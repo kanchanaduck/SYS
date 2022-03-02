@@ -20,6 +20,7 @@ namespace api_hrgis.Models
         [DataType(DataType.Date)]
         [Column(TypeName = "date")]
         public DateTime date_end { get; set; }
+        public string org_code { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }
         public string created_by { get; set; }
@@ -27,6 +28,8 @@ namespace api_hrgis.Models
         public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
+        [ForeignKey("org_code")]
+        public virtual tb_organization organization { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }

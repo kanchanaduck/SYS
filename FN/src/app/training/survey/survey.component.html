@@ -3,20 +3,19 @@
         
             <div class="form-group col">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600">Year</label>
-                <ng-select [multiple]="true"
-                        name="licenseAuthorityId" bindValue="emp_no" 
-                        bindLabel="name" placeholder="Select ..." required 
-                        formControlName="frm_trainer">
-                </ng-select>
+                <select [(ngModel)]="survey.year"
+                    class="form-control">
+                    <option value="2023">2023</option>
+                </select>
             </div>
 
             <div class="form-group col">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600"></label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">Date start</label>
                 <input class="form-control">
             </div>
 
             <div class="form-group col">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600"></label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">Date end</label>
                 <input class="form-control">
             </div>
 
