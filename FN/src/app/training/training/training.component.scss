@@ -1,0 +1,13 @@
+.table thead th, .table tbody td{
+    padding: 5px 7px 5px 7px;
+}
+
+
+.az-sidebar-sticky + .az-content {
+    margin-left: 220px;
+}
+
+a.disabled {
+    pointer-events: none;
+    color: #666;
+}

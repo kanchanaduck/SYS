@@ -1,0 +1,106 @@
+{
+  "data": 
+  [ 
+    {
+      "menu_code": "Menus",
+      "menu_name": "Menus",
+      "parent_menu_code": null,
+      "description": null,
+      "url": "menus",
+      "spare1": null,
+      "spare2": null,
+      "update_date": "2021-09-15T00:00:00",
+      "update_by": "014496",
+      "parent": null
+    },
+    {
+      "menu_code": "Users",
+      "menu_name": "User",
+      "parent_menu_code": null,
+      "description": null,
+      "url": "users",
+      "spare1": null,
+      "spare2": null,
+      "update_date": "2021-09-15T00:00:00",
+      "update_by": "014496",
+      "parent": null
+    },
+    {
+      "menu_code": "TR",
+      "menu_name": "Training",
+      "parent_menu_code": null,
+      "description": null,
+      "url": "training",
+      "spare1": null,
+      "spare2": null,
+      "update_date": "2021-09-15T00:00:00",
+      "update_by": "014496",
+      "parent": null,
+      "children": [
+        {
+          "menu_code": "TR-01",
+          "menu_name": "Maintenance",
+          "parent_menu_code": "TR",
+          "description": null,
+          "url": null,
+          "spare1": null,
+          "spare2": null,
+          "update_date": "2021-09-15T00:00:00",
+          "update_by": "014496",
+          "children": [
+            {
+              "menu_code": "TR-01-001",
+              "menu_name": "Trainer management",
+              "parent_menu_code": "TR-01",
+              "description": null,
+              "url": "trainer",
+              "spare1": null,
+              "spare2": null,
+              "update_date": "2021-09-15T00:00:00",
+              "update_by": "014496"
+            },
+            {
+              "menu_code": "TR-01-002",
+              "menu_name": "Stakeholder management",
+              "parent_menu_code": "TR-01",
+              "description": null,
+              "url": "trainer",
+              "spare1": null,
+              "spare2": null,
+              "update_date": "2021-09-15T00:00:00",
+              "update_by": "014496"
+            }
+          ]
+        },
+        {
+          "menu_code": "TR-02",
+          "menu_name": "Inquiry",
+          "parent_menu_code": "TR",
+          "description": null,
+          "url": null,
+          "spare1": null,
+          "spare2": null,
+          "update_date": "2021-09-15T00:00:00",
+          "update_by": "014496",
+          "children": [
+            
+          ]
+        },
+        {
+          "menu_code": "TR-03",
+          "menu_name": "Report",
+          "parent_menu_code": "TR",
+          "description": null,
+          "url": null,
+          "spare1": null,
+          "spare2": null,
+          "update_date": "2021-09-15T00:00:00",
+          "update_by": "014496",
+          "children": [
+            
+          ]
+        }
+        ]
+    }
+  ]
+}

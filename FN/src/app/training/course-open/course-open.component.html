@@ -1,0 +1,260 @@
+<div class="card card-body mb-3">
+    <div [formGroup]="form">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
+                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
+                    </label>
+                    <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." autofocus (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                    <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course.errors.required">Course no is required</div>
+                        <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
+                        <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">thai name</label>
+                    <input type="text" class="form-control" [readonly]="isdisabled" formControlName="frm_course_th" [ngClass]="{ 'is-invalid': submitted && f.frm_course_th.errors }" #txtcourse_name_tha>
+                    <div *ngIf="submitted && f.frm_course_th.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course_th.errors.required">Thai name is required</div>
+                        <div *ngIf="f.frm_course_th.errors.pattern">Thai name is pattern</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">english name</label>
+                    <input type="text" class="form-control" [readonly]="isdisabled" formControlName="frm_course_en" [ngClass]="{ 'is-invalid': submitted && f.frm_course_en.errors }" #txtcourse_name_en>
+                    <div *ngIf="submitted && f.frm_course_en.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_course_en.errors.required">English name is required</div>
+                        <div *ngIf="f.frm_course_en.errors.pattern">English name is pattern</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
+                    <input type="text" class="form-control" readonly #txtgroup>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">day</label>
+                    <input type="number" class="form-control" [readonly]="isdisabled" formControlName="frm_day" [ngClass]="{ 'is-invalid': submitted && f.frm_day.errors }" #txtday>
+                    <div *ngIf="submitted && f.frm_day.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_day.errors.required">Day is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">capacity</label>
+                    <input type="number" min="0" class="form-control" [readonly]="isdisabled" formControlName="frm_qty" [ngClass]="{ 'is-invalid': submitted && f.frm_qty.errors }" #txtqty>
+                    <div *ngIf="submitted && f.frm_qty.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_qty.errors.required">Capacity is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
+                    <br>
+                    <div *ngFor="let item of checkboxesDataList" style="display: inline-block;">
+                        &nbsp;&nbsp;<input type="checkbox" [disabled]="isdisabled" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}" (change)="changeSelection()">&nbsp;{{item.band}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 align-items-center  pt-1">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">open register</label>
+                    <div class="az-toggle" (click)="open_regis=!open_regis" [ngClass]="open_regis ? 'on' : null "><span></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                            </div>
+                        </div>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_from" #txtdate_from readonly ngbDatepicker #date_from="ngbDatepicker" (click)="date_from.toggle()" (dateSelect)="onDateSelectFrom($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
+                            </div>
+                        </div>
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_to" #txtdate_to readonly ngbDatepicker #date_to="ngbDatepicker" (click)="date_to.toggle()" (dateSelect)="onDateSelectTo($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">time in</label>
+                            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="HH" formControlName="frm_time_in_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_hh.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_in_hh.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_in_hh.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6" style="margin-left: -30px;">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">mm</label>
+                            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="mm" formControlName="frm_time_in_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_in_mm.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_in_mm.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_in_mm.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">time out</label>
+                            <ng-select [items]="ddl_hh" bindLabel="name" bindValue="value" placeholder="HH" formControlName="frm_time_out_hh" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_hh.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_out_hh.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_out_hh.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6" style="margin-left: -30px;">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">mm</label>
+                            <ng-select [items]="ddl_mm" bindLabel="name" bindValue="value" placeholder="mm" formControlName="frm_time_out_mm" [ngClass]="{ 'is-invalid': submitted && f.frm_time_out_mm.errors }">
+                            </ng-select>
+                            <div *ngIf="submitted && f.frm_time_out_mm.errors" class="invalid-feedback">
+                                <div *ngIf="f.frm_time_out_mm.errors.required">Required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
+                    <input class="form-control" formControlName="frm_place" [ngClass]="{ 'is-invalid': submitted && f.frm_place.errors }" #txtplace>
+                    <div *ngIf="submitted && f.frm_place.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_place.errors.required">Place is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <!-- //auto complete -->
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">trainer&nbsp;&nbsp;&nbsp;
+                    <i class="typcn typcn-document-add tx-20 lh--9 op-6 pointer" (click)="open(content)"></i>
+                </label>
+                    <ng-select [items]="value_trainer" bindLabel="fulls" bindValue="trainer_no" [multiple]="true" [(ngModel)]="selected_trainer_multiple" placeholder="Select ..." formControlName="frm_trainer" [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }">
+                    </ng-select>
+                    <div *ngIf="submitted && f.frm_trainer.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_trainer.errors.required">Trainer is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col text-right pt-4">
+                <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+                <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
+                <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div>
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr class="text-uppercase">
+                    <th>no.</th>
+                    <th>course no.</th>
+                    <th>start date</th>
+                    <th>end date</th>
+                    <th>time in</th>
+                    <th>time out</th>
+                    <th>place</th>
+                    <th>trainer</th>
+                    <th>group</th>
+                    <th>manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.course_no }}</td>
+                    <td>{{ item.date_start | date:'dd-MMM-yy'}}</td>
+                    <td>{{ item.date_end | date:'dd-MMM-yy'}}</td>
+                    <td>{{ item.time_in.substring(0, 5) }}</td>
+                    <td>{{ item.time_out.substring(0, 5) }}</td>
+                    <td>{{ item.place }}</td>
+                    <td>{{ item.trainer }}</td>
+                    <td>{{ item.org_code }} : {{ item.org_abb }}</td>
+                    <td>
+                        <div *ngIf="item.org_abb != _ogr_abb; else elseBlock"><span></span></div>
+                        <ng-template #elseBlock>
+                            <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div>
+                            <ng-template #elseDate>
+                                <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>
+                                <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt pointer"></i></a>
+                            </ng-template>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">Create Trainer</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-capitalize">
+        <app-trainer></app-trainer>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>
+
+<ng-template #contentCourse let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-capitalize">
+        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

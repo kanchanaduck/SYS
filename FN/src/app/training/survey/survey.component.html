@@ -1,0 +1,91 @@
+<div class="card card-body mb-3"> 
+    <div class="row row-sm">
+        
+            <div class="form-group col">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">Year</label>
+                <ng-select [multiple]="true"
+                        name="licenseAuthorityId" bindValue="emp_no" 
+                        bindLabel="name" placeholder="Select ..." required 
+                        formControlName="frm_trainer">
+                </ng-select>
+            </div>
+
+            <div class="form-group col">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600"></label>
+                <input class="form-control">
+            </div>
+
+            <div class="form-group col">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600"></label>
+                <input class="form-control">
+            </div>
+
+            <div class="form-group col">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">Upload File</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+            </div>
+
+            <div class="form-group col">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600"></label>
+                <div>
+                    <a class="btn btn-sm btn-outline-indigo p-1"><i class="fas fa-cloud-download-alt"></i> Download</a>
+                    <a class="btn btn-sm btn-outline-indigo p-1"><i class="fas fa-cloud-upload-alt"></i> Upload</a>
+                </div>
+            </div>
+
+      </div><!-- row -->
+</div>
+
+<table id="example" class="table table-bordered table-hover" datatable [dtOptions]="dtOptions">
+    <thead>
+        <tr>
+            <th class="text-center">SEQ</th>
+            <th class="text-center">FILE NAME</th>
+            <th class="text-center">UPLOAD BY</th>
+            <th class="text-center">UPLOAD DATE</th>
+            <th class="text-center">VIEW</th>
+            <th class="text-center">APPROVE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center">1</td>
+            <td>NEED_SURVEY_ICD_2021_20201201_163850_000094.xlsx</td>
+            <td class="text-center">000094</td>
+            <td>2020-12-01 16:38:50</td>
+            <td>
+                <a href="/assets/NEED_SURVEY_ICD_2021_20201201_163850_000094.xlsx">
+                    <i class="fas fa-cloud-download-alt"></i> Download</a>
+            </td>
+            <td>
+                <label class="rdiobox">
+                    <input name="rdio" type="radio" name="approved">
+                    <span>Approve</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center">2</td>
+            <td>NEED_SURVEY_ICD_2021_20201201_163850_000094.xlsx</td>
+            <td class="text-center">000094</td>
+            <td>2020-12-01 16:38:50</td>
+            <td>
+                <a href="/assets/NEED_SURVEY_ICD_2021_20201201_163850_000094.xlsx">
+                    <i class="fas fa-cloud-download-alt"></i> Download</a>
+            </td>
+            <td>
+                <label class="rdiobox">
+                    <input name="rdio" type="radio" name="approved">
+                    <span>Approve</span>
+                </label>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="text-center">
+    <button type="submit" class="btn btn-sm btn-az-primary">Approve</button>
+</div>

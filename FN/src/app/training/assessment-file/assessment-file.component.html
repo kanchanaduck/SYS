@@ -1,0 +1,24 @@
+<div class="row text-capitalize">
+    <div class="col-4 offset-4">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    course no.
+                </div>
+            </div>
+            <input type="text" class="form-control" 
+                placeholder="Enter key..." 
+                #txtcourse_no
+                name="course_no"
+                [(ngModel)]="course_no"
+            >
+        </div>
+        <p class="tx-danger tx-13">{{ error }}</p>
+    </div>
+</div>
+<div class="text-center">
+    <button type="button" class="btn btn-sm btn-az-primary"
+        (click)="download()">
+        <i class="fas fa-cloud-download-alt"></i> Download 
+    </button>
+</div>

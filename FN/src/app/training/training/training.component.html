@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col" *ngFor="let parent of training_menu">
+        <div class="card">
+            <div class="card-header">
+                <h5>{{ parent.menu_name }}</h5>
+            </div>
+            <div class="card-body">
+                <ul class="pl-1">
+                    <li *ngFor="let item of parent.children">
+                        <a routerLink="{{item.url}}" class="tx-13"
+                            [ngClass]="item.spare1==null? '':'disabled'"
+                        >{{ item.menu_name }}</a>
+                        <span *ngIf="item.spare1!=null" class="tx-10">(Not ready to test)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="az-content">
+    <div class="container-fluid">
+        <!-- <app-components-sidebar></app-components-sidebar> -->
+        <div class="az-content-body d-flex flex-column">
+            <div class="az-content-breadcrumb">
+                <span>Home</span>
+                <span>Welfare</span>
+                <span>Locker</span>
+            </div>
+            <h4 class="az-content-title">Locker</h4>
+
+            <div class="card">
+                <div class="card-header">
+                    Locker
+                </div>
+                <div class="card-body">
+                    <div class="col-4 offset-4">
+                        <div class="form-group">
+                            <label for="exampleSelectGender">Room No.</label>
+                            <select class="form-control form-control-sm" id="exampleSelectGender">
+                <option>R01</option>
+                <option>R02</option>
+              </select>
+                        </div>
+                    </div>
+
+                    <!-- <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-sm table-hover tx-13">
+            <thead>
+              <tr>
+                <th>LOCK NO</th>
+                <th>SEX</th>
+                <th>EMP NO</th>
+                <th>NAME</th>
+                <th>DEPT</th>
+                <th>ENTR DATE</th>
+                <th>RESIGN</th>
+                <th>CATEGORY</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let locker of lockers">
+                <td>{{ locker.id }}</td>
+                <td>{{ locker.firstName }}</td>
+                <td>{{ locker.lastName }}</td>
+              </tr>
+            </tbody>
+          </table> -->
+                </div>
+            </div>
+
+            <ng-template #content let-modal>
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    KANCHANA
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+                </div>
+            </ng-template>
+
+
+        </div>
+        <!-- az-content-body -->
+    </div>
+    <!-- container -->
+</div>
+<!-- az-content -->

@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col" *ngFor="let parent of user_menu">
+        <div class="card">
+            <div class="card-header">
+                {{ parent.menu_name }}
+            </div>
+            <div class="card-body">
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" class="form-control" placeholder="Search.." aria-label="Search.." aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+                <ul class="pl-1">
+                    <li *ngFor="let item of parent.children">
+                        <a routerLink="{{item.url}}" class="tx-13">{{ item.menu_name }}</a> 
+                        <img alt="" width="16" src="{{ item.update_by=='014496'? 'assets/images/rubber-duck.png':'assets/images/apple.png'}}" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">
+                <input type="checkbox" name="employee[]" id="employee-check" [checked]="isChecked">
+            </th>
+            <th>emp no</th>
+            <th>Name</th>
+            <th>Division</th>
+            <th>Department</th>
+            <th>BAND</th>
+            <th>POSITION</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of employees">
+            <th class="text-center">
+                <input type="checkbox" name="employee[]" value="{{ user.EMP_NO }}" (change)="checkValue($event)">
+            </th>
+            <td>{{ user.EMP_NO }}</td>
+            <td>{{ (user.firstname_en === null)? '':user.firstname_en+' '+user.lastname_en }}</td>
+            <td>{{ user.DIV_ABB_NAME }}</td>
+            <td>{{ (user.dept_abb === null)? '':user.dept_abb+'('+ user.DEPT_CODE +')' }}</td>
+            <td>{{ user.BAND }}</td>
+            <td>{{ user.position_name_en }}</td>
+        </tr>
+    </tbody>
+</table>

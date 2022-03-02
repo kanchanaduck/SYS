@@ -1,0 +1,161 @@
+
+
+<div class="card card-body mb-2" *ngIf="is_committee">
+    <form (ngSubmit)="save_course_master()">
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
+            <input type="hidden" name="course.course_no_temp" class="form-control" 
+                autofocus required 
+                [(ngModel)]="course.course_no_temp" >
+            <input type="text" name="course.course_no" class="form-control" 
+                autofocus required 
+                [(ngModel)]="course.course_no" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.course_no"> 
+                <span *ngFor="let text of errors.course_no">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
+            <input type="text" name="course.course_name_th" class="form-control" required 
+                [(ngModel)]="course.course_name_th" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.course_name_th"> 
+                <span *ngFor="let text of errors.course_name_th">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
+            <input type="text" name="course.course_name_en" class="form-control" required 
+                [(ngModel)]="course.course_name_en" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.course_name_en"> 
+                <span *ngFor="let text of errors.course_name_en">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+    </div>
+    
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
+                <select name="course.org_code" class="form-control"
+                    [(ngModel)]="course.org_code">
+                    <option value="{{ _org_code }}">{{ _org_abb }}</option>
+                </select>
+                <!-- <p>Selected: {{ course.org_code | json}}</p> -->
+                <p class="text-danger tx-12" *ngIf="errors && errors.org_code"> 
+                    <span *ngFor="let text of errors.org_code">{{ text }}</span>
+                </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
+            <input type="number" name="course.capacity" class="form-control"
+                [(ngModel)]="course.capacity" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.capacity"> 
+                <span *ngFor="let text of errors.capacity">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Required course</label>     
+            <ng-select 
+                [(ngModel)]="previous_courses"
+                [items]="all_course"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                [multiple]="true">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+            <p>Selected: {{previous_courses | json}}</p>
+        </div><!-- form-group -->
+    </div>
+
+    <div class="row">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Days</label>
+            <input type="text" name="course.days" class="form-control"
+                [(ngModel)]="course.days" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.days"> 
+                <span *ngFor="let text of errors.days">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Category</label>
+            <input type="text" name="course.category" class="form-control"
+            [(ngModel)]="course.category" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.category"> 
+                <span *ngFor="let text of errors.category">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
+            <input type="text" name="course.level" class="form-control"
+            [(ngModel)]="course.level" >
+            <p class="text-danger tx-12" *ngIf="errors && errors.level"> 
+                <span *ngFor="let text of errors.level">{{ text }}</span>
+            </p>
+        </div><!-- form-group -->
+        <div class="form-group col-5 mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
+            <div class="form-row">
+                <label class="ckbox" *ngFor="let band of bands">
+                    <input type="checkbox" [(ngModel)]="band.isChecked" [ngModelOptions]="{standalone: true}">
+                    <span>{{band.band}} </span>
+                </label>
+            </div>
+        </div><!-- form-group -->
+    </div>
+
+    <div class="row">
+        <div class="form-group col text-right">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_course_master()">Clear</button>
+            </div>
+        </div><!-- form-group -->
+    </div>
+</form>
+</div>
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+    <thead>
+        <tr class="text-uppercase">
+            <th class="text-center">Course No.</th>
+            <th class="text-center">Thai Name</th>
+            <th class="text-center">English Name</th>
+            <th class="text-center">Group</th>
+            <th class="text-center">Capacity</th>
+            <th class="text-center">Days</th>
+            <th class="text-center">Category</th>
+            <th class="text-center">Level</th>
+            <th class="text-center">Manage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let c of courses">
+            <td>{{ c.course_no }}</td>
+            <td class="text-wrap">{{ c.course_name_th }}</td>
+            <td class="text-wrap">{{ c.course_name_en }}</td>
+            <td class="text-right">{{ c.organization.org_abb+" ("+ c.org_code + ")"}}</td>
+            <td class="text-right">{{ c.capacity }}</td>
+            <td class="text-right">{{ c.days }}</td>
+            <td>{{ c.category }}</td>
+            <td>{{ c.level }}</td>
+            <td class="text-center">
+                <a href="javascript:;" 
+                    (click)="get_course(c.course_no)"
+                    >
+                    <i class="far fa-edit"></i>
+                </a>
+                <a href="javascript:;"
+                    (click)="delete_course(c.course_no)"
+                    >
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

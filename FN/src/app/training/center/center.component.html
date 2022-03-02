@@ -1,0 +1,109 @@
+<div class="card card-info card-body p-2 mb-3">
+    <div>
+        <h5>Responsibility of center</h5>
+        <ul>
+            <li>Setting master data</li>
+            <li>Approving course registration at the final </li>
+            <li>Being able to see the learning and teaching information of the whole company</li>
+        </ul>
+        <ul>
+            <li>จัดทำ master data</li>
+            <li>อนุมัติการลงทะเบียนคอร์สในขั้นตอนสุดท้าย</li>
+            <li>สามารถมองเห็นข้อมูลการเรียนการสอนของทั้งบริษัท</li>
+        </ul>
+    </div>
+</div> 
+
+<div class="card card-body mb-3" *ngIf="is_center">
+    <form (ngSubmit)="save_center()">
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
+            <input type="text" name="emp_no" class="form-control" required 
+                [(ngModel)]="center.emp_no" 
+                (keyup)="fillEmpNo()" >
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
+            <select type="text" name="title_name_en" class="form-control" required 
+                [(ngModel)]="center.title_name_en" 
+                [disabled]="true"
+                >
+                <option value="MR.">MR.</option>
+                <option value="MRS.">MRS.</option>
+                <option value="MS.">MS.</option>
+                </select>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
+            <input type="text" name="firstname_en" class="form-control" required 
+                [(ngModel)]="center.firstname_en" 
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
+            <input type="text" name="lastname_en" class="form-control" required 
+                [(ngModel)]="center.lastname_en" 
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
+            <input type="text" name="div_abb" class="form-control" required 
+                [(ngModel)]="center.div_abb"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DEPARTMENT</label>
+            <input type="text" name="dept_abb" class="form-control" required 
+                [(ngModel)]="center.dept_abb"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
+            <input type="text" name="employed_status" class="form-control" required disabled="true"
+                [(ngModel)]="center.employed_status" 
+            >
+        </div><!-- form-group -->
+    <!-- </div>
+    <div class="row"> -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_center()">Clear</button>
+            </div>
+        </div><!-- form-group -->
+    </div>
+    </form>
+</div>
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+    <thead>
+        <tr>
+            <th class="text-center">EMP NO.</th>
+            <th class="text-center">TITLE NAME</th>
+            <th class="text-center">FIRSTNAME</th>
+            <th class="text-center">LASTNAME</th>
+            <th class="text-center">POSITION NAME</th>
+            <th class="text-center">DIVISION</th>
+            <th class="text-center">DEPARTMENT</th>
+            <th class="text-center">STATUS</th>
+            <th class="text-center" *ngIf="is_center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let center of centers">
+            <td>{{ center.emp_no }}</td>
+            <td>{{ center.title_name_en }}</td>
+            <td>{{ center.firstname_en }}</td>
+            <td>{{ center.firstname_en }}</td>
+            <td>{{ center.position_name_en }}</td>
+            <td>{{ center.div_abb }}</td>
+            <td>{{ center.dept_abb }}</td>
+            <td>{{ center.employed_status }}</td>
+            <td class="text-center" *ngIf="is_center">
+                <a href="javascript:;" (click)="delete_center(center.emp_no)"><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

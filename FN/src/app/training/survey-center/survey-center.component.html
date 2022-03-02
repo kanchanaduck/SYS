@@ -1,0 +1,33 @@
+<ngb-alert [type]="info" (closed)="close(alert)">
+    Only center have authorize to use this page
+</ngb-alert>
+
+<table class="table table-bordered table-bordered" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+    <thead>
+        <tr>
+            <th class="text-center">YEAR</th>
+            <th class="text-center">START DATE</th>
+            <th class="text-center">END DATE</th>
+            <th class="text-center">ORGANIZATION VIEW</th>
+            <th class="text-center">MONTH VIEW</th>
+            <th class="text-center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of survey">
+            <td class="text-center tx-13">{{ i.year }}</td>
+            <td class="text-center tx-13">{{ i.date_start }}</td>
+            <td class="text-center tx-13">{{ i.date_end }}</td>
+            <td class="text-center tx-13">
+                <a href=""><i class="far fa-eye"></i></a>
+            </td>
+            <td class="text-center tx-13">
+                <a href=""><i class="far fa-eye"></i></a>
+            </td>
+            <td class="text-center tx-13">       
+                <a href=""><i class="far fa-edit"></i></a>
+                <a href=""><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

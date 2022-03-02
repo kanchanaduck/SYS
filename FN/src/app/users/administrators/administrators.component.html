@@ -1,0 +1,40 @@
+<div class="card card-info card-body p-2 mb-3">
+    <div>Administrator </div>
+</div>
+
+<table datatable [dtOptions]="dtOptions" class="table table-bordered table-hover" id="example">
+    <thead>
+        <tr>
+            <th class="text-center">
+                <input type="checkbox">
+            </th>
+            <th class="text-center">EMP NO.</th>
+            <th class="text-center">Name</th>
+            <th class="text-center">Division</th>
+            <th class="text-center">Department</th>
+            <th class="text-center">Band</th>
+            <th class="text-center">Position</th>
+            <th class="text-center">EMAIL</th>
+            <th class="text-center">USERNAME</th>
+            <th class="text-center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let e of c">
+            <td class="text-center p-1">
+                <input type="checkbox">
+            </td>
+            <td class="tx-9 p-1">{{ e.EMP_NO }}</td>
+            <td class="tx-9 p-1">{{ e.firstname_en+" "+e.lastname_en }}</td>
+            <td class="tx-9 p-1">{{ e.div_abb}}</td>
+            <td class="tx-9 p-1">{{ e.dept_abb }}</td>
+            <td class="tx-9 p-1">{{ e.BAND }}</td>
+            <td class="tx-9 p-1">{{ e.position_name_en }}</td>
+            <td class="tx-9 p-1">{{ e.EMAIL }}</td>
+            <td class="tx-9 p-1">{{ e.UserName }}</td>
+            <td class="tx-9 text-center p-1">
+                <a href=""><i class="far fa-trash-alt"></i></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

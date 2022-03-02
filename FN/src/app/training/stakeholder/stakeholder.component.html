@@ -1,0 +1,119 @@
+<div class="card card-body mb-3" *ngIf="is_center">
+    <form (ngSubmit)="save_stakeholders()">
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Organization</label>
+            <ng-select
+                autofocus
+                [items]="departments" 
+                [searchFn]="custom_search_org_fn"
+                [selectableGroup]="true"
+                bindLabel="org_abb" 
+                bindValue="org_code"
+                [groupBy]="group_by_parent_org_code_fn"
+                [groupValue]="group_value_parent_org_code_fn"
+                [compareWith]="compare_org"
+                [(ngModel)]="stakeholder.org_code" 
+                [ngModelOptions]="{standalone: true}"
+                (change)="get_employees()"
+                >
+                <ng-template ng-label-tmp let-item="item">
+                    {{ item.org_abb + '('+item.org_code+')' }}
+                </ng-template>
+                <ng-template ng-optgroup-tmp let-item="item" let-index="index">
+                    {{ item.org_abb + '('+item.org_code+')' }}
+                </ng-template>
+            </ng-select>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>
+            <ng-select 
+                [items]="employees"
+                bindLabel="emp_no"
+                bindValue="emp_no"
+                [multiple]="true"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="stakeholder.committees"
+                >
+                <ng-template ng-label-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_en  }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_en  }}
+                </ng-template>
+            </ng-select>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
+            <ng-select 
+                [items]="employees"
+                bindLabel="emp_no"
+                bindValue="emp_no"
+                [multiple]="true"
+                [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="stakeholder.approvers"
+                >
+                <ng-template ng-label-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_en  }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ item.emp_no+': '+item.shortname_en  }}
+                </ng-template>
+            </ng-select>
+        </div><!-- form-group -->
+        <div class="form-group col pt-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">222</label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_stakeholder()">Clear</button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+    <thead>
+        <tr>
+            <th class="text-center">DIVISION</th>
+            <th class="text-center">DEPARTMENT</th>
+            <th class="text-center">LEVEL</th>
+            <th class="text-center">COMMITTEE</th>
+            <th class="text-center">APPROVER (MGR.)</th>
+            <th class="text-center" *ngIf="is_center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let i of stakeholders">
+            <td class="text-center">
+                {{ i.parent_org.org_abb==null? i.org_abb: i.parent_org.org_abb }}
+            </td>
+            <td class="text-center">
+                {{ i.parent_org.org_abb==null? '': i.org_abb }}
+            </td>
+            <td>
+                {{ i.level_name | uppercase }}
+            </td>
+            <td>
+                <div *ngFor="let j of i.stakeholders">
+                    <div *ngIf="j.role=='COMMITTEE'">
+                        {{ j.emp_no + ": " + j.employee.shortname_en }}
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div *ngFor="let j of i.stakeholders">
+                    <div *ngIf="j.role=='APPROVER'">
+                        {{ j.emp_no + ": " + j.employee.shortname_en }}
+                    </div>
+                </div>
+            </td>
+            <td class="text-center" *ngIf="is_center">
+                <a href="javascript:;" (click)="get_stakeholder(i.org_code)">
+                    <i class="far fa-edit"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

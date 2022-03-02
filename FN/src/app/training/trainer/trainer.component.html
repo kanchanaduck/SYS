@@ -1,0 +1,156 @@
+<div class="card card-body mb-3" *ngIf="is_center">
+    <form (ngSubmit)="save_trainer()">
+    <div class="row text-center">
+        <div class="offset-4 col-4">
+            <div class="row">
+                <div class="col">
+                    <label class="rdiobox">
+                    <input name="trainer_type" type="radio" required
+                        value="Internal" 
+                        [(ngModel)]="trainer.trainer_type"
+                        (ngModelChange)="change_trainer_type($event)"
+                        [checked]="trainer.trainer_type=='Internal'"
+                        >
+                    <span>Internal</span>
+                    </label>
+                </div>
+                <div class="col">
+                    <label class="rdiobox">
+                    <input name="trainer_type" type="radio" required
+                        value="External" 
+                        [(ngModel)]="trainer.trainer_type"
+                        (ngModelChange)="change_trainer_type($event)"
+                        [checked]="trainer.trainer_type=='External'"
+                    >
+                    <span>External</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Emp no.</label>
+            <input type="text" name="emp_no" class="form-control" required 
+                [(ngModel)]="trainer.emp_no" 
+                (keyup)="fillEmpNo($event)" 
+                [disabled]="trainer.trainer_type=='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.emp_no">{{ e }}</p>
+            </div>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Title</label>
+            <select type="text" name="title_name_en" class="form-control" required 
+                [(ngModel)]="trainer.title_name_en" 
+                [disabled]="trainer.trainer_type!='External'? true:false"
+                >
+                <option></option>
+                <option>MR.</option>
+                <option>MRS.</option>
+                <option>MS.</option>
+                </select>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
+            <input type="text" name="firstname_en" class="form-control" required 
+                [(ngModel)]="trainer.firstname_en" 
+                [disabled]="trainer.trainer_type!='External'? true:false">      
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.firstname_en">{{ e }}</p>
+            </div>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">LASTNAME</label>
+            <input type="text" name="lastname_en" class="form-control" required 
+                [(ngModel)]="trainer.lastname_en" 
+                [disabled]="trainer.trainer_type!='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.lastname_en">{{ e }}</p>
+            </div>
+        </div><!-- form-group -->
+    </div>
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
+            <input type="text" name="div_abb" class="form-control" required 
+                [(ngModel)]="trainer.div_abb"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">DEPARTMENT</label>
+            <input type="text" name="dept_abb" class="form-control" required 
+                [(ngModel)]="trainer.dept_abb"
+                [disabled]="true">
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">ORGANIZATION</label>
+            <input type="text" name="organization" class="form-control" required 
+                [(ngModel)]="trainer.organization"
+                [disabled]="trainer.trainer_type!='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.organization">{{ e }}</p>
+            </div>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
+            <input type="text" name="employed_status" class="form-control" required disabled="true"
+                [(ngModel)]="trainer.employed_status" 
+            >
+        </div><!-- form-group -->
+    </div>
+    <div class="row">
+        <div class="form-group col text-right">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+            <div>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_trainer()">Clear</button>
+            </div>
+        </div><!-- form-group -->
+    </div>
+    </form>
+</div>
+
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+    <thead>
+        <tr>
+            <th class="text-center">EMP NO</th>
+            <th class="text-center">TITLE</th>
+            <th class="text-center">FIRSTNAME</th>
+            <th class="text-center">LASTNAME</th>
+            <th class="text-center">ORGANIZATION</th>
+            <th class="text-center">STATUS</th>
+            <th class="text-center">TYPE</th>
+            <th class="text-center">VIEW</th>
+            <th class="text-center">MANAGE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let t of trainers">
+            <td>{{ t.emp_no }}</td>
+            <td>{{ t.title_name_en  }} </td>
+            <td>{{ t.firstname_en  }} </td>
+            <td>{{ t.lastname_en  }} </td>
+            <td>{{ t.div_abb==null? t.organization:t.div_abb+" - "+t.dept_abb  }} </td>
+            <td>{{ t.employed_status }}</td>
+            <td>{{ t.trainer_type }}</td>
+            <td class="text-center">
+                <a [routerLink]="['/training/trainer-history', t.trainer_no]"><i class="far fa-eye"></i></a>
+            </td>
+            <td class="text-center">
+                <a href="javascript:;"
+                    *ngIf="t.trainer_type=='External'" 
+                    (click)="get_trainer(t.trainer_no)"
+                >
+                    <i class="far fa-edit"></i>
+                </a>
+                <a href="javascript:;"
+                    (click)="delete_trainer(t.trainer_no)">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

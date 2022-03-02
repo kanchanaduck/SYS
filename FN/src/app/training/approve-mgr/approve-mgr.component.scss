@@ -1,0 +1,29 @@
+.bg-gray-400,
+.nav-tabs {
+    background-color: transparent;
+}
+
+.nav-tabs {
+    padding: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.nav-tabs .nav-link.active {
+    color: #5b47fb;
+}
+
+.nav-tabs .nav-link {
+    padding: 5px 20px;
+}
+
+.card,
+.nav-tabs+.tab-content {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.input-group-text {
+    background-color: transparent;
+    border: transparent;
+    padding: 0 0.75rem 0 0;
+}

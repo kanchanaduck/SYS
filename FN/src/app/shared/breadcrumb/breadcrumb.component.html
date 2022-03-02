@@ -1,0 +1,38 @@
+<style>
+    .az-content-breadcrumb {
+        margin-bottom: -10px;
+    }
+    
+    .mb-20 {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="" *ngFor="let breadcrumb of breadcrumbs; let last = last">
+    <div *ngIf="breadcrumb.active && last">
+        <nav aria-label="breadcrumb" *ngIf="last">
+            <ol class="breadcrumb breadcrumb-style2">
+                <li class="breadcrumb-item" [ngClass]="breadcrumb.active === false ? '': 'active'" *ngFor="let breadcrumb of breadcrumbs; let last = last">
+                    <ng-container *ngIf="!last">
+                        <a routerLink="{{breadcrumb.url}}">{{ breadcrumb.label }}</a>
+                    </ng-container>
+                    <span *ngIf="last">{{ breadcrumb.label }}</span>
+                </li>
+            </ol>
+        </nav>
+        <h2 class="az-content-title mb-20">
+            {{ breadcrumb.label }}
+            <!-- <a *ngIf="show_suggestion" (href="javascript:;" (click)="suggestion_info()">
+                <i class="fa-solid fa-circle-info"></i>
+            </a> -->
+        </h2>
+    </div>
+</div>
+
+<!-- <nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-style2 float-right">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item"><a href="#">Employee</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Manpower</li>
+  </ol>
+</nav> -->

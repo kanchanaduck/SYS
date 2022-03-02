@@ -1,0 +1,77 @@
+<div class="az-content">
+  <div class="container-fluid">
+    <!-- <app-components-sidebar></app-components-sidebar> -->
+    <div class="az-content-body d-flex flex-column">
+      <app-breadcrumb></app-breadcrumb>
+      <h2 class="az-content-title">Welfare</h2>
+
+      <div class="row">
+
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              Maintenance
+            </div>
+            <div class="card-body">
+              <div class="input-group input-group-sm mb-3">
+                <input type="text" class="form-control" placeholder="Search.." aria-label="Search.." aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                </div>
+              </div>
+              <ul class="pl-1">
+                <li *ngFor="let menu of menus_maintenance">
+                  <a href="welfare/locker" class="tx-13">{{ menu.menu_code }} - {{ menu.menu_name }}</a>
+                  <div *ngIf="(menu.menu_code == 'PEF054_03B')" class="badge badge-danger badge-pill">Active</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              Inquiry
+            </div>
+            <div class="card-body">
+              <div class="input-group input-group-sm mb-3">
+                <input type="text" class="form-control" placeholder="Search.." aria-label="Search.." aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                </div>
+              </div>
+              <ul class="pl-1">
+                <li *ngFor="let menu of menus_inquiry">
+                  <a href="welfare/locker" class="tx-13">{{ menu.menu_code }} - {{ menu.menu_name }}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              Report
+            </div>
+            <div class="card-body">
+              <div class="input-group input-group-sm mb-3">
+                <input type="text" class="form-control" placeholder="Search.." aria-label="Search.." aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <span class="input-group-text" id="basic-addon2"><i class="fa fa-search"></i></span>
+                </div>
+              </div>
+              <ul class="pl-1">
+                <li *ngFor="let menu of menus_report">
+                  <a href="welfare/locker" class="tx-13">{{ menu.menu_code }} - {{ menu.menu_name }}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div><!-- az-content-body -->
+  </div><!-- container -->
+</div><!-- az-content -->

@@ -1,0 +1,34 @@
+<div class="az-sidebar">
+    <div class="az-sidebar-header">
+        <a href="/training" class="az-logo">HRGIS</a>
+    </div>
+    <!-- az-sidebar-header -->
+    <div class="az-sidebar-loggedin">
+        <div class="az-img-user online">
+            <!-- <img src="assets/images/img1.jpg" alt=""> -->
+            <img #image src="{{images}}" class="img-radius" alt="image">
+        </div>
+        <div class="media-body">
+            <h6>{{_fullname}}.</h6>
+            <span>{{_positions}}</span>
+        </div>
+        <!-- media-body -->
+    </div>
+    <!-- az-sidebar-loggedin -->
+    <div class="az-sidebar-body">
+        <ul class="nav">
+            <li class="nav-label mb-3">Main Menu</li>
+            <a *ngFor="let menu of menus" 
+                routerLink="{{ menu.url }}" 
+                class="nav-link" 
+                [ngClass]="{'active': menu.url == activeUrl  }"
+                [ngClass]="{'d-none': _emp_no != '014496' && ( menu.menu_name=='User' || menu.menu_name=='Menu') }">
+                  {{ menu.menu_name }}
+            <div *ngIf="(menu.url == activeUrl )" class="badge badge-danger badge-pill">Active</div>
+      </a>
+        </ul>
+        <!-- nav -->
+    </div>
+    <!-- az-sidebar-body -->
+</div>
+<!-- az-sidebar -->

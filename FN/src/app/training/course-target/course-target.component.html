@@ -1,0 +1,49 @@
+<div class="row text-capitalize">
+    <div class="col-4 offset-4">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                    course no.
+                </div>
+            </div>
+            <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" #txtcourse_no>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-12">
+        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+            <thead>
+                <tr class="text-uppercase">
+                    <th>no.</th>
+                    <th>emp no</th>
+                    <th>title en</th>
+                    <th>firstname en</th>
+                    <th>lastname en</th>
+                    <th>position</th>
+                    <th>department</th>
+                    <th>division</th>
+                    <th>title th</th>
+                    <th>firstname th</th>
+                    <th>lastname th</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data_grid; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.emp_no }}</td>
+                    <td>{{ item.title_name_en }}</td>
+                    <td>{{ item.firstname_en }}</td>
+                    <td>{{ item.lastname_en }}</td>
+                    <td>{{ item.position_name_en }}</td>
+                    <td>{{ item.dept_abb }}</td>
+                    <td>{{ item.div_abb }}</td>
+                    <td>{{ item.title_name_th }}</td>
+                    <td>{{ item.firstname_th }}</td>
+                    <td>{{ item.lastname_th }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

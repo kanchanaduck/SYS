@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DXREPORTHRGIS": {
+      "commandName": "Project",
+      "launchBrowser": true
+    }
+  }
+}
