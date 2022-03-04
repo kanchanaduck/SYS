@@ -109,7 +109,7 @@
                         <label class="az-content-label tx-11 tx-medium tx-gray-600">pre-test</label>
                         <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
                         <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
-                            <div *ngIf="f.frm_pre_test_score.errors.required">Required</div>
+                            <!-- <div *ngIf="f.frm_pre_test_score.errors.required">Required</div> -->
                             <div *ngIf="f.frm_pre_test_score.errors.minlength">Min 1 characters</div>
                             <div *ngIf="f.frm_pre_test_score.errors.maxlength">Max 3 characters</div>
                         </div>
@@ -130,7 +130,7 @@
                         <label class="az-content-label tx-11 tx-medium tx-gray-600">post-test</label>
                         <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKeyPostTestScore($event)" #txtpost_test_score>
                         <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
-                            <div *ngIf="f.frm_post_test_score.errors.required">Required</div>
+                            <!-- <div *ngIf="f.frm_post_test_score.errors.required">Required</div> -->
                             <div *ngIf="f.frm_post_test_score.errors.minlength">Min 1 characters</div>
                             <div *ngIf="f.frm_post_test_score.errors.maxlength">Max 3 characters</div>
                         </div>

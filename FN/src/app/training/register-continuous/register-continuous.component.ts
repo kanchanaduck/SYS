@@ -56,6 +56,8 @@ export class RegisterContinuousComponent implements OnInit {
         frm_emp_no_to: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
         // frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
         // frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+        frm_pre_test_score: ['', [Validators.minLength(1), Validators.maxLength(3)]],
+        frm_post_test_score: ['', [Validators.minLength(1), Validators.maxLength(3)]],
       },
     );
 

@@ -66,7 +66,8 @@ export class CourseOpenComponent implements OnInit {
       {
         frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
         frm_course_th: ['', [Validators.required, Validators.pattern(this.th_pattern)]],
-        frm_course_en: ['', [Validators.required, Validators.pattern(this.en_pattern)]],
+        // frm_course_en: ['', [Validators.required, Validators.pattern(this.en_pattern)]],
+        frm_course_en: ['', [Validators.pattern(this.en_pattern)]],
         frm_day: ['', [Validators.required]],
         frm_qty: ['', [Validators.required]],
         frm_time_in_hh: ['', [Validators.required]],
@@ -382,9 +383,20 @@ export class CourseOpenComponent implements OnInit {
 
   // Open popup trainer
   open(content) {
-    this.modalService.open(content, {
-      size: 'xl' //sm, mb, lg, xl
-    });
+    // this.modalService.open(content, {
+    //   size: 'xl' //sm, mb, lg, xl
+    // });
+    const modalRef = this.modalService.open(content, { size: 'xl' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        this.fnGetTrainer();
+      },
+      (reason) => {
+        console.log(reason);
+        this.fnGetTrainer();
+      }
+    );
   } // End Open popup trainer
 
   // Open popup Course
@@ -419,7 +431,7 @@ export class CourseOpenComponent implements OnInit {
       this.fnGet(environment.text.all);
     }
     else {
-      this.fnGet("");
+      this.fnGet(this._ogr_code);
     }
   } // EndCheck box All
 

@@ -87,7 +87,9 @@ export class ConfirmationSheetComponent implements OnInit {
             text: '<i class="fas fa-envelope"></i> Trainee email</button>',
             key: '1',
             action: () => {
-              this.fnSendMail();
+              if(this.course_org_code != ""){
+                this.fnSendMail();
+              }
             }
           }
         ],
@@ -98,7 +100,8 @@ export class ConfirmationSheetComponent implements OnInit {
     };
 
     this.fnGet("NULL");
-    this.fnGetCenter(this._emp_no);
+    // this.fnGetCenter(this._emp_no);
+    this.fnGetStakeholder(this._emp_no)
   }
 
   async onKeyCourse(event: any) {
@@ -109,18 +112,35 @@ export class ConfirmationSheetComponent implements OnInit {
     }
   }
 
-  async fnGetCenter(emp_no: any) {
-    await this.service.gethttp('Center/' + emp_no)
+  // async fnGetCenter(emp_no: any) {
+  //   await this.service.gethttp('Center/' + emp_no)
+  //     .subscribe((response: any) => {
+  //       console.log(response);
+  //       this.isCenter = true;
+  //     }, (error: any) => {
+  //       console.log(error);
+  //       this.fnGet("No");
+  //       this.isCenter = false;
+  //     });
+  // }
+
+  org_code: any;
+  async fnGetStakeholder(emp_no: any) {
+    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
       .subscribe((response: any) => {
-        console.log(response);
-        this.isCenter = true;
+        if (response.role.toUpperCase() == environment.role.committee) {
+          console.log(response);
+          this.org_code = response.org_code;     
+          this.isCenter = true;
+        }
       }, (error: any) => {
         console.log(error);
         this.fnGet("No");
+        this.isCenter = false;
       });
   }
 
-  mail_date: any; mail_time: any; mail_place: any;
+  mail_date: any; mail_time: any; mail_place: any; mail_course: any; course_org_code: string = "";
   async fnGet(course_no: string) {
     await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + course_no)
       .subscribe((response: any) => {
@@ -129,6 +149,8 @@ export class ConfirmationSheetComponent implements OnInit {
           this.mail_date = new Date(response[0].date_start).getDate() + "-" + new Date(response[0].date_end).getDate() + " " + new Date(response[0].date_start).toLocaleString('default', { month: 'long' }) + " " + new Date(response[0].date_start).getFullYear();
           this.mail_time = response[0].time_in + "～" + response[0].time_out;
           this.mail_place = response[0].place;
+          this.mail_course = response[0].course_no + "(" + response[0].course_name_th + ")";
+          this.course_org_code = response[0].org_code;
         }
 
         this.data_grid = response;
@@ -153,11 +175,18 @@ export class ConfirmationSheetComponent implements OnInit {
   res_file: any;
   array_to: any = [];
   async fnSendMail() {
+    if(this.org_code != this.course_org_code){ 
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.invalid_course
+      })
+      return; 
+    }
+
     if (this.isCenter == true) {
-      // this.fnSendMailExemple(this.txtcourse_no.nativeElement.value);
-      if (this.txtcourse_no.nativeElement.value != "") {
+      if (this.txtcourse_no.nativeElement.value != "" && this.mail_date != undefined) {
         this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.txtcourse_no.nativeElement.value);
-        // console.log(this.res_mail);
+        console.log(this.res_mail);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainner);
         Array.prototype.push.apply(this.array_to, this.res_mail.manager);
@@ -166,13 +195,13 @@ export class ConfirmationSheetComponent implements OnInit {
 
         this.array_to = removeDuplicateObjectFromArray(this.array_to, 'emp_no'); // console.log('remove: ', this.array_to);
         if (this.array_to.length > 0) {
-          const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no); // console.log(filter_form);
+          const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no);  console.log(filter_form);
           const filter_to = this.array_to; console.log(filter_to); // console.log(filter_to.map(a => a.email).join());
 
           Swal.fire({
-            // title: 'Are you sure? \n you want to send e-mail to',
+            title: 'Are you sure? \n you want to send e-mail to',
             text: filter_to.map(a => a.email).join("; "),
-            // icon: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
@@ -184,7 +213,7 @@ export class ConfirmationSheetComponent implements OnInit {
 
               var formData_M = new FormData();
               let mailform = filter_form[0].email;
-              let subject = "Confirm Training : Sync C-BOM : " + this.mail_date;
+              let subject = "Confirm Training : " + this.mail_course + " : " + this.mail_date;
               formData_M.append('from', mailform);
 
               let select_data = filter_to.map(a => a.emp_no);
@@ -202,15 +231,16 @@ export class ConfirmationSheetComponent implements OnInit {
               formData_M.append('text', "Dear: " + dear + " \n\n" +
                 "I would like to confirm about the lists :\n" +
                 "****************************************************************************************\n" +
-                "Course          :   \" Sync C-BOM \"\n" +
-                "Date            :   15-17 December 2021\n" +
+                "Course          :   \"" + this.mail_course + "\"\n" +
+                "Date            :   " + this.mail_date + "\n" +
                 "Time            :   " + this.mail_time + " (Please arrive 10 minutes early to allow us enough time to check your list.)\n" +
                 "Place           :   " + this.mail_place + "\n" +
                 "Trainer         :   " + this.res_mail.trainner.map(a => a.fullname).join(", ") + "	\n" +
                 "Please try to be punctual, so we can start the training on time.\n" +
                 "****************************************************************************************\n" +
                 "Prepare     : Eraser\n" +
-                "            : Pencil\n" +
+                "            : Pencil\n" +                
+                "Please click the link. http://cptsvs52t/HRGIS_TEST \n\n" +
                 "Best Regards");
               var url = "http://cptsvs531:1000/middleware/email/sendmail";
               // this.service.axios_formdata_post(url, formData_M, 'Send mail success.');
@@ -222,6 +252,18 @@ export class ConfirmationSheetComponent implements OnInit {
           })
         }
       }
+      else{
+        Swal.fire({
+          icon: 'error',
+          text: environment.text.not_sendmail
+        })
+      }
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.committee_only
+      })
     }
   }
 
@@ -246,6 +288,7 @@ export class ConfirmationSheetComponent implements OnInit {
     }
   }
 
+  // Exemple
   async fnSendMailExemple(course_no) {
     var formData_M = new FormData();
     let mailform = 'nuttaya001@mail.canon';
@@ -290,6 +333,7 @@ export class ConfirmationSheetComponent implements OnInit {
     //   console.log(pair[0] + ', ' + pair[1]);
     // }
   }
+  // end Exemple
 
 }
 

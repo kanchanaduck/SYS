@@ -29,7 +29,7 @@
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">english name</label>
                     <input type="text" class="form-control" [readonly]="isdisabled" formControlName="frm_course_en" [ngClass]="{ 'is-invalid': submitted && f.frm_course_en.errors }" #txtcourse_name_en>
                     <div *ngIf="submitted && f.frm_course_en.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_course_en.errors.required">English name is required</div>
+                        <!-- <div *ngIf="f.frm_course_en.errors.required">English name is required</div> -->
                         <div *ngIf="f.frm_course_en.errors.pattern">English name is pattern</div>
                     </div>
                 </div>

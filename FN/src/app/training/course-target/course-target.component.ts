@@ -83,7 +83,7 @@ export class CourseTargetComponent implements OnInit {
   }
 
   async onKeyCourse(event: any) {
-    if (event.target.value.length >= 3 && event.target.value.length < 15) {
+    if (event.target.value.length >= 7 && event.target.value.length < 8) {
       this.fnGet(event.target.value);
     }else if(event.target.value.length == 0){
       this.fnGet("NULL");
@@ -91,7 +91,7 @@ export class CourseTargetComponent implements OnInit {
   }
 
   async fnGet(course_no:string) {
-    await this.service.gethttp('OtherData/GetCountAttendee?course_no=' + course_no)
+    await this.service.gethttp('OtherData/GetCourseTarget?course_no=' + course_no)
       .subscribe((response: any) => {
         console.log(response);
 

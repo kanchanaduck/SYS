@@ -1,4 +1,4 @@
-	
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +63,66 @@ namespace api_hrgis.Controllers
             dt = _repository.get_datatable(query);
 
             return Ok(dt);
+        }
+
+        [HttpGet("GetCourseTarget")]
+        public IActionResult GetCourseTarget(string course_no)
+        {
+            var query = string.Format(@"select distinct substring(tc.course_no,1,7) as course_no, tc.course_name_en, tc.course_name_th, tcb.band from 
+                            [HRGIS].[dbo].[tr_course_registration] trc
+                            left join [HRGIS].[dbo].[tr_course] tc on trc.course_no = tc.course_no
+                            left join [HRGIS].[dbo].[tr_course_band] tcb on tc.course_no = tcb.course_no
+                            where substring(tc.course_no,1,7) = '{0}' and (last_status = '{1}' or (last_status = '{2}')) "
+                        , course_no, _config.GetValue<string>("Status:center_approved"), _config.GetValue<string>("Status:continuous"));
+
+            DataTable dt = new DataTable();
+            dt = _repository.get_datatable(query);
+
+            List<target> list = new List<target>();
+            for (var i = 0; i < dt.Rows.Count; i++)
+            {
+                // Console.WriteLine("===== 2 =====" + dt.Rows[i]["band"]);
+                var query1 = string.Format(@"select te.emp_no, te.title_name_en
+                            , case when te.band = 'JP' then te.lastname_en else te.firstname_en end as firstname_en
+                            , case when te.band = 'JP' then te.firstname_en else te.lastname_en end as lastname_en
+                            , te.title_name_th
+                            , case when te.band = 'JP' then te.lastname_th else te.firstname_th end as firstname_th
+                            , case when te.band = 'JP' then te.firstname_th else te.lastname_th end as lastname_th
+                            , te.band, te.position_name_en, te.dept_abb, te.div_abb 
+                            from [HRGIS].[dbo].[tb_employee] te
+                            where te.band = '{0}' AND (te.resign_date IS null OR te.resign_date >= GETDATE())
+                            and te.emp_no not in (
+                                select emp_no from [HRGIS].[dbo].[tr_course_registration] 
+                                where (last_status = '{1}' or (last_status = '{2}')) and substring(course_no,1,7) = '{3}'
+                            )"
+                        , dt.Rows[i]["band"], _config.GetValue<string>("Status:center_approved"), _config.GetValue<string>("Status:continuous"), course_no);
+                DataTable dt1 = new DataTable();
+                dt1 = _repository.get_datatable(query1);
+                if (dt1.Rows.Count > 0)
+                {
+                    for (var j = 0; j < dt1.Rows.Count; j++)
+                    {
+                        target tb = new target();
+                        tb.course_no = dt.Rows[i]["course_no"].ToString();
+                        tb.course_name_th = dt.Rows[i]["course_name_th"].ToString();
+                        tb.course_name_en = dt.Rows[i]["course_name_en"].ToString();
+                        tb.emp_no = dt1.Rows[j]["emp_no"].ToString();
+                        tb.title_name_en = dt1.Rows[j]["title_name_en"].ToString();
+                        tb.firstname_en = dt1.Rows[j]["firstname_en"].ToString();
+                        tb.lastname_en = dt1.Rows[j]["lastname_en"].ToString();
+                        tb.title_name_th = dt1.Rows[j]["title_name_th"].ToString();
+                        tb.firstname_th = dt1.Rows[j]["firstname_th"].ToString();
+                        tb.lastname_th = dt1.Rows[j]["emp_no"].ToString();
+                        tb.band = dt1.Rows[j]["band"].ToString();
+                        tb.position_name_en = dt1.Rows[j]["position_name_en"].ToString();
+                        tb.dept_abb = dt1.Rows[j]["dept_abb"].ToString();
+                        tb.div_abb = dt1.Rows[j]["div_abb"].ToString();
+                        list.Add(tb);
+                    }
+                }
+            }
+
+            return Ok(list);
         }
 
         [HttpGet("GetEmployeeTraining")]
@@ -139,7 +199,8 @@ namespace api_hrgis.Controllers
             dt = _repository.get_datatable(query); // Console.WriteLine("===== 1 =====" + dt.Rows.Count);
 
             List<confirmation> list = new List<confirmation>();
-            for(var i = 0; i < dt.Rows.Count; i++){ // Console.WriteLine("===== 2 =====" + dt.Rows[i]["dept_code"]);
+            for (var i = 0; i < dt.Rows.Count; i++)
+            { // Console.WriteLine("===== 2 =====" + dt.Rows[i]["dept_code"]);
                 var query1 = string.Format(@"SELECT emp_no, email, band, position_name_en, dept_code, dept_abb, div_code, div_abb
                                         , case when band = N'JP' 
                                             then title_name_en + lastname_en + ' ' + LEFT(firstname_en,1) + '. ('+ dept_abb +')' 
@@ -148,7 +209,8 @@ namespace api_hrgis.Controllers
                         , dt.Rows[i]["dept_code"]);
                 DataTable dt1 = new DataTable();
                 dt1 = _repository.get_datatable(query1);
-                if(dt1.Rows.Count > 0){
+                if (dt1.Rows.Count > 0)
+                {
                     confirmation tb = new confirmation();
                     tb.emp_no = dt1.Rows[0]["emp_no"].ToString();
                     tb.email = dt1.Rows[0]["email"].ToString();
@@ -172,17 +234,27 @@ namespace api_hrgis.Controllers
             DataTable dt2 = new DataTable();
             dt2 = _repository.get_datatable(query2);
 
+            // var query3 = string.Format(@"SELECT tc.emp_no, email, band, position_name_en, dept_code, dept_abb, div_code, div_abb
+            //             , case when band = N'JP' 
+            //                 then title_name_en + lastname_en + ' ' + LEFT(firstname_en,1) + '. ('+ dept_abb +')' 
+            //                 else title_name_en + firstname_en + ' ' + LEFT(lastname_en,1) + '. ('+ dept_abb +')'  end as fullname
+            //             FROM [HRGIS].[dbo].[tr_center] tc
+            //             left join tb_employee te on tc.emp_no = te.emp_no");
+            // DataTable dt3 = new DataTable();
+            // dt3 = _repository.get_datatable(query3);
+            ////////// มีการเปลี่ยนจาก Center เป็น Committee ที่เปิด Course ในการกดส่ง E-mail
             var query3 = string.Format(@"SELECT tc.emp_no, email, band, position_name_en, dept_code, dept_abb, div_code, div_abb
                         , case when band = N'JP' 
                             then title_name_en + lastname_en + ' ' + LEFT(firstname_en,1) + '. ('+ dept_abb +')' 
                             else title_name_en + firstname_en + ' ' + LEFT(lastname_en,1) + '. ('+ dept_abb +')'  end as fullname
-                        FROM [HRGIS].[dbo].[tr_center] tc
-                        left join tb_employee te on tc.emp_no = te.emp_no");
+                        FROM [HRGIS].[dbo].[tr_stakeholder] tc
+                        left join tb_employee te on tc.emp_no = te.emp_no where tc.emp_no = '{0}'", User.FindFirst("emp_no").Value);
             DataTable dt3 = new DataTable();
             dt3 = _repository.get_datatable(query3);
 
             List<confirmation> list4 = new List<confirmation>();
-            for(var j = 0; j < dt.Rows.Count; j++){ // Console.WriteLine("===== 2 =====" + dt.Rows[i]["dept_code"]);
+            for (var j = 0; j < dt.Rows.Count; j++)
+            { // Console.WriteLine("===== 2 =====" + dt.Rows[i]["dept_code"]);
                 var query4 = string.Format(@"SELECT ts.emp_no, email, band, position_name_en, dept_code, dept_abb, div_code, div_abb, ts.role
                                         , case when band = N'JP' 
                                             then title_name_en + lastname_en + ' ' + LEFT(firstname_en,1) + '. ('+ dept_abb +')' 
@@ -193,7 +265,8 @@ namespace api_hrgis.Controllers
                         , "APPROVER", dt.Rows[j]["dept_code"]);
                 DataTable dt4 = new DataTable();
                 dt4 = _repository.get_datatable(query4);
-                if(dt4.Rows.Count > 0){
+                if (dt4.Rows.Count > 0)
+                {
                     confirmation tb = new confirmation();
                     tb.emp_no = dt4.Rows[0]["emp_no"].ToString();
                     tb.email = dt4.Rows[0]["email"].ToString();
@@ -237,17 +310,17 @@ namespace api_hrgis.Controllers
             var originalFileName = $"Confirmation_Sheet.xlsx";
             var originalFilePath = $"wwwroot/excel/Confirmation_Sheet/{originalFileName}";
 
-            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
+            using (var package = new ExcelPackage(new FileInfo(originalFilePath)))
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
                 worksheet.Cells["A1"].LoadFromDataTable(dt, true);
 
                 package.SaveAs(new FileInfo(filepath));
                 package.Dispose();
-            }  
+            }
 
             byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
-            return File(fileBytes, "application/x-msdownload", fileName); 
+            return File(fileBytes, "application/x-msdownload", fileName);
         }
         // GET: api/OtherData/course_map/23/2310
         // GET: api/OtherData/course_map/23/2310/employed
@@ -255,22 +328,23 @@ namespace api_hrgis.Controllers
         [HttpGet("course_map/{div_code}/{dept_code}/{employed_status?}")]
         public IActionResult course_map(string div_code, string dept_code, string employed_status)
         {
-            string employed_status_text = "@employed_status='"+employed_status+"'";
-            if(employed_status=="")
+            string employed_status_text = "@employed_status='" + employed_status + "'";
+            if (employed_status == "")
                 employed_status_text = "@employed_status is null";
             var query = string.Format(@"EXECUTE dbo.course_map 
-            @div_code='{0}', @dept_code='{1}', {2}",div_code,dept_code, employed_status_text);
+            @div_code='{0}', @dept_code='{1}', {2}", div_code, dept_code, employed_status_text);
             Console.WriteLine(query);
             DataTable dt = new DataTable();
             dt = _repository.get_datatable(query);
-        
+
             return Ok(dt);
         }
 
     }
 }
 
-public class confirmation {
+public class confirmation
+{
     public string emp_no { get; set; }
     public string email { get; set; }
     public string band { get; set; }
@@ -280,4 +354,22 @@ public class confirmation {
     public string div_code { get; set; }
     public string div_abb { get; set; }
     public string fullname { get; set; }
+}
+
+public class target
+{
+    public string course_no { get; set; }
+    public string course_name_th { get; set; }
+    public string course_name_en { get; set; }
+    public string emp_no { get; set; }
+    public string title_name_en { get; set; }
+    public string firstname_en { get; set; }
+    public string lastname_en { get; set; }
+    public string title_name_th { get; set; }
+    public string firstname_th { get; set; }
+    public string lastname_th { get; set; }
+    public string band { get; set; }
+    public string position_name_en { get; set; }
+    public string div_abb { get; set; }
+    public string dept_abb { get; set; }
 }

@@ -306,6 +306,11 @@ export class RegisterComponent implements OnInit {
           }
         })
       }
+    }else{
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.not_sendmail
+      })
     }
   }
   fnClear() {
