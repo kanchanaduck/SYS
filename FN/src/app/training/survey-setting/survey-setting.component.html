@@ -29,12 +29,16 @@
                         <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
                     </div>
                 </div><!-- [(ngModel)]="survey.date_start"  -->
-                <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_start" 
+                <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_start" 
                     ngbDatepicker #date_from="ngbDatepicker" 
                     [(ngModel)]="survey.date_start"
                     (click)="date_from.toggle()" 
                     (dateSelect)="onDateSelectFrom($event)"
-                    >
+                    > -->
+
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_start"  
+                    [(ngModel)]="survey.date_start">
+                
             </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
@@ -45,11 +49,14 @@
                         <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
                     </div>
                 </div>
-                <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_end" 
+                <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_end" 
                     ngbDatepicker #date_to="ngbDatepicker" 
                     [(ngModel)]="survey.date_end" 
                     (click)="date_to.toggle()" 
-                    (dateSelect)="onDateSelectTo($event)">
+                    (dateSelect)="onDateSelectTo($event)"> -->
+
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="survey.date_end"  
+                    [(ngModel)]="survey.date_end">
             </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
@@ -67,6 +74,7 @@
     <thead>
         <tr>
             <th class="text-center">YEAR</th>
+            <th class="text-center">COURSE OWNER</th>
             <th class="text-center">START DATE</th>
             <th class="text-center">END DATE</th>
             <th class="text-center">ORGANIZATION VIEW</th>
@@ -77,6 +85,7 @@
     <tbody>
         <tr *ngFor="let i of surveys">
             <td class="text-center tx-13">{{ i.year }}</td>
+            <td class="text-center tx-13">{{ i.organization.org_abb }}</td>
             <td class="text-center tx-13">{{ i.date_start | date:'dd-MMM-yy' }}</td>
             <td class="text-center tx-13">{{ i.date_end | date:'dd-MMM-yy' }}</td>
             <td class="text-center tx-13">

@@ -7,11 +7,11 @@ import { environment } from 'src/environments/environment';
 import axios from 'axios';
 
 @Component({
-  selector: 'app-course-confirmation-sheet',
-  templateUrl: './course-confirmation-sheet.component.html',
-  styleUrls: ['./course-confirmation-sheet.component.scss']
+  selector: 'app-confirmation-sheet',
+  templateUrl: './confirmation-sheet.component.html',
+  styleUrls: ['./confirmation-sheet.component.scss']
 })
-export class CourseConfirmationSheetComponent implements OnInit {
+export class ConfirmationSheetComponent implements OnInit {
   data_grid: any = [];
   // datatable
   dtOptions: any = {};

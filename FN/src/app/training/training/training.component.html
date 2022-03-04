@@ -1,4 +1,4 @@
-<div class="row">
+<!-- <div class="row">
     <div class="col" *ngFor="let parent of training_menu">
         <div class="card">
             <div class="card-header">
@@ -16,4 +16,69 @@
             </div>
         </div>
     </div>
+</div> -->
+
+<div class="row">
+    <div class="col-3">
+        <div class="az-content-label mg-b-5">Course</div>
+        <p class="mg-b-20 tx-13">To manage master course and open course</p>
+        <div class="list-group">
+            <a routerLink="course-master" class="list-group-item list-group-item-action">Course master control</a>
+            <a routerLink="course-open" class="list-group-item list-group-item-action">Open course</a>
+        </div>
+    </div>
+    
+    <div class="col-3">
+        <div class="az-content-label mg-b-5">Register-approve</div>
+        <p class="mg-b-20 tx-13">To register course and approve registration</p>
+        <div class="list-group">
+            <a routerLink="register" class="list-group-item list-group-item-action">Committee register</a>
+            <a routerLink="register-continuous" class="list-group-item list-group-item-action">Committee register continuous employee no.</a>
+            <a routerLink="approve-mgr" class="list-group-item list-group-item-action">Approver approve</a>
+            <a routerLink="approve-center" class="list-group-item list-group-item-action">Final approve</a>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="az-content-label mg-b-5">Before open course</div>
+        <p class="mg-b-20 tx-13">To prepare document before course open</p>
+        <div class="list-group">
+            <a routerLink="course-confirmation-sheet" class="list-group-item list-group-item-action">Confirmation sheet</a>
+            <a routerLink="assessment-file" class="list-group-item list-group-item-action">Assessment file</a>
+            <a routerLink="signature-sheet" class="list-group-item list-group-item-action">Signature sheet</a>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="az-content-label mg-b-5">Input score</div>
+        <p class="mg-b-20 tx-13">To input score</p>
+        <div class="list-group">
+            <a routerLink="course-score" class="list-group-item list-group-item-action">Input score</a>
+            <a routerLink="register-continuous" class="list-group-item list-group-item-action">Committee input score of continuous employee no.</a>
+        </div>
+    </div>    
 </div>
+
+<hr>
+
+<div class="row">
+    <div class="col-6">
+        <div class="az-content-label mg-b-5">Setting master data</div>
+        <p class="mg-b-20 tx-13">To setting person involve</p>
+        <div class="list-group">
+            <a routerLink="center" class="list-group-item list-group-item-action">Center management</a>
+            <a routerLink="stakeholder" class="list-group-item list-group-item-action">Stakeholder management</a>
+            <a routerLink="trainer" class="list-group-item list-group-item-action">Trainer management</a>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="az-content-label mg-b-5">Need survey</div>
+        <p class="mg-b-20 tx-13">Need survey system</p>
+    
+        <div class="list-group">
+            <a routerLink="survey-setting" class="list-group-item list-group-item-action">Need survey setting</a>
+            <a routerLink="survey" class="list-group-item list-group-item-action">Need survey answer</a>
+        </div>
+        </div>  
+</div>
+

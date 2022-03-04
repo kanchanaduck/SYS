@@ -10,6 +10,7 @@ using api_hrgis.Models;
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using OfficeOpenXml.DataValidation;
 
 namespace api_hrgis.Controllers
 {
@@ -25,17 +26,25 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Survey
+        // GET: api/Survey?status=open
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tr_survey_setting>>> get_survey_setting()
+        public async Task<ActionResult<IEnumerable<tr_survey_setting>>> get_survey_setting(string status)
         {
-            return await _context.tr_survey_setting.ToListAsync();
-        }
+            List<tr_survey_setting> tr_survey_setting  = null;
 
-        // GET: api/Survey/2023
-        [HttpGet("{year}")]
-        public async Task<ActionResult<tr_survey_setting>> get_survey_setting(string year)
-        {
-            var tr_survey_setting = await _context.tr_survey_setting.FindAsync(year);
+            if(status=="open"){
+                tr_survey_setting = await _context.tr_survey_setting
+                                    .Where(e => e.date_start<=DateTime.Now && DateTime.Now>=e.date_end)
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
+            else{
+                tr_survey_setting = await _context.tr_survey_setting
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
 
             if (tr_survey_setting == null)
             {
@@ -45,15 +54,87 @@ namespace api_hrgis.Controllers
             return tr_survey_setting;
         }
 
-        // GET: api/Survey/2023/Org/55
-        // GET: api/Survey/2023/Org/5510
-        [HttpGet("{year}/Org/{org_code}")]
-        public async Task<ActionResult<tr_survey_setting>> get_course_survey_from_org(string year, string org_code)
+        // GET: api/Survey/year/2023
+        // GET: api/Survey/year/2023?status=open
+        [HttpGet("year/{year}")]
+        public async Task<ActionResult<IEnumerable<tr_survey_setting>>> get_survey_from_year(string year, string status)
         {
-            var tr_survey_setting = await _context.tr_survey_setting
-                                .Where(e=>e.year==year && e.org_code==org_code)
+            List<tr_survey_setting> tr_survey_setting  = null;
+
+            if(status=="open"){
+                tr_survey_setting = await _context.tr_survey_setting
+                                    .Where(e => e.year==year && e.date_start<=DateTime.Now && DateTime.Now>=e.date_end)
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
+            else{
+                tr_survey_setting = await _context.tr_survey_setting
+                                    .Where(e => e.year==year)
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
+
+            if (tr_survey_setting == null)
+            {
+                return NotFound();
+            }
+
+            return tr_survey_setting;
+        }
+
+        // GET: api/Survey/org/2230
+        // GET: api/Survey/org/2230?status=open
+        [HttpGet("org/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_survey_setting>>> get_survey_from_org(string org_code, string status)
+        {
+            List<tr_survey_setting> tr_survey_setting  = null;
+            if(status=="open"){
+                tr_survey_setting =  await _context.tr_survey_setting
+                                    .Where(e => e.org_code==org_code && e.date_start<=DateTime.Now && DateTime.Now>=e.date_end)
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
+            else{
+                tr_survey_setting =  await _context.tr_survey_setting
+                                    .Where(e => e.org_code==org_code)
+                                    .Include(e=>e.organization)
+                                    .AsNoTracking()
+                                    .ToListAsync();
+            }
+
+            if (tr_survey_setting == null)
+            {
+                return NotFound();
+            }
+
+            return tr_survey_setting;
+        }
+
+        // GET: api/Survey/year/2023/org/55
+        // GET: api/Survey/year/2023/org/5510
+        // GET: api/Survey/year/2023/org/55?status=open
+        // GET: api/Survey/year/2023/org/5510?status=open
+        [HttpGet("year/{year}/org/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_survey_setting>>> get_course_survey_from_org(string year, string org_code, string status)
+        {
+            List<tr_survey_setting> tr_survey_setting  = null;
+            if(status=="open"){
+                tr_survey_setting = await _context.tr_survey_setting
+                                .Where(e=>e.year==year && e.org_code==org_code && e.date_start<=DateTime.Now && DateTime.Now>=e.date_end)
+                                .Include(e=>e.organization)
                                 .AsNoTracking()
-                                .FirstOrDefaultAsync();
+                                .ToListAsync();
+            }
+            else{
+                tr_survey_setting = await _context.tr_survey_setting
+                                .Where(e=>e.year==year && e.org_code==org_code)
+                                .Include(e=>e.organization)
+                                .AsNoTracking()
+                                .ToListAsync();
+            }
 
             if (tr_survey_setting == null)
             {
@@ -63,13 +144,14 @@ namespace api_hrgis.Controllers
             return tr_survey_setting;
         }
 
-        // GET: api/Survey/2023/Org/55
-        // GET: api/Survey/2023/Org/5510
-        [HttpGet("Excel/{year}/Org/{org_code}")]
-        public async Task<ActionResult<tr_survey_setting>> download_excel(string year, string org_code)
+        // GET: api/Survey/Excel/year/2023/Org/55/For/2230
+        // GET: api/Survey/Excel/year/2023/Org/5510/For/2230
+        [HttpGet("Excel/Year/{year}/Org/{org_code_emp}/For/{org_code_course}")]
+        public async Task<ActionResult<tr_survey_setting>> download_excel(string year, string org_code_emp, string org_code_course)
         {
             var tr_survey_setting = await _context.tr_survey_setting
-                                .Where(e=>e.year==year && e.org_code==org_code)
+                                .Where(e=>e.year==year && e.org_code==org_code_course)
+                                .Include(e=>e.organization)
                                 .AsNoTracking()
                                 .FirstOrDefaultAsync();
 
@@ -79,15 +161,31 @@ namespace api_hrgis.Controllers
             }
 
             var courses = await _context.tr_course_master
-                                .Where(e=> e.org_code==org_code)
+                                .Where(e=> e.org_code==org_code_course)
                                 .AsNoTracking()
                                 .ToListAsync();
+
+            if (tr_survey_setting == null)
+            {
+                return NotFound(@"Not found course of {org_code_course}");
+            }
           
             var employees = await _context.tb_employee
                             .Include(e => e.courses_registrations)
-                            .Where(e => (e.div_code==org_code || e.dept_code==org_code) && (e.resign_date==null ||e.resign_date > DateTime.Today))
+                            .Where(e => (e.div_code==org_code_emp || e.dept_code==org_code_emp) && (e.resign_date==null ||e.resign_date > DateTime.Today))
                             .AsNoTracking()
                             .ToListAsync();
+
+            var organization = await _context.tb_organization
+                            .Where(e => (e.org_code==org_code_emp || e.org_code==org_code_emp))
+                            .FirstOrDefaultAsync();
+
+            string org_abb = organization.org_abb;
+
+            if (tr_survey_setting == null)
+            {
+                return NotFound(@"Not found  employees of {org_code_emp}");
+            }
 
             var time = DateTime.Now.ToString("yyyyMMddHHmmss");
             var fileName = $"NeedSurveyFormat_{time}.xlsx";
@@ -99,7 +197,17 @@ namespace api_hrgis.Controllers
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets["survey"];
 
+                worksheet.Cells[1, 1].Value = $"{org_abb} survey for {tr_survey_setting.organization.org_abb} {year}"; 
+
                 int start_row=3; int start_col=9;
+
+                foreach (var item in courses)
+                {
+                    worksheet.Cells[2, start_col].Value = item.course_no+" "+item.course_name_th;
+                    start_col++;
+                }
+
+                // string last_cell_address = "";
 
                 foreach (var item in employees)
                 {
@@ -111,24 +219,30 @@ namespace api_hrgis.Controllers
                     worksheet.Cells[start_row, 6].Value = item.dept_abb; 
                     worksheet.Cells[start_row, 7].Value = item.band; 
                     worksheet.Cells[start_row, 8].Value = item.position_name_en; 
-                    start_row++;
-                }
 
-                foreach (var item in courses)
-                {
-                    worksheet.Cells[2, start_col].Value = item.course_no+" "+item.course_name_th;
-                    start_col++;
+                    start_row++;
                 }
 
                 int last_row = worksheet.Dimension.End.Row; 
                 Console.WriteLine(last_row);
                 int last_col = worksheet.Dimension.End.Column;   
                 Console.WriteLine(last_col);
+               
+                String last_cell_address = worksheet.Cells[last_row, last_col].Address;
+                Console.WriteLine(last_cell_address); 
 
-                var last_cell_address = worksheet.Cells.Last(c => c.Start.Row == last_row);
-                Console.WriteLine(last_cell_address.Address);
+                // add a validation and set values
+                var validation = worksheet.DataValidations.AddListValidation("I3:"+last_cell_address);
+                validation.ShowErrorMessage = true;
+                validation.ErrorStyle = ExcelDataValidationWarningStyle.warning;
+                validation.ErrorTitle = "An invalid value was entered";
+                validation.Error = "Select a value from the list";
+                foreach(var month in month_list()){
+                    validation.Formula.Values.Add(month);
+                }
+                Console.WriteLine("Added sheet for list validation with values");
 
-
+                //Get range to add border
                 string modelRange = "A2:"+ last_cell_address;
                 Console.WriteLine(modelRange);
                 var modelTable = worksheet.Cells[modelRange];
@@ -139,9 +253,17 @@ namespace api_hrgis.Controllers
                 modelTable.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 modelTable.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
+                //Get range to width column
+                modelRange = "9:"+ last_col;
+                Console.WriteLine(modelRange);
+                // modelTable = worksheet.Cells[modelRange];
+                for (int i = 9; i < last_col; i++)
+                {
+                    worksheet.Column(i).Width = 9;
+                }
 
                 // Fill worksheet with data to export
-                modelTable.AutoFitColumns();
+                // modelTable.AutoFitColumns();
                 
                 package.SaveAs(new FileInfo(filepath));
                 package.Dispose();
@@ -153,10 +275,10 @@ namespace api_hrgis.Controllers
 
         // PUT: api/Survey/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Puttr_survey_setting(string id, tr_survey_setting tr_survey_setting)
+        [HttpPut("{year}/{org_code}")]
+        public async Task<IActionResult> Puttr_survey_setting(string year, string org_code, tr_survey_setting tr_survey_setting)
         {
-            if (id != tr_survey_setting.year)
+            if (year != tr_survey_setting.year)
             {
                 return BadRequest();
             }
@@ -169,7 +291,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tr_survey_settingExists(id))
+                if (!survey_exists(year,org_code))
                 {
                     return NotFound();
                 }
@@ -194,7 +316,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateException)
             {
-                if (tr_survey_settingExists(tr_survey_setting.year))
+                if (survey_exists(tr_survey_setting.year, tr_survey_setting.org_code))
                 {
                     return Conflict();
                 }
@@ -207,11 +329,11 @@ namespace api_hrgis.Controllers
             return CreatedAtAction("Gettr_survey_setting", new { id = tr_survey_setting.year }, tr_survey_setting);
         }
 
-        // DELETE: api/Survey/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletetr_survey_setting(string id)
+        /* // DELETE: api/Survey/5
+        [HttpDelete("{year}")]
+        public async Task<IActionResult> Deletetr_survey_setting(string year)
         {
-            var tr_survey_setting = await _context.tr_survey_setting.FindAsync(id);
+            var tr_survey_setting = await _context.tr_survey_setting.FindAsync(year,org_code);
             if (tr_survey_setting == null)
             {
                 return NotFound();
@@ -221,11 +343,23 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        } */
 
-        private bool tr_survey_settingExists(string id)
+        private bool survey_exists(string year, string org_code)
         {
-            return _context.tr_survey_setting.Any(e => e.year == id);
+            return _context.tr_survey_setting.Any(e => e.year == year && e.org_code == org_code);
+        }
+        private string[] month_list ()
+        {
+            // return [January, February, March, ...]
+            string[] month_name = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+
+            foreach (string m in month_name) // writing out
+            {
+                Console.WriteLine(m);
+            }
+
+            return month_name;
         }
     }
 }

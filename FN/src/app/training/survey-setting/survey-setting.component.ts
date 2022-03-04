@@ -10,14 +10,14 @@ import { DataTableDirective } from 'angular-datatables';
 import { AppServiceService } from '../../app-service.service'
 
 @Component({
-  selector: 'app-survey-center',
-  templateUrl: './survey-center.component.html',
-  styleUrls: ['./survey-center.component.scss'],
+  selector: 'app-survey-setting',
+  templateUrl: './survey-setting.component.html',
+  styleUrls: ['./survey-setting.component.scss'],
   providers: [DatePipe] 
 })
 
 @Injectable()
-export class SurveyCenterComponent implements OnInit {
+export class SurveySettingComponent implements OnInit {
   dtOptions: any = {};
   
   dtTrigger: Subject<any> = new Subject();
@@ -122,7 +122,6 @@ export class SurveyCenterComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
 
-    this.get_surveys()
 
   }
 
@@ -142,15 +141,9 @@ export class SurveyCenterComponent implements OnInit {
         self.is_committee = true;
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
-        self.survey.org_code = response._org_code
-        /* if (response.role.toUpperCase() == "COMMITTEE") {
-          self.dtOptions.columnDefs = [ 
-            {
-              targets: [ 8 ],
-              visible: true
-            }
-          ]
-        } */
+        self.survey.org_code = response.org_code
+        console.log(self.survey.org_code);
+        self.get_surveys()
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
@@ -172,7 +165,8 @@ export class SurveyCenterComponent implements OnInit {
 
   async get_surveys(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Survey`, this.headers)
+    console.log(this._org_code)
+    await this.httpClient.get(`${environment.API_URL}Survey/org/${this._org_code}`, this.headers)
     .subscribe((response: any) => {
       self.surveys = response;
       if (this.isDtInitialized) {

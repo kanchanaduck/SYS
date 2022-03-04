@@ -45,6 +45,9 @@ namespace api_hrgis.Data
 
             modelBuilder.Entity<tr_stakeholder>()
                 .HasKey(c => new { c.emp_no, c.org_code, c.role });
+            
+            modelBuilder.Entity<tr_survey_setting>()
+                .HasKey(c => new { c.year, c.org_code });
 
             //Relation
 

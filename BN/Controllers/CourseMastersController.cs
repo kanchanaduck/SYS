@@ -323,7 +323,7 @@ namespace api_hrgis.Controllers
 
             if(course == null)
             {
-                return NotFound("Data is not found");
+                return NotFound("Course is not found");
             }
 
             var c = new List<int>();
@@ -386,6 +386,11 @@ namespace api_hrgis.Controllers
                     table.position_name_en
                 }).OrderBy(x => x.seq_no).ToListAsync();
 
+            if(registrant == null)
+            {
+                return NotFound("Registrant is not found");
+            }
+
             var time = DateTime.Now.ToString("yyyyMMddHHmmss");
             var fileName = $"Course_Assessment_{time}_{course_no}.xlsx";
             var filepath = $"wwwroot/excel/Course_Assessment/{fileName}";
@@ -416,21 +421,44 @@ namespace api_hrgis.Controllers
 
                 worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน"];
 
-                // if(registrant.Count())
-                int limit_page = 10; 
-                int pages = (int) Math.Ceiling((decimal)(registrant.Count()/limit_page));
+                Console.WriteLine(registrant.Count());
+                int page_size = 10; 
+                int pages = (int) Math.Ceiling((decimal)(registrant.Count()/page_size));
+                int data = 1;
+                int page;
 
-                for (var page=1; page<=pages; page++) {
-                    string worksheet_name_new = "_Page"+page;
-                    worksheet = package.Workbook.Worksheets.Copy("ประเมิน Trainee รายคน", "ประเมิน Trainee รายคน"+worksheet_name_new);
-                        int start_col = 5; 
-                        foreach (var i in registrant) {
-                            worksheet.Cells[14, start_col].Value = i.firstname_en+" "+i.lastname_en.Substring(0,1)+"."; 
-                            worksheet.Cells[15, start_col].Value = i.emp_no;
-                            worksheet.Cells[16, start_col].Value = i.dept_abb;
-                            start_col = start_col+2;                     
-                        }         
+
+                for (page=0; page<=pages; page++)
+                {
+                    string worksheet_name_new = "_Page"+(page+1);
+                    package.Workbook.Worksheets.Copy("ประเมิน Trainee รายคน", "ประเมิน Trainee รายคน"+worksheet_name_new);
                 }
+
+                page=1;
+                int start_col=5;
+                worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน"];
+                foreach (var item in registrant)
+                {
+                    if ((data-1) % page_size == 0)
+                    {    
+                        // Console.WriteLine("ขึ้นหน้าใหม่");  
+                        worksheet.Cells["W1"].Value = "Page: "+(page-1);  
+                        start_col = 5;    
+                        worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน_Page"+(page)];
+                        page++;  
+                        
+                    }
+                  
+                    // Console.WriteLine(worksheet.Name+" "+data+" "+item.emp_no+" "+item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."+" "+item.dept_abb+" "+start_col);
+                    worksheet.Cells[14, start_col].Value = item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."; 
+                    worksheet.Cells[15, start_col].Value = item.emp_no;
+                    worksheet.Cells[16, start_col].Value = item.dept_abb;
+                    start_col = start_col+2;
+                    data++;
+                } 
+                package.Workbook.Worksheets.Delete("ประเมิน Trainee รายคน");
+
+
 
                 worksheet = package.Workbook.Worksheets["แบบประเมินผู้สอน"];
                 worksheet.Cells["D6"].Value = course.course_no;
@@ -454,17 +482,38 @@ namespace api_hrgis.Controllers
                 worksheet.Cells["L9"].Value = course.place; 
                 worksheet.Cells["D10"].Value = trainer_joined; 
                 worksheet.Cells["L10"].Value = course.organization.org_abb;
-                if(registrant .Count()<=10){
-                    int start_row = 16; 
-                    foreach (var i in registrant) {
-                        worksheet.Cells[start_row, 3].Value = i.emp_no; 
-                        worksheet.Cells[start_row, 4].Value = i.firstname_en+" "+i.lastname_en;
-                        worksheet.Cells[start_row, 6].Value = i.position_name_en;
-                        worksheet.Cells[start_row, 7].Value = i.div_abb;
-                        worksheet.Cells[start_row, 8].Value = i.dept_abb;
-                        start_row++;                     
-                    } 
+
+                data = 1;
+
+                for (page=0; page<=pages; page++)
+                {
+                    string worksheet_name_new = "_Page"+(page+1);
+                    package.Workbook.Worksheets.Copy("Score of trainee", "Score of trainee"+worksheet_name_new);
                 }
+
+                page=1;
+                int start_row=16;
+                worksheet = package.Workbook.Worksheets["Score of trainee"];
+                foreach (var item in registrant)
+                {
+                    if ((data-1) % page_size == 0)
+                    {    
+                        // Console.WriteLine("ขึ้นหน้าใหม่");
+                        worksheet.Cells["N1"].Value = "Page: "+(page-1);  
+                        start_row = 16;    
+                        worksheet = package.Workbook.Worksheets["Score of trainee_Page"+(page)];
+                        page++;  
+                        
+                    }
+                    worksheet.Cells[start_row, 3].Value = item.emp_no; 
+                    worksheet.Cells[start_row, 4].Value = item.firstname_en+" "+item.lastname_en;
+                    worksheet.Cells[start_row, 6].Value = item.position_name_en;
+                    worksheet.Cells[start_row, 7].Value = item.div_abb;
+                    worksheet.Cells[start_row, 8].Value = item.dept_abb;
+                    start_row++;  
+                    data++;
+                } 
+                package.Workbook.Worksheets.Delete("Score of trainee");
 
                 worksheet = package.Workbook.Worksheets["ประเมินหลักสูตร"];
 

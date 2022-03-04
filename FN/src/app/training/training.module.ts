@@ -18,15 +18,15 @@ import { ChartsModule } from 'ng2-charts';
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
 import { CourseOpenComponent } from './course-open/course-open.component';
-import { SurveyCenterComponent } from './survey-center/survey-center.component';
+import { SurveySettingComponent } from './survey-setting/survey-setting.component';
 import { SurveyComponent } from './survey/survey.component';
 import { CourseTargetComponent } from './course-target/course-target.component';
 import { RegisterComponent } from './register/register.component';
 import { ApproveMgrComponent } from './approve-mgr/approve-mgr.component';
 import { ApproveCenterComponent } from './approve-center/approve-center.component';
-import { CourseConfirmationSheetComponent } from './course-confirmation-sheet/course-confirmation-sheet.component';
+import { ConfirmationSheetComponent } from './confirmation-sheet/confirmation-sheet.component';
 import { RegisterContinuousComponent } from './register-continuous/register-continuous.component';
-import { CourseSignatureSheetComponent } from './course-signature-sheet/course-signature-sheet.component';
+import { SignatureSheetComponent } from './signature-sheet/signature-sheet.component';
 import { CourseScoreComponent } from './course-score/course-score.component';
 import { TraineeCountComponent } from './trainee-count/trainee-count.component';
 import { CourseAndScoreComponent } from './course-and-score/course-and-score.component';
@@ -39,6 +39,7 @@ import { DialogCourseComponent } from './dialog-course/dialog-course.component';
 import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
 import { AssessmentFileComponent } from './assessment-file/assessment-file.component';
+import { SurveyApproveComponent } from './survey-approve/survey-approve.component';
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -47,15 +48,16 @@ const routes: Routes = [
   { path: 'approve-center', component: ApproveCenterComponent, data: { title: 'Center approve trainee', active: true } },
   { path: 'center', component: CenterComponent, data: { title: 'Center management', active: true } },
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score', active: true } },
-  { path: 'course-confirmation-sheet', component: CourseConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
+  { path: 'course-confirmation-sheet', component: ConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course control', active: true } },
   { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
   { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map', active: true } },
-  { path: 'course-signature-sheet', component: CourseSignatureSheetComponent, data: { title: 'Signature sheet', active: true } },
+  { path: 'signature-sheet', component: SignatureSheetComponent, data: { title: 'Signature sheet', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true} },
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
-  { path: 'survey-center', component: SurveyCenterComponent, data: { title: 'Need survey for center', active: true } },
-  { path: 'survey', component: SurveyComponent, data: { title: 'Need survey for committee', active: true } },
+  { path: 'survey-setting', component: SurveySettingComponent, data: { title: 'Need survey setting', active: true } },
+  { path: 'survey', component: SurveyComponent, data: { title: 'Need survey answer', active: true } },
+  { path: 'survey-detail', component: SurveyApproveComponent, data: { title: 'Need survey detail', active: true } },
   { path: 'course-target', component: CourseTargetComponent, data: { title: 'Target group of course', active: true } },
   { path: 'register', component: RegisterComponent, data: { title: 'Committee register trainee ', active: true } },
   { path: 'register-continuous', component: RegisterContinuousComponent, data: { title: 'Register continuous employee no.', active: true } },
@@ -65,7 +67,7 @@ const routes: Routes = [
   { path: 'course-history', component: CourseHistoryComponent, data: { title: 'Course attendee', active: true } },
   { path: 'course-history', component: CourseHistoryComponent, data: { title: 'Course attendee', active: true } },
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
-  { path: 'accessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
+  { path: 'assessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
 ]
 @NgModule({
   declarations: [
@@ -73,15 +75,15 @@ const routes: Routes = [
     CourseMasterComponent,
     CourseOpenComponent,
     TrainerComponent,
-    SurveyCenterComponent,
+    SurveySettingComponent,
     SurveyComponent,
     CourseTargetComponent,
     RegisterComponent,
     ApproveMgrComponent,
     ApproveCenterComponent,
-    CourseConfirmationSheetComponent,
+    ConfirmationSheetComponent,
     RegisterContinuousComponent,
-    CourseSignatureSheetComponent,
+    SignatureSheetComponent,
     CourseScoreComponent,
     TraineeCountComponent,
     CourseAndScoreComponent,
@@ -92,7 +94,8 @@ const routes: Routes = [
     DialogCourseComponent,
     TrainerHistoryComponent,
     CenterComponent,
-    AssessmentFileComponent
+    AssessmentFileComponent,
+    SurveyApproveComponent
   ],
   imports: [
     CommonModule,

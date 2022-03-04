@@ -26,7 +26,8 @@ export class AssessmentFileComponent implements OnInit {
     if(self.course_no.trim()!=""){
       if(this.course_no.length>=10)
       {
-        this.error = ""
+        location.href=self.link 
+        /* this.error = ""
         await axios.get(`${this.link}`)
           .then(function (response) {
           location.href=self.link 
@@ -38,7 +39,7 @@ export class AssessmentFileComponent implements OnInit {
             title: error.response.status,
             text: error.response.data
           })
-        }) 
+        })  */
       }
       else
       {
