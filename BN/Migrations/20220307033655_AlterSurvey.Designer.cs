@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_hrgis.Data;
 
 namespace api_hrgis.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220307033655_AlterSurvey")]
+    partial class AlterSurvey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -640,7 +642,7 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("emp_no")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("file_name")
                         .IsRequired()
@@ -650,10 +652,6 @@ namespace api_hrgis.Migrations
                         .HasColumnType("int")
                         .HasComment("เก็บเดือนที่ต้องการเรียน");
 
-                    b.Property<string>("org_code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
 
@@ -662,16 +660,11 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("year")
-                        .IsRequired()
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)")
                         .HasColumnName("year");
 
                     b.HasIndex("course_no");
-
-                    b.HasIndex("emp_no");
-
-                    b.HasIndex("org_code");
 
                     b.ToTable("tr_survey_detail");
 
@@ -932,23 +925,7 @@ namespace api_hrgis.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("api_hrgis.Models.tb_employee", "employee")
-                        .WithMany()
-                        .HasForeignKey("emp_no")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
-                        .WithMany()
-                        .HasForeignKey("org_code")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("employee");
-
                     b.Navigation("master_course");
-
-                    b.Navigation("organization");
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tr_survey_setting", b =>

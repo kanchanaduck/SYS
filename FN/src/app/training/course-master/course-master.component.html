@@ -68,7 +68,7 @@
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            <p>Selected: {{previous_courses | json}}</p>
+            <!-- <p>Selected: {{previous_courses | json}}</p> -->
         </div><!-- form-group -->
     </div>
 
@@ -145,12 +145,12 @@
             <td>{{ c.category }}</td>
             <td>{{ c.level }}</td>
             <td class="text-center">
-                <a href="javascript:;" 
+                <a href="javascript:;" *ngIf="_org_code==c.org_code" 
                     (click)="get_course(c.course_no)"
                     >
                     <i class="far fa-edit"></i>
                 </a>
-                <a href="javascript:;"
+                <a href="javascript:;" *ngIf="_org_code==c.org_code"
                     (click)="delete_course(c.course_no)"
                     >
                     <i class="far fa-trash-alt"></i>

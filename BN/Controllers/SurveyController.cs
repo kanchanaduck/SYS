@@ -11,6 +11,8 @@ using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.DataValidation;
+using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
@@ -272,6 +274,75 @@ namespace api_hrgis.Controllers
             byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
             return File(fileBytes, "application/x-msdownload", fileName); 
         }
+        // POST: api/Survey/Upload
+        [AllowAnonymous]
+        [HttpPost("Upload")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> receive_survey(List<IFormFile> files)
+        // public async Task<IActionResult> receive_survey([FromForm]IFormFile files)
+        {
+            var time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            long size = files.Sum(f => f.Length);
+            string filePath = null;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    filePath = Path.Combine("./wwwroot/excel/Survey_Upload/", $"Survey_{time}.xlsx");
+                    Console.WriteLine(filePath);
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                }
+            }
+
+            if(System.IO.File.Exists(filePath)){
+                Console.WriteLine("File exists.");
+                using(var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+                    using var transaction = _context.Database.BeginTransaction();
+                    try
+                    {
+                        for (int row = 2; row <= rowCount; row++){
+                            var insert_mst_prod_success = false;
+                            if(worksheet.Cells[row, 3].Value!=null){
+                                string emp_no = worksheet.Cells[row, 1].Value==null? null:worksheet.Cells[row, 1].Value.ToString().Trim();
+                                string course_no=null; 
+                                int month=1;
+                                for(int column=9; column<=colCount; column++){
+                                    if(worksheet.Cells[row, column].Value!=null){
+                                        course_no =  worksheet.Cells[2, column].Value==null? null:worksheet.Cells[2, column].Value.ToString().Trim().Substring(0,7);
+                                        month = DateTime.ParseExact( worksheet.Cells[row, column].Value.ToString(), "MMMM", CultureInfo.CurrentCulture).Month;
+                                    }
+                                }
+                                _context.Add(new tr_survey_detail
+                                {
+                                    emp_no = emp_no,
+                                    course_no = course_no,
+                                    month = month
+                                });
+                                insert_mst_prod_success = await _context.SaveChangesAsync() > 0;
+                                Console.WriteLine(row+" "+insert_mst_prod_success);
+                    
+                            }
+                        }
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        throw;
+                    }
+                }
+            }
+            
+            return Ok(new { success=true, count = files.Count, size });
+        }
 
         // PUT: api/Survey/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -329,11 +400,11 @@ namespace api_hrgis.Controllers
             return CreatedAtAction("Gettr_survey_setting", new { id = tr_survey_setting.year }, tr_survey_setting);
         }
 
-        /* // DELETE: api/Survey/5
+        // DELETE: api/Survey/5
         [HttpDelete("{year}")]
-        public async Task<IActionResult> Deletetr_survey_setting(string year)
+        public async Task<IActionResult> Deletetr_survey_setting(string year, string org_code)
         {
-            var tr_survey_setting = await _context.tr_survey_setting.FindAsync(year,org_code);
+            var tr_survey_setting = await _context.tr_survey_setting.Where(e=>e.year==year && e.org_code==org_code).FirstOrDefaultAsync();
             if (tr_survey_setting == null)
             {
                 return NotFound();
@@ -343,7 +414,27 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        } */
+        }
+
+        [HttpGet("Detail/Year/{year}/Org/{org_code_emp}/For/{org_code_course}")]
+        public async Task<ActionResult<tr_survey_setting>> survey_datail(string year, string org_code_emp, string org_code_course)
+        {
+            var survey_detail = await _context.tr_survey_detail
+                                .Include(e=>e.employee)
+                                .Include(e=>e.master_course)
+                                .Where(e=>e.year==year && e.org_code==org_code_course)
+                                .AsNoTracking()
+                                .ToListAsync();
+
+            var employees =  await _context.tb_employee.Where(e=>e.div_code==org_code_emp || e.dept_code==org_code_emp).ToListAsync();
+            
+            if (survey_detail == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new{employees=employees, survey_detail=survey_detail});
+        }
 
         private bool survey_exists(string year, string org_code)
         {

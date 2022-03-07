@@ -57,7 +57,7 @@ const routes: Routes = [
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
   { path: 'survey-setting', component: SurveySettingComponent, data: { title: 'Need survey setting', active: true } },
   { path: 'survey', component: SurveyComponent, data: { title: 'Need survey answer', active: true } },
-  { path: 'survey-detail', component: SurveyApproveComponent, data: { title: 'Need survey detail', active: true } },
+  { path: 'survey-detail/:year/:course_owner', component: SurveyApproveComponent, data: { title: 'Need survey detail', active: true } },
   { path: 'course-target', component: CourseTargetComponent, data: { title: 'Target group of course', active: true } },
   { path: 'register', component: RegisterComponent, data: { title: 'Committee register trainee ', active: true } },
   { path: 'register-continuous', component: RegisterContinuousComponent, data: { title: 'Register continuous employee no.', active: true } },

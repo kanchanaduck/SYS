@@ -1,10 +1,14 @@
-<div class="row">
-    <div class="col-2">
-        <ul>
-            <li><a href="">File 1</a></li>
-        </ul>
+<div class="card card-body mb-3">
+    <div class="col-4">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Upload file</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
+                <label class="custom-file-label" for="customFile">{{nameFile}}</label>
+            </div>
+        </div>
     </div>
-    <div class="col-10">
+</div>
         <table class="table table-bordered table-bordered table-sm w-100">
         <thead>
             <tr>
@@ -23,8 +27,6 @@
             </tr>
         </tbody>
         </table>
-    </div>
-</div>
 
 <!-- 
 <div class="col-6">

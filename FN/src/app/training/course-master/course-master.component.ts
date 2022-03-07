@@ -126,7 +126,7 @@ export class CourseMasterComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
 
-
+    console.log(this.previous_courses)
     
   }
 
@@ -174,6 +174,7 @@ export class CourseMasterComponent implements OnInit {
       return el.band === band;
     }); 
   }
+
 
   async reset_form_course_master(){
     this.errors = {};
@@ -244,7 +245,6 @@ export class CourseMasterComponent implements OnInit {
     let self = this
     self.get_bands()
     self.edit_mode = true;
-    self.previous_courses = [];
     self.master_courses_bands = [];
 
     await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers)
@@ -267,14 +267,15 @@ export class CourseMasterComponent implements OnInit {
           }          
         }
 
+        let arr1 = [];
+
         if(self.course.master_courses_previous_courses.length>0 ){
           self.course.master_courses_previous_courses.forEach(i => {
-            self.previous_courses.push(i.prev_course_no)
+            arr1.push(i.prev_course_no)
           });        
         }
-        else{
-          self.course.master_courses_previous_courses = [];
-        }
+        
+        self.previous_courses = arr1;
 
         console.log(self.previous_courses)
 

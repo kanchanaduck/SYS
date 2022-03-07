@@ -117,7 +117,6 @@ namespace api_hrgis.Data
         public DbSet<tr_course> tr_course { get; set; }
         public DbSet<tr_stakeholder> tr_stakeholder { get; set; }
         public DbSet<tr_survey_detail> tr_survey_detail { get; set; }
-        public DbSet<tr_survey_file> tr_survey_file{ get; set; }
         public DbSet<tr_survey_setting> tr_survey_setting { get; set; } 
         public DbSet<tr_trainer> tr_trainer { get; set; }
         public DbSet<tr_course_trainer> tr_course_trainer { get; set; }

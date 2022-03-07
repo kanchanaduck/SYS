@@ -12,11 +12,10 @@ namespace api_hrgis.Models
     {
         [MaxLength(4)]
         [Column("year")]
+        [Required]
         public string year { get; set; }
         [Required]
-        public string division { get; set; }
-        [Required]
-        public string department { get; set; }
+        public string org_code { get; set; }
         [Required]
         public string emp_no { get; set; }
         [Required]
@@ -29,6 +28,9 @@ namespace api_hrgis.Models
         [Required]
         public string file_name { get; set; }
         [Column(TypeName = "datetime")]
+        public DateTime? approved_at { get; set; }
+        public string approved_by { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; }
         public string created_by { get; set; }
         [Column(TypeName = "datetime")]
@@ -37,6 +39,12 @@ namespace api_hrgis.Models
         public string updated_by { get { return _username; } set { _username = value; } }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
+        [ForeignKey("org_code")]
+        public virtual tb_organization organization { get; set; }
+        [ForeignKey("emp_no")]
+        public virtual tb_employee employee { get; set; }
+        [ForeignKey("course_no")]
+        public virtual tr_course_master master_course { get; set; }
     }
 
 }
