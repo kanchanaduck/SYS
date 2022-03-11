@@ -120,7 +120,9 @@
             <th class="text-center">TITLE</th>
             <th class="text-center">FIRSTNAME</th>
             <th class="text-center">LASTNAME</th>
+            <th class="text-center">COMPANY</th>
             <th class="text-center">ORGANIZATION</th>
+            <th class="text-center">TRAINER OWNER</th>
             <th class="text-center">STATUS</th>
             <th class="text-center">TYPE</th>
             <th class="text-center">VIEW</th>
@@ -133,7 +135,9 @@
             <td>{{ t.title_name_en  }} </td>
             <td>{{ t.firstname_en  }} </td>
             <td>{{ t.lastname_en  }} </td>
-            <td>{{ t.div_abb==null? t.organization:t.div_abb+" - "+t.dept_abb  }} </td>
+            <td>{{ t.company  }} </td>
+            <td>{{ t.div_abb+" - "+t.dept_abb  }} </td>
+            <td>{{ t.trainer_owner  }} </td>
             <td>{{ t.employed_status }}</td>
             <td>{{ t.trainer_type }}</td>
             <td class="text-center">

@@ -4,9 +4,9 @@
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
+                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
                     </label>
-                    <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                    <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                     <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_course.errors.required">Course is required</div>
                         <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
@@ -78,7 +78,7 @@
             <div class="col-2">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
-                    <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
+                    <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
                     <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_emp_no.errors.required">Emp no is required</div>
                         <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
@@ -179,8 +179,8 @@
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
                     <td class="text-center">
-                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(item) : null" [checked]="selection.isSelected(item) == true" [attr.aria-label]="checkboxLabel(item)" [disabled]="item.center_approved_checked == true">
-                        <!-- [disabled]="item.manager_approved_checked == true || item.center_approved_checked == true" -->
+                        <!-- <input type="checkbox" (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(item) : null" [checked]="selection.isSelected(item) == true" [attr.aria-label]="checkboxLabel(item)" [disabled]="(selection.selected.length === v_capacity) && !selection.isSelected(item)"> -->
+                        <input type="checkbox" (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(item) : null" [checked]="selection.isSelected(item) == true" [attr.aria-label]="checkboxLabel(item)" [disabled]="(_checkbox === v_capacity) && !selection.isSelected(item) || open_register == false">
                     </td>
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.emp_no }}</td>

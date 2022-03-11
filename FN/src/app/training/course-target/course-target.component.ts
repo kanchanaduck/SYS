@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal, NgbModalConfig, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
-
 @Component({
   selector: 'app-course-target',
   templateUrl: './course-target.component.html',
@@ -18,7 +18,18 @@ export class CourseTargetComponent implements OnInit {
   isDtInitialized: boolean = false
   // end datatable
 
-  constructor(private service: AppServiceService) { }
+  @ViewChild("txtcourse_no") txtcourse_no;
+  loading: boolean = false;
+
+  constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) { 
+    config.backdrop = 'static'; // popup
+    config.keyboard = false;
+
+    processbar.max = 1000;  // processbar
+    processbar.striped = true;
+    processbar.animated = true;
+    processbar.type = 'primary';
+  }
 
   ngOnInit(): void {
 
@@ -89,8 +100,40 @@ export class CourseTargetComponent implements OnInit {
       this.fnGet("NULL");
     }
   }
+  // Open popup Course
+  inputitem = 'course-target';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.txtcourse_no.nativeElement.value = "";
+          this.fnGet("NULL");
+          this.v_course_no = "";
+        }else{
+          this.fnGet(this.txtcourse_no.nativeElement.value);
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.txtcourse_no.nativeElement.value = "";
+        this.fnGet("NULL");
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.txtcourse_no.nativeElement.value = newItem;
+  }
 
   async fnGet(course_no:string) {
+    this.loading = true;
     await this.service.gethttp('OtherData/GetCourseTarget?course_no=' + course_no)
       .subscribe((response: any) => {
         console.log(response);
@@ -107,10 +150,12 @@ export class CourseTargetComponent implements OnInit {
           this.isDtInitialized = true
           this.dtTrigger.next();
         }
+        this.loading = false;
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
-      });
+        this.loading = false;
+      });    
   }
 
   ngOnDestroy(): void {

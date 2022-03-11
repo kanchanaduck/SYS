@@ -39,12 +39,6 @@ namespace api_hrgis.Models
         public string updated_by { get { return _username; } set { _username = value; } }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
-        [ForeignKey("org_code")]
-        public virtual tb_organization organization { get; set; }
-        [ForeignKey("emp_no")]
-        public virtual tb_employee employee { get; set; }
-        [ForeignKey("course_no")]
-        public virtual tr_course_master master_course { get; set; }
     }
 
 }

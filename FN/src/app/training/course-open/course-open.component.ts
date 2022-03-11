@@ -540,7 +540,7 @@ export class CourseOpenComponent implements OnInit {
       this.form.controls['frm_course_en'].setValue(this.response.course_name_en);
       this.form.controls['frm_day'].setValue(this.response.days);
       this.form.controls['frm_qty'].setValue(this.response.capacity);
-      this.txtgroup.nativeElement.value = this.response.org_code;
+      this.txtgroup.nativeElement.value = this.response.organization.org_abb;
 
       var nameArr = this.response.master_courses_bands; // console.log(nameArr);
       this.array_chk.forEach(object => {

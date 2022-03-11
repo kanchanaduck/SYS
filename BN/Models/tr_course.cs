@@ -16,6 +16,7 @@ namespace api_hrgis.Models
         public int days { get; set; }
         public int capacity { get; set; }
         public bool? open_register { get; set; }
+        public string trainer_text { get; set; }
         [Required]
         [Column(TypeName = "date")]
         public DateTime date_start { get; set; } 

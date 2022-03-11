@@ -38,10 +38,13 @@ export class ApproveCenterComponent implements OnInit {
   not_pass: boolean = false;
   disabled_chkall: boolean = false;
   visableButton: boolean = false;
+  isreadonly: boolean = true;
+  isIf: boolean = false;
   txt_not_pass = '';
   v_regis: number = 0;
   v_wait: number = 0;
   v_total: number = 0;
+  open_register: boolean = false;
 
   form: FormGroup;
   submitted = false;
@@ -146,7 +149,7 @@ export class ApproveCenterComponent implements OnInit {
     };
 
     this.fnGetband();
-    this.fnGetCenter(this._emp_no);
+    this.fnGetStakeholder(this._emp_no); // this.fnGetCenter(this._emp_no);
   }
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
@@ -156,10 +159,7 @@ export class ApproveCenterComponent implements OnInit {
   //   label: '# of Votes',
   //   data: [12, 39, 20, 10, 25, 18],
   // }];
-  barChartData2: any;
   // barChartLabels = ['ACC', 'CAO', 'ICD', 'MTP', 'PGA-1', 'PGA-2'];
-  barChartLabels: any;
-  barChartOptions: any;
   // barChartOptions = {
   //   scales: {
   //     yAxes: [{
@@ -186,7 +186,10 @@ export class ApproveCenterComponent implements OnInit {
   //       radius: 0
   //     }
   //   }
-  // };
+  // };  
+  barChartData2: any;
+  barChartLabels: any;
+  barChartOptions: any;
   barChartColors2 = [
     {
       borderColor: '#560bd0', //'#560bd0', 'rgba(0,123,255,.5)'
@@ -202,16 +205,24 @@ export class ApproveCenterComponent implements OnInit {
     }
     // console.log(JSON.stringify(this.form.value, null, 2));
 
-    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
+    if(this._getjwt.user.dept_abb != this.txtgroup.nativeElement.value){ 
       Swal.fire({
         icon: 'error',
-        title: "",
-        text: environment.text.invalid_department
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+        text: environment.text.invalid_course
       })
-
-      return;
+      return; 
     }
+    ////////// หลังจากเปลี่ยนจาก center เป็น committee > committee เจ้าของ course เท่านั้นที่สามารถเพิ่มพนักงานได้
+    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: "",
+    //     text: environment.text.invalid_department
+    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+    //   })
+
+    //   return;
+    // }
 
     if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
       Swal.fire({
@@ -234,7 +245,15 @@ export class ApproveCenterComponent implements OnInit {
     await this.service.axios_post('Registration', send_data, environment.text.success);
     await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
   }
-  fnApproved() {
+  fnApproved() {  //////// committee เจ้าของ course เท่านั้นที่สามารถ Approve ได้
+    if(this._getjwt.user.dept_abb != this.txtgroup.nativeElement.value){ 
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.invalid_course
+      })
+      return; 
+    }
+
     let text = "";
     if (this.array_grid.length > 0) {
       text = "you want to approve these trainees";
@@ -316,6 +335,7 @@ export class ApproveCenterComponent implements OnInit {
         this.v_capacity = this.res_course.capacity;
         this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
         this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out;
+        this.open_register = this.res_course.open_register;
 
         this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -328,7 +348,19 @@ export class ApproveCenterComponent implements OnInit {
         } // console.log(this.array_chk);
         this.checkboxesDataList = this.array_chk;
 
-        await this.fnGet(event.target.value, this._org_abb);
+        console.log(this._org_code);
+        console.log(this.res_course.organization.org_code);
+            
+        if(this._org_code == this.res_course.organization.org_code){
+          await this.fnGet(event.target.value, this._org_abb);
+        }
+        else{
+          Swal.fire({
+            icon: 'error',
+            title: "",
+            text: environment.text.invalid_course
+          })
+        }
       }
     } else if (event.target.value.length < 11) {
       this.form.controls['frm_course_name'].setValue("");
@@ -477,74 +509,102 @@ export class ApproveCenterComponent implements OnInit {
 
   res_chart: any = [];
   chartmax: any;
+  c_course_no: any; c_course_name_en: any;
   async open(content) {
+    this.c_course_no = this.form.controls['frm_course'].value.substring(0, 7)
+    this.c_course_name_en = this.form.controls['frm_course_name'].value;
+
     this.res_chart = await this.service.axios_get('OtherData/GetChartCenter?course_no=' + this.form.controls['frm_course'].value.substring(0, 7));
-    // console.log(this.res_chart);
+    console.log(this.res_chart);
+    if(this.res_chart.data.length > 0){
+      var total = this.res_chart.data.map(function (item) {
+        return item.total;
+      }); // console.log(total);
 
-    var total = this.res_chart.data.map(function (item) {
-      return item.total;
-    }); // console.log(total);
+      // console.log(((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total)));
+      // console.log(((Math.ceil((Math.max(27) / 10)) * 10) - Math.max(27)));
 
-    console.log(((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total)));
-    console.log(((Math.ceil((Math.max(27) / 10)) * 10) - Math.max(27)));
+      this.chartmax = Math.max(...total) + ((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total));
 
-    this.chartmax = Math.max(...total) + ((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total));
+      var chartlabels = this.res_chart.chartlabels.map(function (item) {
+        return item.dept_abb;
+      }); // console.log(chartlabels);
 
-    var chartlabels = this.res_chart.chartlabels.map(function (item) {
-      return item.dept_abb;
-    }); // console.log(chartlabels);
-
-    this.barChartData2 = [{
-      // label: '# of Value',
-      labels: total,
-      data: total,
-    }];
-    this.barChartLabels = chartlabels;
-    this.barChartOptions = {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-            fontSize: 10,
-            min: 0,
-            max: this.chartmax
+      this.barChartData2 = [{
+        // label: '# of Value',
+        labels: total,
+        data: total,
+      }];
+      this.barChartLabels = chartlabels;
+      this.barChartOptions = {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              fontSize: 10,
+              min: 0,
+              max: this.chartmax
+            }
+          }],
+          xAxes: [{
+            barPercentage: 0.6,
+            ticks: {
+              beginAtZero: true,
+              fontSize: 11
+            }
+          }]
+        },
+        legend: {
+          display: false
+        },
+        elements: {
+          point: {
+            radius: 0
           }
-        }],
-        xAxes: [{
-          barPercentage: 0.6,
-          ticks: {
-            beginAtZero: true,
-            fontSize: 11
-          }
-        }]
-      },
-      legend: {
-        display: false
-      },
-      elements: {
-        point: {
-          radius: 0
         }
-      }
-    };
+      };
 
-    if (this.form.controls['frm_course_name'].value != "") {
-      this.modalService.open(content, {
-        size: 'lg' //sm, mb, lg, xl
-      });
+      if (this.form.controls['frm_course_name'].value != "") {
+        this.modalService.open(content, {
+          size: 'lg' //sm, mb, lg, xl
+        });
+      }
     }
   } // Popup chart
 
-  async fnGetCenter(emp_no: any) {
-    await this.service.gethttp('Center/' + emp_no)
+  // async fnGetCenter(emp_no: any) {
+  //   await this.service.gethttp('Center/' + emp_no)
+  //     .subscribe((response: any) => {
+  //       this.visableButton = true;
+  //       this._org_abb = environment.text.all;
+  //       this.fnGet("No", "No");
+  //     }, (error: any) => {
+  //       console.log(error);
+  //       this.fnGet("No", "No");
+  //       this.visableButton = false;
+  //     });
+  // }
+  _org_code:any;
+  async fnGetStakeholder(emp_no: any) {
+    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
       .subscribe((response: any) => {
-        this.visableButton = true;
-        this._org_abb = environment.text.all;
-        this.fnGet("No", "No");
+        console.log(response);
+        
+        if (response.role.toUpperCase() == environment.role.committee) {
+          this.visableButton = true;
+          this.isreadonly = false;
+          this.isIf = true;
+          this._org_abb = environment.text.all;
+          this._org_code = response.org_code;
+          this.txtgroup.nativeElement.value = response.organization.org_abb;
+          this.fnGet("No", "No");
+        }
       }, (error: any) => {
         console.log(error);
         this.fnGet("No", "No");
         this.visableButton = false;
+        this.isreadonly = true;
+        this.isIf = false;
       });
   }
 
@@ -561,10 +621,12 @@ export class ApproveCenterComponent implements OnInit {
         if (chk_true.length > 0) {
           this.selection = new SelectionModel<DataTablesResponse>(true, chk_true)
           //console.log("1", this.selection.selected);
-        } else {
+        } 
+        else {
           this.selection = new SelectionModel<DataTablesResponse>(true, []);
           //console.log("2", this.selection);
         }
+        if (response.your.filter(x => x.center_approved_checked == true).length > 0) { this.disabled_chkall = true; } else { this.disabled_chkall = false; }
 
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
@@ -604,6 +666,7 @@ export class ApproveCenterComponent implements OnInit {
           this.form.controls['frm_course'].setValue("");
           this.fnGetCourse("NULL");
           this.v_course_no = "";
+          this.fnClear();
         } else {
           this.fnGetCourse(this.v_course_no);
         }
@@ -613,6 +676,7 @@ export class ApproveCenterComponent implements OnInit {
         this.form.controls['frm_course'].setValue("");
         this.fnGetCourse("NULL");
         this.v_course_no = "";
+        this.fnClear();
       }
     );
   }
@@ -625,13 +689,15 @@ export class ApproveCenterComponent implements OnInit {
 
   async fnGetCourse(course_no: any) {
     this.res_course = await this.service.axios_get('CourseOpen/Open/' + course_no);
-    // console.log('fnGetCourse: ', this.res_course);
+    // console.log('fnGetCourse: ', this.res_course);    
     if (this.res_course != undefined) {
       this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
       this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
       this.txtqty.nativeElement.value = this.res_course.capacity;
+      this.v_capacity = this.res_course.capacity;
       this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
       this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
+      this.open_register = this.res_course.open_register;
 
       this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -640,8 +706,8 @@ export class ApproveCenterComponent implements OnInit {
         this.array_chk.find(v => v.band === iterator.band).isChecked = true;
       } // console.log(this.array_chk);
       this.checkboxesDataList = this.array_chk;
-
-      await this.fnGet(this.v_course_no, this._org_abb);
+            
+      await this.fnGet(this.v_course_no, this._org_abb);        
     } else {
       this.form.controls['frm_course_name'].setValue("");
       this.txtgroup.nativeElement.value = "";

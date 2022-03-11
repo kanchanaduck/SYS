@@ -24,18 +24,7 @@ DECLARE @cols AS NVARCHAR(MAX),
 	IF (@employed_status='Employed')
 		BEGIN
 			set @employed_status_sql = 'AND (e.resign_date IS null OR e.resign_date >= GETDATE())'
-		END
-	ELSE IF (@employed_status='Resigned')
-		BEGIN
-			set @employed_status_sql = 'AND e.resign_date < GETDATE()'
-		END
-	ELSE
-		BEGIN
-			set @employed_status_sql = ''
-		END
-	PRINT(@employed_status_sql)
-
-select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
+			select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
                     from 
 					(
 						select SUBSTRING(r.course_no,0,8) as master_course_no
@@ -43,12 +32,73 @@ select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
 						from tr_course_registration r
 						inner join tb_employee e
 						on r.emp_no=e.emp_no
+						where 1=1 AND (e.resign_date IS null OR e.resign_date >= GETDATE())
+						AND (e.div_code= @div_code or e.dept_code= @dept_code)
 					) t1
 					group by master_course_no
 
             FOR XML PATH(''), TYPE
             ).value('.', 'NVARCHAR(MAX)') 
         ,1,1,'');
+		END
+	ELSE IF (@employed_status='Resigned')
+		BEGIN
+			set @employed_status_sql = 'AND e.resign_date < GETDATE()'
+			select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
+                    from 
+					(
+						select SUBSTRING(r.course_no,0,8) as master_course_no
+						,r.emp_no as emp_no, 1 as count_
+						from tr_course_registration r
+						inner join tb_employee e
+						on r.emp_no=e.emp_no
+						where 1=1 AND e.resign_date < GETDATE()
+						AND (e.div_code= @div_code or e.dept_code= @dept_code)
+					) t1
+					group by master_course_no
+
+            FOR XML PATH(''), TYPE
+            ).value('.', 'NVARCHAR(MAX)') 
+        ,1,1,'');
+		END
+	ELSE
+		BEGIN
+			set @employed_status_sql = ''
+			select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
+                    from 
+					(
+						select SUBSTRING(r.course_no,0,8) as master_course_no
+						,r.emp_no as emp_no, 1 as count_
+						from tr_course_registration r
+						inner join tb_employee e
+						on r.emp_no=e.emp_no
+						AND (e.div_code= @div_code or e.dept_code= @dept_code)
+					) t1
+					group by master_course_no
+
+            FOR XML PATH(''), TYPE
+            ).value('.', 'NVARCHAR(MAX)') 
+        ,1,1,'');
+		END
+	PRINT(@employed_status_sql)
+
+/*select @cols = STUFF((SELECT ',' + QUOTENAME(master_course_no)
+                    from 
+					(
+						select SUBSTRING(r.course_no,0,8) as master_course_no
+						,r.emp_no as emp_no, 1 as count_
+						from tr_course_registration r
+						inner join tb_employee e
+						on r.emp_no=e.emp_no
+
+					) t1
+					group by master_course_no
+
+            FOR XML PATH(''), TYPE
+            ).value('.', 'NVARCHAR(MAX)') 
+        ,1,1,'');
+
+PRINT (@cols)*/
 
 set @query = 'SELECT emp_no
 				,title_name_en

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
@@ -23,7 +24,10 @@ export class TraineeCountComponent implements OnInit {
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
 
-  constructor(private service: AppServiceService) { }
+  constructor(private modalService: NgbModal, config: NgbModalConfig, private service: AppServiceService) {
+    config.backdrop = 'static'; // popup
+    config.keyboard = false;
+   }
 
   ngOnInit(): void {
     this.dtOptions = {
@@ -103,6 +107,38 @@ export class TraineeCountComponent implements OnInit {
   onDateSelectFrom(event) {
     console.log('onDateSelectFrom: ', event);
     this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+  }
+
+  // Open popup Course
+  inputitem = 'course-target';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.txtcourse_no.nativeElement.value = "";
+          this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+          this.v_course_no = "";
+        }else{
+          this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.txtcourse_no.nativeElement.value = "";
+        this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.txtcourse_no.nativeElement.value = newItem;
   }
 
   async fnGet(course_no: string, date_start: string, date_end: string) {

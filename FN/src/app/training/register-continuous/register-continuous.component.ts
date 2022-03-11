@@ -36,6 +36,8 @@ export class RegisterContinuousComponent implements OnInit {
   visableUpdate = false;
   visableClear = false;
   isreadonly = false;
+  isClose: boolean = true;
+  isIf: boolean = false;
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
@@ -43,7 +45,8 @@ export class RegisterContinuousComponent implements OnInit {
   form: FormGroup;
   submitted = false;
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
+  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
+    , private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
   }
@@ -163,9 +166,9 @@ export class RegisterContinuousComponent implements OnInit {
         result_non["remark"] = "The employee do not match with database.";
         array_non.push(result_non);
       }
-      result["pre_test_score"] = frm.frm_pre_test_score;
+      result["pre_test_score"] = frm.frm_pre_test_score == "" ? 0 : frm.frm_pre_test_score;
       result["pre_test_grade"] = this.txtpre_test_grade.nativeElement.value;
-      result["post_test_score"] = frm.frm_post_test_score;
+      result["post_test_score"] = frm.frm_post_test_score == "" ? 0 : frm.frm_post_test_score;
       result["post_test_grade"] = this.txtpost_test_grade.nativeElement.value;
 
       n++;
@@ -338,6 +341,8 @@ export class RegisterContinuousComponent implements OnInit {
           this.visableSave = true;
           this.visableUpdate = false;
           this.visableClear = true;
+          this.isClose = false;
+          this.isIf = true;
         }
       }, (error: any) => {
         console.log(error);
@@ -345,6 +350,8 @@ export class RegisterContinuousComponent implements OnInit {
         this.visableSave = false;
         this.visableUpdate = false;
         this.visableClear = false;
+        this.isClose = true;
+        this.isIf = false;
       });
   }
 
@@ -385,6 +392,11 @@ export class RegisterContinuousComponent implements OnInit {
   res_emp: any;
   async fnGetEmp() {
     this.res_emp = await this.service.axios_get('Employees');
+    // console.log('res_emp: ', this.res_emp);
+    // console.log(this.res_emp[1].resign_date);
+    // console.log(new Date(this.res_emp[1].resign_date));
+    // console.log(new Date());    
+    this.res_emp = this.res_emp.filter(x => x.resign_date == null || new Date(x.resign_date) >= new Date());
     console.log('res_emp: ', this.res_emp);
   }
 

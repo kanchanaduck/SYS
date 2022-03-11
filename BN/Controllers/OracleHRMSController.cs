@@ -47,11 +47,11 @@ namespace api_hrgis.Controllers
             dt = get_oracle_datatable(@"select * from cpt_employees");
             Console.WriteLine("Count row"+dt.Rows.Count);
 
-            DumpDataTableToDB("tb_employee",dt,dt.Rows.Count);
+            DumpDataTableToDB("tb_employee_temp",dt,dt.Rows.Count);
 
             Console.WriteLine("Start register..");
             var tb_employees = await _context.tb_employee
-                            .FromSqlRaw("SELECT A.* FROM tb_employee A LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL")
+                            .FromSqlRaw("SELECT A.* FROM tb_employee_temp A LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL")
                             .ToListAsync();
 
             Console.WriteLine(tb_employees.Count());
@@ -87,7 +87,7 @@ namespace api_hrgis.Controllers
 
             dt = get_oracle_datatable(@"select * from cpt_organization");
 
-            DumpDataTableToDB("tb_organization",dt,dt.Rows.Count);
+            DumpDataTableToDB("tb_organization_temp",dt,dt.Rows.Count);
 
             return await _context.tb_organization.Take(5).ToListAsync();
         }

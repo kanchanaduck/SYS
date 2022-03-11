@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
@@ -18,7 +19,12 @@ export class CourseHistoryComponent implements OnInit {
   isDtInitialized: boolean = false
   // end datatable
 
-  constructor(private service: AppServiceService) { }
+  @ViewChild("txtcourse_no") txtcourse_no;
+
+  constructor(private modalService: NgbModal, config: NgbModalConfig, private service: AppServiceService) { 
+    config.backdrop = 'static'; // popup
+    config.keyboard = false;
+  }
 
   ngOnInit(): void {
     this.dtOptions = {
@@ -95,6 +101,38 @@ export class CourseHistoryComponent implements OnInit {
     }else if(event.target.value.length == 0){
       this.fnGet("NULL");
     }
+  }
+
+  // Open popup Course
+  inputitem = 'course-target';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.txtcourse_no.nativeElement.value = "";
+          this.fnGet("NULL");
+          this.v_course_no = "";
+        }else{
+          this.fnGet(this.txtcourse_no.nativeElement.value);
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.txtcourse_no.nativeElement.value = "";
+        this.fnGet("NULL");
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.txtcourse_no.nativeElement.value = newItem;
   }
 
   async fnGet(course_no:string) {

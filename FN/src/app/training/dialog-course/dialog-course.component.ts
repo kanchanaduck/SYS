@@ -107,9 +107,34 @@ export class DialogCourseComponent implements OnInit {
           console.log(error);
           this.data_grid = [];
         });
-    } else {
-      if(this.inputitem == 'course-score' || this.inputitem == 'register-continuous'){
-        await this.service.gethttp('CourseOpen/GetCourseALL')
+    }
+    else if(this.inputitem == 'course-target'){
+      await this.service.gethttp('Registration/Get_course')
+        .subscribe((response: any) => {
+          console.log('co: ', response);
+          this.data_grid = response;
+
+          // Calling the DT trigger to manually render the table
+          if (this.isDtInitialized) {
+            this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+              dtInstance.destroy();
+              this.dtTrigger.next();
+            });
+          } else {
+            this.isDtInitialized = true
+            this.dtTrigger.next();
+          }
+        }, (error: any) => {
+          console.log(error);
+          this.data_grid = [];
+        });
+    }
+    else {
+      // if(this.inputitem == "course-confirmation-sheet"){
+        
+      // }
+      if(this.inputitem == 'course-score' || this.inputitem == 'register-continuous' || this.inputitem == "course-confirmation-sheet"){
+        await this.service.gethttp('CourseOpen/GetCourseStatus')
         .subscribe((response: any) => {
           console.log('co: ', response);
           this.data_grid = response;
@@ -129,25 +154,49 @@ export class DialogCourseComponent implements OnInit {
           this.data_grid = [];
         });
       }else{
-        await this.service.gethttp('CourseOpen/GetCourseOpenRegister')
-        .subscribe((response: any) => {
-          console.log('co: ', response);
-          this.data_grid = response;
+        if(this.inputitem == 'approve-center'){
+          await this.service.gethttp('CourseOpen/GetCourseOpenRegister')
+          .subscribe((response: any) => {
+            console.log('co: ', response);
+            response = response.filter(x => x.org_code == this._getjwt.user.dept_code);
 
-          // Calling the DT trigger to manually render the table
-          if (this.isDtInitialized) {
-            this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-              dtInstance.destroy();
+            this.data_grid = response;
+
+            // Calling the DT trigger to manually render the table
+            if (this.isDtInitialized) {
+              this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+                dtInstance.destroy();
+                this.dtTrigger.next();
+              });
+            } else {
+              this.isDtInitialized = true
               this.dtTrigger.next();
-            });
-          } else {
-            this.isDtInitialized = true
-            this.dtTrigger.next();
-          }
-        }, (error: any) => {
-          console.log(error);
-          this.data_grid = [];
-        });
+            }
+          }, (error: any) => {
+            console.log(error);
+            this.data_grid = [];
+          });
+        }else{
+          await this.service.gethttp('CourseOpen/GetCourseOpenRegister')
+          .subscribe((response: any) => {
+            console.log('co: ', response);
+            this.data_grid = response;
+
+            // Calling the DT trigger to manually render the table
+            if (this.isDtInitialized) {
+              this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+                dtInstance.destroy();
+                this.dtTrigger.next();
+              });
+            } else {
+              this.isDtInitialized = true
+              this.dtTrigger.next();
+            }
+          }, (error: any) => {
+            console.log(error);
+            this.data_grid = [];
+          });
+        }
       }      
     }
   }

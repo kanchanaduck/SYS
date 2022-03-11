@@ -51,7 +51,7 @@ CREATE   VIEW [dbo].[V_GETREGISTRATION] as
 				  FOR XML PATH (''))
 				 , 1, 1, '') from tr_course_trainer tb1 group by course_no) tbt on tc.course_no = tbt.course_no
 	CROSS APPLY [dbo].[FN_GETDATE](tc.date_start, tc.date_end) as fnd
-	where (tr.last_status = 'Center approved' or (tr.last_status = 'Continuous'))
+	where (tr.last_status = 'Approved')
 	
 GO
 

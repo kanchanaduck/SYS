@@ -99,13 +99,13 @@ export class TrainerComponent implements OnInit {
           },
         ],
       },
-      order: [[6, 'desc'],[0, 'asc']],
+      order: [[8, 'desc'],[0, 'asc']],
       rowGroup: {
-        dataSrc: 6
+        dataSrc: 8
       },
       columnDefs: [ 
         {
-          targets: [ 0,7],
+          targets: [ 0,8],
           orderable: false 
         } 
       ],

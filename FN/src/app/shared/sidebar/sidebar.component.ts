@@ -36,11 +36,7 @@ export class SidebarComponent implements OnInit {
 
   async ngOnInit() {
 
-    this.activeUrl = this.route
-
-    await axios.get(`${environment.API_URL}Menus`, this.headers).then(response => (
-      this.menus = response
-    ));
+    this.activeUrl = this.router.url
 
     if (localStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); 

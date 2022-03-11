@@ -9,51 +9,27 @@
         </div>
     </div>
 </div>
-        <table class="table table-bordered table-bordered table-sm w-100">
-        <thead>
-            <tr>
-                <th class="text-center">EMP NO</th>
-                <th class="text-center">NAME</th>
-                <th class="text-center">BAND</th>
-                <th class="text-center">POSITION</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="tx-13">014496</td>
-                <td class="tx-13">KANCHANA SAIPANUS</td>
-                <td class="tx-13">J2</td>
-                <td class="tx-13">SENIOR PROGRAMMER</td>
-            </tr>
-        </tbody>
-        </table>
 
-<!-- 
-<div class="col-6">
-    <div class="card">
-        <div class="card-header">
-            <h4>Approve zone</h4>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-bordered table-sm w-100">
-                <thead>
-                    <tr>
-                        <th class="text-center">Upload at</th>
-                        <th class="text-center">Upload by</th>
-                        <th class="text-center">File</th>
-                        <th class="text-center">Approver</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="tx-13">2022-03-01 12:00:37</td>
-                        <td class="tx-13">014496</td>
-                        <td class="tx-13"></td>
-                        <td class="tx-13"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
- -->
+<table class="table table-bordered table-bordered table-sm w-100">
+<thead>
+    <tr>
+        <th class="text-center">EMP NO</th>
+        <th class="text-center">NAME</th>
+        <th class="text-center">BAND</th>
+        <th class="text-center">POSITION</th>
+        <th class="text-center" *ngFor="let item of courses">{{ item.course_no }}</th>
+    </tr>
+</thead>
+<tbody>
+    <tr *ngFor="let item of employees">
+        <td class="tx-13">{{ item.emp_no }}</td>
+        <td class="tx-13">{{ item.fullname_en }}</td>
+        <td class="tx-13">{{ item.band }}</td>
+        <td class="tx-13">{{ item.position_name_en }}</td>
+        <td class="tx-13" *ngFor="let c of courses">
+            {{ c.course_no  }}
+            <!-- <span>{{ match_course(item.emp_no, c.course_no) }}</span> -->
+        </td>
+    </tr>
+</tbody>
+</table>

@@ -38,6 +38,8 @@ export class RegisterComponent implements OnInit {
   checkboxesDataList: any[];
   not_pass: boolean = false;
   visableButton: boolean = false;
+  isreadonly: boolean = true;
+  isIf: boolean = false;
   txt_not_pass = '';
   _getjwt: any;
   _emp_no: any;
@@ -480,11 +482,15 @@ export class RegisterComponent implements OnInit {
           this.txtgroup.nativeElement.value = response.organization.org_abb;
           this.fnGet("No", "No");
           this.visableButton = true;
+          this.isreadonly = false;
+          this.isIf = true;
         }
       }, (error: any) => {
         console.log(error);
         this.fnGet("No", "No");
         this.visableButton = false;
+        this.isreadonly = true;
+        this.isIf = false;
       });
   }
 

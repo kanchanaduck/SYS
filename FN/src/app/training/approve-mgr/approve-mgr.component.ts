@@ -31,6 +31,7 @@ export class ApproveMgrComponent implements OnInit {
   // end datatable
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
+  v_capacity = 0;
   @ViewChild("txtdate_from") txtdate_from: any;
   @ViewChild("txtdate_to") txtdate_to: any;
   @ViewChild("txtposition") txtposition: any;
@@ -39,6 +40,8 @@ export class ApproveMgrComponent implements OnInit {
   not_pass: boolean = false;
   disabled_chkall: boolean = false;
   visableButton: boolean = false;
+  isreadonly: boolean = true;
+  isIf: boolean = false;
   txt_not_pass = '';
   _getjwt: any;
   _emp_no: any;
@@ -46,6 +49,7 @@ export class ApproveMgrComponent implements OnInit {
   checkboxesDataList: any[];
   form: FormGroup;
   submitted = false;
+  open_register: boolean = false;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
@@ -292,7 +296,7 @@ export class ApproveMgrComponent implements OnInit {
           capacity: this.txtqty.nativeElement.value,
           array: this.array_grid
         }
-        //console.log('send data: ', send_data);
+        console.log('send data: ', send_data);
 
         this.selection.clear();
         this.array_grid = [];
@@ -334,8 +338,10 @@ export class ApproveMgrComponent implements OnInit {
         this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
         this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
         this.txtqty.nativeElement.value = this.res_course.capacity;
+        this.v_capacity = this.res_course.capacity;
         this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
         this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out;
+        this.open_register = this.res_course.open_register;
 
         this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -486,10 +492,22 @@ export class ApproveMgrComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.emp_no + 1}`;
   }
 
+  _checkbox: any = 0;
   toggleSelection(row) {
-    this.selection.toggle(row);
+    // this.selection.toggle(row);
+    // this.array_grid = this.selection.selected;
+
+    if ((this.selection.selected.length < this.v_capacity) || this.selection.isSelected(row)) {
+      this.selection.toggle(row);
+    }
 
     this.array_grid = this.selection.selected;
+    // console.log(this.array_grid);
+
+    // console.log('1: ',this.array_grid.length);
+    // console.log('2: ',this.data_grid_other.filter(x => x.center_approved_checked == true).length);
+    this._checkbox = this.array_grid.length + this.data_grid_other.filter(x => x.center_approved_checked == true).length;
+    // console.log('3: ',this._checkbox);
   }
   // End Check box
 
@@ -500,12 +518,16 @@ export class ApproveMgrComponent implements OnInit {
           this._org_abb = response.organization.org_abb;
           this.txtgroup.nativeElement.value = response.organization.org_abb;
           this.visableButton = true;
+          this.isreadonly = false;
+          this.isIf = true;
         }
         this.fnGet("No", "No");
       }, (error: any) => {
         console.log(error);
         this.fnGet("No", "No");
         this.visableButton = false;
+        this.isreadonly = true;
+        this.isIf = false;
       });
   }
 
@@ -520,12 +542,18 @@ export class ApproveMgrComponent implements OnInit {
         if (chk_true.length > 0) {
           this.selection = new SelectionModel<PeriodicElement>(true, chk_true)
           console.log("1", this.selection.selected);
-        }else{
+        }
+        else{
           this.selection = new SelectionModel<PeriodicElement>(true, []);
           console.log("2", this.selection.selected);
         }
 
-        if (response.your.filter(x => x.center_approved_checked == true).length > 0) { this.disabled_chkall = true; } else { this.disabled_chkall = false; }
+        if (response.your.filter(x => x.manager_approved_checked == true).length > 0) { this.disabled_chkall = true; } else { this.disabled_chkall = false; }
+
+        // console.log('1: ',this.data_grid.filter(x => x.center_approved_checked == true).length);
+        // console.log('2: ',this.data_grid_other.filter(x => x.center_approved_checked == true).length);
+        this._checkbox = this.data_grid.filter(x => x.center_approved_checked == true).length + this.data_grid_other.filter(x => x.center_approved_checked == true).length;
+        // console.log('3: ',this._checkbox);
 
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
@@ -603,8 +631,10 @@ export class ApproveMgrComponent implements OnInit {
       this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
         this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
         this.txtqty.nativeElement.value = this.res_course.capacity;
+        this.v_capacity = this.res_course.capacity;
         this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
         this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
+        this.open_register = this.res_course.open_register;
 
         this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -665,15 +695,20 @@ function removeDuplicateObjectFromArray(array, key) {
 }
 
 export interface PeriodicElement {
+  band: string;
+  center_approved_checked: boolean;
+  course_name_en: string;
+  course_no: string;
+  dept_abb: string;
+  dept_code: string;
   emp_no: string;
-  title_name_en: string;
   firstname_en: string;
   lastname_en: string;
+  last_status: string;
+  manager_approved_checked: boolean;
+  position_code: string;
   position_name_en: string;
-  band: string;
-  dept_code: string;
-  dept_abb: string;
-  status: string;
   remark: string;
-  course_name: string;
+  seq_no: number;
+  title_name_en: string;
 }

@@ -29,8 +29,10 @@ namespace api_hrgis.Models
         [Required]
         [Display(Name = "TRAINER TYPE")]
         public string trainer_type { get; set; } = "Internal";
-        [RequiredIf("trainer_type","External",ErrorMessage = "ORGANIZATION is required due to TRAINER TYPE is External")]
-        public string organization { get; set; }
+        [RequiredIf("trainer_type","External",ErrorMessage = "COMPANY is required due to TRAINER TYPE is External")]
+        public string company { get; set; }
+        [RequiredIf("trainer_type","Internal",ErrorMessage = "ORGANIZATION is required due to TRAINER TYPE is Internal")]
+        public string org_code { get; set; }
         public bool? status_active { get; set; }
         public string remark { get; set; }
         [Column(TypeName = "datetime")]
@@ -41,6 +43,8 @@ namespace api_hrgis.Models
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
         public List<tr_course_trainer> courses_trainers { get; set; }
+        [ForeignKey("org_code")]
+        public virtual tb_organization organization { get; set; }
         private DateTime _date = DateTime.Now;
         private string _username = "014496";
     }

@@ -27,7 +27,7 @@ namespace api_hrgis
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-            .UseKestrel(o => { o.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(1); })
+            .UseKestrel(o => { o.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(3); })
             .Build();
     }
 }

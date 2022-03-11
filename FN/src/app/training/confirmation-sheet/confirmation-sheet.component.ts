@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
 import axios from 'axios';
+import { NgbModal, NgbModalConfig, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-confirmation-sheet',
@@ -25,9 +26,18 @@ export class ConfirmationSheetComponent implements OnInit {
   _emp_no: any;
   _org_abb: string = "";
   _org_code: string = "";
-  isCenter: boolean = false;
+  isCheck: boolean = false;
+  loading: boolean = false;
 
-  constructor(private service: AppServiceService) { }
+  constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) {
+    config.backdrop = 'static'; // popup
+    config.keyboard = false;
+
+    processbar.max = 1000;  // processbar
+    processbar.striped = true;
+    processbar.animated = true;
+    processbar.type = 'primary';
+   }
 
   ngOnInit(): void {
     this._getjwt = this.service.service_jwt();  // get jwt
@@ -131,14 +141,47 @@ export class ConfirmationSheetComponent implements OnInit {
         if (response.role.toUpperCase() == environment.role.committee) {
           console.log(response);
           this.org_code = response.org_code;     
-          this.isCenter = true;
+          this.isCheck = true;
         }
       }, (error: any) => {
         console.log(error);
         this.fnGet("No");
-        this.isCenter = false;
+        this.isCheck = false;
       });
   }
+
+  // Open popup Course
+  inputitem = 'course-confirmation-sheet';
+  openCourse(content) {
+    //   size: 'lg' //sm, mb, lg, xl
+    this.v_course_no = "";
+    const modalRef = this.modalService.open(content, { size: 'lg' });
+    modalRef.result.then(
+      (result) => {
+        console.log(result);
+        if (result != "OK") {
+          this.txtcourse_no.nativeElement.value = "";
+          this.fnGet("NULL");
+          this.v_course_no = "";
+        }else{
+          this.fnGet(this.txtcourse_no.nativeElement.value);
+        }
+      },
+      (reason) => {
+        console.log(reason);
+        this.txtcourse_no.nativeElement.value = "";
+        this.fnGet("NULL");
+        this.v_course_no = "";
+      }
+    );
+  }
+
+  v_course_no: string = "";
+  addItemCourse(newItem: string) {
+    this.v_course_no = newItem;
+    this.txtcourse_no.nativeElement.value = newItem;
+  }
+  // End Open popup Course
 
   mail_date: any; mail_time: any; mail_place: any; mail_course: any; course_org_code: string = "";
   async fnGet(course_no: string) {
@@ -174,7 +217,7 @@ export class ConfirmationSheetComponent implements OnInit {
   res_mail: any;
   res_file: any;
   array_to: any = [];
-  async fnSendMail() {
+  async fnSendMail_old() {
     if(this.org_code != this.course_org_code){ 
       Swal.fire({
         icon: 'error',
@@ -183,8 +226,10 @@ export class ConfirmationSheetComponent implements OnInit {
       return; 
     }
 
-    if (this.isCenter == true) {
+    if (this.isCheck == true) {
       if (this.txtcourse_no.nativeElement.value != "" && this.mail_date != undefined) {
+        this.loading = true;
+
         this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.txtcourse_no.nativeElement.value);
         console.log(this.res_mail);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
@@ -194,6 +239,7 @@ export class ConfirmationSheetComponent implements OnInit {
         Array.prototype.push.apply(this.array_to, this.res_mail.approver);
 
         this.array_to = removeDuplicateObjectFromArray(this.array_to, 'emp_no'); // console.log('remove: ', this.array_to);
+        this.array_to = this.array_to.filter(x => x.email != null && x.email != '');
         if (this.array_to.length > 0) {
           const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no);  console.log(filter_form);
           const filter_to = this.array_to; console.log(filter_to); // console.log(filter_to.map(a => a.email).join());
@@ -251,6 +297,8 @@ export class ConfirmationSheetComponent implements OnInit {
             }
           })
         }
+
+        this.loading = false;
       }
       else{
         Swal.fire({
@@ -266,6 +314,90 @@ export class ConfirmationSheetComponent implements OnInit {
       })
     }
   }
+
+  async fnSendMail() {
+    if(this.org_code != this.course_org_code){ 
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.invalid_course
+      })
+      return; 
+    }
+
+    if (this.isCheck == true) {
+      if (this.txtcourse_no.nativeElement.value != "" && this.mail_date != undefined) {
+        this.loading = true;
+
+        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.txtcourse_no.nativeElement.value);
+        console.log(this.res_mail);
+        Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
+        Array.prototype.push.apply(this.array_to, this.res_mail.trainner);
+        Array.prototype.push.apply(this.array_to, this.res_mail.manager);
+        Array.prototype.push.apply(this.array_to, this.res_mail.center);
+        Array.prototype.push.apply(this.array_to, this.res_mail.approver);
+
+        this.array_to = removeDuplicateObjectFromArray(this.array_to, 'emp_no'); // console.log('remove: ', this.array_to);
+        this.array_to = this.array_to.filter(x => x.email != null && x.email != '');
+        if (this.array_to.length > 0) {
+          const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no);  console.log(filter_form);
+          const filter_to = this.array_to; console.log(filter_to); // console.log(filter_to.map(a => a.email).join());
+
+          Swal.fire({
+            // title: 'Are you sure? \n you want to send e-mail to',
+            title: 'List e-mail to',
+            text: filter_to.map(a => a.email).join("; "),
+            // icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+          }).then(async (result) => {
+            if (result.value) {
+              let mailform = filter_form[0].email;
+              let subject = "Confirm Training : " + this.mail_course + " : " + this.mail_date;
+              let dear = filter_to.map(a => a.fullname).join(", "); // console.log(dear); 
+                           
+              var mailOptions = {
+                from: mailform,
+                to: filter_to.map(a => a.email).join("; "),
+                subject: "[TEST][HRGIS TRAINING] " + subject,
+                text: "Dear: " + dear + " \n\n" +
+                "I would like to confirm about the lists :\n" +
+                "****************************************************************************************\n" +
+                "Course          :   \"" + this.mail_course + "\"\n" +
+                "Date            :   " + this.mail_date + "\n" +
+                "Time            :   " + this.mail_time + " (Please arrive 10 minutes early to allow us enough time to check your list.)\n" +
+                "Place           :   " + this.mail_place + "\n" +
+                "Trainer         :   " + this.res_mail.trainner.map(a => a.fullname).join(", ") + "	\n" +
+                "Please try to be punctual, so we can start the training on time.\n" +
+                "****************************************************************************************\n" +
+                "Prepare     : Eraser\n" +
+                "            : Pencil\n" +                
+                "Please click the link. http://cptsvs52t/HRGIS_TEST \n\n" +
+                "Best Regards"
+              };
+              console.log('mailOptions: ',mailOptions);
+              
+              // location.href = "mailto:nuttaya001@gmail.com?" + mailOptions;
+            }
+          })
+        }
+
+        this.loading = false;
+      }
+      else{
+        Swal.fire({
+          icon: 'error',
+          text: environment.text.not_sendmail
+        })
+      }
+    }
+    else{
+      Swal.fire({
+        icon: 'error',
+        text: environment.text.committee_only
+      })
+    }
+  }  
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

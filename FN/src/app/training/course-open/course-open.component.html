@@ -212,7 +212,7 @@
                     <td>{{ item.place }}</td>
                     <td>{{ item.trainer }}</td>
                     <td>{{ item.org_code }} : {{ item.org_abb }}</td>
-                    <td>
+                    <td class="text-center">
                         <div *ngIf="item.org_abb != _ogr_abb; else elseBlock"><span></span></div>
                         <ng-template #elseBlock>
                             <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div>

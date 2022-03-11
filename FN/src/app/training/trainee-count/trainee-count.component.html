@@ -5,8 +5,9 @@
                 <div class="input-group-text">
                     course no.
                 </div>
+                <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
             </div>
-            <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" #txtcourse_no>
+            &nbsp;<input type="text" class="form-control" placeholder="Ex. XXX" (keyup)="onKeyCourse($event)" #txtcourse_no>
         </div>
     </div>
     <div class="col-3">
@@ -61,3 +62,19 @@
         </table>
     </div>
 </div>
+
+<ng-template #contentCourse let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-capitalize">
+        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

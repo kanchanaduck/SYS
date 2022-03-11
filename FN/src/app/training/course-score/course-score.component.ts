@@ -40,6 +40,8 @@ export class CourseScoreComponent implements OnInit {
   visableClear = false;
   visableButton = false;
   isreadonly = false;
+  isClose: boolean = true;
+  isIf: boolean = false;
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
@@ -392,7 +394,6 @@ export class CourseScoreComponent implements OnInit {
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
       
-
       this.result = await this.service.axios_formdata_post('/RegisterScore/UploadCourseScore/' + this.form.controls['frm_course'].value, formData, environment.text.success);
       // // console.log('result: ', this.result.data);
       if (this.result.data.length > 0) {
@@ -418,6 +419,8 @@ export class CourseScoreComponent implements OnInit {
           this.visableUpdate = false;
           this.visableClear = true;
           this.visableButton = true;
+          this.isClose = false;
+          this.isIf = true;
         }
       }, (error: any) => {
         console.log(error);
@@ -426,6 +429,8 @@ export class CourseScoreComponent implements OnInit {
         this.visableUpdate = false;
         this.visableClear = false;
         this.visableButton = false;
+        this.isClose = true;
+        this.isIf = false;
       });
   }
 

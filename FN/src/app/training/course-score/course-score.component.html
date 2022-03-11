@@ -4,9 +4,9 @@
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
+                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
                     </label>
-                    <input type="text" class="form-control" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
+                    <input type="text" class="form-control" [readonly]="isClose" placeholder="Ex. XXX-XXX-XXX" (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                     <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_course.errors.required">Course is required</div>
                         <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
@@ -228,15 +228,15 @@
                     <td>{{ item.employees.dept_code}}:{{ item.employees.dept_abb }}</td>
                     <td>{{ item.employees.entrance_date | date:'dd-MMM-yy'}}</td>
                     <td>
-                        <div *ngIf="item.pre_test_score == null; else elseBlock"><span></span></div>
+                        <div *ngIf="item.pre_test_grade != '' && item.pre_test_grade != null; else elseBlock">{{ item.pre_test_score }} : {{ item.pre_test_grade }}</div>
                         <ng-template #elseBlock>
-                            {{ item.pre_test_score }} : {{ item.pre_test_grade }}
+                            <span></span>
                         </ng-template>
                     </td>
                     <td>
-                        <div *ngIf="item.post_test_score == null; else elseBlock"><span></span></div>
-                        <ng-template #elseBlock>
-                            {{ item.post_test_score }} : {{ item.post_test_grade }}
+                        <div *ngIf="item.post_test_grade != '' && item.post_test_grade != null; else elseBlock_post">{{ item.post_test_score }} : {{ item.post_test_grade }}</div>
+                        <ng-template #elseBlock_post>
+                            <span></span>
                         </ng-template>
                     </td>
                     <td class="text-center">

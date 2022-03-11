@@ -144,6 +144,224 @@ namespace api_hrgis.Migrations
                     b.ToTable("tb_employee");
                 });
 
+            modelBuilder.Entity("api_hrgis.Models.tb_employee_diff", b =>
+                {
+                    b.Property<string>("emp_no")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("band")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("birthday")
+                        .HasColumnType("date");
+
+                    b.Property<string>("center_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("center_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email_active")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email_active_date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("entrance_date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("firstname_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("firstname_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("id_card_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("old_emp_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_name_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_name_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("probation_date")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("resign_date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("rfid_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sex_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sex_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title_name_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title_name_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("emp_no");
+
+                    b.ToTable("tb_employee_diff");
+                });
+
+            modelBuilder.Entity("api_hrgis.Models.tb_employee_temp", b =>
+                {
+                    b.Property<string>("emp_no")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("band")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("birthday")
+                        .HasColumnType("date");
+
+                    b.Property<string>("center_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("center_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("dept_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("div_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email_active")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("email_active_date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("entrance_date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("firstname_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("firstname_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("id_card_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("old_emp_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_name_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("position_name_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("probation_date")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("resign_date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("rfid_no")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sex_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sex_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title_name_en")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title_name_th")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("wc_name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("emp_no");
+
+                    b.ToTable("tb_employee_temp");
+                });
+
             modelBuilder.Entity("api_hrgis.Models.tb_holiday", b =>
                 {
                     b.Property<DateTime>("holiday")
@@ -231,6 +449,62 @@ namespace api_hrgis.Migrations
                     b.HasIndex("parent_org_code");
 
                     b.ToTable("tb_organization");
+                });
+
+            modelBuilder.Entity("api_hrgis.Models.tb_organization_diff", b =>
+                {
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Center (1) > Division (2) > Department(3) > Work center(4)");
+
+                    b.Property<string>("level_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("level_seq")
+                        .HasColumnType("int");
+
+                    b.Property<string>("org_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("org_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("parent_org_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("org_code");
+
+                    b.ToTable("tb_organization_diff");
+                });
+
+            modelBuilder.Entity("api_hrgis.Models.tb_organization_temp", b =>
+                {
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Center (1) > Division (2) > Department(3) > Work center(4)");
+
+                    b.Property<string>("level_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("level_seq")
+                        .HasColumnType("int");
+
+                    b.Property<string>("org_abb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("org_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("parent_org_code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("org_code");
+
+                    b.ToTable("tb_organization_temp");
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tb_role", b =>
@@ -379,6 +653,9 @@ namespace api_hrgis.Migrations
 
                     b.Property<TimeSpan>("time_out")
                         .HasColumnType("time");
+
+                    b.Property<string>("trainer_text")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
@@ -629,7 +906,7 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("course_no")
                         .IsRequired()
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(max)")
                         .HasComment("เลขคอร์ส 6 หลัก");
 
                     b.Property<DateTime?>("created_at")
@@ -640,7 +917,7 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("emp_no")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("file_name")
                         .IsRequired()
@@ -652,7 +929,7 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("org_code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("updated_at")
                         .HasColumnType("datetime");
@@ -666,12 +943,6 @@ namespace api_hrgis.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)")
                         .HasColumnName("year");
-
-                    b.HasIndex("course_no");
-
-                    b.HasIndex("emp_no");
-
-                    b.HasIndex("org_code");
 
                     b.ToTable("tr_survey_detail");
 
@@ -724,6 +995,9 @@ namespace api_hrgis.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("company")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("created_at")
                         .HasColumnType("datetime");
 
@@ -746,8 +1020,8 @@ namespace api_hrgis.Migrations
                     b.Property<string>("lastname_th")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("organization")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("org_code")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("remark")
                         .HasColumnType("nvarchar(max)");
@@ -773,6 +1047,8 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("trainer_no");
+
+                    b.HasIndex("org_code");
 
                     b.ToTable("tr_trainer");
 
@@ -924,33 +1200,6 @@ namespace api_hrgis.Migrations
                     b.Navigation("organization");
                 });
 
-            modelBuilder.Entity("api_hrgis.Models.tr_survey_detail", b =>
-                {
-                    b.HasOne("api_hrgis.Models.tr_course_master", "master_course")
-                        .WithMany()
-                        .HasForeignKey("course_no")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api_hrgis.Models.tb_employee", "employee")
-                        .WithMany()
-                        .HasForeignKey("emp_no")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
-                        .WithMany()
-                        .HasForeignKey("org_code")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("employee");
-
-                    b.Navigation("master_course");
-
-                    b.Navigation("organization");
-                });
-
             modelBuilder.Entity("api_hrgis.Models.tr_survey_setting", b =>
                 {
                     b.HasOne("api_hrgis.Models.tb_organization", "organization")
@@ -958,6 +1207,15 @@ namespace api_hrgis.Migrations
                         .HasForeignKey("org_code")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("organization");
+                });
+
+            modelBuilder.Entity("api_hrgis.Models.tr_trainer", b =>
+                {
+                    b.HasOne("api_hrgis.Models.tb_organization", "organization")
+                        .WithMany()
+                        .HasForeignKey("org_code");
 
                     b.Navigation("organization");
                 });

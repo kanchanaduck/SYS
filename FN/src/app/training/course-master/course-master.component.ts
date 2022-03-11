@@ -186,13 +186,14 @@ export class CourseMasterComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    let url = ""
-    if(self.is_center){
-      url = `CourseMasters`
-    }
-    else{
-      url = `CourseMasters/Employee/${self._emp_no}`
-    }
+    let url = `CourseMasters`
+    // let url = ""
+    // if(self.is_center){
+    //   url = `CourseMasters`
+    // }
+    // else{
+    //   url = `CourseMasters/Employee/${self._emp_no}`
+    // }
     await this.httpClient.get(`${environment.API_URL}${url}`, this.headers)
     .subscribe((response: any) => {
       self.courses = response;
