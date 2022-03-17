@@ -158,6 +158,7 @@ export class CourseMapComponent implements OnInit {
     console.log(response[0])
       if (this.isDtInitialized) {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.clear().draw();
           this.isDtInitialized = true
           dtInstance.destroy();
           this.dtTrigger.next();

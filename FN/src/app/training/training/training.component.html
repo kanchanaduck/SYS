@@ -1,23 +1,3 @@
-<!-- <div class="row">
-    <div class="col" *ngFor="let parent of training_menu">
-        <div class="card">
-            <div class="card-header">
-                <h5>{{ parent.menu_name }}</h5>
-            </div>
-            <div class="card-body">
-                <ul class="pl-1">
-                    <li *ngFor="let item of parent.children">
-                        <a routerLink="{{item.url}}" class="tx-13"
-                            [ngClass]="item.spare1==null? '':'disabled'"
-                        >{{ item.menu_name }}</a>
-                        <span *ngIf="item.spare1!=null" class="tx-10">(Not ready to test)</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <div class="row">
     <div class="col-3">
         <div class="az-content-label mg-b-5">Course</div>
@@ -62,7 +42,7 @@
 <hr>
 
 <div class="row">
-    <div class="col-4">
+    <div class="col-6">
         <div class="az-content-label mg-b-5">Setting master data</div>
         <p class="mg-b-20 tx-13">To setting person involve</p>
         <div class="list-group">
@@ -71,7 +51,7 @@
             <a routerLink="trainer" class="list-group-item list-group-item-action">Trainer management</a>
         </div>
     </div>
-    <div class="col-4">
+    <div class="col-6">
         <div class="az-content-label mg-b-5">Report and data</div>
         <p class="mg-b-20 tx-13">Report and data</p>
         <div class="list-group">
@@ -83,7 +63,7 @@
             <a routerLink="trainee-count" class="list-group-item list-group-item-action">Count trainee of course</a>
         </div>
     </div>
-    <div class="col-4">
+    <!-- <div class="col-4">
         <div class="az-content-label mg-b-5">Need survey</div>
         <p class="mg-b-20 tx-13">Need survey system</p>
     
@@ -91,5 +71,5 @@
             <a routerLink="survey-setting" class="list-group-item list-group-item-action">Need survey setting</a>
             <a routerLink="survey" class="list-group-item list-group-item-action">Need survey answer</a>
         </div>
-    </div>  
+    </div> -->  
 </div>

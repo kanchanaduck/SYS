@@ -26,8 +26,8 @@ export class CourseOpenComponent implements OnInit {
   ddl_mm: any = [];
   _getjwt: any;
   _emp_no: any;
-  _ogr_abb: string = "";
-  _ogr_code: string = "";
+  _org_abb: string = "";
+  _org_code: string = "";
   @ViewChild("txtgroup") txtgroup;
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
@@ -152,7 +152,7 @@ export class CourseOpenComponent implements OnInit {
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
-      order: [[0, 'asc']],
+      order: [[2, 'desc']],
       // responsive: true,
       autoWidth: false,
       columnDefs: [
@@ -160,11 +160,6 @@ export class CourseOpenComponent implements OnInit {
           targets: [9],
           orderable: false,
         },
-        {
-          targets: [7],
-          orderable: false,
-          width: "15%"
-        }
       ],
       // deferRender: true,
       // scrollX: true,
@@ -183,7 +178,7 @@ export class CourseOpenComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.txtgroup.nativeElement.value = this._ogr_abb;
+    this.txtgroup.nativeElement.value = this._org_code;
     this.txtdate_to.nativeElement.value = formatDate(this.today).toString();
     this.txtdate_from.nativeElement.value = formatDate(this.today).toString();
   }
@@ -218,7 +213,7 @@ export class CourseOpenComponent implements OnInit {
       console.log('send data: ', send_data);
 
       await this.service.axios_post('/CourseOpen/Posttr_course', send_data, 'Update data success.');
-      this.fnGet(this._ogr_code);
+      this.fnGet(this._org_code);
     }
   }
   fnClear() {
@@ -339,7 +334,7 @@ export class CourseOpenComponent implements OnInit {
     console.log('send data: ', send_data);
 
     await this.service.axios_put('/CourseOpen/' + frm.frm_course, send_data, 'Update data success.');
-    this.fnGet(this._ogr_code);
+    this.fnGet(this._org_code);
   }
   async fnDelete(item) {
     Swal.fire({
@@ -367,7 +362,7 @@ export class CourseOpenComponent implements OnInit {
       if (result.isConfirmed) {
         if (item.course_no === result.value) {
           await this.service.axios_delete('CourseOpen/' + result.value, 'Delete data success.');
-          this.fnGet(this._ogr_code);
+          this.fnGet(this._org_code);
           this.fnClear();
         } else {
           // console.log(item.course_no);
@@ -431,7 +426,7 @@ export class CourseOpenComponent implements OnInit {
       this.fnGet(environment.text.all);
     }
     else {
-      this.fnGet(this._ogr_code);
+      this.fnGet(this._org_code);
     }
   } // EndCheck box All
 
@@ -505,17 +500,17 @@ export class CourseOpenComponent implements OnInit {
       .subscribe((response: any) => {
         console.log(response);
         if (response.role.toUpperCase() == environment.role.committee) {
-          this._ogr_abb = response.organization.org_abb;
-          this._ogr_code = response.organization.org_code;
-          this.txtgroup.nativeElement.value = this._ogr_abb;
-          this.fnGet(this._ogr_code);
+          this._org_abb = response.organization.org_abb;
+          this._org_code = response.organization.org_code;
+          this.txtgroup.nativeElement.value = this._org_abb;
+          this.fnGet(this._org_code);
           this.visableSave = true;
           this.visableUpdate = false;
           this.visableClear = true;
         }
       }, (error: any) => {
         console.log(error);
-        this.fnGet(this._ogr_code);
+        this.fnGet(this._org_code);
         this.visableSave = false;
         this.visableUpdate = false;
         this.visableClear = false;
@@ -525,7 +520,7 @@ export class CourseOpenComponent implements OnInit {
     await this.service.gethttp('Center/' + emp_no)
       .subscribe((response: any) => {
         this.chk_disable = true;
-        this.fnGet(this._ogr_code);
+        this.fnGet(this._org_code);
       }, (error: any) => {
         console.log(error);
         this.chk_disable = false;
@@ -533,14 +528,14 @@ export class CourseOpenComponent implements OnInit {
   }
 
   async fnGetCourse(course_no: any) {
-    this.response = await this.service.axios_get('CourseMasters/SearchCourse/' + course_no + '/' + this._ogr_code);
+    this.response = await this.service.axios_get('CourseMasters/SearchCourse/' + course_no + '/' + this._org_code);
     console.log('fnGetCourse: ', this.response);
     if (this.response != undefined) {
       this.form.controls['frm_course_th'].setValue(this.response.course_name_th);
       this.form.controls['frm_course_en'].setValue(this.response.course_name_en);
       this.form.controls['frm_day'].setValue(this.response.days);
       this.form.controls['frm_qty'].setValue(this.response.capacity);
-      this.txtgroup.nativeElement.value = this.response.organization.org_abb;
+      this.txtgroup.nativeElement.value = this.response.org_code;
 
       var nameArr = this.response.master_courses_bands; // console.log(nameArr);
       this.array_chk.forEach(object => {

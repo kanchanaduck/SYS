@@ -1,8 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
+import axios from 'axios';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
+import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-course-target',
   templateUrl: './course-target.component.html',
@@ -13,15 +17,26 @@ export class CourseTargetComponent implements OnInit {
   // datatable
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
-  @ViewChild(DataTableDirective)
+  @ViewChild(DataTableDirective, {static: false})
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false
   // end datatable
 
-  @ViewChild("txtcourse_no") txtcourse_no;
-  loading: boolean = false;
+  course_no: string;
+  course: any = {};
+  courses: any = [];
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) { 
+  constructor(
+      private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, 
+      private service: AppServiceService,
+      private httpClient: HttpClient
+  ) { 
     config.backdrop = 'static'; // popup
     config.keyboard = false;
 
@@ -90,72 +105,103 @@ export class CourseTargetComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
 
-    this.fnGet("NULL");
+    this.clear_data();
+    this.get_courses();
+    this.datatable();
   }
 
-  async onKeyCourse(event: any) {
-    if (event.target.value.length >= 7 && event.target.value.length < 8) {
-      this.fnGet(event.target.value);
-    }else if(event.target.value.length == 0){
-      this.fnGet("NULL");
+  async get_courses(){
+    let self = this
+    await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
+
+    });
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+  }
+
+  async get_course() {
+    let self = this
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}CourseMasters/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.course = response
+          self.course.band_text = self.course.master_courses_bands.map(c => c.band).join(', ');
+          console.log(self.course.band_text )
+          self.datatable()
+        })
+        .catch(function(error){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          self.course = {};
+          return false;
+      });      
     }
   }
-  // Open popup Course
-  inputitem = 'course-target';
-  openCourse(content) {
-    //   size: 'lg' //sm, mb, lg, xl
-    this.v_course_no = "";
-    const modalRef = this.modalService.open(content, { size: 'lg' });
-    modalRef.result.then(
-      (result) => {
-        console.log(result);
-        if (result != "OK") {
-          this.txtcourse_no.nativeElement.value = "";
-          this.fnGet("NULL");
-          this.v_course_no = "";
-        }else{
-          this.fnGet(this.txtcourse_no.nativeElement.value);
-        }
-      },
-      (reason) => {
-        console.log(reason);
-        this.txtcourse_no.nativeElement.value = "";
-        this.fnGet("NULL");
-        this.v_course_no = "";
-      }
-    );
-  }
 
-  v_course_no: string = "";
-  addItemCourse(newItem: string) {
-    this.v_course_no = newItem;
-    this.txtcourse_no.nativeElement.value = newItem;
-  }
-
-  async fnGet(course_no:string) {
-    this.loading = true;
-    await this.service.gethttp('OtherData/GetCourseTarget?course_no=' + course_no)
-      .subscribe((response: any) => {
+  async datatable(){
+    await this.service.gethttp('OtherData/GetCourseTarget?course_no=' + this.course_no)
+    // await this.httpClient.get(`${environment.API_URL}OtherData/GetCourseTarget?course_no=${this.course_no}`)  
+    .subscribe((response: any) => {
         console.log(response);
 
         this.data_grid = response;
 
         // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
+        if (this.isDtInitialized) 
+        {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear();
+            dtInstance.draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
-        } else {
+        } 
+        else 
+        {
           this.isDtInitialized = true
           this.dtTrigger.next();
         }
-        this.loading = false;
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
-        this.loading = false;
-      });    
+
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) 
+        {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } 
+        else 
+        {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+      }); 
   }
 
   ngOnDestroy(): void {

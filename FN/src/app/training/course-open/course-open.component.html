@@ -37,7 +37,10 @@
             <div class="col-2">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
-                    <input type="text" class="form-control" readonly #txtgroup>
+                    <!-- <input type="text" class="form-control" readonly #txtgroup> -->
+                    <select name="txtgroup" #txtgroup class="form-control" readonly>
+                        <option value="{{ _org_code }}">{{ _org_abb }}</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -189,31 +192,31 @@
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
-                    <th>no.</th>
-                    <th>course no.</th>
-                    <th>start date</th>
-                    <th>end date</th>
-                    <th>time in</th>
-                    <th>time out</th>
-                    <th>place</th>
-                    <th>trainer</th>
-                    <th>group</th>
-                    <th>manage</th>
+                    <th class="text-center">no.</th>
+                    <th class="text-center">course no.</th>
+                    <th class="text-center">start date</th>
+                    <th class="text-center">end date</th>
+                    <th class="text-center">time in</th>
+                    <th class="text-center">time out</th>
+                    <th class="text-center">place</th>
+                    <th class="text-center">trainer</th>
+                    <th class="text-center">group</th>
+                    <th class="text-center">manage</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.course_no }}</td>
-                    <td>{{ item.date_start | date:'dd-MMM-yy'}}</td>
-                    <td>{{ item.date_end | date:'dd-MMM-yy'}}</td>
-                    <td>{{ item.time_in.substring(0, 5) }}</td>
-                    <td>{{ item.time_out.substring(0, 5) }}</td>
-                    <td>{{ item.place }}</td>
-                    <td>{{ item.trainer }}</td>
-                    <td>{{ item.org_code }} : {{ item.org_abb }}</td>
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td class="text-center">{{ item.course_no }}</td>
+                    <td class="text-center">{{ item.date_start | date:'dd-MMM-yy'}}</td>
+                    <td class="text-center">{{ item.date_end | date:'dd-MMM-yy'}}</td>
+                    <td class="text-center">{{ item.time_in.substring(0, 5) }}</td>
+                    <td class="text-center">{{ item.time_out.substring(0, 5) }}</td>
+                    <td class="text-center">{{ item.place }}</td>
+                    <td class="text-center">{{ item.trainer }}</td>
+                    <td class="text-center">{{ item.org_code }} : {{ item.org_abb }}</td>
                     <td class="text-center">
-                        <div *ngIf="item.org_abb != _ogr_abb; else elseBlock"><span></span></div>
+                        <div *ngIf="item.org_abb != _org_abb; else elseBlock"><span></span></div>
                         <ng-template #elseBlock>
                             <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div>
                             <ng-template #elseDate>

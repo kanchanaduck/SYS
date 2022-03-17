@@ -48,13 +48,14 @@ namespace api_hrgis.Controllers
             var tr_course_master = await _context.tr_course_master
                                         .Include(e => e.master_courses_bands)
                                         .Include(e => e.master_courses_previous_courses)
+                                        .Include(e => e.organization)
                                         .Where(e => e.course_no == course_no)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync();
 
             if (tr_course_master == null)
             {
-                return NotFound();
+                return NotFound("Course no. is not found");
             }
 
             return tr_course_master;

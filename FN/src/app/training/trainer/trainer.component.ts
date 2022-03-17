@@ -38,6 +38,7 @@ export class TrainerComponent implements OnInit {
   _org_code: any;
   _org_abb: any;
   is_center: boolean = false;
+  is_committee: boolean = false;
 
   constructor(
     private service: AppServiceService, 
@@ -52,7 +53,7 @@ export class TrainerComponent implements OnInit {
     this._div_code = this._getjwt.user.div_code; // set dept_code
     this._dept_code = this._getjwt.user.dept_code; // set dept_code
 
-    this.check_is_center()
+    this.check_is_committee()
     this.trainer.trainer_type = 'Internal';
 
     this.dtOptions = {
@@ -102,10 +103,14 @@ export class TrainerComponent implements OnInit {
       order: [[8, 'desc'],[0, 'asc']],
       rowGroup: {
         dataSrc: 8
-      },
+      }, 
       columnDefs: [ 
         {
-          targets: [ 0,8],
+          targets: [ 10 ],
+          visible: false
+        },
+        {
+          targets: [ 9, 10],
           orderable: false 
         } 
       ],
@@ -120,38 +125,31 @@ export class TrainerComponent implements OnInit {
     this.dtTrigger.unsubscribe();
   }
 
-
-  async check_is_center() {
+  async check_is_committee() {
     let self = this
-    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,this.headers)
-    .then(function (response) {
-      self.is_center = true;
-      self.dtOptions.columnDefs.push(
+    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_committee = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+        self.trainer.org_code = response.org_code
+        self.dtOptions.columnDefs.push(
         {
-          targets: [8],
+          targets: [ 10 ],
           visible: true
-        },
-        {
-          targets: [ 0,7,8],
-          orderable: false 
-        } 
-      )
-      console.log(self.dtOptions.columnDefs)
-    })
-    .catch(function (error) {
-      console.log(error);
-      self.dtOptions.columnDefs.push(
-        {
-          targets: [8],
-          visible: false
-        } 
-      )
-    });
+        });
+      }, (error: any) => {
+        console.log(error);
+        self.is_committee = false;
+      });
+
+      
   }
 
   async get_trainers(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Trainers`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Trainers/Owner/${this._org_code}`, this.headers)
     .subscribe((response: any) => {
       self.trainers = response;
       if (this.isDtInitialized) {
@@ -188,9 +186,8 @@ export class TrainerComponent implements OnInit {
       console.log(response)
       self.trainer = response
       self.trainer.trainer_type = "Internal"
-      self.trainer.title_name_en = self.trainer.title_name_en
-      self.trainer.firstname_en = self.trainer.firstname_en
-      self.trainer.lastname_en = self.trainer.lastname_en
+      self.trainer.company = "CPT"
+      self.trainer.org_code = self._org_code
     }) 
     .catch(function (error) {
       console.log(error)
@@ -221,6 +218,7 @@ export class TrainerComponent implements OnInit {
   async change_trainer_type(event: any) {
     this.reset_form_trainer()
     this.trainer.trainer_type = event;
+    this.trainer.org_code = this._org_code;
     this.errors = {};
   }
 

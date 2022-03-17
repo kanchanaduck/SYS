@@ -1,24 +1,62 @@
-<div class="row text-capitalize">
+<div class="row">
     <div class="col-4 offset-4">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text">
-                    course no.
-                </div>
-            </div>
+        <div class="form-group">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>
             <input type="text" class="form-control" 
-                placeholder="Enter key..." 
+                placeholder="CPT-00X-00X" 
                 #txtcourse_no
                 name="course_no"
                 [(ngModel)]="course_no"
             >
         </div>
-        <p class="tx-danger tx-13">{{ error }}</p>
     </div>
 </div>
-<div class="text-center">
-    <button type="button" class="btn btn-sm btn-az-primary"
-        (click)="download()">
-        <i class="fas fa-cloud-download-alt"></i> Download 
-    </button>
+<div class="row mt-3 text-center">
+    <div class="col-12">
+        <button type="button" class="btn btn-sm btn-az-primary"
+            (click)="get_course()">
+            <i class="fa fa-search"></i> Search
+        </button>
+        <button type="button" class="btn btn-sm btn-az-primary"
+            [disabled]="download_button_disabled"
+            (click)="download()">
+            <i class="fas fa-cloud-download-alt"></i> Download 
+        </button>
+    </div>
+</div>
+<div class="row mt-3" *ngIf="(course | json) != '{}'">
+    <div class="col-10 offset-1 card card-body tx-13 p-1">
+        <dl class="row mb-1">
+            <dt class="col-sm-2">COURSE NO.: </dt>
+            <dd class="col-sm-2">{{ course.course_no }}</dd>
+            <dt class="col-sm-3">THAI COURSE NAME:</dt>
+            <dd class="col-sm-5">{{ course.course_name_th || '-' }}</dd>
+        </dl>
+        <dl class="row mt-1">
+            <dt class="col-sm-3 offset-4">ENGLISH COURSE NAME:</dt>
+            <dd class="col-sm-5">{{ course.course_name_en || '-' }}</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">NUMBER OF TRAINEE: </dt>
+            <dd class="col-sm-2">{{ course.courses_registrations.length }}</dd>
+            <dt class="col-sm-2">FROM:</dt>
+            <dd class="col-sm-2">
+                <span>{{ course.date_start | date:'dd-MMM-yy' }}</span>
+                <span>{{ course.time_in.substring(0,5).toString() }}</span>
+            </dd>
+            <dt class="col-sm-2">TO:</dt>
+            <dd class="col-sm-2">
+                <span>{{ course.date_end | date:'dd-MMM-yy' }}</span>
+                <span>{{ course.time_out.substring(0,5).toString()  }}</span>
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">GROUP:</dt>
+            <dd class="col-sm-2">{{ course.organization.org_abb+"("+course.org_code+")" }}</dd>
+            <dt class="col-sm-2">DAY: </dt>
+            <dd class="col-sm-2">{{ course.days }}</dd>
+            <dt class="col-sm-2">CAPACITY:</dt>
+            <dd class="col-sm-2">{{ course.capacity }}</dd>
+        </dl>
+    </div>
 </div>

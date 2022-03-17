@@ -3,13 +3,11 @@
         <h5>Responsibility of center</h5>
         <ul>
             <li>Setting master data</li>
-            <li>Approving course registration at the final </li>
-            <li>Being able to see the learning and teaching information of the whole company</li>
+            <li>Being able to see the learning and teaching information of the whole company, except add, edit, and delete data of committee</li>
         </ul>
         <ul>
             <li>จัดทำ master data</li>
-            <li>อนุมัติการลงทะเบียนคอร์สในขั้นตอนสุดท้าย</li>
-            <li>สามารถมองเห็นข้อมูลการเรียนการสอนของทั้งบริษัท</li>
+            <li>สามารถมองเห็นข้อมูลการเรียนการสอนของทั้งบริษัท แต่ไม่สามารถเพิ่ม ลบ แก้ไขข้อมูลของ committee ได้</li>
         </ul>
     </div>
 </div> 
@@ -59,7 +57,7 @@
                 [disabled]="true">
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Status</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">STATUS</label>
             <input type="text" name="employed_status" class="form-control" required disabled="true"
                 [(ngModel)]="center.employed_status" 
             >
@@ -88,7 +86,7 @@
             <th class="text-center">DIVISION</th>
             <th class="text-center">DEPARTMENT</th>
             <th class="text-center">STATUS</th>
-            <th class="text-center" *ngIf="is_center">MANAGE</th>
+            <th class="text-center not-export" *ngIf="is_center">MANAGE</th>
         </tr>
     </thead>
     <tbody>
@@ -101,7 +99,7 @@
             <td>{{ center.div_abb }}</td>
             <td>{{ center.dept_abb }}</td>
             <td>{{ center.employed_status }}</td>
-            <td class="text-center" *ngIf="is_center">
+            <td class="text-center not-export" *ngIf="is_center">
                 <a href="javascript:;" (click)="delete_center(center.emp_no)"><i class="far fa-trash-alt"></i></a>
             </td>
         </tr>

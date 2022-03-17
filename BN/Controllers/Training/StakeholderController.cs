@@ -209,7 +209,7 @@ namespace api_hrgis.Controllers
                     return NotFound("Organization is not found");
                 }
             }
-
+            
             if(tr_stakeholder.Count()>0){
 
                 var stakeholder = await _context.tr_stakeholder

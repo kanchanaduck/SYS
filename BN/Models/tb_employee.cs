@@ -57,6 +57,7 @@ namespace api_hrgis.Models
         public DateTime? probation_date { get; set;}
         [Column(TypeName = "date")]
         public DateTime? resign_date { get; set;}
+        public string employed_status { get; set;}
         [Column(TypeName = "date")]
         public DateTime? birthday { get; set;}
         public string id_card_no { get; set;}
@@ -64,12 +65,6 @@ namespace api_hrgis.Models
         public string email { get; set;}
         public string email_active_date { get; set;}
         public string email_active { get; set;}
-        public string employed_status{
-            get
-            {
-                return resign_date==null? "Employed":(resign_date < DateTime.Today) ? "Resigned":"Employed";
-            }
-        }
         public List<tr_course_registration> courses_registrations { get; set; }
         public virtual ICollection<tr_stakeholder> stakeholders { get; set; }
     }

@@ -80,13 +80,17 @@ export class CenterComponent implements OnInit {
             buttons: [
                 {
                     extend: 'excel',
+                    title: null,
+                    exportOptions: {
+                      columns: [ 0,1,2,3,4,5,6,7 ]
+                    },
                     text: '<i class="far fa-file-excel"></i> Excel</button>',
                 },
             ]
           },
         ],
       },
-      order: [ [1, 'asc']],
+      order: [ [0, 'asc']],
       /* columnDefs: [ {
         targets: [ 0 ],
         "orderable": false

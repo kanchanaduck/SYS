@@ -20,7 +20,6 @@ namespace api_hrgis.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
         public EmployeesController(ApplicationDbContext context)
         {
             _context = context;
@@ -28,9 +27,35 @@ namespace api_hrgis.Controllers
 
         // GET: api/Employees
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee()
         {
             return await _context.tb_employee.ToListAsync();
+        }
+
+        // GET: api/Employees/J4Up
+        // GET: api/Employees/J4Up?org_code=2230&employed_status=employed
+        // GET: api/Employees/J4Up
+        [HttpGet("J4Up")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee_J4_up(string org_code, string employed_status)
+        {
+            string[] j4up_band = {"J4","M1","M2","JP"};
+
+            var j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+                                e.employed_status.ToUpper()==employed_status.ToUpper() &&
+                                (e.div_code==org_code || e.dept_code==org_code)
+                                ).ToListAsync();
+
+            if(j4==null){
+
+                var organization = await _context.tb_organization.Include(e=>e.org_code==org_code).FirstOrDefaultAsync();
+
+                j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+                                e.employed_status.ToUpper()==employed_status.ToUpper() &&
+                                e.div_code==organization.parent_org_code)
+                                .ToListAsync();
+            }
+
+            return j4;
         }
 
         // GET: api/Employees/Course
@@ -68,7 +93,7 @@ namespace api_hrgis.Controllers
                             .ToListAsync();
             }
         }
-
+        
         // GET: api/Employees/Organization/55
         // GET: api/Employees/Organization/5510
         // GET: api/Employees/Organization/55/employed
@@ -99,6 +124,38 @@ namespace api_hrgis.Controllers
             }
         }
 
+        // GET: api/Employees/Organization/55/j4up
+        // GET: api/Employees/Organization/5510/j4up/
+        // GET: api/Employees/Organization/55/j4up/employed
+        // GET: api/Employees/Organization/5510/j4up/employed
+        // GET: api/Employees/Organization/55/j4up/resigned
+        // GET: api/Employees/Organization/5510/j4up/resigned
+        [HttpGet("Organization/{org_code}/j4up/{employed_status?}")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee_j4_up_from_org(string org_code, string employed_status)
+        {
+            string[] j4up_band = {"J4","M1","M2","JP"};
+
+            var j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+                                e.employed_status.ToUpper()==employed_status.ToUpper() &&
+                                e.dept_code==org_code).ToListAsync();
+
+            Console.WriteLine("Count : "+j4.Count());
+
+            if(j4==null){
+
+                var organization = await _context.tb_organization.Include(e=>e.org_code==org_code).FirstOrDefaultAsync();
+
+                Console.WriteLine("Division: "+organization.parent_org_code);
+
+                j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+                                e.employed_status.ToUpper()==employed_status.ToUpper() &&
+                                e.div_code==organization.parent_org_code)
+                                .ToListAsync();
+            }
+
+            return j4;
+        }
+
         // GET: api/Employees/5
         [HttpGet("{id}")]
         public async Task<ActionResult<tb_employee>> GetEmployees(string id)
@@ -107,7 +164,7 @@ namespace api_hrgis.Controllers
 
             if (employees == null)
             {
-                return NotFound("Data not found");
+                return NotFound("Employee is not found");
             }
 
             return employees;
@@ -189,5 +246,9 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_employee.Any(e => e.emp_no == id);
         }
+        /* private string[] band_j4_up(){
+            string[] band_j4_up =  {"J4","M1","M2","JP"};
+            return band_j4_up;
+        } */
     }
 }

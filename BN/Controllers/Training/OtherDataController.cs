@@ -65,7 +65,7 @@ namespace api_hrgis.Controllers
             return Ok(dt);
         }
 
-        [HttpGet("GetCourseTarget")]
+        /* [HttpGet("GetCourseTarget")]
         public IActionResult GetCourseTarget(string course_no)
         {
             var query = string.Format(@"select distinct substring(tc.course_no,1,7) as course_no, tc.course_name_en, tc.course_name_th, tcb.band from 
@@ -123,6 +123,45 @@ namespace api_hrgis.Controllers
             }
 
             return Ok(list);
+        } */
+
+        [HttpGet("GetCourseTarget")]
+        public async Task<IActionResult> GetCourseTarget(string course_no)
+        {
+            var course_master = await _context.tr_course_master
+                                        .Include(e => e.master_courses_bands)
+                                        .Where(e => e.course_no == course_no)
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync();
+            if(course_master==null){
+                return NotFound("Course no. is not found");
+            }
+
+            if(course_master.master_courses_bands==null){
+                return BadRequest("This course is not defined the bands");
+            }
+
+            List<string> bands= new List<string>();
+            foreach (var item in course_master.master_courses_bands)
+            {
+                bands.Add(item.band);
+            }
+
+            var student_in_target_band = await _context.tb_employee
+                                        .Where(e=>bands.Contains(e.band) && e.employed_status=="EMPLOYED").ToListAsync();
+
+            var learnt = await _context.tb_employee.FromSqlRaw(@"select e.* from tb_employee e, tr_course_registration r
+                    where e.emp_no=r.emp_no and r.last_status='APPROVED' and course_no='{0}'", course_no).ToListAsync();
+
+            var target = student_in_target_band.Except(learnt);
+            /* var list1 = new List<int> { 1, 2, 3, 4, 5};
+            var list2 = new List<int> { 3, 4, 5, 6, 7 };
+
+            var list3 = list1.Except(list2); //list3 contains only 1, 2
+            var list4 = list2.Except(list1); //list4 contains only 6, 7
+            var resultList = list3.Concat(list4).ToList(); //resultList contains 1, 2, 6, 7 */
+
+            return Ok(target);
         }
 
         [HttpGet("GetEmployeeTraining")]

@@ -1,4 +1,4 @@
-<div class="card card-body mb-3" *ngIf="is_center">
+<div class="card card-body mb-3" *ngIf="is_committee">
     <form (ngSubmit)="save_trainer()">
     <div class="row text-center">
         <div class="offset-4 col-4">
@@ -50,7 +50,7 @@
                 <option>MR.</option>
                 <option>MRS.</option>
                 <option>MS.</option>
-                </select>
+            </select>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">FIRSTNAME</label>
@@ -73,6 +73,15 @@
     </div>
     <div class="row">
         <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COMPANY</label>
+            <input type="text" name="company" class="form-control" required 
+                [(ngModel)]="trainer.company"
+                [disabled]="trainer.trainer_type!='External'? true:false">
+            <div class="text-danger" *ngIf="errors" >
+                <p *ngFor="let e of errors.company">{{ e }}</p>
+            </div>
+        </div><!-- form-group -->
+        <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">DIVISION</label>
             <input type="text" name="div_abb" class="form-control" required 
                 [(ngModel)]="trainer.div_abb"
@@ -84,13 +93,20 @@
                 [(ngModel)]="trainer.dept_abb"
                 [disabled]="true">
         </div><!-- form-group -->
+    </div>
+    <div class="row">
         <div class="form-group col mb-0 p-1">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">ORGANIZATION</label>
-            <input type="text" name="organization" class="form-control" required 
-                [(ngModel)]="trainer.organization"
-                [disabled]="trainer.trainer_type!='External'? true:false">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">TRAINER OWNER</label>
+            <!-- <input type="text" name="org_code" class="form-control" required 
+                [(ngModel)]="trainer.org_code"> -->
+            <select type="text" name="org_code" class="form-control" required 
+                [(ngModel)]="trainer.org_code" 
+                [disabled]="true"
+                >
+                <option value="{{ _org_code }}">{{ _org_abb }}</option>
+            </select>
             <div class="text-danger" *ngIf="errors" >
-                <p *ngFor="let e of errors.organization">{{ e }}</p>
+                <p *ngFor="let e of errors.org_code">{{ e }}</p>
             </div>
         </div><!-- form-group -->
         <div class="form-group col mb-0 p-1">
@@ -99,10 +115,8 @@
                 [(ngModel)]="trainer.employed_status" 
             >
         </div><!-- form-group -->
-    </div>
-    <div class="row">
-        <div class="form-group col text-right">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600"> </label>
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">OK</label>
             <div>
                 <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
                 <button type="button" class="btn btn-dark btn-sm" (click)="reset_form_trainer()">Clear</button>
@@ -136,9 +150,9 @@
             <td>{{ t.firstname_en  }} </td>
             <td>{{ t.lastname_en  }} </td>
             <td>{{ t.company  }} </td>
-            <td>{{ t.div_abb+" - "+t.dept_abb  }} </td>
+            <td>{{ t.div_abb==null? "":t.div_abb+" - "+t.dept_abb  }} </td>
             <td>{{ t.trainer_owner  }} </td>
-            <td>{{ t.employed_status }}</td>
+            <td [ngClass]="t.employed_status=='RESIGNED'? 'tx-danger':''">{{ t.employed_status }}</td>
             <td>{{ t.trainer_type }}</td>
             <td class="text-center">
                 <a [routerLink]="['/training/trainer-history', t.trainer_no]"><i class="far fa-eye"></i></a>

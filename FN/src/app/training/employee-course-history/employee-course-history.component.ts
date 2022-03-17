@@ -76,7 +76,7 @@ export class EmployeeCourseHistoryComponent implements OnInit {
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      // order: [[1, 'desc']],
+      order: [[3, 'desc']],
     };
 
     this.fnGet("NULL");

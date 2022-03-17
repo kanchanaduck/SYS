@@ -46,7 +46,7 @@
         <div class="form-group col mb-0 p-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
             <ng-select 
-                [items]="employees"
+                [items]="employees_j4up"
                 bindLabel="emp_no"
                 bindValue="emp_no"
                 [multiple]="true"
@@ -99,6 +99,7 @@
                 <div *ngFor="let j of i.stakeholders">
                     <div *ngIf="j.role=='COMMITTEE'">
                         {{ j.emp_no + ": " + j.employee.shortname_en }}
+                        <span class="tx-danger">{{ j.employee.employed_status=="RESIGNED"? "(Resigned)":""}}</span>
                     </div>
                 </div>
             </td>

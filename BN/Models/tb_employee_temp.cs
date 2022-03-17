@@ -39,6 +39,7 @@ namespace api_hrgis.Models
         public DateTime? probation_date { get; set;}
         [Column(TypeName = "date")]
         public DateTime? resign_date { get; set;}
+        public string employed_status { get; set;}
         [Column(TypeName = "date")]
         public DateTime? birthday { get; set;}
         public string id_card_no { get; set;}

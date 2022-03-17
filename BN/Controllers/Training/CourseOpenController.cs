@@ -53,7 +53,7 @@ namespace api_hrgis.Controllers
 
             if (tr_course == null)
             {
-                return NotFound();
+                return NotFound("Course no. is not found");
             }
 
             return tr_course;
@@ -73,7 +73,7 @@ namespace api_hrgis.Controllers
 
             if (tr_course == null)
             {
-                return NotFound();
+                return NotFound("Course no. is not found");
             }
 
             return tr_course;
@@ -320,7 +320,7 @@ namespace api_hrgis.Controllers
             {
                 if (tr_courseExists(tr_course.course_no))
                 {
-                    return Conflict();
+                    return Conflict(_config.GetValue<string>("Text:duplication"));
                 }
                 else
                 {

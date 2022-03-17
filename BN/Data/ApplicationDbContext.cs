@@ -105,10 +105,8 @@ namespace api_hrgis.Data
         public DbSet<tb_band> tb_band { get; set; }
         public DbSet<tb_employee> tb_employee { get; set; }
         public DbSet<tb_employee_temp> tb_employee_temp { get; set; }
-        public DbSet<tb_employee_diff> tb_employee_diff { get; set; }
         public DbSet<tb_organization> tb_organization { get; set; }
         public DbSet<tb_organization_temp> tb_organization_temp { get; set; }
-        public DbSet<tb_organization_diff> tb_organization_diff { get; set; }
         public DbSet<tb_menus> tb_menus { get; set; }
         public DbSet<tb_role> tb_role { get; set; }
         public DbSet<tr_center> tr_center { get; set; }

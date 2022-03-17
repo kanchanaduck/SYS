@@ -47,6 +47,10 @@ namespace api_hrgis.Controllers
             dt = get_oracle_datatable(@"select * from cpt_employees");
             Console.WriteLine("Count row"+dt.Rows.Count);
 
+            var employee_temp = _context.tb_employee_temp.ToList();
+            _context.tb_employee_temp.RemoveRange(employee_temp);
+            _context.SaveChanges();
+
             DumpDataTableToDB("tb_employee_temp",dt,dt.Rows.Count);
 
             Console.WriteLine("Start register..");
