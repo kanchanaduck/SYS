@@ -147,12 +147,12 @@
     </div>
 </div>
 
-<ul class="nav nav-tabs text-capitalize" id="myTab" role="tablist">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">your division.</a>
+        <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">Your organization</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">other division.</a>
+        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">Other organization</a>
     </li>
 </ul>
 <div class="tab-content" id="myTabContent">
@@ -161,7 +161,7 @@
             <thead>
                 <tr class="text-uppercase">
                     <th>no.</th>
-                    <th>emp no</th>
+                    <th>emp no.</th>
                     <th>title</th>
                     <th>firstname</th>
                     <th>lastname</th>
@@ -204,7 +204,7 @@
             <thead>
                 <tr class="text-uppercase">
                     <th>no.</th>
-                    <th>emp no</th>
+                    <th>emp no.</th>
                     <th>title</th>
                     <th>firstname</th>
                     <th>lastname</th>
@@ -240,7 +240,7 @@
     </div>
 </div>
 
-<ng-template #contentCourse let-modal>
+<ng-template #contentCourse let-modal class="fade">
     <div class="modal-header">
         <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">

@@ -15,6 +15,7 @@
                     <th class="text-center">NO.</th>
                     <th class="text-center">COURSE NO.</th>
                     <th class="text-center">THAI COURSE NAME</th>
+                    <th class="text-center">ENGLISH COURSE NAME</th>
                     <th class="text-center">START</th>
                     <th class="text-center">END</th>
                     <th class="text-center">ORGANIZATION</th>
@@ -27,6 +28,7 @@
                 <tr *ngFor="let item of data_grid; let i = index">
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.course_no }}</td>
+                    <td>{{ item.course_name_th }}</td>
                     <td>{{ item.course_name_en }}</td>
                     <td>{{ item.date_start | date:'dd-MMM-yy' }}</td>
                     <td>{{ item.date_end | date:'dd-MMM-yy' }}</td>

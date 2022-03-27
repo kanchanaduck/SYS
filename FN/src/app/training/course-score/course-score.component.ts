@@ -60,8 +60,10 @@ export class CourseScoreComponent implements OnInit {
         frm_course_name: ['', [Validators.required]],
         frm_emp_no: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
         frm_emp_name: ['', [Validators.required]],
-        frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
-        frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+        // frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+        // frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+        frm_pre_test_score: [''],
+        frm_post_test_score: [''],
       },
     );
 
@@ -141,16 +143,16 @@ export class CourseScoreComponent implements OnInit {
     }
     console.log(JSON.stringify(this.form.value, null, 2));
 
-    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.invalid_department
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-      })
+    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: "",
+    //     text: environment.text.invalid_department
+    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+    //   })
 
-      return;
-    }
+    //   return;
+    // }
 
     if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
       Swal.fire({
@@ -191,16 +193,16 @@ export class CourseScoreComponent implements OnInit {
     // console.log(JSON.stringify(this.form.value, null, 2));
     // console.log(this.form.value);
 
-    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.invalid_department
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-      })
+    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: "",
+    //     text: environment.text.invalid_department
+    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+    //   })
 
-      return;
-    }
+    //   return;
+    // }
 
     if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
       Swal.fire({

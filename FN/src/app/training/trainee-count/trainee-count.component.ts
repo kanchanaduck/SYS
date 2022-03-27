@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
+import axios from 'axios';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-trainee-count',
@@ -23,7 +25,15 @@ export class TraineeCountComponent implements OnInit {
   @ViewChild("txtcourse_no") txtcourse_no;
   @ViewChild("txtdate_from") txtdate_from;
   @ViewChild("txtdate_to") txtdate_to;
-
+  course_no: string;
+  course: any = {};
+  courses: any = [];
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
   constructor(private modalService: NgbModal, config: NgbModalConfig, private service: AppServiceService) {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
@@ -83,30 +93,53 @@ export class TraineeCountComponent implements OnInit {
           }
         ],
       },
-      container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      "order": [[ 0, "desc" ]]
     };
+
+    this.get_courses()
   }
   ngAfterViewInit() {
     this.txtdate_from.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth(), 1)).toString();
     this.txtdate_to.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0)).toString();
-    this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+    // this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
   }
 
-  async onKeyCourse(event: any) {
+  async get_courses(){
+    let self = this
+    await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
+
+    });
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+  }
+
+ /*  async onKeyCourse(event: any) {
     if (event.target.value.length >= 3 && event.target.value.length < 15) {
       this.fnGet(event.target.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
     }else if(event.target.value.length == 0){
       this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
     }
-  }
+  } */
   onDateSelectTo(event) {
     console.log('onDateSelectTo: ', event);
-    this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+    // this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
   }
   onDateSelectFrom(event) {
     console.log('onDateSelectFrom: ', event);
-    this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+    // this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
   }
 
   // Open popup Course
@@ -120,16 +153,16 @@ export class TraineeCountComponent implements OnInit {
         console.log(result);
         if (result != "OK") {
           this.txtcourse_no.nativeElement.value = "";
-          this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+          // this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
           this.v_course_no = "";
         }else{
-          this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+          // this.fnGet(this.txtcourse_no.nativeElement.value, this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
         }
       },
       (reason) => {
         console.log(reason);
         this.txtcourse_no.nativeElement.value = "";
-        this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
+        // this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
         this.v_course_no = "";
       }
     );
@@ -141,9 +174,11 @@ export class TraineeCountComponent implements OnInit {
     this.txtcourse_no.nativeElement.value = newItem;
   }
 
-  async fnGet(course_no: string, date_start: string, date_end: string) {
-    await this.service.gethttp('OtherData/GetCountTrainee?course_no=' + course_no + '&date_start=' + date_start + '&date_end=' + date_end)
-      .subscribe((response: any) => {
+  // async fnGet(course_no: string, date_start: string, date_end: string) {
+  async get_course(){
+    // await this.service.gethttp('OtherData/GetCountTrainee?course_no=' + course_no + '&date_start=' + date_start + '&date_end=' + date_end)
+    await this.service.gethttp(`OtherData/GetCountTrainee?course_no=${this.course_no}`)  
+    .subscribe((response: any) => {
         console.log(response);
 
         this.data_grid = response;

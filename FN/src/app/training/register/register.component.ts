@@ -24,9 +24,11 @@ export class RegisterComponent implements OnInit {
 
   dtOptionsOther: any = {};
   dtTriggerOther: Subject<any> = new Subject();
-  // @ViewChild(DataTableDirective) 
-  dtElementOther: DataTableDirective;
+  @ViewChild(DataTableDirective) dtElementOther: DataTableDirective;
   isDtInitializedOther: boolean = false
+  // @ViewChild(DataTableDirective) 
+  // dtElement: DataTableDirective;
+  // dtElementOther: DataTableDirective;
   // end datatable
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
@@ -68,6 +70,7 @@ export class RegisterComponent implements OnInit {
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
     this.dtOptions = {
+      destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -147,6 +150,7 @@ export class RegisterComponent implements OnInit {
       ],
     };
     this.dtOptionsOther = {
+      destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -510,6 +514,8 @@ export class RegisterComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -520,6 +526,8 @@ export class RegisterComponent implements OnInit {
 
         if (this.isDtInitializedOther) {
           this.dtElementOther.dtInstance.then((dtInstance1: DataTables.Api) => {
+            dtInstance1.clear().draw();
+            this.isDtInitializedOther = true
             dtInstance1.destroy();
             this.dtTriggerOther.next();
           });

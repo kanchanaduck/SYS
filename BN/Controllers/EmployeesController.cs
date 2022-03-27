@@ -42,13 +42,16 @@ namespace api_hrgis.Controllers
 
             var j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
                                 e.employed_status.ToUpper()==employed_status.ToUpper() &&
-                                (e.div_code==org_code || e.dept_code==org_code)
+                                e.dept_code==org_code
                                 ).ToListAsync();
+
+            Console.WriteLine("J4: "+j4);
+            Console.WriteLine("J4: "+j4.Count());
 
             if(j4==null){
 
                 var organization = await _context.tb_organization.Include(e=>e.org_code==org_code).FirstOrDefaultAsync();
-
+                Console.WriteLine("Parent: "+organization.parent_org_code);
                 j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
                                 e.employed_status.ToUpper()==employed_status.ToUpper() &&
                                 e.div_code==organization.parent_org_code)
@@ -137,13 +140,14 @@ namespace api_hrgis.Controllers
 
             var j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
                                 e.employed_status.ToUpper()==employed_status.ToUpper() &&
-                                e.dept_code==org_code).ToListAsync();
+                                (e.div_code==org_code || e.dept_code==org_code)).ToListAsync();
 
+            Console.WriteLine("J4: "+j4);
             Console.WriteLine("Count : "+j4.Count());
 
-            if(j4==null){
+            if(j4.Count()<=0){
 
-                var organization = await _context.tb_organization.Include(e=>e.org_code==org_code).FirstOrDefaultAsync();
+                var organization = await _context.tb_organization.Where(e=>e.org_code==org_code).FirstOrDefaultAsync();
 
                 Console.WriteLine("Division: "+organization.parent_org_code);
 

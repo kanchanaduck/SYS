@@ -4,8 +4,8 @@
             <thead>
                 <tr class="text-uppercase">
                     <th [width]="100">course no.</th>
-                    <th>course name en</th>
-                    <th>course name th</th>
+                    <th>english course name</th>
+                    <th>thai course name</th>
                     <th [width]="90">group</th>
                 </tr>
             </thead>
@@ -15,9 +15,9 @@
                     <td>{{ item.course_name_en }}</td>
                     <td>{{ item.course_name_th }}</td>
                     <td>
-                        <div *ngIf="item.org_abb != null; else elseBlock">{{ item.org_code }} : {{ item.org_abb }}</div>
+                        <div *ngIf="item.org_abb != null; else elseBlock">{{ item.org_abb+" ("+ item.org_code+")" }}</div>
                         <ng-template #elseBlock>
-                            {{ item.org_code }}
+                            {{ item.organization.org_abb+" ("+item.org_code+")" }}
                         </ng-template>
                     </td>
                 </tr>

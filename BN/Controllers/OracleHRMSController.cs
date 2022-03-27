@@ -42,20 +42,20 @@ namespace api_hrgis.Controllers
         [HttpGet("Employee/Dump")]
         public async Task<ActionResult<IEnumerable<tb_employee>>> Employee_Dump()
         {
-            DataTable dt = new DataTable();
+            // DataTable dt = new DataTable();
 
-            dt = get_oracle_datatable(@"select * from cpt_employees");
-            Console.WriteLine("Count row"+dt.Rows.Count);
+            // dt = get_oracle_datatable(@"select * from cpt_employees");
+            // Console.WriteLine("Count row"+dt.Rows.Count);
 
-            var employee_temp = _context.tb_employee_temp.ToList();
-            _context.tb_employee_temp.RemoveRange(employee_temp);
-            _context.SaveChanges();
+            // var employee_temp = _context.tb_employee_temp.ToList();
+            // _context.tb_employee_temp.RemoveRange(employee_temp);
+            // _context.SaveChanges();
 
-            DumpDataTableToDB("tb_employee_temp",dt,dt.Rows.Count);
+            // DumpDataTableToDB("tb_employee_temp",dt,dt.Rows.Count);
 
             Console.WriteLine("Start register..");
             var tb_employees = await _context.tb_employee
-                            .FromSqlRaw("SELECT A.* FROM tb_employee_temp A LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL")
+                            .FromSqlRaw("SELECT A.* FROM tb_employee A LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL")
                             .ToListAsync();
 
             Console.WriteLine(tb_employees.Count());

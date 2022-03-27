@@ -89,7 +89,7 @@
                                 <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
                             </div>
                         </div>
-                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_from" #txtdate_from readonly ngbDatepicker #date_from="ngbDatepicker" (click)="date_from.toggle()" (dateSelect)="onDateSelectFrom($event)">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_from" #txtdate_from ngbDatepicker #date_from="ngbDatepicker" (click)="date_from.toggle()" (dateSelect)="onDateSelectFrom($event)">
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                                 <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
                             </div>
                         </div>
-                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_to" #txtdate_to readonly ngbDatepicker #date_to="ngbDatepicker" (click)="date_to.toggle()" (dateSelect)="onDateSelectTo($event)">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="txtdate_to" #txtdate_to ngbDatepicker #date_to="ngbDatepicker" (click)="date_to.toggle()" (dateSelect)="onDateSelectTo($event)">
                     </div>
                 </div>
             </div>
@@ -212,9 +212,9 @@
                     <td class="text-center">{{ item.date_end | date:'dd-MMM-yy'}}</td>
                     <td class="text-center">{{ item.time_in.substring(0, 5) }}</td>
                     <td class="text-center">{{ item.time_out.substring(0, 5) }}</td>
-                    <td class="text-center">{{ item.place }}</td>
-                    <td class="text-center">{{ item.trainer }}</td>
-                    <td class="text-center">{{ item.org_code }} : {{ item.org_abb }}</td>
+                    <td>{{ item.place }}</td>
+                    <td>{{ item.trainer }}</td>
+                    <td class="text-center">{{ item.org_abb+" ("+item.org_code+")" }}</td>
                     <td class="text-center">
                         <div *ngIf="item.org_abb != _org_abb; else elseBlock"><span></span></div>
                         <ng-template #elseBlock>

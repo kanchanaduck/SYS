@@ -172,7 +172,6 @@ export class StakeholderComponent implements OnInit {
   }
 
   async get_employees_j4up() {
-    alert("J4")
     let self = this
     let org_code = self.stakeholder.org_code
     await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/j4up/employed`,this.headers)
@@ -285,62 +284,30 @@ export class StakeholderComponent implements OnInit {
 
   async save_stakeholders(){
     let self = this
-
-    console.log(self.stakeholder.org_code)
-
-    if(self.stakeholder.org_code===undefined ||self.stakeholder.org_code=="" || self.stakeholder.org_code==null){
-      Swal.fire({
-        icon: 'error',
-        title: '400',
-        text: 'Plase select organization'
-      })
-      return false;
-    }
-
     self.formData = [];
     //console.log("Committee: ", self.stakeholder.committees)
     //console.log("Approver: ", self.stakeholder.approvers)
 
     if(self.stakeholder.committees!==undefined){
-      self.stakeholder.committees.forEach(async element => {
-        await axios.get(`${environment.API_URL}Employees/{element}`, self.headers)
-        .then(function (response) {
-          let c = {
-            emp_no: element,
-            org_code: self.stakeholder.org_code,
-            role: 'COMMITTEE'
-          }
-          self.formData.push(c)          
-        })
-        .catch(function (error) {
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
-        });
+      self.stakeholder.committees.forEach(element => {
+        let c = {
+          emp_no: element,
+          org_code: self.stakeholder.org_code,
+          role: 'COMMITTEE'
+        }
+        self.formData.push(c)
       });      
     }
 
     if(self.stakeholder.approvers!==undefined){
-      // self.stakeholder.approvers.forEach(async element => {
-        await axios.get(`${environment.API_URL}Employees/{self.stakeholder.approvers}`,self.headers)
-        .then(function (response) {
+      self.stakeholder.approvers.forEach(element => {
         let a = {
-          emp_no: self.stakeholder.approvers,
+          emp_no: element,
           org_code: self.stakeholder.org_code,
           role: 'APPROVER'
         }
         self.formData.push(a)
-      })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })
       });
-    // });
     }
 
     //console.log(self.formData)

@@ -38,12 +38,18 @@ namespace api_hrgis.Controllers
         [HttpGet("GetCountTrainee")]
         public IActionResult GetCountTrainee(string course_no, string date_start, string date_end)
         {
-            var query = string.Format(@"SELECT * FROM V_COUNT_TRAINEE
+            /* var query = string.Format(@"SELECT * FROM V_COUNT_TRAINEE
                         where course_no like '%{0}%'
                         and date_start >= '{1}' AND date_end <= '{2}'
                         and (last_status = '{3}')
                         "
-                        , course_no, date_start, date_end, _config.GetValue<string>("Status:approved"));
+                        , course_no, date_start, date_end, _config.GetValue<string>("Status:approved")); */
+            
+            var query = string.Format(@"SELECT * FROM V_COUNT_TRAINEE
+                        where course_no like '%{0}%'
+                        and (last_status = '{1}')
+                        "
+                        , course_no, _config.GetValue<string>("Status:approved"));
 
             DataTable dt = new DataTable();
             dt = _repository.get_datatable(query);

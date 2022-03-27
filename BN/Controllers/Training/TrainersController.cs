@@ -30,46 +30,24 @@ namespace api_hrgis.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tr_trainer>>> Gettr_trainer()
         {
-            // var trainers = null;
-            if(user_is_center()){
-                var trainers = await (from trainer in _context.tr_trainer
-                join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
-                from emp in z.DefaultIfEmpty()
-                select new { 
-                        trainer_no = trainer.trainer_no,
-                        emp_no = trainer.emp_no,
-                        title_name_en = trainer.title_name_en?? emp.title_name_en,
-                        firstname_en = trainer.firstname_en?? emp.firstname_en,
-                        lastname_en = trainer.lastname_en?? emp.lastname_en,
-                        div_abb = emp.div_abb,
-                        dept_abb = emp.dept_abb,
-                        company = trainer.company==null? "CPT":trainer.company,
-                        trainer_owner = trainer.organization.org_abb+"("+trainer.org_code+")",
-                        employed_status = emp.employed_status,
-                        trainer_type = trainer.trainer_type
-                }).ToListAsync();
-                return Ok(trainers);
-            }
-            else{
-                var trainers = await (from trainer in _context.tr_trainer
-                join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
-                from emp in z.DefaultIfEmpty()
-                where trainer.org_code == user_is_commitee_return_org_code()
-                select new { 
-                        trainer_no = trainer.trainer_no,
-                        emp_no = trainer.emp_no,
-                        title_name_en = trainer.title_name_en?? emp.title_name_en,
-                        firstname_en = trainer.firstname_en?? emp.firstname_en,
-                        lastname_en = trainer.lastname_en?? emp.lastname_en,
-                        div_abb = emp.div_abb,
-                        dept_abb = emp.dept_abb,
-                        company = trainer.company==null? "CPT":trainer.company,
-                        trainer_owner = trainer.organization.org_abb+"("+trainer.org_code+")",
-                        employed_status = emp.employed_status,
-                        trainer_type = trainer.trainer_type
-                }).ToListAsync();
-                return Ok(trainers);
-            }
+            var trainers = await (from trainer in _context.tr_trainer
+            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+            from emp in z.DefaultIfEmpty()
+            select new { 
+                    trainer_no = trainer.trainer_no,
+                    emp_no = trainer.emp_no,
+                    title_name_en = trainer.title_name_en?? emp.title_name_en,
+                    firstname_en = trainer.firstname_en?? emp.firstname_en,
+                    lastname_en = trainer.lastname_en?? emp.lastname_en,
+                    div_abb = emp.div_abb,
+                    dept_abb = emp.dept_abb,
+                    company = trainer.company,
+                    trainer_owner_code = trainer.org_code,
+                    trainer_owner_abb = trainer.organization.org_abb,
+                    employed_status = emp.employed_status,
+                    trainer_type = trainer.trainer_type
+            }).ToListAsync();
+            return Ok(trainers);
         }
 
         // GET: api/Trainers/5
@@ -88,7 +66,8 @@ namespace api_hrgis.Controllers
                                     div_abb = emp.div_abb,
                                     dept_abb = emp.dept_abb,
                                     company = trainer.company,
-                                    trainer_owner = trainer.organization.org_abb+"("+trainer.org_code+")",
+                                    trainer_owner_code = trainer.org_code,
+                                    trainer_owner_abb = trainer.organization.org_abb,
                                     employed_status = emp.employed_status,
                                     trainer_type = trainer.trainer_type,
                             })
@@ -101,6 +80,26 @@ namespace api_hrgis.Controllers
             }
 
             return Ok(tr_trainer);
+        }
+        // GET: api/Trainers/Owner
+        [HttpGet("Owner")]
+        // public async Task<ActionResult<tr_trainer>> distinct_org_owner()
+        public async Task<ActionResult<IEnumerable<tr_trainer>>> distinct_org_owner()
+        {
+            var results = await (from trainer in _context.tr_trainer
+            join org in  _context.tb_organization on trainer.org_code equals org.org_code
+            select new { 
+                trainer_owner = org.org_abb+" ("+trainer.org_code+")",
+            })
+            .Distinct()
+            .ToListAsync();
+
+            if (results == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(results);
         }
         // GET: api/Trainers/Owner/{org_code}
         [HttpGet("Owner/{org_code}")]
@@ -118,11 +117,12 @@ namespace api_hrgis.Controllers
                                     div_abb = emp.div_abb,
                                     dept_abb = emp.dept_abb,
                                     company = trainer.company,
-                                    trainer_owner = trainer.organization.org_abb+"("+trainer.org_code+")",
+                                    trainer_owner_code = trainer.org_code,
+                                    trainer_owner_abb = trainer.organization.org_abb,
                                     employed_status = emp.employed_status,
                                     trainer_type = trainer.trainer_type,
                             })
-                            .Where(trainer=>trainer.trainer_owner==org_code)
+                            .Where(trainer=>trainer.trainer_owner_code==org_code)
                             .ToListAsync();
 
             if (tr_trainer == null)
@@ -439,7 +439,7 @@ namespace api_hrgis.Controllers
                             .Where(e => e.emp_no == emp_no && e.role.ToUpper()=="COMMITTEE")
                             .FirstOrDefault();
 
-            // Console.WriteLine(committee.);
+            Console.WriteLine("Committee: "+committee.org_code);
             if(committee==null){
                 return null;
             }
@@ -456,7 +456,8 @@ namespace api_hrgis.Controllers
                 from tb1 in _context.tr_trainer
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.status_active == true && tb1.org_code == user_is_commitee_return_org_code()
+                where 
+                tb1.org_code == user_is_commitee_return_org_code()
                 select new { 
                     tb1.trainer_no, 
                     tb1.emp_no,
@@ -512,4 +513,10 @@ namespace api_hrgis.Controllers
             return Ok("success");
         }
     }
+}
+
+public class trainer_owner
+{
+    public string org_code{ get; set; }
+    public string org_abb { get; set; }
 }

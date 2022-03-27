@@ -62,88 +62,12 @@ export class CourseMasterComponent implements OnInit {
     this.get_bands()
     this.get_departments()
     this.check_is_committee()
-    this.check_is_center()
 
 
-    this.dtOptions = {
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      "processing": true,
-      buttons: {
-        "dom":{
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend:'pageLength',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-                {
-                    extend: 'excel',
-                    text: '<i class="far fa-file-excel"></i> Excel</button>',
-                },
-            ]
-          },
-        ],
-      },
-      order: [ [3, 'asc'], [0, 'asc']],
-      rowGroup: {
-        dataSrc: [3]
-      },
-      columnDefs: [ 
-        {
-          targets: [ 0,8 ],
-          "orderable": false
-        },
-        {
-          targets: [ 3 ],
-          visible: false 
-        },
-        {
-          targets: [ 8 ],
-          visible: false/* this.is_committee? false:true */
-        }
-      ],
-
-      container: "#example_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-    };
-
-    console.log(this.previous_courses)
+  
     
   }
 
-  async check_is_center() {
-    let self = this
-    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,this.headers)
-    .then(function (response) {
-      self.is_center = true;
-      console.log(true)
-      self.get_courses()
-      return true
-    })
-    .catch(function (error) {
-      self.get_courses()
-      console.log(error);
-    });
-  } 
 
   custom_search_org_fn(term: string, item: any) {
     term = term.toLowerCase();
@@ -186,15 +110,7 @@ export class CourseMasterComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    let url = `CourseMasters`
-    // let url = ""
-    // if(self.is_center){
-    //   url = `CourseMasters`
-    // }
-    // else{
-    //   url = `CourseMasters/Employee/${self._emp_no}`
-    // }
-    await this.httpClient.get(`${environment.API_URL}${url}`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}CourseMasters`, this.headers)
     .subscribe((response: any) => {
       self.courses = response;
       if(self.is_center){
@@ -358,20 +274,81 @@ export class CourseMasterComponent implements OnInit {
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
         self.course.org_code = response.org_code
-        if (response.role.toUpperCase() == "COMMITTEE") {
-          self.dtOptions.columnDefs = [ 
-            {
-              targets: [ 8 ],
-              visible: true
-            }
-          ]
-        }
+        self.datatable()
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
-      });
+        self.datatable()
+      }); 
+  }
 
-      
+  datatable(){
+    let self = this
+    self.get_courses()
+      self.dtOptions = {
+        dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+        language: {
+          paginate: {
+            next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+            previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+          }
+        },
+        "processing": true,
+        "search": {
+          "search": self.is_committee? self._org_abb:""
+        },
+        buttons: {
+          "dom":{
+            "container": {
+              tag: "div",
+              className: "dt-buttons btn-group flex-wrap float-right"
+            },
+            "button": {
+              tag: "button",
+              className: "btn btn-outline-indigo btn-sm"
+            },
+          },
+          "buttons": [
+            {
+              extend:'pageLength',
+            },
+            {
+              extend: 'collection',
+              text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+              buttons: [
+                  {
+                      extend: 'excel',
+                      text: '<i class="far fa-file-excel"></i> Excel</button>',
+                  },
+              ]
+            },
+          ],
+        },
+        order: [ [3, 'asc'], [0, 'asc']],
+        rowGroup: {
+          dataSrc: [3]
+        },
+        columnDefs: [ 
+          {
+            targets: [ 0,8 ],
+            "orderable": false
+          },
+          {
+            targets: [ 3 ],
+            visible: false 
+          },
+          {
+            targets: [ 8 ],
+            visible: self.is_committee? true:false
+          }
+        ],
+  
+        container: "#example_wrapper .col-md-6:eq(0)",
+        lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      };
+
   }
 
 

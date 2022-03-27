@@ -1,4 +1,4 @@
-<div [formGroup]="form">
+<div [formGroup]="form" class="card card-body mb-3">
     <div class="row">
         <div class="col-3">
             <div class="form-group">
@@ -151,7 +151,7 @@
             </div>
         </div>
         <div class="col-2 text-right pt-4">
-            <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+            <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="save_trainee()">Save</button>
             <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
             <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
         </div>
@@ -167,20 +167,20 @@
         </div>
     </div>
 </div>
-<hr>
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
     <thead>
-        <tr class="text-uppercase">
+        <tr>
             <th>no.</th>
             <th>emp no</th>
             <th>title</th>
             <th>firstname</th>
             <th>lastname</th>
             <th>band</th>
+            <th>division</th>
             <th>department</th>
-            <th>ENTRA DATE</th>
-            <th>PRE-RESULT</th>
-            <th>POST-RESULT</th>
+            <th>ENTRANCE DATE</th>
+            <th>PRE-TEST</th>
+            <th>POST-TEST</th>
             <th>manage</th>
         </tr>
     </thead>
@@ -191,20 +191,15 @@
             <td>{{ item.employees.title_name_en }}</td>
             <td>{{ item.employees.firstname_en }}</td>
             <td>{{ item.employees.lastname_en }}</td>
-            <td>{{ item.employees.band }}</td>
-            <td>{{ item.employees.dept_code}}:{{ item.employees.dept_abb }}</td>
+            <td class="text-center">{{ item.employees.band }}</td>
+            <td class="text-center">{{ item.employees.div_abb }}</td>
+            <td class="text-center">{{ item.employees.dept_abb }}</td>
             <td>{{ item.employees.entrance_date | date:'dd-MMM-yy'}}</td>
-            <td>
-                <div *ngIf="item.pre_test_grade != '' && item.pre_test_grade != null; else elseBlock">{{ item.pre_test_score }} : {{ item.pre_test_grade }}</div>
-                <ng-template #elseBlock>
-                    <span></span>
-                </ng-template>
+            <td class="text-center">
+                {{ item.pre_test_score+" ("+item.pre_test_grade+")" }}
             </td>
-            <td>
-                <div *ngIf="item.post_test_grade != '' && item.post_test_grade != null; else elseBlock_post">{{ item.post_test_score }} : {{ item.post_test_grade }}</div>
-                <ng-template #elseBlock_post>
-                    <span></span>
-                </ng-template>
+            <td class="text-center">
+                {{ item.post_test_score+" ("+item.post_test_grade+")"  }}
             </td>
             <td class="text-center">
                 <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>

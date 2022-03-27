@@ -59,7 +59,7 @@ export class DialogCourseComponent implements OnInit {
   }
 
   async fnGetStakeholder(emp_no: any) {
-    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
+    await this.service.gethttp('Stakeholder/Committee/' + emp_no)
       .subscribe((response: any) => {
         console.log(response);
         if (response.role.toUpperCase() == environment.role.committee || response.role.toUpperCase() == environment.role.approver) {

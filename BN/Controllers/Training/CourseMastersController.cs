@@ -377,7 +377,7 @@ namespace api_hrgis.Controllers
                     tb1.last_status,
                     tb1.remark,
                     tb1.manager_approved_checked,
-                    tb1.center_approved_checked,
+                    tb1.final_approved_checked,
                     table.div_code,
                     table.div_abb,
                     table.dept_code,
@@ -533,9 +533,9 @@ namespace api_hrgis.Controllers
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tr_course_master>>> CourseMaster()
         {
-            var itemsToDelete = _context.Set<tr_course_master>();
-            _context.tr_course_master.RemoveRange(itemsToDelete);
-            _context.SaveChanges();
+            // var itemsToDelete = _context.Set<tr_course_master>();
+            // _context.tr_course_master.RemoveRange(itemsToDelete);
+            // _context.SaveChanges();
 
             string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");
 

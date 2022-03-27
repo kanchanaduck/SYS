@@ -25,9 +25,9 @@ namespace api_hrgis.Models
         public string manager_approved_by { get; set; }
         public bool? manager_approved_checked { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? center_approved_at	 { get; set; }
-        public string center_approved_by { get; set; }
-        public bool? center_approved_checked { get; set; }
+        public DateTime? final_approved_at	 { get; set; }
+        public string final_approved_by { get; set; }
+        public bool? final_approved_checked { get; set; }
         [Range(0, 100)]
         public int? pre_test_score { get; set; }
         public string pre_test_grade { get; set; }

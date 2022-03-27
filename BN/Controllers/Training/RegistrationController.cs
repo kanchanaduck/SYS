@@ -98,7 +98,7 @@ namespace api_hrgis.Controllers
                     tb1.last_status,
                     tb1.remark,
                     tb1.manager_approved_checked,
-                    tb1.center_approved_checked,
+                    tb1.final_approved_checked,
                     table.dept_code,
                     table.dept_abb,
                     table.lastname_en,
@@ -124,7 +124,7 @@ namespace api_hrgis.Controllers
                     tb1.last_status,
                     tb1.remark,
                     tb1.manager_approved_checked,
-                    tb1.center_approved_checked,
+                    tb1.final_approved_checked,
                     table.dept_code,
                     table.dept_abb,
                     table.lastname_en,
@@ -229,9 +229,9 @@ namespace api_hrgis.Controllers
                             edits.manager_approved_at = null;
                             edits.manager_approved_by = null;
                             edits.manager_approved_checked = null;
-                            edits.center_approved_at = null;
-                            edits.center_approved_by = null;
-                            edits.center_approved_checked = null;
+                            edits.final_approved_at = null;
+                            edits.final_approved_by = null;
+                            edits.final_approved_checked = null;
                         }
                         else
                         {
@@ -241,9 +241,9 @@ namespace api_hrgis.Controllers
                                 edits.manager_approved_at = DateTime.Now;
                                 edits.manager_approved_by = User.FindFirst("emp_no").Value;
                                 edits.manager_approved_checked = item.manager_approved_checked;
-                                edits.center_approved_at = DateTime.Now;
-                                edits.center_approved_by = User.FindFirst("emp_no").Value;
-                                edits.center_approved_checked = item.manager_approved_checked;
+                                edits.final_approved_at = DateTime.Now;
+                                edits.final_approved_by = User.FindFirst("emp_no").Value;
+                                edits.final_approved_checked = item.manager_approved_checked;
                             }
                             else
                             {
@@ -251,9 +251,9 @@ namespace api_hrgis.Controllers
                                 edits.manager_approved_at = null;
                                 edits.manager_approved_by = null;
                                 edits.manager_approved_checked = null;
-                                edits.center_approved_at = null;
-                                edits.center_approved_by = null;
-                                edits.center_approved_checked = null;
+                                edits.final_approved_at = null;
+                                edits.final_approved_by = null;
+                                edits.final_approved_checked = null;
                             }
                         }
 
@@ -311,7 +311,7 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        protected async Task HaveCenter(string course_no, req_tr_course_registration model)
+        protected async Task HaveFinal(string course_no, req_tr_course_registration model)
         {
             List<tr_course_registration> list = new List<tr_course_registration>();
             int _seq_no = 0;
@@ -372,7 +372,7 @@ namespace api_hrgis.Controllers
             _context.tr_course_registration.UpdateRange(list_after);
             await _context.SaveChangesAsync();
         }
-        protected async Task NonCenter(string course_no, req_tr_course_registration model)
+        protected async Task NonFinal(string course_no, req_tr_course_registration model)
         {
             List<tr_course_registration> list = new List<tr_course_registration>();
             int _seq_no = 0;
@@ -435,10 +435,10 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync();
         }
 
-        // PUT: api/Registration/CenterApprove/5
+        // PUT: api/Registration/FinalApprove/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("CenterApprove/{course_no}")]
-        public async Task<IActionResult> PutCenterApprove(string course_no, req_tr_course_registration model)
+        [HttpPut("FinalApprove/{course_no}")]
+        public async Task<IActionResult> PutFinalApprove(string course_no, req_tr_course_registration model)
         {
             if (course_no != model.course_no)
             {
@@ -510,18 +510,18 @@ namespace api_hrgis.Controllers
                             edits.manager_approved_at = null;
                             edits.manager_approved_by = null;
                             edits.manager_approved_checked = null;
-                            edits.center_approved_at = null;
-                            edits.center_approved_by = null;
-                            edits.center_approved_checked = null;
+                            edits.final_approved_at = null;
+                            edits.final_approved_by = null;
+                            edits.final_approved_checked = null;
                         }
                         else
                         {
-                            if (item.center_approved_checked == true)
+                            if (item.final_approved_checked == true)
                             {
                                 edits.last_status = _config.GetValue<string>("Status:approved");
-                                edits.center_approved_at = DateTime.Now;
-                                edits.center_approved_by = User.FindFirst("emp_no").Value;
-                                edits.center_approved_checked = item.center_approved_checked;
+                                edits.final_approved_at = DateTime.Now;
+                                edits.final_approved_by = User.FindFirst("emp_no").Value;
+                                edits.final_approved_checked = item.final_approved_checked;
                             }
                             else
                             {
@@ -529,9 +529,9 @@ namespace api_hrgis.Controllers
                                 edits.manager_approved_at = null;
                                 edits.manager_approved_by = null;
                                 edits.manager_approved_checked = null;
-                                edits.center_approved_at = null;
-                                edits.center_approved_by = null;
-                                edits.center_approved_checked = null;
+                                edits.final_approved_at = null;
+                                edits.final_approved_by = null;
+                                edits.final_approved_checked = null;
                             }
                         }
 
@@ -544,7 +544,7 @@ namespace api_hrgis.Controllers
                 /////////// ทำการเรียงลำดับ เฉพาะสถานะ approved, เรียงลำดับตาม center_approved_at
                 List<tr_course_registration> list1 = new List<tr_course_registration>();
                 var seq1 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status == _config.GetValue<string>("Status:approved")).OrderBy(x => x.center_approved_at).ToListAsync();
+                                && x.last_status == _config.GetValue<string>("Status:approved")).OrderBy(x => x.final_approved_at).ToListAsync();
                 int _seq1 = 0;
                 for (var j = 0; j < seq1.Count(); j++)
                 {
@@ -772,7 +772,7 @@ public class req_tr_course_registration
     public string last_status { get; set; }
     public string remark { get; set; }
     public bool? manager_approved_checked { get; set; }
-    public bool? center_approved_checked { get; set; }
+    public bool? final_approved_checked { get; set; }
     public int capacity { get; set; }
     public string dept_abb { get; set; }
     public List<req_array_regis> array { get; set; }
@@ -786,7 +786,7 @@ public class req_array_regis
     public string last_status { get; set; }
     public string remark { get; set; }
     public bool? manager_approved_checked { get; set; }
-    public bool? center_approved_checked { get; set; }
+    public bool? final_approved_checked { get; set; }
     public int position { get; set; }
 }
 

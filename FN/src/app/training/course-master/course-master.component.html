@@ -91,8 +91,15 @@
         </div><!-- form-group -->
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Level</label>
-            <input type="text" name="course.level" class="form-control"
-            [(ngModel)]="course.level" >
+            <!-- <input type="text" name="course.level" class="form-control"
+            [(ngModel)]="course.level" > -->
+            <select class="form-control" [(ngModel)]="course.level" [ngModelOptions]="{standalone: true}">
+                <option value="">-</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Basic">Basic</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+            </select>
             <p class="text-danger tx-12" *ngIf="errors && errors.level"> 
                 <span *ngFor="let text of errors.level">{{ text }}</span>
             </p>

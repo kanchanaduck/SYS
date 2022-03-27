@@ -23,7 +23,7 @@ import { SurveyComponent } from './survey/survey.component';
 import { CourseTargetComponent } from './course-target/course-target.component';
 import { RegisterComponent } from './register/register.component';
 import { ApproveMgrComponent } from './approve-mgr/approve-mgr.component';
-import { ApproveCenterComponent } from './approve-center/approve-center.component';
+import { ApproveFinalComponent } from './approve-final/approve-final.component';
 import { ConfirmationSheetComponent } from './confirmation-sheet/confirmation-sheet.component';
 import { RegisterContinuousComponent } from './register-continuous/register-continuous.component';
 import { SignatureSheetComponent } from './signature-sheet/signature-sheet.component';
@@ -44,8 +44,8 @@ import { SurveyApproveComponent } from './survey-approve/survey-approve.componen
 const routes: Routes = [
   { path: '', component: TrainingComponent },
   { path: 'training', component: TrainingComponent, data: { title: 'Training', active: true} },
-  { path: 'approve-mgr', component: ApproveMgrComponent, data: { title: 'Manager approve trainee', active: true } },
-  { path: 'approve-center', component: ApproveCenterComponent, data: { title: 'Center approve trainee', active: true } },
+  { path: 'approve-mgr', component: ApproveMgrComponent, data: { title: 'Approve trainee', active: true } },
+  { path: 'approve-final', component: ApproveFinalComponent, data: { title: 'Final approve trainee', active: true } },
   { path: 'center', component: CenterComponent, data: { title: 'Center management', active: true } },
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score', active: true } },
   { path: 'course-confirmation-sheet', component: ConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
@@ -80,7 +80,7 @@ const routes: Routes = [
     CourseTargetComponent,
     RegisterComponent,
     ApproveMgrComponent,
-    ApproveCenterComponent,
+    ApproveFinalComponent,
     ConfirmationSheetComponent,
     RegisterContinuousComponent,
     SignatureSheetComponent,

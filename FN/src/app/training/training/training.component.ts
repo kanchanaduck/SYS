@@ -18,12 +18,6 @@ export class TrainingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.get_menu_training()
-  }
-
-  async get_menu_training() {
-    this.training_menu = await this.service.axios_get(`Menus/Children/3`);
-    console.log('data: ', this.training_menu);
   }
 }
 

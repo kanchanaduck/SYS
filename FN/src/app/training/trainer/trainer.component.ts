@@ -31,6 +31,9 @@ export class TrainerComponent implements OnInit {
       'Content-Type': 'application/json'
     }
   }
+
+  filter: any = {};
+
   _getjwt: any;
   _emp_no: any;
   _div_code: any;
@@ -39,6 +42,7 @@ export class TrainerComponent implements OnInit {
   _org_abb: any;
   is_center: boolean = false;
   is_committee: boolean = false;
+  trainer_owner: any = [];
 
   constructor(
     private service: AppServiceService, 
@@ -50,12 +54,79 @@ export class TrainerComponent implements OnInit {
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no= this._getjwt.user.emp_no; // set emp_no
-    this._div_code = this._getjwt.user.div_code; // set dept_code
+    this._div_code = this._getjwt.user.div_code; // set div_code
     this._dept_code = this._getjwt.user.dept_code; // set dept_code
 
-    this.check_is_committee()
-    this.trainer.trainer_type = 'Internal';
+    this.get_trainer_owner();
 
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+  }
+  
+  async get_trainer_owner() {
+    await this.httpClient.get(`${environment.API_URL}Trainers/Owner`, this.headers)
+    .subscribe((response: any) => {
+      this.trainer_owner = response;
+      this.check_is_committee()
+      this.trainer.trainer_type = 'Internal';
+      this.filter.trainer_type = '';
+      this.trainer.company = 'CPT'
+    },
+    (error: any) => {
+      console.log(error);
+    });
+  }
+
+  async check_is_committee() {
+    let self = this
+    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_committee = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+        self.trainer.org_code = self._org_code
+        self.filter.trainer_owner = self._org_abb+" ("+self._org_code+")";
+        alert(self.filter.trainer_owner)
+        self.get_trainers()
+        self.datatable()
+      }, (error: any) => {
+        console.log(error);
+        self.is_committee = false;
+        self.filter.trainer_owner = ""
+        this.get_trainers()
+        self.datatable()
+      });
+
+      
+  }
+  async datatable() {
+    $.fn['dataTable'].ext.search.push((settings, data, dataIndex) => {
+      const trainer_owner = data[6]; 
+      const trainer_type = data[8]; 
+      // console.log(trainer_type)
+      // console.log(trainer_owner)
+      console.log("Type: "+this.filter.trainer_type)
+      console.log("Owner: "+this.filter.trainer_owner)
+      /* if ((isNaN(this.min) && isNaN(this.max)) ||
+        (isNaN(this.min) && id <= this.max) ||
+        (this.min <= id && isNaN(this.max)) ||
+        (this.min <= id && id <= this.max)) {
+        return true;
+      } */
+      if(this.filter.trainer_type=="" || this.filter.trainer_owner==""){
+        return true;
+      }
+      if(this.filter.trainer_type===undefined || this.filter.trainer_owner===undefined){
+        return true;
+      }
+      if(this.filter.trainer_type==trainer_type && this.filter.trainer_owner==trainer_owner){
+        return true;
+      }
+      return false;
+    });
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
@@ -100,14 +171,18 @@ export class TrainerComponent implements OnInit {
           },
         ],
       },
-      order: [[8, 'desc'],[0, 'asc']],
+      order: [[6, 'asc'], [8, 'desc'],[0, 'asc']],
       rowGroup: {
-        dataSrc: 8
+        dataSrc: [6, 8]
       }, 
       columnDefs: [ 
         {
-          targets: [ 10 ],
+          targets: [ 6,8 ],
           visible: false
+        },
+        {
+          targets: [ 10 ],
+          visible: this.is_committee? true:false
         },
         {
           targets: [ 9, 10],
@@ -116,44 +191,17 @@ export class TrainerComponent implements OnInit {
       ],
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
-
-    this.get_trainers()
-
-  }
-
-  ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
-  }
-
-  async check_is_committee() {
-    let self = this
-    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
-      .subscribe((response: any) => {
-        console.log(response)
-        self.is_committee = true;
-        self._org_code = response.org_code
-        self._org_abb = response.organization.org_abb
-        self.trainer.org_code = response.org_code
-        self.dtOptions.columnDefs.push(
-        {
-          targets: [ 10 ],
-          visible: true
-        });
-      }, (error: any) => {
-        console.log(error);
-        self.is_committee = false;
-      });
-
-      
   }
 
   async get_trainers(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Trainers/Owner/${this._org_code}`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Trainers`, this.headers)
     .subscribe((response: any) => {
       self.trainers = response;
       if (this.isDtInitialized) {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.clear().draw();
+          this.isDtInitialized = true
           dtInstance.destroy();
           this.dtTrigger.next();
         });
@@ -171,6 +219,9 @@ export class TrainerComponent implements OnInit {
   async reset_form_trainer() { 
     this.trainer = {};
     this.trainer.trainer_type='Internal';
+    this.trainer.company = 'CPT'
+    this.trainer.org_code = this._org_code;
+    this.errors = {};
   }
 
   async fillEmpNo(event: any) { 
@@ -220,6 +271,9 @@ export class TrainerComponent implements OnInit {
     this.trainer.trainer_type = event;
     this.trainer.org_code = this._org_code;
     this.errors = {};
+    if(this.trainer.trainer_type=='External'){
+      this.trainer.company = ''
+    }
   }
 
   async save_trainer() {
@@ -235,6 +289,7 @@ export class TrainerComponent implements OnInit {
         timer: 2000
       })
     self.reset_form_trainer()
+    self.errors = {};
     })
     .catch(function (error) {
       if(error.response.status==400){
@@ -288,6 +343,13 @@ export class TrainerComponent implements OnInit {
         self.get_trainers()
       }
     })
+  }
+
+  filter_trainer(): void {
+    console.log(this.filter)
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.draw();
+    });
   }
 
 }

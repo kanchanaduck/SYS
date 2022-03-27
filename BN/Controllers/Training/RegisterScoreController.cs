@@ -52,7 +52,7 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses)
                         .Include(e => e.employees)
                         .Where(e => e.course_no == id
-                        && e.register_by == User.FindFirst("emp_no").Value
+                        //&& e.register_by == User.FindFirst("emp_no").Value
                          && e.last_status == _config.GetValue<string>("Status:approved"))
                         .OrderBy(x => x.emp_no).ToListAsync();
 
@@ -159,9 +159,9 @@ namespace api_hrgis.Controllers
                     tb.course_no = model.course_no;
                     tb.emp_no = item.emp_no;
                     tb.seq_no = seq;
-                    tb.pre_test_score = item.pre_test_score;
+                    tb.pre_test_score = item.pre_test_score==null? null:item.pre_test_score;
                     tb.pre_test_grade = item.pre_test_grade;
-                    tb.post_test_score = item.post_test_score;
+                    tb.post_test_score = item.post_test_score==null? null:item.post_test_score;
                     tb.post_test_grade = item.post_test_grade;
                     tb.last_status = _config.GetValue<string>("Status:approved");
                     tb.remark = _config.GetValue<string>("Text:papers");
@@ -313,16 +313,16 @@ namespace api_hrgis.Controllers
                     {
                         if (!String.IsNullOrEmpty(worksheet.Cells[row, 1].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
                         {
-                            string _emp_no = worksheet.Cells[row, 1].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 1].Value.ToString().Trim();
-                            string pre_test_score = worksheet.Cells[row, 2].Value.ToString().Trim();
-                            string post_test_score = worksheet.Cells[row, 3].Value.ToString().Trim();
+                            string _emp_no = worksheet.Cells[row, 1].Value == null ? null : worksheet.Cells[row, 1].Value.ToString().Trim();
+                            string pre_test_score = worksheet.Cells[row, 2].Value == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();;
+                            string post_test_score = worksheet.Cells[row, 3].Value == null ? null : worksheet.Cells[row, 3].Value.ToString().Trim();;
                             // ต้องคำนวนเกรด
 
                             int _seq_no = 0;
 
                             var query_emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
-                            if (query_emp.dept_abb == model.dept_abb)
-                            {
+                            // if (query_emp.dept_abb == model.dept_abb)
+                            // {
                                 var query_course = await _context.tr_course_band.Where(x => x.course_no == course_no && x.band.Contains(query_emp.band)).FirstOrDefaultAsync();
                                 if (query_course != null)
                                 {
@@ -374,13 +374,18 @@ namespace api_hrgis.Controllers
                                     }
                                     else
                                     {
-                                        respons.Add(new respons_score
-                                        {
-                                            emp_no = _emp_no,
-                                            pre_test_score = Convert.ToInt32(pre_test_score),
-                                            post_test_score = Convert.ToInt32(post_test_score),
-                                            last_status = _config.GetValue<string>("Text:duplication")
-                                        });
+                                        
+                                        query.emp_no = _emp_no;
+                                        query.pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score);
+                                        query.pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score);
+                                        query.post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score);
+                                        query.post_test_grade = post_test_score==null? null:fnGrade(post_test_score);
+                                        query.last_status = _config.GetValue<string>("Status:approved");
+                                        query.scored_at = DateTime.Now;
+                                        query.scored_by = User.FindFirst("emp_no").Value;
+                                        _context.Entry(query).State = EntityState.Modified;
+                                        await _context.SaveChangesAsync(); 
+                                        
                                     } // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
                                 }
                                 else
@@ -388,22 +393,24 @@ namespace api_hrgis.Controllers
                                     respons.Add(new respons_score
                                     {
                                         emp_no = _emp_no,
-                                        pre_test_score = Convert.ToInt32(pre_test_score),
-                                        post_test_score = Convert.ToInt32(post_test_score),
+                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                        pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                        post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                         last_status = _config.GetValue<string>("Text:unequal_band")
                                     });
                                 } // Unequal band. : band ของพนักงานใน row ไม่ตรงกับที่ band ที่ตั้งค่า course
-                            }
-                            else
-                            {
-                                respons.Add(new respons_score
-                                {
-                                    emp_no = _emp_no,
-                                    pre_test_score = Convert.ToInt32(pre_test_score),
-                                    post_test_score = Convert.ToInt32(post_test_score),
-                                    last_status = _config.GetValue<string>("Text:invalid_department")
-                                });
-                            } // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                            // }
+                            // else
+                            // {
+                            //     respons.Add(new respons_score
+                            //     {
+                            //         emp_no = _emp_no,
+                            //         pre_test_score = Convert.ToInt32(pre_test_score),
+                            //         post_test_score = Convert.ToInt32(post_test_score),
+                            //         last_status = _config.GetValue<string>("Text:invalid_department")
+                            //     });
+                            // } // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
                         }
                     }
                 }
@@ -441,9 +448,9 @@ public class req_tr_course_score
 public class array_tr_course_score
 {
     public string emp_no { get; set; }
-    public int pre_test_score { get; set; }
+    public int? pre_test_score { get; set; }
     public string pre_test_grade { get; set; }
-    public int post_test_score { get; set; }
+    public int? post_test_score { get; set; }
     public string post_test_grade { get; set; }
 }
 
@@ -457,7 +464,9 @@ public class req_score_fileform
 public class respons_score
 {
     public string emp_no { get; set; }
-    public int pre_test_score { get; set; }
-    public int post_test_score { get; set; }
+    public int? pre_test_score { get; set; }
+    public string pre_test_grade { get; set; }
+    public int? post_test_score { get; set; }
+    public string post_test_grade { get; set; }
     public string last_status { get; set; }
 }

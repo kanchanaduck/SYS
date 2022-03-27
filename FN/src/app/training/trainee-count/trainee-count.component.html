@@ -1,4 +1,4 @@
-<div class="row text-capitalize">
+<!-- <div class="row text-capitalize">
     <div class="col-4">
         <div class="input-group">
             <div class="input-group-prepend">
@@ -31,32 +31,79 @@
         </div>
     </div>
 </div>
-<hr>
+<hr> -->
 <div class="row">
+    <div class="col-6 offset-3">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">MASTER COURSE NO.</label>     
+            <ng-select 
+                [(ngModel)]="course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                (clear)="clear_data()"
+                (change)="get_course()">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+        </div>
+    </div>
+</div>
+<div class="row mt-3" *ngIf="(course | json) != '{}'">
+    <div class="col-10 offset-1 card card-body tx-13 p-1">
+        <dl class="row mb-1">
+            <dt class="col-sm-2">COURSE NO.: </dt>
+            <dd class="col-sm-2">{{ course.course_no }}</dd>
+            <dt class="col-sm-3">THAI COURSE NAME:</dt>
+            <dd class="col-sm-5">{{ course.course_name_th || '-' }}</dd>
+        </dl>
+        <dl class="row mt-1">
+            <dt class="col-sm-3 offset-4">ENGLISH COURSE NAME:</dt>
+            <dd class="col-sm-5">{{ course.course_name_en || '-' }}</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">GROUP:</dt>
+            <dd class="col-sm-2">{{ course.organization.org_abb+"("+course.org_code+")" }}</dd>
+            <dt class="col-sm-2">DAY: </dt>
+            <dd class="col-sm-2">{{ course.days }}</dd>
+            <dt class="col-sm-2">CAPACITY:</dt>
+            <dd class="col-sm-2">{{ course.capacity }}</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">BAND TARGET:</dt>
+            <dd class="col-sm-3">{{ course.band_text }}</dd> 
+        </dl>
+    </div>
+</div>
+<div class="row mt-3">
     <div class="col-12">
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
-                <tr class="text-uppercase">
-                    <th>no.</th>
-                    <th>course no.</th>
-                    <th>english course name</th>
-                    <th>thai course name</th>
-                    <th>start date</th>
-                    <th>end date</th>
-                    <th>place</th>
-                    <th>emp no count</th>
+                <tr>
+                    <th class="text-center">no.</th>
+                    <th class="text-center">course no.</th>
+                    <th class="text-center">english course name</th>
+                    <th class="text-center">thai course name</th>
+                    <th class="text-center">start date</th>
+                    <th class="text-center">end date</th>
+                    <th class="text-center">place</th>
+                    <th class="text-center">Count</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <td>{{ i + 1 }}</td>
+                    <td class="text-center">{{ i + 1 }}</td>
                     <td>{{ item.course_no }}</td>
                     <td>{{ item.course_name_th }}</td>
                     <td>{{ item.course_name_en }}</td>
-                    <td>{{ item.date_start | date:'dd-MMM-yy' }}</td>
-                    <td>{{ item.date_end | date:'dd-MMM-yy' }}</td>
+                    <td class="text-center">{{ item.date_start | date:'dd-MMM-yy' }}</td>
+                    <td class="text-center">{{ item.date_end | date:'dd-MMM-yy' }}</td>
                     <td>{{ item.place }}</td>
-                    <td>{{ item.count_emp }}</td>
+                    <td class="text-right">{{ item.count_emp }}</td>
                 </tr>
             </tbody>
         </table>

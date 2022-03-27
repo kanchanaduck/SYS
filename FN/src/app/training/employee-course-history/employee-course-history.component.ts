@@ -76,7 +76,7 @@ export class EmployeeCourseHistoryComponent implements OnInit {
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      order: [[3, 'desc']],
+      order: [[4, 'desc']],
     };
 
     this.fnGet("NULL");
@@ -100,6 +100,8 @@ export class EmployeeCourseHistoryComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTrigger.next();
           });

@@ -160,7 +160,11 @@ namespace api_hrgis.Controllers
         [HttpGet("GetCourseStatus")]
         public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseStatus()
         {
-            var tr_course = await (from tb1 in _context.tr_course
+            if(!user_is_commitee())
+            {
+                return StatusCode(403,"Permission denied, only committee can manage data");
+            }
+            /* var tr_course = await (from tb1 in _context.tr_course
                                    join tb2 in _context.tb_organization on tb1.org_code equals tb2.org_code
                                    join tb3 in _context.tr_course_registration on tb1.course_no equals tb3.course_no
                                    where tb1.status_active == true && tb3.last_status == _config.GetValue<string>("Status:approved")
@@ -172,7 +176,9 @@ namespace api_hrgis.Controllers
                                        tb1.org_code,
                                        tb2.org_abb
                                    }
-                                   ).Distinct().ToListAsync();
+                                   ).Distinct().ToListAsync(); */
+
+            var tr_course = await _context.tr_course.Include(e=>e.organization).ToListAsync();
             if (tr_course == null)
             {
                 return NotFound();
@@ -355,6 +361,18 @@ namespace api_hrgis.Controllers
         private bool tr_courseExists(string id)
         {
             return _context.tr_course.Any(e => e.course_no == id);
+        }
+
+        private bool user_is_commitee()
+        {
+            string emp_no = User.FindFirst("emp_no").Value;
+            string div_code = User.FindFirst("div_code").Value;
+            string dept_code = User.FindFirst("dept_code").Value;
+            return _context.tr_stakeholder
+                .Any(e => e.emp_no == emp_no && (
+                        e.org_code == div_code ||
+                        e.org_code == dept_code ) &&
+                        e.role.ToUpper()=="COMMITTEE");
         }
 
         private async Task UpdateTBChild(string id, req_tr_course tr_course)

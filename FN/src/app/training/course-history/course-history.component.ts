@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { DataTableDirective } from 'angular-datatables';
+import axios from 'axios';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
+import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-course-history',
@@ -18,6 +21,17 @@ export class CourseHistoryComponent implements OnInit {
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false
   // end datatable
+  
+  course_no: string;
+  course: any = {};
+  courses: any = [];
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+
 
   @ViewChild("txtcourse_no") txtcourse_no;
 
@@ -68,21 +82,20 @@ export class CourseHistoryComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              {
+              /* {
                 extend: 'csv',
                 text: '<i class="far fa-file-excel"></i> CSV</button>',
               },
               {
                 extend: 'pdf',
                 text: '<i class="far fa-file-pdf"></i> PDF</button>',
-              },              
+              },   */            
             ]
           }
         ],
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      // order: [[1, 'desc']],
       rowGroup: {
         dataSrc: [ 1 ]
       },
@@ -92,51 +105,70 @@ export class CourseHistoryComponent implements OnInit {
       }]
     };
 
-    this.fnGet("NULL");
+    this.get_courses()
   }
 
-  async onKeyCourse(event: any) {
-    if (event.target.value.length >= 3 && event.target.value.length < 15) {
-      this.fnGet(event.target.value);
-    }else if(event.target.value.length == 0){
-      this.fnGet("NULL");
+  async get_courses(){
+    let self = this
+    await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
+
+    });
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+  }
+
+  async get_course() {
+    let self = this
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}CourseMasters/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.course = response
+          self.course.band_text = self.course.master_courses_bands.map(c => c.band).join(', ');
+          console.log(self.course.band_text )
+          self.get_course_attendee()
+        })
+        .catch(function(error){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          self.course = {};
+          return false;
+      });      
     }
   }
 
-  // Open popup Course
-  inputitem = 'course-target';
-  openCourse(content) {
-    //   size: 'lg' //sm, mb, lg, xl
-    this.v_course_no = "";
-    const modalRef = this.modalService.open(content, { size: 'lg' });
-    modalRef.result.then(
-      (result) => {
-        console.log(result);
-        if (result != "OK") {
-          this.txtcourse_no.nativeElement.value = "";
-          this.fnGet("NULL");
-          this.v_course_no = "";
-        }else{
-          this.fnGet(this.txtcourse_no.nativeElement.value);
-        }
-      },
-      (reason) => {
-        console.log(reason);
-        this.txtcourse_no.nativeElement.value = "";
-        this.fnGet("NULL");
-        this.v_course_no = "";
-      }
-    );
-  }
+  async get_course_attendee() {
+    let self = this
 
-  v_course_no: string = "";
-  addItemCourse(newItem: string) {
-    this.v_course_no = newItem;
-    this.txtcourse_no.nativeElement.value = newItem;
-  }
-
-  async fnGet(course_no:string) {
-    await this.service.gethttp('OtherData/GetCountAttendee?course_no=' + course_no)
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      await this.service.gethttp('OtherData/GetCountAttendee?course_no=' + this.course_no)
       .subscribe((response: any) => {
         console.log(response);
 
@@ -145,6 +177,8 @@ export class CourseHistoryComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -155,86 +189,11 @@ export class CourseHistoryComponent implements OnInit {
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
-      });
+      });    
+    }
   }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
 }
-
-export interface PeriodicElement {
-  course_no: string;
-  course_name_en: string;
-  emp_no: string;
-  status_eng: string;
-  firstname_en: string;
-  lastname_en: string;
-  posn_name: string;
-  dept_abb: string;
-  div_abb: string;
-  pre_test_score: number;
-  pre_test_grade: string;
-  post_test_score: number;
-  post_test_grade: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    course_no: 'CPT-001-001',
-    course_name_en: 'QC Basics',
-    emp_no: '014748',
-    status_eng: 'MISS',
-    firstname_en: 'NUTTAYA',
-    lastname_en: 'KALLA',
-    posn_name: 'PROGRAMMER',
-    dept_abb: 'ICD',
-    div_abb: 'CPD',
-    pre_test_score: 80,
-    pre_test_grade: 'A',
-    post_test_score: 90,
-    post_test_grade: 'A',
-  }, {
-    course_no: 'CPT-001-001',
-    course_name_en: 'QC Basics',
-    emp_no: '014205',
-    status_eng: 'MR.',
-    firstname_en: 'KHETCHANA',
-    lastname_en: 'KETSAUAONG',
-    posn_name: 'TECHNICIAN',
-    dept_abb: 'ICD',
-    div_abb: 'CPD',
-    pre_test_score: 95,
-    pre_test_grade: 'A',
-    post_test_score: 100,
-    post_test_grade: 'A',
-  },{
-    course_no: 'CPT-001-002',
-    course_name_en: 'QC Basics',
-    emp_no: '014748',
-    status_eng: 'MISS',
-    firstname_en: 'NUTTAYA',
-    lastname_en: 'KALLA',
-    posn_name: 'PROGRAMMER',
-    dept_abb: 'ICD',
-    div_abb: 'CPD',
-    pre_test_score: 80,
-    pre_test_grade: 'A',
-    post_test_score: 90,
-    post_test_grade: 'A',
-  }, {
-    course_no: 'CPT-001-002',
-    course_name_en: 'QC Basics',
-    emp_no: '014205',
-    status_eng: 'MR.',
-    firstname_en: 'KHETCHANA',
-    lastname_en: 'KETSAUAONG',
-    posn_name: 'TECHNICIAN',
-    dept_abb: 'ICD',
-    div_abb: 'CPD',
-    pre_test_score: 95,
-    pre_test_grade: 'A',
-    post_test_score: 100,
-    post_test_grade: 'A',
-  },
-];

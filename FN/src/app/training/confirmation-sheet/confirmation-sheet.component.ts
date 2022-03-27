@@ -29,6 +29,16 @@ export class ConfirmationSheetComponent implements OnInit {
   isCheck: boolean = false;
   loading: boolean = false;
 
+  course_no: string;
+  course: any = {};
+  courses: any = [];
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+
   constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
@@ -109,18 +119,41 @@ export class ConfirmationSheetComponent implements OnInit {
       // order: [[1, 'desc']],
     };
 
-    this.fnGet("NULL");
+    // this.fnGet("NULL");
     // this.fnGetCenter(this._emp_no);
     this.fnGetStakeholder(this._emp_no)
+    this.get_courses()
   }
 
-  async onKeyCourse(event: any) {
+  async get_courses(){
+    let self = this
+    await axios.get(`${environment.API_URL}CourseOpen`, this.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
+
+    });
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+  }
+
+
+ /*  async onKeyCourse(event: any) {
     if (event.target.value.length >= 11 && event.target.value.length < 12) {
       this.fnGet(event.target.value);
     } else if (event.target.value.length == 0) {
       this.fnGet("NULL");
     }
-  }
+  } */
 
   // async fnGetCenter(emp_no: any) {
   //   await this.service.gethttp('Center/' + emp_no)
@@ -145,14 +178,14 @@ export class ConfirmationSheetComponent implements OnInit {
         }
       }, (error: any) => {
         console.log(error);
-        this.fnGet("No");
+        // this.fnGet("No");
         this.isCheck = false;
       });
   }
 
   // Open popup Course
   inputitem = 'course-confirmation-sheet';
-  openCourse(content) {
+  /* openCourse(content) {
     //   size: 'lg' //sm, mb, lg, xl
     this.v_course_no = "";
     const modalRef = this.modalService.open(content, { size: 'lg' });
@@ -174,7 +207,7 @@ export class ConfirmationSheetComponent implements OnInit {
         this.v_course_no = "";
       }
     );
-  }
+  } */
 
   v_course_no: string = "";
   addItemCourse(newItem: string) {
@@ -184,8 +217,9 @@ export class ConfirmationSheetComponent implements OnInit {
   // End Open popup Course
 
   mail_date: any; mail_time: any; mail_place: any; mail_course: any; course_org_code: string = "";
-  async fnGet(course_no: string) {
-    await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + course_no)
+  async get_course() {
+
+    await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + this.course_no)
       .subscribe((response: any) => {
         console.log(response);
         if (response.length > 0) {
@@ -201,6 +235,8 @@ export class ConfirmationSheetComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -227,10 +263,10 @@ export class ConfirmationSheetComponent implements OnInit {
     }
 
     if (this.isCheck == true) {
-      if (this.txtcourse_no.nativeElement.value != "" && this.mail_date != undefined) {
+      if (this.course_no != "" && this.mail_date != undefined) {
         this.loading = true;
 
-        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.txtcourse_no.nativeElement.value);
+        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.course_no);
         console.log(this.res_mail);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainner);
@@ -325,10 +361,10 @@ export class ConfirmationSheetComponent implements OnInit {
     }
 
     if (this.isCheck == true) {
-      if (this.txtcourse_no.nativeElement.value != "" && this.mail_date != undefined) {
+      if (this.course_no != "" && this.mail_date != undefined) {
         this.loading = true;
 
-        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.txtcourse_no.nativeElement.value);
+        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.course_no);
         console.log(this.res_mail);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
         Array.prototype.push.apply(this.array_to, this.res_mail.trainner);

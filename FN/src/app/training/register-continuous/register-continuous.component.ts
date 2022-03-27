@@ -131,7 +131,7 @@ export class RegisterContinuousComponent implements OnInit {
     return this.form.controls;
   }
 
-  async fnSave() {
+  /* async fnSave() {
     this.submitted = true;
 
     if (this.form.invalid) {
@@ -192,7 +192,13 @@ export class RegisterContinuousComponent implements OnInit {
     }
 
     this.fnGet(frm.frm_course);
-  }
+  } */
+  
+  /* async save_trainee(){
+    let frm = this.form.value;
+    let course_no: frm.frm_course;
+  } */
+
   async fnUpdate() {
     this.submitted = true;
 
