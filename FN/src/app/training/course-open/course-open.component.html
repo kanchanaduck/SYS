@@ -1,4 +1,4 @@
-<div class="card card-body mb-3">
+<div class="card card-body mb-3" *ngIf="is_committee">
     <div [formGroup]="form">
         <div class="row">
             <div class="col-3">
@@ -171,7 +171,17 @@
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">trainer&nbsp;&nbsp;&nbsp;
                     <i class="typcn typcn-document-add tx-20 lh--9 op-6 pointer" (click)="open(content)"></i>
                 </label>
-                    <ng-select [items]="value_trainer" bindLabel="fulls" bindValue="trainer_no" [multiple]="true" [(ngModel)]="selected_trainer_multiple" placeholder="Select ..." formControlName="frm_trainer" [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }">
+                    <!-- <ng-select [items]="value_trainer" bindLabel="fulls" bindValue="trainer_no" [multiple]="true" [(ngModel)]="selected_trainer_multiple" placeholder="Select ..." formControlName="frm_trainer" [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }">
+                    </ng-select> -->
+                    <ng-select 
+                        formControlName="frm_trainer"
+                        [ngClass]="{ 'is-invalid': submitted && f.frm_trainer.errors }"
+                        [(ngModel)]="selected_trainer_multiple"
+                        [items]="value_trainer"
+                        bindValue="trainer_no"
+                        bindLabel="display_name"
+                        allow-clear="true"
+                        [multiple]="true">	
                     </ng-select>
                     <div *ngIf="submitted && f.frm_trainer.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_trainer.errors.required">Trainer is required</div>
@@ -188,7 +198,13 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div>
+        <div class="alert alert-outline-info" role="alert" *ngIf="is_committee">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            The data can be revised or deleted after course end within 5 working days
+        </div><!-- alert -->
+        <!-- <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div> -->
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
@@ -199,8 +215,9 @@
                     <th class="text-center">time in</th>
                     <th class="text-center">time out</th>
                     <th class="text-center">place</th>
-                    <th class="text-center">trainer</th>
+                    <!-- <th class="text-center">trainer</th> -->
                     <th class="text-center">group</th>
+                    <th class="text-center">register</th>
                     <th class="text-center">manage</th>
                 </tr>
             </thead>
@@ -213,10 +230,15 @@
                     <td class="text-center">{{ item.time_in.substring(0, 5) }}</td>
                     <td class="text-center">{{ item.time_out.substring(0, 5) }}</td>
                     <td>{{ item.place }}</td>
-                    <td>{{ item.trainer }}</td>
-                    <td class="text-center">{{ item.org_abb+" ("+item.org_code+")" }}</td>
+                    <!-- <td>{{ item.courses_trainers }}</td> -->
+                    <td class="text-center">{{ item.organization.org_abb+" ("+item.org_code+")" }}</td>
                     <td class="text-center">
-                        <div *ngIf="item.org_abb != _org_abb; else elseBlock"><span></span></div>
+                        <div *ngIf="item.open_register;then open else close"></div>
+                        <ng-template #open><span class="badge badge-success">Open</span></ng-template>
+                        <ng-template #close><span class="badge badge-dark">Close</span></ng-template>
+                    </td>
+                    <td class="text-center">
+                        <div *ngIf="item.org_code != _org_code; else elseBlock"><span></span></div>
                         <ng-template #elseBlock>
                             <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div>
                             <ng-template #elseDate>

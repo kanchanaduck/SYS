@@ -81,14 +81,14 @@ export class TraineeCountComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              {
+              /* {
                 extend: 'csv',
                 text: '<i class="far fa-file-excel"></i> Csv</button>',
               },
               {
                 extend: 'pdf',
                 text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },
+              }, */
             ]
           }
         ],
@@ -100,8 +100,8 @@ export class TraineeCountComponent implements OnInit {
     this.get_courses()
   }
   ngAfterViewInit() {
-    this.txtdate_from.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth(), 1)).toString();
-    this.txtdate_to.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0)).toString();
+    // this.txtdate_from.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth(), 1)).toString();
+    // this.txtdate_to.nativeElement.value = formatDate(new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0)).toString();
     // this.fnGet("NULL", this.txtdate_from.nativeElement.value , this.txtdate_to.nativeElement.value);
   }
 
@@ -186,6 +186,7 @@ export class TraineeCountComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -216,49 +217,3 @@ function formatDate(date) {
 
   return [year, month, day].join('-');
 }
-
-export interface PeriodicElement {
-  course_no: string;
-  course_name_th: string;
-  course_name_en: string;
-  start_date: string;
-  end_date: string;
-  place: string;
-  count: number;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    course_no: 'PTM-001-001',
-    course_name_th: 'ข้อบังคับการทำงาน',
-    course_name_en: 'COMPANY RULES',
-    start_date: '2013-10-30',
-    end_date: '2013-10-30',
-    place: 'TRAINING ROOM 2',
-    count: 48,
-  }, {
-    course_no: 'PTM-001-002',
-    course_name_th: 'ข้อบังคับการทำงาน',
-    course_name_en: 'COMPANY RULES',
-    start_date: '2014-05-03',
-    end_date: '2014-05-03',
-    place: 'TRAINING ROOM 1',
-    count: 16,
-  }, {
-    course_no: 'PTM-002-001',
-    course_name_th: 'การพัฒนาทักษะหัวหน้างาน',
-    course_name_en: 'MANAGEMENT & LEADERSHIP SKILL DEVELOPMENT',
-    start_date: '2013-11-08',
-    end_date: '2013-11-09',
-    place: 'CHOLAPRUEK RES ...',
-    count: 22,
-  }, {
-    course_no: 'PTM-003-001',
-    course_name_th: 'การอบรบพนักงานหลังการทดลองงาน',
-    course_name_en: 'TRAINING OF EMP. PASS PROBATION',
-    start_date: '2015-01-28',
-    end_date: '2015-01-28',
-    place: 'TRAINING ROOM 2',
-    count: 16,
-  },
-];

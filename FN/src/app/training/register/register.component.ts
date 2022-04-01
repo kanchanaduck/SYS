@@ -7,6 +7,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
+import axios from 'axios';
 
 @Component({
   selector: 'app-register',
@@ -14,6 +15,13 @@ import { ExportService } from '../../export.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
   data_grid: any = [];
   data_grid_other: any = [];
   // datatable
@@ -50,6 +58,11 @@ export class RegisterComponent implements OnInit {
 
   form: FormGroup;
   submitted = false;
+  committee: any;
+
+  has_committee: boolean = false;
+  committee_org_code: string;
+  is_committee: boolean;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
@@ -60,7 +73,8 @@ export class RegisterComponent implements OnInit {
     this.form = this.formBuilder.group(
       {
         frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
-        frm_course_name: ['', [Validators.required]],
+        frm_course_name_th: ['', [Validators.required]],
+        frm_course_name_en: [''],
         frm_emp_no: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(7)]],
         frm_emp_name: ['', [Validators.required]],
       },
@@ -68,6 +82,9 @@ export class RegisterComponent implements OnInit {
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
+
+    this.check_is_committee()
+    this.get_committee_of_emp_no();
 
     this.dtOptions = {
       destroy: true,
@@ -131,9 +148,7 @@ export class RegisterComponent implements OnInit {
             text: '<i class="fas fa-envelope"></i> Send e-mail</button>',
             key: '1',
             action: () => {
-              if (this.visableButton == true) {
-                this.fnSendMail();
-              }
+              this.fnSendMail();
             }
           }
         ],
@@ -214,14 +229,16 @@ export class RegisterComponent implements OnInit {
       container: "#example2_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
-    };
+    }; 
 
     this.fnGetband();
-    this.fnGetStakeholder(this._emp_no);
+    // this.fnGetStakeholder(this._emp_no);
   }
+
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
+
 
   async fnSave() {
     this.submitted = true;
@@ -264,10 +281,18 @@ export class RegisterComponent implements OnInit {
     }
     // console.log(send_data);
     await this.service.axios_post('Registration', send_data, environment.text.success);
-    await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
+    await this.fnGet(this.form.controls['frm_course'].value);
   }
   res_mail: any;
   async fnSendMail() {
+    if(this._org_code==""){
+      Swal.fire({
+        icon: 'error',
+        title: '403',
+        text: "You are not allowed to use this function because you are not a committee. "
+      })
+      return false;
+    }
     if (this.form.controls['frm_course'].value != "") {
       this.res_mail = await this.service.axios_get('OtherData/GetSendMail?org_code=' + this._org_code);
       // console.log(this.res_mail);
@@ -339,7 +364,7 @@ export class RegisterComponent implements OnInit {
     }).then(async (result) => {
       if (result.value) {
         await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
-        this.fnGet(item.course_no, this._org_abb);
+        this.fnGet(item.course_no);
       }
     })
   }
@@ -348,11 +373,12 @@ export class RegisterComponent implements OnInit {
   arr_band: any;
   async onKeyCourse(event: any) { // console.log(event.target.value);
     if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('CourseOpen/Open/' + event.target.value);
+      this.res_course = await this.service.axios_get('Course/Open/' + event.target.value);
       console.log(this.res_course);
 
       if (this.res_course != undefined) {
-        this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
+        this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);
+        this.form.controls['frm_course_name_th'].setValue(this.res_course.course_name_th);
         this.txtgroup.nativeElement.value = this.res_course.org_code;
         this.txtqty.nativeElement.value = this.res_course.capacity;
         // this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + displayTime(this.res_course.time_in);
@@ -368,10 +394,11 @@ export class RegisterComponent implements OnInit {
         } // console.log(this.array_chk);
         this.checkboxesDataList = this.array_chk;
 
-        this.fnGet(event.target.value, this._org_abb);
+        this.fnGet(event.target.value);
       }
     } else if (event.target.value.length < 11) {
-      this.form.controls['frm_course_name'].setValue("");
+      this.form.controls['frm_course_name_th'].setValue("");
+      this.form.controls['frm_course_name_en'].setValue("");
       this.txtgroup.nativeElement.value = "";
       this.txtqty.nativeElement.value = "";
       this.txtdate_from.nativeElement.value = "";
@@ -383,7 +410,7 @@ export class RegisterComponent implements OnInit {
     }
 
     if (event.target.value.length == 0) {
-      await this.fnGet("No", "No");
+      await this.fnGet("No");
     }
   }
 
@@ -403,8 +430,8 @@ export class RegisterComponent implements OnInit {
     if (this.res_emp != null || this.res_emp != undefined) {
       this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
       this.dept_emp = this.res_emp.dept_abb;
-      this.div_emp = this.res_emp.div_abb_name;
-      this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb;
+      this.div_emp = this.res_emp.div_abb;
+      this.txtdept.nativeElement.value = `${this.res_emp.div_abb}/${this.res_emp.dept_abb}`;
       this.txtposition.nativeElement.value = this.res_emp.position_name_en;
       this.txtband.nativeElement.value = this.res_emp.band;
     } else {
@@ -472,12 +499,12 @@ export class RegisterComponent implements OnInit {
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
       this.nameFile = 'Choose file';
-      await this.fnGet(this.form.controls['frm_course'].value, this._org_abb);
+      await this.fnGet(this.form.controls['frm_course'].value);
     }
   }
   /** End File Upload, Download */
 
-  async fnGetStakeholder(emp_no: any) {
+  /* async fnGetStakeholder(emp_no: any) {
     await this.service.gethttp('Stakeholder/Employee/' + emp_no)
       .subscribe((response: any) => {
         if (response.role.toUpperCase() == environment.role.committee) {
@@ -496,20 +523,68 @@ export class RegisterComponent implements OnInit {
         this.isreadonly = true;
         this.isIf = false;
       });
+  } */
+
+  async check_is_committee() {
+    let self = this
+    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_committee = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+      }, (error: any) => {
+        console.log(error);
+        self.is_committee = false;
+      }); 
   }
 
-  async fnGet(course_no, dept_abb) {
+
+  async get_committee_of_emp_no(){
     let self = this
-    await this.service.gethttp('Registration/GetGridView/' + course_no + '/' + dept_abb)
+    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, this.headers)
+    .then(function (response) {
+      self.committee = response
+      self.committee_org_code = self.committee.org_code
+      self.has_committee = true;
+    })
+    .catch(function (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    }); 
+  }
+
+  async fnGet(course_no) {
+
+    if (this.isDtInitialized) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.clear().draw();
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    }
+
+    if (this.isDtInitializedOther) {
+      this.dtElementOther.dtInstance.then((dtInstance1: DataTables.Api) => {
+        dtInstance1.clear().draw();
+        dtInstance1.destroy();
+        this.dtTriggerOther.next();
+      });
+    }
+
+
+
+    await this.service.gethttp(`Registration/GetGridView/${course_no}/${this.committee_org_code}`)
       .subscribe((response: any) => {
         this.data_grid = response.your;
         this.data_grid_other = response.other;
 
         console.log(this.dtElement);
         console.log(this.dtElementOther);
-
-        console.log(self.dtElement);
-        console.log(self.dtElementOther);
 
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
@@ -527,7 +602,6 @@ export class RegisterComponent implements OnInit {
         if (this.isDtInitializedOther) {
           this.dtElementOther.dtInstance.then((dtInstance1: DataTables.Api) => {
             dtInstance1.clear().draw();
-            this.isDtInitializedOther = true
             dtInstance1.destroy();
             this.dtTriggerOther.next();
           });
@@ -583,10 +657,11 @@ export class RegisterComponent implements OnInit {
   }
 
   async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('CourseOpen/Open/' + course_no);
+    this.res_course = await this.service.axios_get('Course/Open/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
-      this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
+      this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);
+      this.form.controls['frm_course_name_th'].setValue(this.res_course.course_name_th);
       this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
       this.txtqty.nativeElement.value = this.res_course.capacity;
       this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
@@ -600,9 +675,10 @@ export class RegisterComponent implements OnInit {
       } // console.log(this.array_chk);
       this.checkboxesDataList = this.array_chk;
 
-      this.fnGet(course_no, this._org_abb);
+      this.fnGet(course_no);
     } else {
-      this.form.controls['frm_course_name'].setValue("");
+      this.form.controls['frm_course_name_en'].setValue("");
+      this.form.controls['frm_course_name_th'].setValue("");
       this.txtgroup.nativeElement.value = "";
       this.txtqty.nativeElement.value = "";
       this.txtdate_from.nativeElement.value = "";
@@ -610,7 +686,7 @@ export class RegisterComponent implements OnInit {
       this.checkboxesDataList.forEach((value, index) => {
         value.isChecked = false;
       });
-      await this.fnGet("No", "No");
+      await this.fnGet("No");
     }
   }
   // End Open popup Course
@@ -634,29 +710,3 @@ function formatDate(date) {
 
   return [year, month, day].join('-');
 }
-function displayTime(ticksInSecs) {
-  // console.log(ticksInSecs);
-  var min = ticksInSecs.Minutes < 10 ? "0" + ticksInSecs.Minutes : ticksInSecs.Minutes;
-  var sec = ticksInSecs.Seconds < 10 ? "0" + ticksInSecs.Seconds : ticksInSecs.Seconds;
-  var hour = ticksInSecs.Hours < 10 ? "0" + ticksInSecs.Hours : ticksInSecs.Hours;
-  // return hour + ':' + min + ':' + sec;
-  return hour + ':' + min;
-}
-
-export interface PeriodicElement {
-  emp_no: string;
-  title_name_en: string;
-  firstname_en: string;
-  lastname_en: string;
-  position_name_en: string;
-  band: string;
-  dept_code: string;
-  dept_abb_name: string;
-  last_status: string;
-  remark: string;
-  course_name_en: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [];
-
-const ELEMENT_DATA_OTHER: PeriodicElement[] = [];

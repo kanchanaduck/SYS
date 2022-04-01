@@ -47,7 +47,8 @@ namespace api_hrgis.Controllers
             
             var query = string.Format(@"SELECT * FROM V_COUNT_TRAINEE
                         where course_no like '%{0}%'
-                        and (last_status = '{1}')
+                        and last_status = '{1}'
+                        order by date_start
                         "
                         , course_no, _config.GetValue<string>("Status:approved"));
 
@@ -175,14 +176,115 @@ namespace api_hrgis.Controllers
         {
             var query = string.Format(@"SELECT * FROM V_EMPLOYEE_TRAINING
                                 where  emp_no = '{0}'
-                                and (last_status = '{1}')"
+                                and (last_status = '{1}')
+                                order by date_start"
                         , emp_no, _config.GetValue<string>("Status:approved"));
 
             DataTable dt = new DataTable();
             dt = _repository.get_datatable(query);
 
             return Ok(dt);
+            /* var history = await _context.tr_course_registration
+                            .Include(r=>r.employees)
+                            .Include(r=>r.courses)
+                            .ThenInclude(e=>e.organization)
+                            // .ThenInclude(e=>e.courses_trainers)
+                            .Where(r=>
+                            r.emp_no==emp_no && 
+                            r.last_status==_config["Status:approved"])
+                            .AsNoTracking()
+                            .ToListAsync();
+
+            Console.WriteLine(_config["Status:approved"]);
+            return Ok(history); */
         }
+
+        
+        // [HttpGet("GetEmployeeTraining/Excel")]
+        // public async Task<IActionResult> GetEmployeeTrainingExcel(string emp_no)
+        [AllowAnonymous]
+        [HttpGet("GetEmployeeTraining/Excel")]
+        public IActionResult GetEmployeeTrainingExcel(string emp_no)
+        // public async Task<ActionResult<IEnumerable<tb_employee>>> GetEmployeeTrainingExcel(string emp_no)
+        {
+            var sql_course = string.Format(@"SELECT * FROM V_EMPLOYEE_TRAINING
+                                where  emp_no = '{0}'
+                                and (last_status = '{1}')
+                                order by date_start"
+                        , emp_no, _config.GetValue<string>("Status:approved"));
+            DataTable data_course = new DataTable();
+            data_course = _repository.get_datatable(sql_course);
+
+            var d = data_course.AsEnumerable().ToList();
+
+            Console.WriteLine(d.Count());
+
+            var data_emp = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
+
+            var time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var fileName = $"Employee_Training_History_{time}.xlsx";
+            var filepath = $"wwwroot/excel/Training_History/{fileName}";
+            var originalFileName = $"Employee_Training_History.xlsx";
+            var originalFilePath = $"wwwroot/excel/Training_History/{originalFileName}";
+
+            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets["training_history"];
+        
+                worksheet.Cells[1, 1].Value = "Training History"; 
+
+                worksheet.Cells[2, 1].Value = "EMP NO: "; 
+                worksheet.Cells[3, 1].Value = "NAME: "; 
+                worksheet.Cells[4, 1].Value = "POSITION: "; 
+                worksheet.Cells[5, 1].Value = "ORGANIZATION: "; 
+                worksheet.Cells[6, 1].Value = "DATA ON: ";
+
+                worksheet.Cells[2, 2].Value = data_emp.emp_no; 
+                worksheet.Cells[3, 2].Value = data_emp.firstname_en+" "+data_emp.lastname_en ; 
+                worksheet.Cells[4, 2].Value = data_emp.position_name_en; 
+                worksheet.Cells[5, 2].Value = data_emp.div_abb+"/"+data_emp.dept_abb; 
+                worksheet.Cells[6, 2].Value = DateTime.Now;
+
+                worksheet.Cells[8, 1].Value = "NO"; 
+                worksheet.Cells[8, 2].Value = "COURSE NO"; 
+                worksheet.Cells[8, 3].Value = "THAI COURSE NAME"; 
+                worksheet.Cells[8, 4].Value = "ENGLISH COURSE NAME"; 
+                worksheet.Cells[8, 5].Value = "DATE START"; 
+                worksheet.Cells[8, 6].Value = "DATE END"; 
+                worksheet.Cells[8, 7].Value = "COURSE ONWER"; 
+                worksheet.Cells[8, 8].Value = "PRE TEST";  
+                worksheet.Cells[8, 9].Value = "POST TEST";  
+                worksheet.Cells[8, 10].Value = "TRAINER"; 
+                
+                int recordIndex = 9; 
+
+                for(int i=0; i<d.Count(); i++){
+                    Console.WriteLine(i);
+                    Console.WriteLine(d[i]);
+                    Console.WriteLine(d[i]["course_no"]);
+                    worksheet.Cells[recordIndex, 1].Value = i+1; 
+                    worksheet.Cells[recordIndex, 2].Value = d[i]["course_no"];
+                    worksheet.Cells[recordIndex, 3].Value = d[i]["course_name_th"];
+                    worksheet.Cells[recordIndex, 4].Value = d[i]["course_name_en"]; 
+                    worksheet.Cells[recordIndex, 5].Value = d[i]["date_start"]; 
+                    worksheet.Cells[recordIndex, 5].Style.Numberformat.Format = "yyyy-mm-dd";
+                    worksheet.Cells[recordIndex, 6].Value = d[i]["date_end"]; 
+                    worksheet.Cells[recordIndex, 6].Style.Numberformat.Format = "yyyy-mm-dd";
+                    worksheet.Cells[recordIndex, 7].Value = d[i]["course_owner_org_abb"]+" ("+d[i]["course_owner_org_code"]+")"; 
+                    worksheet.Cells[recordIndex, 8].Value = ( d[i]["pre_test_grade"]==null ) ? "":d[i]["pre_test_score"]+" ("+d[i]["pre_test_grade"]+")";
+                    worksheet.Cells[recordIndex, 9].Value = ( d[i]["post_test_grade"]==null ) ? "":d[i]["post_test_score"]+" ("+d[i]["post_test_grade"]+")";
+                    worksheet.Cells[recordIndex, 10].Value = d[i]["full_trainer"];
+                    recordIndex++;
+                }
+                package.SaveAs(new FileInfo(filepath));
+                package.Dispose();
+            }  
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
+            return File(fileBytes, "application/x-msdownload", fileName); 
+
+            // return Ok(data_course);
+        } 
 
         [HttpGet("GetChartCenter")]
         public IActionResult GetChartCenter(string course_no)

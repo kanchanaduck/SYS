@@ -15,7 +15,7 @@ import { Subject } from 'rxjs';
   templateUrl: './trainer.component.html',
   styleUrls: ['./trainer.component.scss']
 })
-export class TrainerComponent implements OnInit {
+export class TrainerComponent implements OnInit, OnDestroy {
 
   trainers: any= [];
   trainer: any = {};
@@ -32,7 +32,8 @@ export class TrainerComponent implements OnInit {
     }
   }
 
-  filter: any = {};
+  filter_trainer_owner: string;
+  filter_trainer_type: string = "";
 
   _getjwt: any;
   _emp_no: any;
@@ -59,10 +60,24 @@ export class TrainerComponent implements OnInit {
 
     this.get_trainer_owner();
 
+    $.fn['dataTable'].ext.search.push((settings, data, dataIndex) => {
+      const trainer_owner = data[6]; 
+      const trainer_type = data[8]; 
+      if ((this.filter_trainer_type=="" && this.filter_trainer_owner=="") ||
+        (this.filter_trainer_type=="" && trainer_owner == this.filter_trainer_owner) ||
+        (this.filter_trainer_type == trainer_type && this.filter_trainer_owner=="") ||
+        (this.filter_trainer_type == trainer_type && trainer_owner == this.filter_trainer_owner)) {
+        return true;
+      }
+      return false;
+    });
+
+
   }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
+    $.fn['dataTable'].ext.search.pop();
   }
   
   async get_trainer_owner() {
@@ -71,7 +86,6 @@ export class TrainerComponent implements OnInit {
       this.trainer_owner = response;
       this.check_is_committee()
       this.trainer.trainer_type = 'Internal';
-      this.filter.trainer_type = '';
       this.trainer.company = 'CPT'
     },
     (error: any) => {
@@ -88,111 +102,20 @@ export class TrainerComponent implements OnInit {
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
         self.trainer.org_code = self._org_code
-        self.filter.trainer_owner = self._org_abb+" ("+self._org_code+")";
-        alert(self.filter.trainer_owner)
+        self.filter_trainer_owner = self._org_abb+" ("+self._org_code+")";
         self.get_trainers()
         self.datatable()
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
-        self.filter.trainer_owner = ""
-        this.get_trainers()
+        self.filter_trainer_owner = ""
+        self.get_trainers()
         self.datatable()
       });
 
+
       
   }
-  async datatable() {
-    $.fn['dataTable'].ext.search.push((settings, data, dataIndex) => {
-      const trainer_owner = data[6]; 
-      const trainer_type = data[8]; 
-      // console.log(trainer_type)
-      // console.log(trainer_owner)
-      console.log("Type: "+this.filter.trainer_type)
-      console.log("Owner: "+this.filter.trainer_owner)
-      /* if ((isNaN(this.min) && isNaN(this.max)) ||
-        (isNaN(this.min) && id <= this.max) ||
-        (this.min <= id && isNaN(this.max)) ||
-        (this.min <= id && id <= this.max)) {
-        return true;
-      } */
-      if(this.filter.trainer_type=="" || this.filter.trainer_owner==""){
-        return true;
-      }
-      if(this.filter.trainer_type===undefined || this.filter.trainer_owner===undefined){
-        return true;
-      }
-      if(this.filter.trainer_type==trainer_type && this.filter.trainer_owner==trainer_owner){
-        return true;
-      }
-      return false;
-    });
-    this.dtOptions = {
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      "processing": true,
-      buttons: {
-        "dom":{
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend:'pageLength',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-                {
-                    extend: 'excel',
-                    text: '<i class="far fa-file-excel"></i> Excel</button>',
-                },
-                {
-                    text: '<i class="far fa-file-excel"></i> History</button>',
-                    action: function ( e, dt, node, config ) {
-                      location.href = `${environment.API_URL}Trainers/HistoryExcel`
-                    }
-                },
-            ]
-          },
-        ],
-      },
-      order: [[6, 'asc'], [8, 'desc'],[0, 'asc']],
-      rowGroup: {
-        dataSrc: [6, 8]
-      }, 
-      columnDefs: [ 
-        {
-          targets: [ 6,8 ],
-          visible: false
-        },
-        {
-          targets: [ 10 ],
-          visible: this.is_committee? true:false
-        },
-        {
-          targets: [ 9, 10],
-          orderable: false 
-        } 
-      ],
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-    };
-  }
-
   async get_trainers(){
     let self = this
     await this.httpClient.get(`${environment.API_URL}Trainers`, this.headers)
@@ -345,11 +268,77 @@ export class TrainerComponent implements OnInit {
     })
   }
 
-  filter_trainer(): void {
-    console.log(this.filter)
+  async filter_trainer() {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
       dtInstance.draw();
     });
+  }
+
+  async datatable(){
+    this.dtOptions = {
+      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      "processing": true,
+      buttons: {
+        "dom":{
+          "container": {
+            tag: "div",
+            className: "dt-buttons btn-group flex-wrap float-right"
+          },
+          "button": {
+            tag: "button",
+            className: "btn btn-outline-indigo btn-sm"
+          },
+        },
+        "buttons": [
+          {
+            extend:'pageLength',
+          },
+          {
+            extend: 'collection',
+            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: '<i class="far fa-file-excel"></i> Excel</button>',
+                },
+                {
+                    text: '<i class="far fa-file-excel"></i> History</button>',
+                    action: function ( e, dt, node, config ) {
+                      location.href = `${environment.API_URL}Trainers/HistoryExcel`
+                    }
+                },
+            ]
+          },
+        ],
+      },
+      order: [[6, 'asc'], [8, 'desc'],[0, 'asc']],
+      rowGroup: {
+        dataSrc: [6, 8]
+      }, 
+      columnDefs: [ 
+        {
+          targets: [ 6,8 ],
+          visible: false
+        },
+        {
+          targets: [ 10 ],
+          visible: this.is_committee? true:false
+        },
+        {
+          targets: [ 9, 10],
+          orderable: false 
+        } 
+      ],
+      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+    };
   }
 
 }

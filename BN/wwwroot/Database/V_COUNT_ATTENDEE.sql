@@ -23,8 +23,8 @@ CREATE   VIEW [dbo].[V_COUNT_ATTENDEE] as
     , case when te.band = 'JP' then te.lastname_th else te.firstname_th end as firstname_th
     , case when te.band = 'JP' then te.firstname_th else te.lastname_th end as lastname_th
     , te.band, te.position_name_en, te.dept_abb, te.div_abb
-    FROM [HRGIS].[dbo].[tr_course] tc
-    left join [HRGIS].[dbo].[tr_course_registration] tr on tc.course_no = tr.course_no
+    FROM tr_course tc
+    left join tr_course_registration tr on tc.course_no = tr.course_no
     left join tb_employee te on tr.emp_no = te.emp_no
 	
 GO

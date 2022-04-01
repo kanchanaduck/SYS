@@ -127,7 +127,7 @@ export class ConfirmationSheetComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    await axios.get(`${environment.API_URL}CourseOpen`, this.headers)
+    await axios.get(`${environment.API_URL}Courses`, this.headers)
     .then(function(response){
       self.courses = response
     })

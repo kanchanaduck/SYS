@@ -76,19 +76,19 @@ namespace api_hrgis.Controllers
             return Ok(tr_course_registration);
         }
 
-        // GET: api/Registration/GetGridView/{course_no}/{dept_abb}
-        [HttpGet("GetGridView/{course_no}/{dept_abb}")]
-        public async Task<ActionResult> GetGridView(string course_no, string dept_abb)
+        // GET: api/Registration/GetGridView/{course_no}/{org_code}
+        [HttpGet("GetGridView/{course_no}/{org_code}")]
+        public async Task<ActionResult> GetGridView(string course_no, string org_code)
         {
-            string _dept = "";
-            _dept = dept_abb == _config.GetValue<string>("Text:all") ? "" : dept_abb;
+            // string _org = "";
+            // _org = org_code == _config.GetValue<string>("Text:all") ? "" : dept_abb;
 
             var query = await (
                 from tb1 in _context.tr_course_registration
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && (table.dept_abb.Contains(_dept))
+                where tb1.course_no == course_no && (table.div_code==org_code || table.dept_code==org_code) 
                 select new
                 {
                     tb1.course_no,
@@ -99,6 +99,8 @@ namespace api_hrgis.Controllers
                     tb1.remark,
                     tb1.manager_approved_checked,
                     tb1.final_approved_checked,
+                    table.div_code,
+                    table.div_abb,
                     table.dept_code,
                     table.dept_abb,
                     table.lastname_en,
@@ -114,7 +116,7 @@ namespace api_hrgis.Controllers
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && (!table.dept_abb.Contains(_dept))
+                where tb1.course_no == course_no && !(table.div_code==org_code || table.dept_code==org_code) 
                 select new
                 {
                     tb1.course_no,
@@ -125,6 +127,8 @@ namespace api_hrgis.Controllers
                     tb1.remark,
                     tb1.manager_approved_checked,
                     tb1.final_approved_checked,
+                    table.div_code,
+                    table.div_abb,
                     table.dept_code,
                     table.dept_abb,
                     table.lastname_en,

@@ -348,7 +348,7 @@ export class RegisterComponent implements OnInit {
   arr_band: any;
   async onKeyCourse(event: any) { // console.log(event.target.value);
     if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('CourseOpen/Open/' + event.target.value);
+      this.res_course = await this.service.axios_get('Course/Open/' + event.target.value);
       console.log(this.res_course);
 
       if (this.res_course != undefined) {
@@ -583,7 +583,7 @@ export class RegisterComponent implements OnInit {
   }
 
   async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('CourseOpen/Open/' + course_no);
+    this.res_course = await this.service.axios_get('Course/Open/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
       this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);

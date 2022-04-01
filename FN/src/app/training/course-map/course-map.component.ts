@@ -44,59 +44,6 @@ export class CourseMapComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.dtOptions = {
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      /* "scrollX": true,
-      scrollCollapse: true,
-      fixedColumns:   {
-        left: 3
-      }, */
-      buttons: {
-        "dom":{
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend:'pageLength',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-              {
-                  extend: 'excel',
-                  text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-            ]
-          },
-        ],
-      },
-      order: [ [0, 'asc'],[2, 'desc'], [1, 'asc']], 
-      columnDefs: [ 
-        {
-          targets: [ 'nosort' ],
-          orderable: false 
-        },
-      ],  
-      container: "#example_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-    };
-
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
@@ -157,6 +104,7 @@ export class CourseMapComponent implements OnInit {
 
     console.log(response[0])
       if (this.isDtInitialized) {
+        console.log("TRUE")
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.clear().draw();
           this.isDtInitialized = true
@@ -165,9 +113,11 @@ export class CourseMapComponent implements OnInit {
         });
       } 
       else {
+        console.log("FALSE")
         this.isDtInitialized = true
         this.dtTrigger.next();
       }
+      this.datatable()
     },
     (error: any) => {
       console.log(error);
@@ -188,6 +138,61 @@ export class CourseMapComponent implements OnInit {
         text: error.response.data
       })
     });
+  }
+
+  async datatable(){
+    this.dtOptions = {
+      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      /* "scrollX": true,
+      scrollCollapse: true,
+      fixedColumns:   {
+        left: 3
+      }, */
+      buttons: {
+        "dom":{
+          "container": {
+            tag: "div",
+            className: "dt-buttons btn-group flex-wrap float-right"
+          },
+          "button": {
+            tag: "button",
+            className: "btn btn-outline-indigo btn-sm"
+          },
+        },
+        "buttons": [
+          {
+            extend:'pageLength',
+          },
+          {
+            extend: 'collection',
+            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+            buttons: [
+              {
+                  extend: 'excel',
+                  text: '<i class="far fa-file-excel"></i> Excel</button>',
+              },
+            ]
+          },
+        ],
+      },
+      order: [ [0, 'asc'],[2, 'desc'], [1, 'asc']], 
+      columnDefs: [ 
+        {
+          targets: [ 'nosort' ],
+          orderable: false 
+        },
+      ],  
+      container: "#example_wrapper .col-md-6:eq(0)",
+      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+    };
   }
 
 }

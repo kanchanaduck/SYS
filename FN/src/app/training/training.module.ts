@@ -32,7 +32,7 @@ import { TraineeCountComponent } from './trainee-count/trainee-count.component';
 import { CourseAndScoreComponent } from './course-and-score/course-and-score.component';
 import { CourseMapComponent } from './course-map/course-map.component';
 import { EmployeeCourseHistoryComponent } from './employee-course-history/employee-course-history.component';
-import { CourseHistoryComponent } from './course-history/course-history.component';
+import { CourseAttendeeComponent } from './course-attendee/course-attendee.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
 import { DialogCourseComponent } from './dialog-course/dialog-course.component';
@@ -64,8 +64,7 @@ const routes: Routes = [
   { path: 'trainee-count', component: TraineeCountComponent, data: { title: 'Count trainee of course', active: true } },
   { path: 'course-and-score', component: CourseAndScoreComponent, data: { title: 'Course and trainees score', active: true } },
   { path: 'employee-course-history', component: EmployeeCourseHistoryComponent, data: { title: 'Employee training history', active: true } },
-  { path: 'course-history', component: CourseHistoryComponent, data: { title: 'Course attendee', active: true } },
-  { path: 'course-history', component: CourseHistoryComponent, data: { title: 'Course attendee', active: true } },
+  { path: 'course-attendee', component: CourseAttendeeComponent, data: { title: 'Course attendee', active: true } },
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
   { path: 'assessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
 ]
@@ -89,7 +88,7 @@ const routes: Routes = [
     CourseAndScoreComponent,
     CourseMapComponent,
     EmployeeCourseHistoryComponent,
-    CourseHistoryComponent,
+    CourseAttendeeComponent,
     StakeholderComponent,
     DialogCourseComponent,
     TrainerHistoryComponent,

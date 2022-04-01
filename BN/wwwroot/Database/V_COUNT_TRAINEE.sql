@@ -15,8 +15,8 @@ GO
 CREATE   VIEW [dbo].[V_COUNT_TRAINEE] as 
 	SELECT tc.course_no, tc.course_name_th, tc.course_name_en, tc.date_start, tc.date_end, tc.place, tr.last_status
 	, COUNT(tr.emp_no) as count_emp
-    FROM [HRGIS].[dbo].[tr_course] tc
-    left join [HRGIS].[dbo].[tr_course_registration] tr on tc.course_no = tr.course_no
+    FROM tr_course tc
+    left join tr_course_registration tr on tc.course_no = tr.course_no
 	group by tc.course_no, tc.course_name_th, tc.course_name_en, tc.date_start, tc.date_end, tc.place, tr.last_status
 	
 GO

@@ -1,9 +1,10 @@
-<div [formGroup]="form" class="card card-body mb-3">
+<div [formGroup]="form">
+<div class="card card-body mb-3">
     <div class="row">
         <div class="col-3">
             <div class="form-group">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                    <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
+                    <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
                 </label>
                 <input type="text" class="form-control" [readonly]="isClose" placeholder="Ex. XXX-XXX-XXX" (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                 <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
@@ -75,7 +76,8 @@
             </div>
         </div>
     </div>
-    <hr>
+</div>
+<div class="card card-body mb-3" *ngIf="is_committee">
     <div class="row">
         <div class="col-1 pt-4">emp no.</div>
         <div class="col-2">
@@ -167,6 +169,8 @@
         </div>
     </div>
 </div>
+</div>
+
 <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
     <thead>
         <tr>
@@ -196,10 +200,10 @@
             <td class="text-center">{{ item.employees.dept_abb }}</td>
             <td>{{ item.employees.entrance_date | date:'dd-MMM-yy'}}</td>
             <td class="text-center">
-                {{ item.pre_test_score+" ("+item.pre_test_grade+")" }}
+                {{ item.pre_test_score==null? "":item.pre_test_score+" ("+item.pre_test_grade+")" }}
             </td>
             <td class="text-center">
-                {{ item.post_test_score+" ("+item.post_test_grade+")"  }}
+                {{ item.post_test_score==null? "":item.post_test_score+" ("+item.post_test_grade+")"  }}
             </td>
             <td class="text-center">
                 <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>

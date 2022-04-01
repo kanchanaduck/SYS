@@ -134,7 +134,7 @@ export class DialogCourseComponent implements OnInit {
         
       // }
       if(this.inputitem == 'course-score' || this.inputitem == 'register-continuous' || this.inputitem == "course-confirmation-sheet"){
-        await this.service.gethttp('CourseOpen/GetCourseStatus')
+        await this.service.gethttp('Course/GetCourseStatus')
         .subscribe((response: any) => {
           console.log('co: ', response);
           this.data_grid = response;
@@ -155,7 +155,7 @@ export class DialogCourseComponent implements OnInit {
         });
       }else{
         if(this.inputitem == 'approve-center'){
-          await this.service.gethttp('CourseOpen/GetCourseOpenRegister')
+          await this.service.gethttp('Course/GetCourseOpenRegister')
           .subscribe((response: any) => {
             console.log('co: ', response);
             response = response.filter(x => x.org_code == this._getjwt.user.dept_code);
@@ -177,7 +177,7 @@ export class DialogCourseComponent implements OnInit {
             this.data_grid = [];
           });
         }else{
-          await this.service.gethttp('CourseOpen/GetCourseOpenRegister')
+          await this.service.gethttp('Courses?open_register=true')
           .subscribe((response: any) => {
             console.log('co: ', response);
             this.data_grid = response;

@@ -32,7 +32,7 @@ CREATE   VIEW [dbo].[V_GETREGISTRATION] as
 	, case when fnd.DateDiffs > 3 then null else fnd.date_2 end as date_2
 	, case when fnd.DateDiffs > 3 then null else fnd.date_3 end as date_3
 	, fnd.DateDiffs
-	FROM [HRGIS].[dbo].[tr_course] tc
+	FROM tr_course tc
 	left join tb_organization tbo on tc.org_code = tbo.org_code
 	left join tr_course_registration tr on tc.course_no = tr.course_no
 	left join tb_employee te on tr.emp_no = te.emp_no
@@ -42,7 +42,7 @@ CREATE   VIEW [dbo].[V_GETREGISTRATION] as
 					SELECT ',' + tb.full_trainer from (
 						select CASE WHEN trt.trainer_type = 'Internal' THEN te.title_name_en + te.firstname_en + ' ' + LEFT(te.lastname_en,1) + ' ('+ te.dept_abb +')' 
 								ELSE trt.title_name_en + trt.firstname_en + ' ' + LEFT(trt.lastname_en,1) + '.' END AS full_trainer
-						FROM [HRGIS].[dbo].[tr_course]  tc
+						FROM tr_course]  tc
 						left join tr_course_trainer tt on tc.course_no = tt.course_no
 						left join tr_trainer trt on tt.trainer_no = trt.trainer_no
 						left join tb_employee te on trt.emp_no = te.emp_no
@@ -50,7 +50,7 @@ CREATE   VIEW [dbo].[V_GETREGISTRATION] as
 					) tb
 				  FOR XML PATH (''))
 				 , 1, 1, '') from tr_course_trainer tb1 group by course_no) tbt on tc.course_no = tbt.course_no
-	CROSS APPLY [dbo].[FN_GETDATE](tc.date_start, tc.date_end) as fnd
+	CROSS APPLY FN_GETDATE(tc.date_start, tc.date_end) as fnd
 	where (tr.last_status = 'Approved')
 	
 GO

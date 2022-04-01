@@ -190,11 +190,33 @@ namespace api_hrgis.Controllers
         }
 
         // POST: api/RegisterScore/Continuous
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Continuous")]
-        public async Task<ActionResult<tr_course_registration>> PostContinuous(req_tr_course_score model)
+        public async Task<ActionResult<tr_course_registration>> PostContinuous(List<tr_course_registration> registration)
         {
-            try
+            foreach (var item in registration)
+            {
+                var last = await _context.tr_course_registration.Where(x => x.course_no == registration[0].course_no)
+                .OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
+                if (last == null)
+                {
+                    item.seq_no = 1;
+                }
+                else
+                {
+                    item.seq_no = last.seq_no + 1;
+                }
+                item.pre_test_grade = item.pre_test_grade==""? null:item.pre_test_grade;
+                item.post_test_grade = item.post_test_grade==""? null:item.post_test_grade;
+                item.remark = _config.GetValue<string>("Text:continuous");
+                item.last_status = _config.GetValue<string>("Status:approved");
+                item.register_at = DateTime.Now;
+                item.register_by = User.FindFirst("emp_no").Value;
+                item.scored_at = DateTime.Now;
+                item.scored_by = User.FindFirst("emp_no").Value;
+            }
+            await _context.tr_course_registration.AddRangeAsync(registration);
+            await _context.SaveChangesAsync();
+            /* try
             {
                 int seq = 0;
                 List<tr_course_registration> list = new List<tr_course_registration>();
@@ -250,9 +272,9 @@ namespace api_hrgis.Controllers
                 {
                     throw;
                 }
-            }
+            } */
 
-            return CreatedAtAction("Getcourse_score", new { id = model.course_no }, model);
+            return CreatedAtAction("Getcourse_score", new { id = registration[0].course_no }, registration);
         }
 
         // DELETE: api/RegisterScore/5

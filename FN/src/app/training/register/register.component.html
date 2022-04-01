@@ -1,10 +1,10 @@
-<div class="card card-body mb-3">
-    <div [formGroup]="form">
+<div [formGroup]="form">
+    <div class="card card-body mb-3">
         <div class="row">
-            <div class="col-3">
+            <div class="col-2">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
+                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
                     </label>
                     <input type="text" class="form-control" [readonly]="isreadonly"  placeholder="Ex. XXX-XXX-XXX" autofocus (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
                     <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
@@ -14,13 +14,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-5">
+            <div class="col-4">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course</label>
-                    <input type="text" class="form-control" readonly="" formControlName="frm_course_name" [ngClass]="{ 'is-invalid': submitted && f.frm_course_name.errors }" #txtcourse_name>
-                    <div *ngIf="submitted && f.frm_course_name.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_course_name.errors.required">Course name is required</div>
-                    </div>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai course name</label>
+                    <input type="text" class="form-control" readonly="" formControlName="frm_course_name_th" #txtcourse_name_th>
+                </div>
+            </div>
+            
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">English course name</label>
+                    <input type="text" class="form-control" readonly="" formControlName="frm_course_name_en" #txtcourse_name_en>
                 </div>
             </div>
             <div class="col-2">
@@ -29,14 +33,14 @@
                     <input type="text" class="form-control" readonly="" #txtgroup>
                 </div>
             </div>
-            <div class="col-2">
+        </div>
+        <div class="row pt-1">  
+            <div class="col-1">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
                     <input type="text" class="form-control" readonly="" #txtqty>
                 </div>
             </div>
-        </div>
-        <div class="row pt-1">
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
@@ -63,7 +67,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
                     <br>
@@ -73,7 +77,10 @@
                 </div>
             </div>
         </div>
-        <hr>
+    </div>
+
+
+<div class="card card-body mb-3" *ngIf="is_committee">
         <div class="row">
             <div class="col-2">
                 <div class="form-group">
@@ -110,27 +117,30 @@
             </div>
             <div class="col-2">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">department</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">div/dept</label>
                     <input type="text" class="form-control" readonly="" #txtdept>
                 </div>
             </div>
             <div class="col-2 text-right pt-4">
-                <button type="button" *ngIf="visableButton" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
-                <button type="button" *ngIf="visableButton" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+                <button type="button" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
             </div>
         </div>
         <hr>
         <div class="row text-muted">
-            <div class="col-1 pt-1 text-uppercase">import</div>
             <div class="col-4">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">import</label>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
                     <label class="custom-file-label" for="customFile">{{nameFile}}</label>
                 </div>
             </div>
             <div class="col-6">
-                <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm" (click)="dowloadFormat()"><i class="fas fa-cloud-download-alt"></i> Download</button>
-                <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm" (click)="upload()"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">button</label>
+                <div>
+                    <button type="button" class="btn btn-outline-indigo btn-sm" (click)="dowloadFormat()"><i class="fas fa-cloud-download-alt"></i> Download</button>
+                    <button type="button" class="btn btn-outline-indigo btn-sm" (click)="upload()"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
+                </div>
             </div>
             <div class="col-12">
                 <div style="position: absolute; top:-25px; left: 65px; width: 32%;">
@@ -147,42 +157,48 @@
     </div>
 </div>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+<div class="card bd-0">
+ <ul class="nav nav-tabs card-header bg-gray-400" id="myTab" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">Your organization</a>
+        <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">
+            Your organization
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">Other organization</a>
+        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">
+            Other organization
+        </a>
     </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+
+ <div class="tab-content card-body bd bd-t-0 " id="myTabContent">
     <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
         <table datatable #example [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
-                <tr class="text-uppercase">
-                    <th>no.</th>
-                    <th>emp no.</th>
-                    <th>title</th>
-                    <th>firstname</th>
-                    <th>lastname</th>
-                    <th>position</th>
-                    <th>band</th>
-                    <th>department</th>
-                    <th>status</th>
-                    <th>remark</th>
-                    <th>manage</th>
+                <tr>
+                    <th class="text-center">no.</th>
+                    <th class="text-center">emp no.</th>
+                    <th class="text-center">title</th>
+                    <th class="text-center">firstname</th>
+                    <th class="text-center">lastname</th>
+                    <th class="text-center">position</th>
+                    <th class="text-center">band</th>
+                    <th class="text-center">div/dept</th>
+                    <th class="text-center">status</th>
+                    <th class="text-center">remark</th>
+                    <th class="text-center">manage</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.emp_no }}</td>
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td class="text-center">{{ item.emp_no }}</td>
                     <td>{{ item.title_name_en }}</td>
                     <td>{{ item.firstname_en }}</td>
                     <td>{{ item.lastname_en }}</td>
                     <td>{{ item.position_name_en }}</td>
-                    <td>{{ item.band }}</td>
-                    <td>{{item.dept_code}}:{{ item.dept_abb }}</td>
+                    <td class="text-center">{{ item.band }}</td>
+                    <td>{{item.div_abb+"/"+item.dept_abb }}</td>
                     <td>{{ item.last_status }}</td>
                     <td>
                         <ng-container *ngIf="item.course_name_en === '';else show">
@@ -203,28 +219,28 @@
         <table datatable #example2 [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr class="text-uppercase">
-                    <th>no.</th>
-                    <th>emp no.</th>
-                    <th>title</th>
-                    <th>firstname</th>
-                    <th>lastname</th>
-                    <th>position</th>
-                    <th>band</th>
-                    <th>department</th>
-                    <th>status</th>
-                    <th>remark</th>
+                    <th class="text-center">no.</th>
+                    <th class="text-center">emp no.</th>
+                    <th class="text-center">title</th>
+                    <th class="text-center">firstname</th>
+                    <th class="text-center">lastname</th>
+                    <th class="text-center">position</th>
+                    <th class="text-center">band</th>
+                    <th class="text-center">div/dept</th>
+                    <th class="text-center">status</th>
+                    <th class="text-center">remark</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid_other; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.emp_no }}</td>
+                    <td class="text-center">{{ i + 1 }}</td>
+                    <td class="text-center">{{ item.emp_no }}</td>
                     <td>{{ item.title_name_en }}</td>
                     <td>{{ item.firstname_en }}</td>
                     <td>{{ item.lastname_en }}</td>
                     <td>{{ item.position_name_en }}</td>
-                    <td>{{ item.band }}</td>
-                    <td>{{item.dept_code}}:{{ item.dept_abb }}</td>
+                    <td class="text-center">{{ item.band }}</td>
+                    <td>{{item.div_abb+"/"+item.dept_abb }}</td>
                     <td>{{ item.last_status }}</td>
                     <td>
                         <ng-container *ngIf="item.course_name_en === '';else show">
@@ -238,6 +254,7 @@
             </tbody>
         </table>
     </div>
+</div> 
 </div>
 
 <ng-template #contentCourse let-modal class="fade">

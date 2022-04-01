@@ -7,6 +7,7 @@ import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import { environment } from 'src/environments/environment';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import axios from 'axios';
 
 @Component({
   selector: 'app-register-continuous',
@@ -44,6 +45,14 @@ export class RegisterContinuousComponent implements OnInit {
 
   form: FormGroup;
   submitted = false;
+  headers: any = {
+    headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+  is_committee: boolean;
+  _org_code: any;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
     , private service: AppServiceService, private exportexcel: ExportService) {
@@ -66,6 +75,7 @@ export class RegisterContinuousComponent implements OnInit {
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
+    this.check_is_committee()
 
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
@@ -131,6 +141,23 @@ export class RegisterContinuousComponent implements OnInit {
     return this.form.controls;
   }
 
+  async check_is_committee() {
+    let self = this
+    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_committee = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+      }, (error: any) => {
+        console.log(error);
+        self.is_committee = false;
+      }); 
+  }
+
+
+
+
   /* async fnSave() {
     this.submitted = true;
 
@@ -194,10 +221,39 @@ export class RegisterContinuousComponent implements OnInit {
     this.fnGet(frm.frm_course);
   } */
   
-  /* async save_trainee(){
+  async save_trainee(){
+    // let frm = this.form.value;
     let frm = this.form.value;
-    let course_no: frm.frm_course;
-  } */
+    let form_data = [];
+    let emp_no = frm.frm_emp_no_from
+    while(emp_no <= frm.frm_emp_no_to){
+      let emp_padded = emp_no.toString().padStart(6, '0');
+      let data = {
+        course_no: frm.frm_course,
+        emp_no: emp_padded,
+        pre_test_score: frm.frm_pre_test_score,
+        pre_test_grade: this.txtpre_test_grade.nativeElement.value,
+        post_test_score: frm.frm_post_test_score,
+        post_test_grade: this.txtpost_test_grade.nativeElement.value,
+      };
+      form_data.push(data)
+      emp_no++;
+    }
+    console.log(form_data)
+    if(form_data.length>0){
+      axios.post(`${environment.API_URL}RegisterScore/Continuous`,form_data,this.headers)
+      .then(function (response) {
+        this.fnGet(frm.frm_course);
+      })
+      .catch(function (error) {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+      })
+    }
+  }
 
   async fnUpdate() {
     this.submitted = true;
@@ -273,7 +329,7 @@ export class RegisterContinuousComponent implements OnInit {
   arr_band: any;
   async onKeyCourse(event: any) { // console.log(event.target.value);
     if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('CourseOpen/' + event.target.value);
+      this.res_course = await this.service.axios_get('Course/' + event.target.value);
       if (this.res_course != undefined) {
         this.txtcourse_name_en.nativeElement.value = this.res_course.course_name_en;
         this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
@@ -438,7 +494,7 @@ export class RegisterContinuousComponent implements OnInit {
   }
 
   async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('CourseOpen/OpenALL/' + course_no);
+    this.res_course = await this.service.axios_get('Course/OpenALL/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
       this.txtcourse_name_en.nativeElement.value = this.res_course.course_name_en;

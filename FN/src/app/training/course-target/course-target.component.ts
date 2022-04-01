@@ -129,6 +129,11 @@ export class CourseTargetComponent implements OnInit {
   async clear_data() {
     this.course = {};
     this.data_grid = [];
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.clear().draw();
+      dtInstance.destroy();
+      this.dtTrigger.next();
+    });
   }
 
   async get_course() {
@@ -146,7 +151,6 @@ export class CourseTargetComponent implements OnInit {
           self.course = response
           self.course.band_text = self.course.master_courses_bands.map(c => c.band).join(', ');
           console.log(self.course.band_text )
-          self.datatable()
         })
         .catch(function(error){
           Swal.fire({
@@ -156,7 +160,8 @@ export class CourseTargetComponent implements OnInit {
           })
           self.course = {};
           return false;
-      });      
+      });
+      self.datatable()      
     }
   }
 
@@ -172,8 +177,7 @@ export class CourseTargetComponent implements OnInit {
         if (this.isDtInitialized) 
         {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear();
-            dtInstance.draw();
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });

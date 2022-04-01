@@ -114,6 +114,7 @@ namespace api_hrgis.Controllers
                                     title_name_en = trainer.title_name_en?? emp.title_name_en,
                                     firstname_en = trainer.firstname_en?? emp.firstname_en,
                                     lastname_en = trainer.lastname_en?? emp.lastname_en,
+                                    display_name = trainer.trainer_type=="External"? trainer.firstname_en+" "+trainer.lastname_en.Substring(0,1)+".":emp.firstname_en+" "+emp.lastname_en.Substring(0,1)+". ("+emp.dept_abb+")",
                                     div_abb = emp.div_abb,
                                     dept_abb = emp.dept_abb,
                                     company = trainer.company,
@@ -229,19 +230,30 @@ namespace api_hrgis.Controllers
         [HttpGet("History/{trainer_no}")]
         public async Task<ActionResult<tr_trainer>> trainer_history(int trainer_no)
         {
-            var tr_trainer = await _context.tr_trainer
+            var trainer = await _context.tr_trainer.Where(t=>t.trainer_no==trainer_no).FirstOrDefaultAsync();
+
+            if (trainer == null)
+            {
+                return NotFound();
+            }
+            
+            if(trainer.trainer_type=="Internal"){ 
+                return await _context.tr_trainer
+                                .Include(t => t.courses_trainers)
+                                .ThenInclude(e => e.courses)
+                                .AsNoTracking()
+                                .Where(t => t.emp_no== trainer.emp_no)
+                                .FirstOrDefaultAsync();
+            }
+            else{
+                return await _context.tr_trainer
                                 .Include(t => t.courses_trainers)
                                 .ThenInclude(e => e.courses)
                                 .AsNoTracking()
                                 .Where(t => t.trainer_no==trainer_no)
                                 .FirstOrDefaultAsync();
-
-            if (tr_trainer == null)
-            {
-                return NotFound();
             }
 
-            return tr_trainer;
         }
 
         // GET: api/Trainers/HistoryExcel/1
@@ -449,7 +461,7 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Trainers/FullTrainers
-        [HttpGet("FullTrainers")]
+        /* [HttpGet("FullTrainers")]
         public async Task<ActionResult> FullTrainers()
         {
             var query = await (
@@ -476,7 +488,7 @@ namespace api_hrgis.Controllers
                 }).OrderBy(x => x.firstname_en).ToListAsync();
                 
             return Ok(query);
-        }
+        } */
         [AllowAnonymous]
         [HttpGet("Mock")]
         public async Task<ActionResult<IEnumerable<tr_trainer>>> Trainer()

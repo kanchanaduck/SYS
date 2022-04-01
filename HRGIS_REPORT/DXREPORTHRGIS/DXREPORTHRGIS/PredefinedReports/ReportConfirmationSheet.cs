@@ -9,5 +9,10 @@ namespace DXREPORTHRGIS.PredefinedReports
         {
             InitializeComponent();
         }
+
+        private void ReportConfirmationSheet_BeforePrint(object sender, System.Drawing.Printing.PrintEventArgs e)
+        {
+
+        }
     }
 }

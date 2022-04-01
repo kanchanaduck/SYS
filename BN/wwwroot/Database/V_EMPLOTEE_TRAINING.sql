@@ -24,9 +24,9 @@ CREATE   VIEW [dbo].[V_EMPLOTEE_TRAINING] as
     , case when te.band = N'JP' then te.firstname_th else te.lastname_th end as lastname_th
     , te.band, te.position_name_en, te.dept_abb, te.div_abb
     , tbt.full_trainer
-    FROM [HRGIS].[dbo].[tr_course] tc
+    FROM tr_course tc
     left join tb_organization tbo on tc.org_code = tbo.org_code
-    left join [HRGIS].[dbo].[tr_course_registration] tr on tc.course_no = tr.course_no
+    left join tr_course_registration tr on tc.course_no = tr.course_no
     left join tb_employee te on tr.emp_no = te.emp_no
     left join (
         SELECT course_no ,full_trainer = STUFF(
@@ -34,7 +34,7 @@ CREATE   VIEW [dbo].[V_EMPLOTEE_TRAINING] as
                         SELECT ',' + tb.full_trainer from (
                             select CASE WHEN trt.trainer_type = N'Internal' THEN te.title_name_en + te.firstname_en + ' ' + LEFT(te.lastname_en,1) + ' ('+ te.dept_abb +')' 
                                     ELSE trt.title_name_en + trt.firstname_en + ' ' + LEFT(trt.lastname_en,1) + '.' END AS full_trainer
-                            FROM [HRGIS].[dbo].[tr_course]  tc
+                            FROM tr_course  tc
                             left join tr_course_trainer tt on tc.course_no = tt.course_no
                             left join tr_trainer trt on tt.trainer_no = trt.trainer_no
                             left join tb_employee te on trt.emp_no = te.emp_no

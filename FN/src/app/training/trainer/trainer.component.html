@@ -125,36 +125,36 @@
     </form>
 </div>
 
-<div class="card card-body mb-3" *ngIf="is_committee" #filter>
-    <form (submit)="filter_trainer()">
-        <div class="row">
-            <div class="form-group col mb-0 p-1">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">TRAINER OWNER</label>
-                <select class="form-control" 
-                    [(ngModel)]="filter.trainer_owner"
-                    (change)="filter_trainer()"
-                    [ngModelOptions]="{standalone: true}">
-                    <option value="">ALL</option>
-                    <option *ngFor="let t of trainer_owner" value="{{ t.trainer_owner }}">
-                        {{ t.trainer_owner }}
-                    </option>
-                </select>
-                <p class="">{{ filter.trainer_owner | json }}</p>
-            </div>
-            <div class="form-group col mb-0 p-1">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">TRAINER TYPE</label>
-                <select class="form-control" 
-                    [(ngModel)]="filter.trainer_type" 
-                    (change)="filter_trainer()"
-                    [ngModelOptions]="{standalone: true}">
-                    <option value="">ALL</option>
-                    <option value="Internal">Internal</option>
-                    <option value="External">External</option>
-                </select>
-                <p class="">{{ filter.trainer_type | json }}</p>
-            </div>
+<div class="card card-body mb-3" #filter>
+    <form>
+    <div class="row">
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">TRAINER OWNER</label>
+            <select class="form-control" 
+                name="filter.trainer_owner"
+                [(ngModel)]="filter_trainer_owner"
+                (ngModelChange)="filter_trainer()"
+                [ngModelOptions]="{standalone: true}">
+                <option value="">ALL</option>
+                <option *ngFor="let t of trainer_owner" value="{{ t.trainer_owner }}">
+                    {{ t.trainer_owner }}
+                </option>
+            </select>
         </div>
-    </form>
+        <div class="form-group col mb-0 p-1">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">TRAINER TYPE</label>
+            <select class="form-control" 
+                name="filter.trainer_type"
+                [(ngModel)]="filter_trainer_type" 
+                (ngModelChange)="filter_trainer()"
+                [ngModelOptions]="{standalone: true}">
+                <option value="">ALL</option>
+                <option value="Internal">Internal</option>
+                <option value="External">External</option>
+            </select>
+        </div>
+    </div>
+</form>
 </div>
 
 <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
@@ -195,6 +195,7 @@
                     <i class="far fa-edit"></i>
                 </a>
                 <a href="javascript:;"
+                    *ngIf="_org_abb==t.trainer_owner_abb"
                     (click)="delete_trainer(t.trainer_no)">
                     <i class="far fa-trash-alt"></i>
                 </a>

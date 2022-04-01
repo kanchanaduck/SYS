@@ -26,10 +26,6 @@ export class HeaderComponent implements OnInit {
       this.now = Date.now();
     }, 1);
 
-    axios.get('/assets/menus.json').then(response => (
-      this.menus = response.data
-    ));
-
     if (localStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); //console.log('data jwt: ', this._data);
       this._fullname = this._data.user.firstname_en + ' ' + this._data.user.lastname_en.substring(0, 1);

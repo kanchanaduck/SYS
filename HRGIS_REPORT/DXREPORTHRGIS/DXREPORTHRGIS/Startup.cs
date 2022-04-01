@@ -31,6 +31,7 @@ namespace DXREPORTHRGIS {
                 .AddNewtonsoftJson()
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
             services.ConfigureReportingServices(configurator => {
+                configurator.DisableCheckForCustomControllers();
                 configurator.ConfigureReportDesigner(designerConfigurator => {
                 });
                 configurator.ConfigureWebDocumentViewer(viewerConfigurator => {

@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 export class AssessmentFileComponent implements OnInit {
 
   link: string;
-  course_no: string = "";
+  course_no: string;
   error: string = "";
   headers: any = {
     headers: {
@@ -19,20 +19,30 @@ export class AssessmentFileComponent implements OnInit {
       'Content-Type': 'application/json'
     }
   }
+  courses: any = [];
   course: any = {};
   download_button_disabled: boolean = true;
 
   constructor() { }
 
   ngOnInit(): void {
-    this.link = `${environment.API_URL}CourseMasters/Course_Assessment_File/${this.course_no}`
+    this.get_courses();
+  }
+
+  async get_courses(){
+    let self = this
+    axios.get(`${environment.API_URL}Courses`,self.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
+    });
   }
 
   async get_course(){
     let self = this
-    let course_no = self.course_no.trim()
-    if(this.course_no.length>=11){
-      axios.get(`${environment.API_URL}CourseOpen/${course_no}`,self.headers)
+    if(this.course_no!=null){
+      axios.get(`${environment.API_URL}Course/${this.course_no}`,self.headers)
       .then(function(response){
         self.course = response
         self.download_button_disabled = false;
@@ -47,17 +57,17 @@ export class AssessmentFileComponent implements OnInit {
         self.course = {};
       });
     }
-    else{
-      Swal.fire({
-        icon: 'error',
-        title: '400',
-        text: 'Please fill correct course no.'
-      })
-      self.download_button_disabled = true;
-      self.course = {};
-    }
   }
 
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.download_button_disabled = true;
+  }
   async download(){
     location.href = `${environment.API_URL}CourseMasters/Course_Assessment_File/${this.course_no}`
   }  

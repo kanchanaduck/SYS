@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-employee-course-history',
@@ -16,9 +17,14 @@ export class EmployeeCourseHistoryComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false
+  emp_no: string;
   // end datatable
 
   constructor(private service: AppServiceService) { }
+  /* private download_excel = function(){
+    alert("Entry")
+    location.href = `${environment.API_URL}OtherData/GetEmployeeTraining/Excel?emp_no=${this.emp_no}`
+  } */
 
   ngOnInit(): void {
     this.dtOptions = {
@@ -59,43 +65,49 @@ export class EmployeeCourseHistoryComponent implements OnInit {
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
               {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-              {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },              
+                text: '<i class="far fa-file-excel"></i> History</button>',
+                action: function ( e, dt, node, config ) {
+                  alert("DOWNLOAD")
+                  this.download_excel()
+                }
+              },           
             ]
           }
         ],
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      order: [[4, 'desc']],
+      order: [[0, 'desc']],
     };
-
     this.fnGet("NULL");
+
+    function download_excel(){
+      alert(this.emp_no)
+    }
+  }
+
+  download_excel(): void{
+    alert(this.emp_no)
   }
 
   async onKeyEmp(event: any) {
     if (event.target.value.length >= 6 && event.target.value.length < 8) {
       this.fnGet(event.target.value);
-    }else if(event.target.value.length == 0){
+    }
+    else if(event.target.value.length == 0){
       this.fnGet("NULL");
     }
   }
 
   async fnGet(emp_no:string) {
+
+
     await this.service.gethttp('OtherData/GetEmployeeTraining?emp_no=' + emp_no)
       .subscribe((response: any) => {
         console.log(response);
 
         this.data_grid = response;
+        // this.header = response[0]
 
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
@@ -112,10 +124,13 @@ export class EmployeeCourseHistoryComponent implements OnInit {
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
+
       });
   }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
+
+
 }
