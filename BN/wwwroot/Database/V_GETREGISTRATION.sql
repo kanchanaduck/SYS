@@ -15,7 +15,7 @@ CREATE   VIEW [dbo].[V_GETREGISTRATION] as
 	SELECT tc.course_no, tc.course_name_th, tc.course_name_en
 	, tc.date_start
 	, tc.date_end
-	, left(tc.time_in,5) as time_in, left(tc.time_out,5) as time_out, tc.place, tbo.org_code, tbo.org_abb
+	, cast(date_start as time) as time_in, cast(date_start as time) as time_out, tc.place, tbo.org_code, tbo.org_abb
 	, te.id_card_no, te.emp_no
 	, te.title_name_en
 	, case when te.band = N'JP' then te.lastname_en else te.firstname_en end as firstname_en

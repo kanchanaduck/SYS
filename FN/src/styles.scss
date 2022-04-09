@@ -381,3 +381,11 @@ table.dataTable tbody td.text-wrap{
 .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
     top: 2px !important;
 }
+
+.invalid-feedback-nc{
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: #dc3545;
+}

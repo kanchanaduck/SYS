@@ -7,10 +7,13 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
             <input type="hidden" name="course.course_no_temp" class="form-control" 
                 autofocus required 
-                [(ngModel)]="course.course_no_temp" >
+                [(ngModel)]="course.course_no_temp" 
+                >
             <input type="text" name="course.course_no" class="form-control" 
                 autofocus required 
-                [(ngModel)]="course.course_no" >
+                [(ngModel)]="course.course_no" 
+                [ngClass]="{ 'is-invalid': errors && errors.course_no }"
+                >
             <p class="text-danger tx-12" *ngIf="errors && errors.course_no"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
             </p>
@@ -18,7 +21,8 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
             <input type="text" name="course.course_name_th" class="form-control" required 
-                [(ngModel)]="course.course_name_th" >
+                [(ngModel)]="course.course_name_th" 
+                [ngClass]="{ 'is-invalid': errors && errors.course_name_th }">
             <p class="text-danger tx-12" *ngIf="errors && errors.course_name_th"> 
                 <span *ngFor="let text of errors.course_name_th">{{ text }}</span>
             </p>
@@ -26,7 +30,8 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
             <input type="text" name="course.course_name_en" class="form-control" required 
-                [(ngModel)]="course.course_name_en" >
+                [(ngModel)]="course.course_name_en"
+                [ngClass]="{ 'is-invalid': errors && errors.course_name_en }" >
             <p class="text-danger tx-12" *ngIf="errors && errors.course_name_en"> 
                 <span *ngFor="let text of errors.course_name_en">{{ text }}</span>
             </p>
@@ -40,7 +45,6 @@
                     [(ngModel)]="course.org_code">
                     <option value="{{ _org_code }}">{{ _org_abb }}</option>
                 </select>
-                <!-- <p>Selected: {{ course.org_code | json}}</p> -->
                 <p class="text-danger tx-12" *ngIf="errors && errors.org_code"> 
                     <span *ngFor="let text of errors.org_code">{{ text }}</span>
                 </p>
@@ -48,7 +52,8 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
             <input type="number" name="course.capacity" class="form-control"
-                [(ngModel)]="course.capacity" >
+                [(ngModel)]="course.capacity" 
+                [ngClass]="{ 'is-invalid': errors && errors.capacity }">
             <p class="text-danger tx-12" *ngIf="errors && errors.capacity"> 
                 <span *ngFor="let text of errors.capacity">{{ text }}</span>
             </p>
@@ -76,7 +81,8 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">Days</label>
             <input type="text" name="course.days" class="form-control"
-                [(ngModel)]="course.days" >
+                [(ngModel)]="course.days" 
+                [ngClass]="{ 'is-invalid': errors && errors.days }">
             <p class="text-danger tx-12" *ngIf="errors && errors.days"> 
                 <span *ngFor="let text of errors.days">{{ text }}</span>
             </p>

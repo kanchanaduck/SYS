@@ -63,6 +63,12 @@ export class RegisterComponent implements OnInit {
   has_committee: boolean = false;
   committee_org_code: string;
   is_committee: boolean;
+  errors: any;
+  
+  course_no:string;
+  course: any={};
+  courses: any=[];
+  response: any;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
@@ -72,9 +78,6 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.form = this.formBuilder.group(
       {
-        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
-        frm_course_name_th: ['', [Validators.required]],
-        frm_course_name_en: [''],
         frm_emp_no: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(7)]],
         frm_emp_name: ['', [Validators.required]],
       },
@@ -86,150 +89,9 @@ export class RegisterComponent implements OnInit {
     this.check_is_committee()
     this.get_committee_of_emp_no();
 
-    this.dtOptions = {
-      destroy: true,
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
-        }
-      },
-      buttons: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend: 'pageLength',
-          },
-          {
-            extend: 'copy',
-            text: '<i class="fas fa-copy"></i> Copy</button>',
-          },
-          {
-            extend: 'print',
-            text: '<i class="fas fa-print"></i> Print</button>',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-              {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              }, {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },
-            ]
-          }, {
-            text: '<i class="fas fa-envelope"></i> Send e-mail</button>',
-            key: '1',
-            action: () => {
-              this.fnSendMail();
-            }
-          }
-        ],
-      },
-      container: "#example_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      pageLength: 10,
-      order: [[0, 'asc']],
-      columnDefs: [
-        {
-          targets: [8],
-          orderable: false
-        }
-      ],
-    };
-    this.dtOptionsOther = {
-      destroy: true,
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
-        }
-      },
-      buttons: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend: 'pageLength',
-          },
-          {
-            extend: 'copy',
-            text: '<i class="fas fa-copy"></i> Copy</button>',
-          },
-          {
-            extend: 'print',
-            text: '<i class="fas fa-print"></i> Print</button>',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-              {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-              {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },
-            ]
-          }
-        ],
-      },
-      container: "#example2_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      pageLength: 10,
-    }; 
+    this.get_courses_open()
+
+
 
     this.fnGetband();
     // this.fnGetStakeholder(this._emp_no);
@@ -239,11 +101,243 @@ export class RegisterComponent implements OnInit {
     return this.form.controls;
   }
 
+  async get_course() {
+    let self = this
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.response = response
+          self.course = self.response.courses
+          self.arr_band = self.response.courses.courses_bands;
+          let trainers = self.response.trainers
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
+          let bands = self.arr_band
+          if(bands.length>0){
+            self.course.band_text = bands.map(c => c.band).join(', ');
+          }
+          else{
+            self.course.band_text = "-"
+          }
+          self.fnGet(self.course_no)
+          self.datatable()
+        })
+        .catch(function(error){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          self.course = {};
+          return false;
+      });      
+    }
+  }
+
+async get_courses_open(){
+  let self = this
+  await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+  .then(function(response){
+    self.courses = response
+  })
+  .catch(function(error){
+
+  });
+}
+
+custom_search_course_fn(term: string, item: any) {
+  term = term.toLowerCase();
+  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+}
+
+async clear_data() {
+  this.course = {};
+  this.data_grid = [];
+  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+    dtInstance.clear().draw();
+    dtInstance.destroy();
+    this.dtTrigger.next();
+  });
+}
+
+async datatable(){
+  this.dtOptions = {
+    destroy: true,
+    dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+    language: {
+      paginate: {
+        next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+        previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+      }
+    },
+    filter: {
+      "dom": {
+        "container": {
+          tag: "div",
+          className: "dt-buttons btn-group flex-wrap float-left"
+        },
+      }
+    },
+    buttons: {
+      "dom": {
+        "container": {
+          tag: "div",
+          className: "dt-buttons btn-group flex-wrap float-right"
+        },
+        "button": {
+          tag: "button",
+          className: "btn btn-outline-indigo btn-sm"
+        },
+      },
+      "buttons": [
+        {
+          extend: 'pageLength',
+        },
+        {
+          extend: 'copy',
+          text: '<i class="fas fa-copy"></i> Copy</button>',
+        },
+        {
+          extend: 'print',
+          text: '<i class="fas fa-print"></i> Print</button>',
+        },
+        {
+          extend: 'collection',
+          text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+          buttons: [
+            {
+              extend: 'excel',
+              text: '<i class="far fa-file-excel"></i> Excel</button>',
+            }, 
+            /* {
+              extend: 'csv',
+              text: '<i class="far fa-file-excel"></i> Csv</button>',
+            },
+            {
+              extend: 'pdf',
+              text: '<i class="far fa-file-pdf"></i> Pdf</button>',
+            }, */
+          ]
+        }, {
+          text: '<i class="fas fa-envelope"></i> Send e-mail</button>',
+          key: '1',
+          action: () => {
+            this.fnSendMail();
+          }
+        }
+      ],
+    },
+    container: "#example_wrapper .col-md-6:eq(0)",
+    lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+    pageLength: 10,
+    order: [[0, 'asc']],
+    columnDefs: [
+      {
+        targets: [10],
+        orderable: false
+      },
+      {
+        targets: [10],
+        visible: this.is_committee
+      }
+    ],
+  };
+  this.dtOptionsOther = {
+    destroy: true,
+    dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+    language: {
+      paginate: {
+        next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+        previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+      }
+    },
+    filter: {
+      "dom": {
+        "container": {
+          tag: "div",
+          className: "dt-buttons btn-group flex-wrap float-left"
+        },
+      }
+    },
+    buttons: {
+      "dom": {
+        "container": {
+          tag: "div",
+          className: "dt-buttons btn-group flex-wrap float-right"
+        },
+        "button": {
+          tag: "button",
+          className: "btn btn-outline-indigo btn-sm"
+        },
+      },
+      "buttons": [
+        {
+          extend: 'pageLength',
+        },
+        {
+          extend: 'copy',
+          text: '<i class="fas fa-copy"></i> Copy</button>',
+        },
+        {
+          extend: 'print',
+          text: '<i class="fas fa-print"></i> Print</button>',
+        },
+        {
+          extend: 'collection',
+          text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+          buttons: [
+            {
+              extend: 'excel',
+              text: '<i class="far fa-file-excel"></i> Excel</button>',
+            },
+            /* {
+              extend: 'csv',
+              text: '<i class="far fa-file-excel"></i> Csv</button>',
+            },
+            {
+              extend: 'pdf',
+              text: '<i class="far fa-file-pdf"></i> Pdf</button>',
+            }, */
+          ]
+        }
+      ],
+    },
+    container: "#example2_wrapper .col-md-6:eq(0)",
+    lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+    pageLength: 10,
+  }; 
+}
+
 
   async fnSave() {
     this.submitted = true;
 
     if (this.form.invalid) {
+      return;
+    }
+
+
+    if(this.course_no===undefined){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
       return;
     }
     // console.log(JSON.stringify(this.form.value, null, 2));
@@ -274,14 +368,36 @@ export class RegisterComponent implements OnInit {
     }
 
     const send_data = {
-      course_no: this.form.controls['frm_course'].value,
+      course_no: this.course_no,
       emp_no: this.form.controls['frm_emp_no'].value,
-      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.txtqty.nativeElement.value ? environment.text.wait : null,
+      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? environment.text.wait : null,
       remark: this.txt_not_pass
     }
     // console.log(send_data);
-    await this.service.axios_post('Registration', send_data, environment.text.success);
-    await this.fnGet(this.form.controls['frm_course'].value);
+    // await this.service.axios_post('Registration', send_data, environment.text.success);
+    // await this.fnGet(this.form.controls['frm_course'].value);
+    let self = this
+    await axios.post(`${environment.API_URL}Registration`, send_data, this.headers)
+    .then(function(response){
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: "Success",
+        showConfirmButton: false,
+        timer: 2000
+      })
+      self.fnGet(self.course_no);
+    })
+    .catch(function(error){
+      self.errors = error.response.data.errors
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+      })
+      // self.fnGet(self.course_no);
+    })
   }
   res_mail: any;
   async fnSendMail() {
@@ -293,7 +409,7 @@ export class RegisterComponent implements OnInit {
       })
       return false;
     }
-    if (this.form.controls['frm_course'].value != "") {
+    if (this.course_no != "") {
       this.res_mail = await this.service.axios_get('OtherData/GetSendMail?org_code=' + this._org_code);
       // console.log(this.res_mail);
       if (this.res_mail.length > 0) {
@@ -371,48 +487,6 @@ export class RegisterComponent implements OnInit {
 
   res_course: any = [];
   arr_band: any;
-  async onKeyCourse(event: any) { // console.log(event.target.value);
-    if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('Course/Open/' + event.target.value);
-      console.log(this.res_course);
-
-      if (this.res_course != undefined) {
-        this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);
-        this.form.controls['frm_course_name_th'].setValue(this.res_course.course_name_th);
-        this.txtgroup.nativeElement.value = this.res_course.org_code;
-        this.txtqty.nativeElement.value = this.res_course.capacity;
-        // this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + displayTime(this.res_course.time_in);
-        // this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + displayTime(this.res_course.time_out);
-        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
-        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
-
-        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-
-        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-        for (const iterator of nameArr) {
-          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-        } // console.log(this.array_chk);
-        this.checkboxesDataList = this.array_chk;
-
-        this.fnGet(event.target.value);
-      }
-    } else if (event.target.value.length < 11) {
-      this.form.controls['frm_course_name_th'].setValue("");
-      this.form.controls['frm_course_name_en'].setValue("");
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-      this.fnClear();
-    }
-
-    if (event.target.value.length == 0) {
-      await this.fnGet("No");
-    }
-  }
 
   onKeyEmpno(event: any) {
     if (event.target.value.length >= 6 && event.target.value.length <= 7) {
@@ -479,51 +553,55 @@ export class RegisterComponent implements OnInit {
   }
   result: any;
   async upload() {
-    if (this.form.controls['frm_course'].value == "") {
+    if (this.course_no == "") {
+      return;
+    }
+
+    if(this.course_no===undefined){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+
+    if(this.file===undefined){
+      console.log(this.file)
+      this.errors =  {
+        file: ["Please select file to upload"]
+      };
       return;
     }
 
     let formData = new FormData();
-    if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
+    if (this.customFile.nativeElement.value !== undefined && 
+          this.customFile.nativeElement.value !== "" && 
+          this.customFile.nativeElement.value !== null) {
       formData.append('file_form', this.file)
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
-      formData.append('capacity', this.txtqty.nativeElement.value)
+      formData.append('capacity', this.course.capacity)
 
-      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.form.controls['frm_course'].value, formData, environment.text.success);
+      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.course_no, formData, environment.text.success);
+      this.errors = {};
       // console.log('result: ', this.result.data);
       if (this.result.data.length > 0) {
+        Swal.fire({
+          icon: 'warning',
+          text: "There is something error, please see the files."
+        })
         let element = this.result.data;
         this.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
       }
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
       this.nameFile = 'Choose file';
-      await this.fnGet(this.form.controls['frm_course'].value);
+      this.fnGet(this.course_no);
     }
   }
   /** End File Upload, Download */
 
-  /* async fnGetStakeholder(emp_no: any) {
-    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
-      .subscribe((response: any) => {
-        if (response.role.toUpperCase() == environment.role.committee) {
-          this._org_abb = response.organization.org_abb;
-          this._org_code = response.organization.org_code;
-          this.txtgroup.nativeElement.value = response.organization.org_abb;
-          this.fnGet("No", "No");
-          this.visableButton = true;
-          this.isreadonly = false;
-          this.isIf = true;
-        }
-      }, (error: any) => {
-        console.log(error);
-        this.fnGet("No", "No");
-        this.visableButton = false;
-        this.isreadonly = true;
-        this.isIf = false;
-      });
-  } */
 
   async check_is_committee() {
     let self = this
@@ -533,9 +611,13 @@ export class RegisterComponent implements OnInit {
         self.is_committee = true;
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
+        self.visableButton = true;
+        self.isreadonly = false;
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
+        self.visableButton = false;
+        self.isreadonly = true;
       }); 
   }
 
@@ -625,39 +707,8 @@ export class RegisterComponent implements OnInit {
     this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
   }
 
-  // Open popup Course
-  inputitem = 'register';
-  openCourse(content) {
-    //   size: 'lg' //sm, mb, lg, xl
-    this.v_course_no = "";
-    const modalRef = this.modalService.open(content, { size: 'lg' });
-    modalRef.result.then(
-      (result) => {
-        console.log(result);
-        if (result != "OK") {
-          this.form.controls['frm_course'].setValue("");
-          this.fnGetCourse("NULL");
-          this.v_course_no = "";
-        }
-      },
-      (reason) => {
-        console.log(reason);
-        this.form.controls['frm_course'].setValue("");
-        this.fnGetCourse("NULL");
-        this.v_course_no = "";
-      }
-    );
-  }
-
-  v_course_no: string = "";
-  addItemCourse(newItem: string) {
-    this.v_course_no = newItem;
-    this.form.controls['frm_course'].setValue(newItem);
-    this.fnGetCourse(newItem);
-  }
-
   async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('Course/Open/' + course_no);
+    this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
       this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);

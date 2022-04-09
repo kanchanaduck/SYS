@@ -109,19 +109,19 @@ namespace api_hrgis.Controllers
                             join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
                             from emp in z.DefaultIfEmpty()
                             select new { 
-                                    trainer_no = trainer.trainer_no,
-                                    emp_no = trainer.emp_no,
-                                    title_name_en = trainer.title_name_en?? emp.title_name_en,
-                                    firstname_en = trainer.firstname_en?? emp.firstname_en,
-                                    lastname_en = trainer.lastname_en?? emp.lastname_en,
-                                    display_name = trainer.trainer_type=="External"? trainer.firstname_en+" "+trainer.lastname_en.Substring(0,1)+".":emp.firstname_en+" "+emp.lastname_en.Substring(0,1)+". ("+emp.dept_abb+")",
-                                    div_abb = emp.div_abb,
-                                    dept_abb = emp.dept_abb,
-                                    company = trainer.company,
-                                    trainer_owner_code = trainer.org_code,
-                                    trainer_owner_abb = trainer.organization.org_abb,
-                                    employed_status = emp.employed_status,
-                                    trainer_type = trainer.trainer_type,
+                                trainer_no = trainer.trainer_no,
+                                emp_no = trainer.emp_no,
+                                title_name_en = trainer.title_name_en?? emp.title_name_en,
+                                firstname_en = trainer.firstname_en?? emp.firstname_en,
+                                lastname_en = trainer.lastname_en?? emp.lastname_en,
+                                display_name = trainer.trainer_type=="External"? trainer.firstname_en+" "+trainer.lastname_en.Substring(0,1)+".":emp.firstname_en+" "+emp.lastname_en.Substring(0,1)+". ("+emp.dept_abb+")",
+                                div_abb = emp.div_abb,
+                                dept_abb = emp.dept_abb,
+                                company = trainer.company,
+                                trainer_owner_code = trainer.org_code,
+                                trainer_owner_abb = trainer.organization.org_abb,
+                                employed_status = emp.employed_status,
+                                trainer_type = trainer.trainer_type,
                             })
                             .Where(trainer=>trainer.trainer_owner_code==org_code)
                             .ToListAsync();
@@ -173,7 +173,7 @@ namespace api_hrgis.Controllers
                 worksheet.Cells[2, 2].Value = "TITLE NAME"; 
                 worksheet.Cells[2, 3].Value = "FIRSTNAME"; 
                 worksheet.Cells[2, 4].Value = "LASTNAME"; 
-                worksheet.Cells[2, 5].Value = "company"; 
+                worksheet.Cells[2, 5].Value = "COMPANY"; 
                 worksheet.Cells[2, 6].Value = "DIVISION"; 
                 worksheet.Cells[2, 7].Value = "DEPARTMENT"; 
                 worksheet.Cells[2, 8].Value = "TRAINER TYPE"; 

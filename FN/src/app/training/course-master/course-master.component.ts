@@ -410,20 +410,11 @@ export class CourseMasterComponent implements OnInit {
       })
       .catch(function (error) {
         self.errors = error.response.data.errors
-        if(error.response.status==400){
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data.title
-          })
-        }
-        else{
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })        
-        }
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+        })
       });
   }
   else{
@@ -442,20 +433,11 @@ export class CourseMasterComponent implements OnInit {
     })
     .catch(function (error) {
       self.errors = error.response.data.errors
-      if(error.response.status==400){
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data.title
-        })
-      }
-      else{
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })        
-      }
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+      })
     });
   }
 

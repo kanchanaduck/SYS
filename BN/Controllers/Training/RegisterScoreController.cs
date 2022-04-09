@@ -44,15 +44,33 @@ namespace api_hrgis.Controllers
                        .OrderBy(x => x.course_no).ThenBy(x => x.emp_no).ToListAsync();
         }
 
-        // GET: api/RegisterScore/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<tr_course_registration>> Get_course_score(string id)
+        // GET: api/RegisterScore/CPT-001-001
+        [HttpGet("{course_no}")]
+        public async Task<IActionResult> get_registrator(string course_no)
+        {
+            var course_score = await _context.tr_course_registration
+                        .Include(e => e.employees)
+                        .Where(e => e.course_no == course_no)
+                        .OrderBy(x => x.emp_no)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+            if (course_score==null)
+            {
+                return NotFound();
+            }
+
+            return Ok(course_score);
+        }
+
+        // GET: api/RegisterScore/CPT-001-001/Approved
+        [HttpGet("{course_no}/Approved")]
+        public async Task<ActionResult<tr_course_registration>> get_registrator_approved(string course_no)
         {
             var course_score = await _context.tr_course_registration
                         .Include(e => e.courses)
                         .Include(e => e.employees)
-                        .Where(e => e.course_no == id
-                        //&& e.register_by == User.FindFirst("emp_no").Value
+                        .Where(e => e.course_no == course_no
                          && e.last_status == _config.GetValue<string>("Status:approved"))
                         .OrderBy(x => x.emp_no).ToListAsync();
 
@@ -72,7 +90,6 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses)
                         .Include(e => e.employees)
                         .Where(e => e.course_no == id
-                        && e.register_by == User.FindFirst("emp_no").Value
                         && e.last_status == _config.GetValue<string>("Status:approved"))
                         .OrderBy(x => x.emp_no).ToListAsync();
 

@@ -29,6 +29,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">committee</label>
             <ng-select 
                 [items]="employees"
+                [searchFn]="custom_search_name_fn"
                 bindLabel="emp_no"
                 bindValue="emp_no"
                 [multiple]="true"
@@ -47,6 +48,7 @@
             <label class="az-content-label tx-11 tx-medium tx-gray-600">approver</label>
             <ng-select 
                 [items]="employees_j4up"
+                [searchFn]="custom_search_name_fn"
                 bindLabel="emp_no"
                 bindValue="emp_no"
                 [multiple]="true"

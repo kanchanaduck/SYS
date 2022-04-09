@@ -1,177 +1,157 @@
-<div [formGroup]="form">
-<div class="card card-body mb-3">
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                    <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" (click)="openCourse(contentCourse)"></i>
-                </label>
-                <input type="text" class="form-control" [readonly]="isClose" placeholder="Ex. XXX-XXX-XXX" (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
-                <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course.errors.required">Course is required</div>
-                    <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
-                    <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-5">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">course</label>
-                <input type="text" class="form-control" readonly #txtcourse_name_en>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
-                <input type="text" class="form-control" readonly #txtgroup>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
-                <input type="text" class="form-control" readonly #txtqty>
-            </div>
+<div class="row mb-3" *ngIf="is_committee">
+    <div class="col-6 offset-3">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <ng-select 
+                [(ngModel)]="course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                (clear)="clear_data()"
+                (change)="get_course()"
+                [ngClass]="{ 'is-invalid': errors && errors.course_no }">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+            <small class="text-muted">Display all courses of {{ _org_abb }}</small>
+            <p class="invalid-feedback" *ngIf="errors && errors.course_no"> 
+                <span *ngFor="let text of errors.course_no">{{ text }}</span>
+            </p>
         </div>
     </div>
-    <div class="row pt-1">
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                        </div>
-                    </div>
-                    <input class="form-control" readonly #txtdate_from>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                        </div>
-                    </div>
-                    <input class="form-control" readonly #txtdate_to>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
-                <br>
-                <div *ngFor="let item of checkboxesDataList" style="display: inline-block;">
-                    &nbsp;&nbsp;<input type="checkbox" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}" disabled>&nbsp;{{item.band}}
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
-                <input class="form-control" readonly #txtplace>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="card card-body mb-3" *ngIf="is_committee">
-    <div class="row">
-        <div class="col-1 pt-4">emp no.</div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
-                <input type="text" class="form-control" [readonly]="isreadonly" minlength="0" maxlength="7" formControlName="frm_emp_no_from" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_from.errors }" (keyup)="onKeyEmpNoFrom($event)" #txtemp_no_from>
-                <div *ngIf="f.frm_emp_no_from.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_emp_no_from.errors.required">Required</div>
-                    <div *ngIf="f.frm_emp_no_from.errors.minlength">Min 1 characters</div>
-                    <div *ngIf="f.frm_emp_no_from.errors.maxlength">Max 7 characters</div>
-                    <div *ngIf="f.frm_emp_no_from.errors.someErrorFrom">Please fill correct data</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
-                <input type="text" class="form-control" [readonly]="isreadonly" minlength="0" maxlength="7" formControlName="frm_emp_no_to" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_to.errors }" (keyup)="onKeyEmpNoTo($event)" #txtemp_no_to>
-                <div *ngIf="f.frm_emp_no_to.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_emp_no_to.errors.required">Required</div>
-                    <div *ngIf="f.frm_emp_no_to.errors.minlength">Min 1 characters</div>
-                    <div *ngIf="f.frm_emp_no_to.errors.maxlength">Max 7 characters</div>
-                    <div *ngIf="f.frm_emp_no_to.errors.someErrorTo">Please fill correct data</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="row">
-                <div class="col-6" style="padding: 0 10px 0 10px;">
-                    <div class="form-group">
-                        <label class="az-content-label tx-11 tx-medium tx-gray-600">pre-test</label>
-                        <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
-                        <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
-                            <!-- <div *ngIf="f.frm_pre_test_score.errors.required">Required</div> -->
-                            <div *ngIf="f.frm_pre_test_score.errors.minlength">Min 1 characters</div>
-                            <div *ngIf="f.frm_pre_test_score.errors.maxlength">Max 3 characters</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6" style="margin-left: -22px;">
-                    <div class="form-group">
-                        <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">pre_test_grade</label>
-                        <input type="text" class="form-control" readonly="" #txtpre_test_grade>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="row">
-                <div class="col-6" style="padding: 0 10px 0 10px;">
-                    <div class="form-group">
-                        <label class="az-content-label tx-11 tx-medium tx-gray-600">post-test</label>
-                        <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKeyPostTestScore($event)" #txtpost_test_score>
-                        <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
-                            <!-- <div *ngIf="f.frm_post_test_score.errors.required">Required</div> -->
-                            <div *ngIf="f.frm_post_test_score.errors.minlength">Min 1 characters</div>
-                            <div *ngIf="f.frm_post_test_score.errors.maxlength">Max 3 characters</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6" style="margin-left: -22px;">
-                    <div class="form-group">
-                        <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">post_test_grade</label>
-                        <input type="text" class="form-control" readonly="" #txtpost_test_grade>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-1" style="padding: 0 0 0 10px;">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">total</label>
-                <input type="text" class="form-control" readonly="" #txttotal>
-            </div>
-        </div>
-        <div class="col-2 text-right pt-4">
-            <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="save_trainee()">Save</button>
-            <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
-            <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
-        </div>
-        <div class="col-12">
-            <div style="position: absolute; top:-10px; left: 30px; width: 35%;">
-                <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer text-muted"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 5px;">
-                    <img src="assets/images/standard_point.PNG" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </div>
 
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="is_committee && (course | json) != '{}'">
+    <dl class="row my-0">
+        <dt class="col-sm-2">COURSE NO.: </dt>
+        <dd class="col-sm-2">{{ course.course_no }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-1">GROUP:</dt>
+        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
+        <dt class="col-sm-1">DAY: </dt>
+        <dd class="col-sm-2">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">OPEN REGISTER:</dt>
+        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">FROM:</dt>
+        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dt class="col-sm-2">TO:</dt>
+        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">TRAINER:</dt>
+        <dd class="col-sm-4">{{ course.trainer_text }}</dd> 
+        <dt class="col-sm-2">BAND:</dt>
+        <dd class="col-sm-4">{{ course.band_text }}</dd> 
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">CREATED:</dt>
+        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dt class="col-sm-2">UPDATED:</dt>
+        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+    </dl>
+</div>
+
+<div class="card mt-3 mb-3" *ngIf="is_committee" [formGroup]="form">
+    <div class="card-header">
+        Register
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no. from</label>
+                    <input type="text" class="form-control" [readonly]="isreadonly" minlength="0" maxlength="7" 
+                    placeholder="8XXXXX"
+                    formControlName="frm_emp_no_from" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_from.errors }" 
+                    (keyup)="onKeyEmpNoFrom($event)" #txtemp_no_from>
+                    <div *ngIf="f.frm_emp_no_from.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_emp_no_from.errors.required">Required</div>
+                        <div *ngIf="f.frm_emp_no_from.errors.minlength">Min 1 characters</div>
+                        <div *ngIf="f.frm_emp_no_from.errors.maxlength">Max 7 characters</div>
+                        <div *ngIf="f.frm_emp_no_from.errors.someErrorFrom">Please fill correct data</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no. to</label>
+                    <input type="text" class="form-control" [readonly]="isreadonly" minlength="0" maxlength="7" 
+                    placeholder="8XXXXX"
+                    formControlName="frm_emp_no_to" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no_to.errors }" 
+                    (keyup)="onKeyEmpNoTo($event)" #txtemp_no_to>
+                    <div *ngIf="f.frm_emp_no_to.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_emp_no_to.errors.required">Required</div>
+                        <div *ngIf="f.frm_emp_no_to.errors.minlength">Min 1 characters</div>
+                        <div *ngIf="f.frm_emp_no_to.errors.maxlength">Max 7 characters</div>
+                        <div *ngIf="f.frm_emp_no_to.errors.someErrorTo">Please fill correct data</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row">
+                    <div class="col-8 pr-0">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">pre-test</label>
+                            <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
+                        </div>
+                    </div>
+                    <div class="col-4 pl-1">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">pre_test_grade</label>
+                            <input type="text" class="form-control" readonly="" #txtpre_test_grade>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row">
+                    <div class="col-8 pr-0">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600">post-test</label>
+                            <input type="text" class="form-control" minlength="0" maxlength="3" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKeyPostTestScore($event)" #txtpost_test_score>
+                        </div>
+                    </div>
+                    <div class="col-4 pl-1">
+                        <div class="form-group">
+                            <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">post_test_grade</label>
+                            <input type="text" class="form-control" readonly="" #txtpost_test_grade>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">total</label>
+                    <input type="text" class="form-control" readonly="" #txttotal>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible"> </label>
+                    <div>
+                        <button type="submit" class="btn btn-az-primary btn-sm" (click)="save_trainee()">Save</button>
+                        <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+                    </div>
+                </div>
+            </div>  
+        </div>
+    </div>
+</div>
+
+<table *ngIf="is_committee" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
     <thead>
         <tr>
             <th>no.</th>
@@ -180,9 +160,8 @@
             <th>firstname</th>
             <th>lastname</th>
             <th>band</th>
-            <th>division</th>
-            <th>department</th>
-            <th>ENTRANCE DATE</th>
+            <th>div/dept</th>
+            <th>ENTRANCE</th>
             <th>PRE-TEST</th>
             <th>POST-TEST</th>
             <th>manage</th>
@@ -196,9 +175,8 @@
             <td>{{ item.employees.firstname_en }}</td>
             <td>{{ item.employees.lastname_en }}</td>
             <td class="text-center">{{ item.employees.band }}</td>
-            <td class="text-center">{{ item.employees.div_abb }}</td>
-            <td class="text-center">{{ item.employees.dept_abb }}</td>
-            <td>{{ item.employees.entrance_date | date:'dd-MMM-yy'}}</td>
+            <td class="text-center">{{ item.employees.div_abb+"/"+item.employees.dept_abb}}</td>
+            <td>{{ item.employees.entrance_date | date:'dd/MM/yy'}}</td>
             <td class="text-center">
                 {{ item.pre_test_score==null? "":item.pre_test_score+" ("+item.pre_test_grade+")" }}
             </td>
@@ -206,25 +184,15 @@
                 {{ item.post_test_score==null? "":item.post_test_score+" ("+item.post_test_grade+")"  }}
             </td>
             <td class="text-center">
-                <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>
                 <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt pointer"></i></a>
             </td>
         </tr>
     </tbody>
 </table>
 
-<ng-template #contentCourse let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body text-capitalize">
-        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>
+<div class="card card-body" *ngIf="!is_committee">
+    <p class="m-0">
+        This page for committee. If you would like to see the status of registration, 
+        you can go to <a routerLink="./../course">Course</a> page.
+    </p>
+</div>

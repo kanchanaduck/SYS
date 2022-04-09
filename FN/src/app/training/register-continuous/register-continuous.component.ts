@@ -8,6 +8,7 @@ import { ExportService } from '../../export.service';
 import { environment } from 'src/environments/environment';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-register-continuous',
@@ -42,6 +43,7 @@ export class RegisterContinuousComponent implements OnInit {
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
+  response: any;
 
   form: FormGroup;
   submitted = false;
@@ -53,6 +55,14 @@ export class RegisterContinuousComponent implements OnInit {
   }
   is_committee: boolean;
   _org_code: any;
+  course_no:string;
+  course_no_view:string;
+  course_no_register:string;
+  course: any={};
+  courses: any=[];
+  courses_view: any=[];
+  courses_register: any=[];
+  errors:any={};
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
     , private service: AppServiceService, private exportexcel: ExportService) {
@@ -63,13 +73,10 @@ export class RegisterContinuousComponent implements OnInit {
   ngOnInit() {
     this.form = this.formBuilder.group(
       {
-        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
         frm_emp_no_from: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
         frm_emp_no_to: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
-        // frm_pre_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
-        // frm_post_test_score: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
-        frm_pre_test_score: ['', [Validators.minLength(1), Validators.maxLength(3)]],
-        frm_post_test_score: ['', [Validators.minLength(1), Validators.maxLength(3)]],
+        frm_pre_test_score: ['' ],
+        frm_post_test_score: [''],
       },
     );
 
@@ -77,6 +84,14 @@ export class RegisterContinuousComponent implements OnInit {
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
     this.check_is_committee()
 
+    this.fnGetband();
+    this.fnGetEmp();
+  }
+  get f(): { [key: string]: AbstractControl } {
+    return this.form.controls;
+  }
+
+  async datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -117,119 +132,153 @@ export class RegisterContinuousComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              {
+              /* {
                 extend: 'csv',
                 text: '<i class="far fa-file-excel"></i> Csv</button>',
               },
               {
                 extend: 'pdf',
                 text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },
+              }, */
             ]
           }
         ],
       },
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+      columnDefs: [
+        {
+          targets: [10],
+          orderable: false,
+        },
+        {
+          targets: [10],
+          visible: this.is_committee
+        }
+      ],
     };
-
-    this.fnGetStakeholder(this._emp_no);
-    this.fnGetband();
-    this.fnGetEmp();
-  }
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
   }
 
-  async check_is_committee() {
+  async get_course() {
     let self = this
-    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
-      .subscribe((response: any) => {
-        console.log(response)
-        self.is_committee = true;
-        self._org_code = response.org_code
-        self._org_abb = response.organization.org_abb
-      }, (error: any) => {
-        console.log(error);
-        self.is_committee = false;
-      }); 
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.response = response
+          self.course = self.response.courses
+          self.arr_band = self.response.courses.courses_bands
+          let trainers = self.response.trainers
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
+          let bands = self.arr_band
+          if(bands.length>0){
+            self.course.band_text = bands.map(c => c.band).join(', ');
+          }
+          else{
+            self.course.band_text = "-"
+          }
+          self.fnGet(self.course_no)
+          self.datatable()
+        })
+        .catch(function(error){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          self.course = {};
+          return false;
+      });      
+    }
   }
 
+async get_courses(){
+  let self = this
+  // await axios.get(`${environment.API_URL}Courses`, this.headers)
+  // .then(function(response){
+  //   self.courses_view = response
+  // })
+  // .catch(function(error){
 
+  // });
+  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
+  .then(function(response){
+    self.courses = response
+  })
+  .catch(function(error){
 
+  });
+}
 
-  /* async fnSave() {
-    this.submitted = true;
+custom_search_course_fn(term: string, item: any) {
+  term = term.toLowerCase();
+  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+}
+
+async clear_data() {
+  this.course = {};
+  this.data_grid = [];
+  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+    dtInstance.clear().draw();
+    dtInstance.destroy();
+    this.dtTrigger.next();
+  });
+}
+
+async check_is_committee() {
+  let self = this
+  await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+    .subscribe((response: any) => {
+      console.log(response)
+      self.is_committee = true;
+      self._org_code = response.org_code
+      self._org_abb = response.organization.org_abb
+      self.get_courses()
+      self.datatable()
+    }, (error: any) => {
+      console.log(error);
+      self.is_committee = false;
+      self.get_courses()
+      self.datatable()
+    }); 
+}
+  
+  async save_trainee(){
+
+      this.submitted=true;
 
     if (this.form.invalid) {
       return;
     }
-    console.log(JSON.stringify(this.form.value, null, 2));
 
-    let frm = this.form.value;
-    var n = parseInt(frm.frm_emp_no_from);
-    var x = parseInt(frm.frm_emp_no_to);
-    var array = [];
-    var array_non = [];
-
-    while (n <= x) {
-      const result = {}
-      const result_non = {}
-      const padded = n.toString().padStart(6, '0');
-      let filters = this.res_emp.filter(x => x.emp_no == padded); // console.log(filters);
-
-      if (filters.length > 0) { // ตรวจสอบข้อมูลระหว่าง emp_no ที่กรอก กับข้อมูลใน employee
-        let filter_conf = this.res_conflict.filter(x => x.emp_no == padded); console.log('filter_conf: ', filter_conf);
-        if (filter_conf.length > 0) { // ตรวจสอบข้อมูลระหว่าง emp_no ที่กรอก กับข้อมูลในที่ถูก register ไปแล้ว
-          result_non["emp_no"] = padded;
-          result_non["remark"] = environment.text.duplication;
-          array_non.push(result_non);
-        } else {
-          result["emp_no"] = padded;
-          array.push(result);
-        }
-      } else if (filters.length == 0) {
-        result_non["emp_no"] = padded;
-        result_non["remark"] = "The employee do not match with database.";
-        array_non.push(result_non);
-      }
-      result["pre_test_score"] = frm.frm_pre_test_score == "" ? 0 : frm.frm_pre_test_score;
-      result["pre_test_grade"] = this.txtpre_test_grade.nativeElement.value;
-      result["post_test_score"] = frm.frm_post_test_score == "" ? 0 : frm.frm_post_test_score;
-      result["post_test_grade"] = this.txtpost_test_grade.nativeElement.value;
-
-      n++;
-    }
-    console.log(array);
-    console.log(array_non);
-
-    const send_data = {
-      course_no: frm.frm_course,
-      array: array
-    }
-    console.log(send_data);
-
-    if (array.length > 0) {
-      await this.service.axios_post("RegisterScore/Continuous", send_data, environment.text.success);
+    if(this.course_no===undefined){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
     }
 
-    if (array_non.length > 0) {
-      let element = array_non;
-      this.exportexcel.exportJSONToExcel(element, 'ResultRegisterContinuous');
-    }
-
-    this.fnGet(frm.frm_course);
-  } */
-  
-  async save_trainee(){
-    // let frm = this.form.value;
+    let self = this
     let frm = this.form.value;
     let form_data = [];
     let emp_no = frm.frm_emp_no_from
     while(emp_no <= frm.frm_emp_no_to){
       let emp_padded = emp_no.toString().padStart(6, '0');
       let data = {
-        course_no: frm.frm_course,
+        course_no: this.course_no,
         emp_no: emp_padded,
         pre_test_score: frm.frm_pre_test_score,
         pre_test_grade: this.txtpre_test_grade.nativeElement.value,
@@ -243,7 +292,10 @@ export class RegisterContinuousComponent implements OnInit {
     if(form_data.length>0){
       axios.post(`${environment.API_URL}RegisterScore/Continuous`,form_data,this.headers)
       .then(function (response) {
-        this.fnGet(frm.frm_course);
+        self.fnGet(self.course_no);
+        self.datatable()
+        self.errors = {}
+        self.fnClear()
       })
       .catch(function (error) {
         Swal.fire({
@@ -255,60 +307,6 @@ export class RegisterContinuousComponent implements OnInit {
     }
   }
 
-  async fnUpdate() {
-    this.submitted = true;
-
-    if (this.form.invalid) {
-      return;
-    }
-    // console.log(JSON.stringify(this.form.value, null, 2));
-    // console.log(this.form.value);
-
-    let frm = this.form.value;
-    var array = [{
-      emp_no: frm.frm_emp_no_from,
-      pre_test_score: frm.frm_pre_test_score,
-      pre_test_grade: this.txtpre_test_grade.nativeElement.value,
-      post_test_score: frm.frm_post_test_score,
-      post_test_grade: this.txtpost_test_grade.nativeElement.value
-    }];
-    const send_data = {
-      course_no: frm.frm_course,
-      array: array
-    }
-    console.log(send_data);
-
-    if (array.length > 0) {
-      await this.service.axios_put("RegisterScore/" + frm.frm_course, send_data, environment.text.success);
-    }
-    this.fnGet(frm.frm_course);
-  }
-
-  fnClear() {
-    this.form.controls['frm_emp_no_from'].setValue("");
-    this.form.controls['frm_emp_no_to'].setValue("");
-    this.form.controls['frm_pre_test_score'].setValue("");
-    this.txtpre_test_grade.nativeElement.value = "";
-    this.form.controls['frm_post_test_score'].setValue("");
-    this.txtpost_test_grade.nativeElement.value = "";
-    this.txttotal.nativeElement.value = "";
-    this.visableSave = true;
-    this.visableUpdate = false;
-    this.isreadonly = false;
-  }
-  fnEdit(item) {
-    // console.log(item);
-    this.form.controls['frm_emp_no_from'].setValue(item.employees.emp_no);
-    this.form.controls['frm_emp_no_to'].setValue(item.employees.emp_no);
-    this.form.controls['frm_pre_test_score'].setValue(item.pre_test_score);
-    this.form.controls['frm_post_test_score'].setValue(item.post_test_score);
-    this.txtpre_test_grade.nativeElement.value = item.pre_test_grade;
-    this.txtpost_test_grade.nativeElement.value = item.post_test_grade;
-    this.txttotal.nativeElement.value = fnEmpNoTotal(item.employees.emp_no, item.employees.emp_no);
-    this.visableSave = false;
-    this.visableUpdate = true;
-    this.isreadonly = true;
-  }
   fnDelete(item) {
     Swal.fire({
       title: 'Are you sure?',
@@ -327,42 +325,7 @@ export class RegisterContinuousComponent implements OnInit {
 
   res_course: any = [];
   arr_band: any;
-  async onKeyCourse(event: any) { // console.log(event.target.value);
-    if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('Course/' + event.target.value);
-      if (this.res_course != undefined) {
-        this.txtcourse_name_en.nativeElement.value = this.res_course.course_name_en;
-        this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
-        this.txtqty.nativeElement.value = this.res_course.capacity;
-        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
-        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out;
-        this.txtplace.nativeElement.value = this.res_course.place;
 
-        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-        for (const iterator of nameArr) {
-          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-        }  // console.log(this.array_chk);
-        this.checkboxesDataList = this.array_chk;
-
-        this.fnGet(event.target.value);
-      }
-    } else if (event.target.value.length < 11) {
-      this.txtcourse_name_en.nativeElement.value = "";
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
-      this.txtplace.nativeElement.value = "";
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-    }
-
-    if (event.target.value.length == 0) {
-      await this.fnGet("No");
-    }
-  }
   onKeyEmpNoFrom(event) {
     let check;
     check = fnEmpNoTotal(event.target.value, this.form.controls['frm_emp_no_to'].value);
@@ -393,33 +356,9 @@ export class RegisterContinuousComponent implements OnInit {
     this.txtpost_test_grade.nativeElement.value = fnGrade(event.target.value);
   }
 
-  async fnGetStakeholder(emp_no: any) {
-    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
-      .subscribe((response: any) => {
-        if (response.role.toUpperCase() == environment.role.committee) {
-          this._org_abb = response.organization.org_abb;
-          this.txtgroup.nativeElement.value = response.organization.org_abb;
-          this.fnGet("No");
-          this.visableSave = true;
-          this.visableUpdate = false;
-          this.visableClear = true;
-          this.isClose = false;
-          this.isIf = true;
-        }
-      }, (error: any) => {
-        console.log(error);
-        this.fnGet("No");
-        this.visableSave = false;
-        this.visableUpdate = false;
-        this.visableClear = false;
-        this.isClose = true;
-        this.isIf = false;
-      });
-  }
-
   res_conflict: any;
   async fnGet(course_no) {
-    await this.service.gethttp('RegisterScore/GetContinuous/' + course_no)
+    await this.service.gethttp(`RegisterScore/${course_no}`)
       .subscribe((response: any) => {
         console.log(response);
 
@@ -429,6 +368,7 @@ export class RegisterContinuousComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -462,39 +402,36 @@ export class RegisterContinuousComponent implements OnInit {
     console.log('res_emp: ', this.res_emp);
   }
 
-  // Open popup Course
-  inputitem = 'register-continuous';
-  openCourse(content) {
-    //   size: 'lg' //sm, mb, lg, xl
-    this.v_course_no = "";
-    const modalRef = this.modalService.open(content, { size: 'lg' });
-    modalRef.result.then(
-      (result) => {
-        console.log(result);
-        if (result != "OK") {
-          this.form.controls['frm_course'].setValue("");
-          this.fnGetCourse("NULL");
-          this.v_course_no = "";
-        }
-      },
-      (reason) => {
-        console.log(reason);
-        this.form.controls['frm_course'].setValue("");
-        this.fnGetCourse("NULL");
-        this.v_course_no = "";
-      }
-    );
+  fnClear() {
+    this.form.controls['frm_emp_no_from'].setValue("");
+    this.form.controls['frm_emp_no_to'].setValue("");
+    this.form.controls['frm_pre_test_score'].setValue("");
+    this.txtpre_test_grade.nativeElement.value = "";
+    this.form.controls['frm_post_test_score'].setValue("");
+    this.txtpost_test_grade.nativeElement.value = "";
+    this.txttotal.nativeElement.value = "";
+    this.visableSave = true;
+    this.visableUpdate = false;
+    this.isreadonly = false;
   }
 
-  v_course_no: string = "";
-  addItemCourse(newItem: string) {
-    this.v_course_no = newItem;
-    this.form.controls['frm_course'].setValue(newItem);
-    this.fnGetCourse(newItem);
-  }
+  // v_course_no: string = "";
+  // addItemCourse(newItem: string) {
+  //   this.v_course_no = newItem;
+  //   this.form.controls['frm_course'].setValue(newItem);
+  //   this.fnGetCourse(newItem);
+  // }
 
-  async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('Course/OpenALL/' + course_no);
+  // async fnGetCourse(course_no: any) {
+  //   let self = this
+  //   await axios.get(`${environment.API_URL}Courses/${course_no}`, this.headers)
+  //   .then(function(){
+  //     self.fnGet(course_no);
+  //   })
+  //   .catch(function(){
+      
+  //   })
+    /* this.res_course = await this.service.axios_get('Courses/OpenALL/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
       this.txtcourse_name_en.nativeElement.value = this.res_course.course_name_en;
@@ -524,8 +461,8 @@ export class RegisterContinuousComponent implements OnInit {
         value.isChecked = false;
       });
       await this.fnGet("No");
-    }
-  }
+    } */
+  // }
   // End Open popup Course
 
   ngOnDestroy(): void {

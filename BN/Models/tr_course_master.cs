@@ -20,10 +20,8 @@ namespace api_hrgis.Models
         public string course_no { get; set; }
         [Required]
         [Display(Name = "THAI NAME")]
-        [RegularExpression(@"^[\p{N}\p{P}\p{Sm}\p{IsThai}\s]+$", ErrorMessage = "Characters are allowed only Thai, number, and symbol")]
         public string course_name_th { get; set; }
         [Display(Name = "ENGLISH NAME")]
-        [RegularExpression(@"^[\p{L}\p{N}\p{P}\p{Sm}\s]+$", ErrorMessage = "Characters are not allowed only English, number, and symbol")]
         public string course_name_en { get; set; }
         [Required]
         [Display(Name = "GROUP")]

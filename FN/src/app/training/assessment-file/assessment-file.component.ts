@@ -42,7 +42,7 @@ export class AssessmentFileComponent implements OnInit {
   async get_course(){
     let self = this
     if(this.course_no!=null){
-      axios.get(`${environment.API_URL}Course/${this.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/${this.course_no}`,self.headers)
       .then(function(response){
         self.course = response
         self.download_button_disabled = false;

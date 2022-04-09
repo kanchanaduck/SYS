@@ -17,7 +17,7 @@ import { ChartsModule } from 'ng2-charts';
 
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
-import { CourseOpenComponent } from './course-open/course-open.component';
+import { CourseComponent } from './course/course.component';
 import { SurveySettingComponent } from './survey-setting/survey-setting.component';
 import { SurveyComponent } from './survey/survey.component';
 import { CourseTargetComponent } from './course-target/course-target.component';
@@ -40,6 +40,7 @@ import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
 import { AssessmentFileComponent } from './assessment-file/assessment-file.component';
 import { SurveyApproveComponent } from './survey-approve/survey-approve.component';
+import { RegisterDataComponent } from './register-data/register-data.component';
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -50,7 +51,7 @@ const routes: Routes = [
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score', active: true } },
   { path: 'course-confirmation-sheet', component: ConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course control', active: true } },
-  { path: 'course-open', component: CourseOpenComponent, data: { title: 'Open course', active: true } },
+  { path: 'course', component: CourseComponent, data: { title: 'Course', active: true } },
   { path: 'course-map', component: CourseMapComponent, data: { title: 'Course map', active: true } },
   { path: 'signature-sheet', component: SignatureSheetComponent, data: { title: 'Signature sheet', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true} },
@@ -67,12 +68,13 @@ const routes: Routes = [
   { path: 'course-attendee', component: CourseAttendeeComponent, data: { title: 'Course attendee', active: true } },
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
   { path: 'assessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
+  { path: 'register-data/:course_no', component: RegisterDataComponent, data: { title: 'Register data', active: true } },
 ]
 @NgModule({
   declarations: [
     TrainingComponent,
     CourseMasterComponent,
-    CourseOpenComponent,
+    CourseComponent,
     TrainerComponent,
     SurveySettingComponent,
     SurveyComponent,
@@ -94,7 +96,8 @@ const routes: Routes = [
     TrainerHistoryComponent,
     CenterComponent,
     AssessmentFileComponent,
-    SurveyApproveComponent
+    SurveyApproveComponent,
+    RegisterDataComponent,
   ],
   imports: [
     CommonModule,

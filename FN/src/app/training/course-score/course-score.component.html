@@ -1,85 +1,70 @@
-<div class="card card-body mb-3">
-    <div [formGroup]="form">
-        <div class="row">
-            <div class="col-3">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                        <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
-                    </label>
-                    <input type="text" class="form-control" [readonly]="isClose" placeholder="Ex. XXX-XXX-XXX" (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
-                    <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_course.errors.required">Course is required</div>
-                        <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
-                        <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-5">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">course</label>
-                    <input type="text" class="form-control" readonly="" formControlName="frm_course_name" [ngClass]="{ 'is-invalid': submitted && f.frm_course_name.errors }" #txtcourse_name>
-                    <div *ngIf="submitted && f.frm_course_name.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_course_name.errors.required">Course name is required</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-2">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
-                    <input type="text" class="form-control" readonly="" #txtgroup>
-                </div>
-            </div>
-            <div class="col-2">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
-                    <input type="text" class="form-control" readonly="" #txtqty>
-                </div>
-            </div>
+<div class="row mb-3" *ngIf="is_committee">
+    <div class="col-6 offset-3">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <ng-select 
+                [(ngModel)]="course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                (clear)="clear_data()"
+                (change)="get_course()">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+            <small class="text-muted">Display all courses of {{ _org_abb }}</small>
         </div>
-        <div class="row pt-1">
-            <div class="col-3">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txtdate_from>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                            </div>
-                        </div>
-                        <input class="form-control" readonly #txtdate_to>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
-                    <br>
-                    <div *ngFor="let item of checkboxesDataList" style="display: inline-block;">
-                        &nbsp;&nbsp;<input type="checkbox" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}" disabled>&nbsp;{{item.band}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-2">
-                <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
-                    <input class="form-control" readonly #txtplace>
-                </div>
-            </div>
-        </div>
-        <hr>
+    </div>
+</div>
+
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="is_committee && (course | json) != '{}'">
+    <dl class="row my-0">
+        <dt class="col-sm-2">COURSE NO.: </dt>
+        <dd class="col-sm-2">{{ course.course_no }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-1">GROUP:</dt>
+        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
+        <dt class="col-sm-1">DAY: </dt>
+        <dd class="col-sm-2">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">OPEN REGISTER:</dt>
+        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">FROM:</dt>
+        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dt class="col-sm-2">TO:</dt>
+        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">TRAINER:</dt>
+        <dd class="col-sm-4">{{ course.trainer_text }}</dd> 
+        <dt class="col-sm-2">BAND:</dt>
+        <dd class="col-sm-4">{{ course.band_text }}</dd> 
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">CREATED:</dt>
+        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dt class="col-sm-2">UPDATED:</dt>
+        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+    </dl>
+</div>
+
+<div class="card mb-3" *ngIf="is_committee" [formGroup]="form">
+    <div class="card-header">
+        Register
+    </div>
+    <div class="card-body">
         <div class="row">
             <div class="col-3">
                 <div class="form-group">
@@ -147,7 +132,8 @@
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">name</label>
-                    <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
+                    <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" 
+                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
                     <div *ngIf="submitted && f.frm_emp_name.errors" class="invalid-feedback">
                         <div *ngIf="f.frm_emp_name.errors.required">Emp name is required</div>
                     </div>
@@ -174,16 +160,23 @@
         </div>
         <hr>
         <div class="row text-muted">
-            <div class="col-1 pt-1 text-uppercase">import</div>
             <div class="col-4">
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">import</label>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
                     <label class="custom-file-label" for="customFile">{{nameFile}}</label>
                 </div>
             </div>
             <div class="col-6">
-                <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm " (click)="dowloadFormat()"><i class="fas fa-cloud-download-alt"></i> Download</button>
-                <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm " (click)="upload()"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">button</label>
+                <div>
+                    <button type="button" class="btn btn-outline-indigo btn-sm" (click)="dowloadFormat()">
+                        <i class="fas fa-cloud-download-alt"></i> Download template
+                    </button>
+                    <button type="button" class="btn btn-outline-indigo btn-sm" (click)="upload()">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload
+                    </button>
+                </div>
             </div>
             <div class="col-12">
                 <div style="position: absolute; top:-25px; left: 65px; width: 32%;">
@@ -192,13 +185,14 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 5px;">
                         <p>เริ่มกรอกข้อมูลแถวที่ 4</p>
-                        <img src="assets/images/img-input-score.PNG" class="img-fluid">
+                        <img src="assets/images/img-format-input-training.PNG" class="img-fluid">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <div class="row">
     <div class="col-12">
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
@@ -248,19 +242,3 @@
         </table>
     </div>
 </div>
-
-<ng-template #contentCourse let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body text-capitalize">
-        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>

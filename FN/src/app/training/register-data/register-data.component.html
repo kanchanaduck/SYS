@@ -1,0 +1,165 @@
+<div class="row mb-3">
+    <div class="col-6 offset-3">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <ng-select 
+                [(ngModel)]="course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                (clear)="clear_data()"
+                (change)="redirect()">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="(course | json) != '{}'">
+    <dl class="row my-0">
+        <dt class="col-sm-2">COURSE NO.: </dt>
+        <dd class="col-sm-2">{{ course.course_no }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-1">GROUP:</dt>
+        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
+        <dt class="col-sm-1">DAY: </dt>
+        <dd class="col-sm-2">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">OPEN REGISTER:</dt>
+        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">FROM:</dt>
+        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dt class="col-sm-2">TO:</dt>
+        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">TRAINER:</dt>
+        <dd class="col-sm-4">{{ course.trainer_text }}</dd> 
+        <dt class="col-sm-2">BAND:</dt>
+        <dd class="col-sm-4">{{ course.band_text }}</dd> 
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">CREATED:</dt>
+        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dt class="col-sm-2">UPDATED:</dt>
+        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+    </dl>
+</div>
+
+
+<div class="card bd-0">
+    <ul class="nav nav-tabs card-header bg-gray-400" id="myTab" role="tablist">
+       <li class="nav-item">
+           <a class="nav-link active" id="your-tab" data-toggle="tab" href="#your" role="tab" aria-controls="your" aria-selected="true">
+               Your organization ({{_org_abb}})
+           </a>
+       </li>
+       <li class="nav-item">
+           <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">
+               Other organization
+           </a>
+       </li>
+    </ul>
+   
+    <div class="tab-content card-body bd bd-t-0 " id="myTabContent">
+       <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
+           <table datatable #example [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+               <thead>
+                   <tr>
+                       <th class="text-center">seq</th>
+                       <th class="text-center">emp no.</th>
+                       <th class="text-center">title</th>
+                       <th class="text-center">firstname</th>
+                       <th class="text-center">lastname</th>
+                       <th class="text-center">position</th>
+                       <th class="text-center">band</th>
+                       <th class="text-center">div/dept</th>
+                       <th class="text-center">status</th>
+                       <th class="text-center">remark</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   <tr *ngFor="let item of data_grid; let i = index">
+                       <td class="text-center">{{ item.seq_no }}</td>
+                       <td class="text-center">{{ item.emp_no }}</td>
+                       <td>{{ item.title_name_en }}</td>
+                       <td>{{ item.firstname_en }}</td>
+                       <td>{{ item.lastname_en }}</td>
+                       <td>{{ item.position_name_en }}</td>
+                       <td class="text-center">{{ item.band }}</td>
+                       <td>{{item.div_abb+"/"+item.dept_abb }}</td>
+                       <td>{{ item.last_status }}</td>
+                       <td>
+                           <ng-container *ngIf="item.course_name_en === '';else show">
+                               <span>{{ item.remark }}</span>
+                           </ng-container>
+                           <ng-template #show>
+                               <span placement="bottom" ngbTooltip="{{ item.course_name_en }}">{{ item.remark }}</span>
+                           </ng-template>
+                       </td>
+                   </tr>
+               </tbody>
+           </table>
+       </div>
+       <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
+           <table datatable #example2 [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" class="table table-bordered table-hover table-sm">
+               <thead>
+                   <tr>
+                       <th class="text-center">seq</th>
+                       <th class="text-center">emp no.</th>
+                       <th class="text-center">title</th>
+                       <th class="text-center">firstname</th>
+                       <th class="text-center">lastname</th>
+                       <th class="text-center">position</th>
+                       <th class="text-center">band</th>
+                       <th class="text-center">div/dept</th>
+                       <th class="text-center">status</th>
+                       <th class="text-center">remark</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   <tr *ngFor="let item of data_grid_other; let i = index">
+                       <td class="text-center">{{ item.seq_no }}</td>
+                       <td class="text-center">{{ item.emp_no }}</td>
+                       <td>{{ item.title_name_en }}</td>
+                       <td>{{ item.firstname_en }}</td>
+                       <td>{{ item.lastname_en }}</td>
+                       <td>{{ item.position_name_en }}</td>
+                       <td class="text-center">{{ item.band }}</td>
+                       <td>{{item.div_abb+"/"+item.dept_abb }}</td>
+                       <td>{{ item.last_status }}</td>
+                       <td>
+                           <ng-container *ngIf="item.course_name_en === '';else show">
+                               <span>{{ item.remark }}</span>
+                           </ng-container>
+                           <ng-template #show>
+                               <span placement="bottom" ngbTooltip="{{ item.course_name_en }}">{{ item.remark }}</span>
+                           </ng-template>
+                       </td>
+                   </tr>
+               </tbody>
+           </table>
+       </div>
+    </div> 
+
+    <div class="card-footer">   
+        <div class="tx-13 text-right">
+            Registration <span class="badge badge-primary">{{v_regis}}</span> 
+            Total <span class="badge badge-dark">{{v_total}}</span>
+            Wait  <span class="badge badge-warning">{{v_wait}}</span>
+        </div>
+    </div>
+</div>

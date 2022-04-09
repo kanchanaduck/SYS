@@ -94,10 +94,25 @@ export class StakeholderComponent implements OnInit {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
-              {
-                  extend: 'excel',
-                  text: '<i class="far fa-file-excel"></i> Excel</button>',
+              { 
+                extend: 'excel',
+                text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
+              /* {
+                extend: 'excelHtml5',
+                filename: 'stakeholder',
+                text: '<i class="far fa-file-excel"></i> Excel</button>',
+                exportOptions: {
+                  format: {
+                    body: function(data, column, row) {
+                      if (typeof data === 'string' || data instanceof String) {
+                          data = data.replace(/<br\s*\/?>/ig, "\r\n");
+                      }
+                      return data;
+                    }
+                  }
+                }
+              } */
             ]
           },
         ],
@@ -201,6 +216,11 @@ export class StakeholderComponent implements OnInit {
         text: error.response.data
       })
     });
+  }
+
+  custom_search_name_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.emp_no.toLowerCase().indexOf(term) > -1 ||  item.shortname_en.toLowerCase().indexOf(term) > -1 ;
   }
 
   async get_stakeholder(org_code: string) {

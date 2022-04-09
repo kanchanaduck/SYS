@@ -46,32 +46,30 @@
     </div>
 </div>
 <div class="row mt-3" *ngIf="(course | json) != '{}'">
-    <div class="col-10 offset-1 card card-body tx-13 p-1">
-        <dl class="row mb-1">
+    <div class="card card-body tx-13">
+        <dl class="row my-1">
             <dt class="col-sm-2">COURSE NO.: </dt>
             <dd class="col-sm-2">{{ course.course_no }}</dd>
             <dt class="col-sm-3">THAI COURSE NAME:</dt>
             <dd class="col-sm-5">{{ course.course_name_th || '-' }}</dd>
         </dl>
-        <dl class="row mt-1">
+        <dl class="row my-1">
             <dt class="col-sm-3 offset-4">ENGLISH COURSE NAME:</dt>
             <dd class="col-sm-5">{{ course.course_name_en || '-' }}</dd>
         </dl>
-        <dl class="row">
+        <dl class="row my-1">
             <dt class="col-sm-2">NUMBER OF TRAINEE: </dt>
             <dd class="col-sm-2">{{ course.courses_registrations.length }}</dd>
             <dt class="col-sm-2">FROM:</dt>
             <dd class="col-sm-2">
-                <span>{{ course.date_start | date:'dd-MMM-yy' }}</span>
-                <span>{{ course.time_in.substring(0,5).toString() }}</span>
+                <span>{{ course.date_start | date:'dd-MMM-yy HH:mm' }}</span>
             </dd>
             <dt class="col-sm-2">TO:</dt>
             <dd class="col-sm-2">
-                <span>{{ course.date_end | date:'dd-MMM-yy' }}</span>
-                <span>{{ course.time_out.substring(0,5).toString()  }}</span>
+                <span>{{ course.date_end | date:'dd-MMM-yy HH:mm' }}</span>
             </dd>
         </dl>
-        <dl class="row">
+        <dl class="row my-1">
             <dt class="col-sm-2">GROUP:</dt>
             <dd class="col-sm-2">{{ course.organization.org_abb+"("+course.org_code+")" }}</dd>
             <dt class="col-sm-2">DAY: </dt>

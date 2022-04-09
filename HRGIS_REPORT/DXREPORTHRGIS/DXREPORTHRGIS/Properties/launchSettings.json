@@ -1,7 +1,19 @@
 {
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/DXREPORTHRGIS",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:58547/",
+      "sslPort": 0
+    }
+  },
   "profiles": {
     "DXREPORTHRGIS": {
-      "commandName": "Project",
+      "commandName": "IISExpress",
       "launchBrowser": true
     }
   }

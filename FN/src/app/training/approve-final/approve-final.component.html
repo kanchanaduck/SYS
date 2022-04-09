@@ -1,239 +1,188 @@
-<div [formGroup]="form">
-    <div class="row">
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">course no&nbsp;&nbsp;&nbsp;
-                    <i class="typcn typcn-zoom tx-20 lh--9 op-6 pointer" *ngIf="isIf" (click)="openCourse(contentCourse)"></i>
-                </label>
-                <!-- ใช้งานไม่ได้ จะทำให้ check box เพี้ยน, ทำให้ไม่สามารถ เปิด-ปิด check box ได้ -->
-                <!-- <label class="az-content-label tx-11 tx-medium tx-gray-600">course no</label> -->
-                <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." (keyup)="onKeyCourse($event)" formControlName="frm_course" [ngClass]="{ 'is-invalid': submitted && f.frm_course.errors }" #txtcourse_no>
-                <div *ngIf="submitted && f.frm_course.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course.errors.required">Course is required</div>
-                    <div *ngIf="f.frm_course.errors.minlength">Min 11 characters</div>
-                    <div *ngIf="f.frm_course.errors.maxlength">Max 20 characters</div>
-                </div>
-            </div>
+<div class="row mb-3" *ngIf="is_committee">
+    <div class="col-6 offset-3">
+        <div class="form-group col mb-0">
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <ng-select 
+                [(ngModel)]="course_no"
+                [items]="courses"
+                [ngModelOptions]="{standalone: true}"
+                [searchFn]="custom_search_course_fn"
+                bindValue="course_no"
+                bindLabel="course_no"
+                allow-clear="true"
+                (clear)="clear_data()"
+                (change)="get_course()">	
+                <ng-template ng-option-tmp ng-label-tmp let-item="item">
+                    {{item.course_no}}: {{item.course_name_th}}
+                </ng-template>	
+            </ng-select>
+            
+            <small class="text-muted">Display all of the opening courses of {{ _org_abb }}</small>
         </div>
-        <div class="col-5">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">course</label>
-                <input type="text" class="form-control"readonly="" formControlName="frm_course_name" [ngClass]="{ 'is-invalid': submitted && f.frm_course_name.errors }" #txtcourse_name>
-                <div *ngIf="submitted && f.frm_course_name.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_course_name.errors.required">Course name is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">group</label>
-                <input type="text" class="form-control" readonly="" #txtgroup>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
-                <input type="text" class="form-control" readonly="" #txtqty>
-            </div>
-        </div>
-    </div>
-    <div class="row pt-1">
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                        </div>
-                    </div>
-                    <input class="form-control" readonly #txtdate_from>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="typcn typcn-calendar-outline tx-20 lh--9 op-6"></i>
-                        </div>
-                    </div>
-                    <input class="form-control" readonly #txtdate_to>
-                </div>
-            </div>
-        </div>
-        <div class="col-5">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
-                <br>
-                <div *ngFor="let item of checkboxesDataList" style="display: inline-block;">
-                    &nbsp;&nbsp;<input type="checkbox" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}" disabled>&nbsp;{{item.band}}
-                </div>
-            </div>
-        </div>
-        <div class="col-1 tx-indigo pt-3" *ngIf="visableButton"><i class="typcn typcn-chart-bar tx-24 lh--9 op-6 pointer" (click)="open(content)"></i></div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
-                <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
-                <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_emp_no.errors.required">Emp no is required</div>
-                    <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
-                    <div *ngIf="f.frm_emp_no.errors.maxlength">Max 7 characters</div>
-                </div>
-                <span class="text-warning" *ngIf="not_pass">{{txt_not_pass}}</span>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">name</label>
-                <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
-                <div *ngIf="submitted && f.frm_emp_name.errors" class="invalid-feedback">
-                    <div *ngIf="f.frm_emp_name.errors.required">Emp name is required</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">position</label>
-                <input type="text" class="form-control" readonly="" #txtposition>
-            </div>
-        </div>
-        <div class="col-1">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
-                <input type="text" class="form-control" readonly="" #txtband>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">department</label>
-                <input type="text" class="form-control" readonly="" #txtdept>
-            </div>
-        </div>
-        <div class="col-2 text-right pt-4">
-            <button type="button" *ngIf="visableButton" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
-            <button type="button" *ngIf="visableButton" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
-        </div>
-    </div>
-    <!-- <hr> -->
-    <!-- <div class="row text-muted">
-        <div class="col-1 pt-1 text-uppercase">import</div>
-        <div class="col-4">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
-                <label class="custom-file-label" for="customFile">{{nameFile}}</label>
-            </div>
-        </div>
-        <div class="col-6">
-            <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm" (click)="dowloadFormat()"><i class="fas fa-cloud-download-alt"></i> Download</button>
-            <button type="button" *ngIf="visableButton" class="btn btn-outline-indigo btn-sm" (click)="upload()"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
-        </div>
-        <div class="col-12">
-            <div style="position: absolute; top:-25px; left: 65px; width: 32%;">
-                <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                    <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer text-muted"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="padding: 5px;">
-                    <p>เริ่มกรอกข้อมูลแถวที่ 4</p>
-                    <img src="assets/images/img-format-input-training.PNG" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </div> -->
-</div>
-<hr>
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
-    <thead>
-        <tr class="text-uppercase">
-            <th class="text-center">
-                <input type="checkbox" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [attr.aria-label]="checkboxLabel()" [disabled]="disabled_chkall">
-            </th>
-            <th>no.</th>
-            <th>emp no</th>
-            <th>title</th>
-            <th>firstname</th>
-            <th>lastname</th>
-            <th>position</th>
-            <th>band</th>
-            <th>department</th>
-            <th>status</th>
-            <th>remark</th>
-            <th>manage</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let item of data_grid; let i = index">
-            <th class="text-center">
-                <input type="checkbox" (click)="$event.stopPropagation()" (change)="$event ? toggleSelection(item) : null" [checked]="selection.isSelected(item) == true" [disabled]="(selection.selected.length === v_capacity) && !selection.isSelected(item) || open_register == false" [attr.aria-label]="checkboxLabel(item)">
-            </th>
-            <td>{{ i + 1 }}</td>
-            <td>{{ item.emp_no }}</td>
-            <td>{{ item.title_name_en }}</td>
-            <td>{{ item.firstname_en }}</td>
-            <td>{{ item.lastname_en }}</td>
-            <td>{{ item.position_name_en }}</td>
-            <td>{{ item.band }}</td>
-            <td>{{item.dept_code}}:{{ item.dept_abb }}</td>
-            <td>{{ item.last_status }}</td>
-            <td>
-                <ng-container *ngIf="item.course_name_en === '';else show">
-                    <span>{{ item.remark }}</span>
-                </ng-container>
-                <ng-template #show>
-                    <span placement="bottom" ngbTooltip="{{ item.course_name_en }}">{{ item.remark }}</span>
-                </ng-template>
-            </td>
-            <td class="text-center">
-                <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt pointer"></i></a>
-            </td>
-        </tr>
-    </tbody>
-</table>
-<div class="row text-right">
-    <div class="col-12">
-        Total Registration&nbsp;&nbsp;&nbsp;{{v_regis}}&nbsp;/&nbsp;Total Wait&nbsp;&nbsp;&nbsp;{{v_wait}}&nbsp;/&nbsp;Total&nbsp;&nbsp;&nbsp;{{v_total}}
     </div>
 </div>
 
-<ng-template #content let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Registrant in course no. {{c_course_no}} – {{c_course_name_en}} </h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="is_committee && (course | json) != '{}'">
+    <dl class="row my-0">
+        <dt class="col-sm-2">COURSE NO.: </dt>
+        <dd class="col-sm-2">{{ course.course_no }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-1">GROUP:</dt>
+        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
+        <dt class="col-sm-1">DAY: </dt>
+        <dd class="col-sm-2">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">OPEN REGISTER:</dt>
+        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">FROM:</dt>
+        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dt class="col-sm-2">TO:</dt>
+        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">TRAINER:</dt>
+        <dd class="col-sm-4">{{ course.trainer_text }}</dd> 
+        <dt class="col-sm-2">BAND:</dt>
+        <dd class="col-sm-4">{{ course.band_text }}</dd> 
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">CREATED:</dt>
+        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dt class="col-sm-2">UPDATED:</dt>
+        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+    </dl>
+</div>
+
+<div class="card mb-3" *ngIf="is_committee" [formGroup]="form">
+    <div class="card-header">
+        Register
     </div>
-    <div class="modal-body text-capitalize">
-        <!-- <img src="assets/report/chart.png" class="img-fluid" alt="Responsive image"> -->
+    <div class="card-body">
         <div class="row">
-            <div class="col-12">
-                <!-- <div class="az-content-label az-content-label-sm mg-b-15">With Transparency</div> -->
-                <canvas baseChart [chartType]="'bar'" [datasets]="barChartData2" [labels]="barChartLabels" [options]="barChartOptions" [colors]="barChartColors2"></canvas>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
+                    <input type="text" class="form-control" placeholder="Enter key..." 
+                        (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" 
+                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
+                    <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_emp_no.errors.required">Emp no is required</div>
+                        <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
+                        <div *ngIf="f.frm_emp_no.errors.maxlength">Max 7 characters</div>
+                    </div>
+                    <span class="text-warning" *ngIf="not_pass">{{txt_not_pass}}</span>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">name</label>
+                    <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" 
+                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
+                    <div *ngIf="submitted && f.frm_emp_name.errors" class="invalid-feedback">
+                        <div *ngIf="f.frm_emp_name.errors.required">Emp name is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">position</label>
+                    <input type="text" class="form-control" readonly="" #txtposition>
+                </div>
+            </div>
+            <div class="col-1">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
+                    <input type="text" class="form-control" readonly="" #txtband>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-group">
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">div/dept</label>
+                    <input type="text" class="form-control" readonly="" #txtdept>
+                </div>
+            </div>
+            <div class="col-2 text-right pt-4">
+                <button type="button" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
             </div>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>
+</div>
 
-<ng-template #contentCourse let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+<div class="card card-body mb-3" *ngIf="is_committee">
+    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+        <thead>
+            <tr>
+                <th class="text-center">
+                    <input type="checkbox" (change)="$event ? masterToggle() : null" 
+                        [checked]="selection.hasValue() && isAllSelected()" 
+                        [indeterminate]="selection.hasValue() && !isAllSelected()" 
+                        [attr.aria-label]="checkboxLabel()" 
+                        [disabled]="disabled_chkall">
+                </th>
+                <th class="text-center">seq</th>
+                <th class="text-center">emp no.</th>
+                <th class="text-center">title</th>
+                <th class="text-center">firstname</th>
+                <th class="text-center">lastname</th>
+                <th class="text-center">position</th>
+                <th class="text-center">band</th>
+                <th class="text-center">div/dept</th>
+                <th class="text-center">status</th>
+                <th class="text-center">remark</th>
+                <th class="text-center">manage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of data_grid; let i = index">
+                <th class="text-center">
+                    <input type="checkbox" (click)="$event.stopPropagation()" 
+                        (change)="$event ? toggleSelection(item) : null" 
+                        [checked]="selection.isSelected(item) == true" 
+                        [disabled]="(selection.selected.length === course.capacity) && !selection.isSelected(item)" 
+                        [attr.aria-label]="checkboxLabel(item)">
+                </th>
+                <td class="text-right">{{ item.seq_no }}</td>
+                <td>{{ item.emp_no }}</td>
+                <td>{{ item.employees.title_name_en }}</td>
+                <td>{{ item.employees.firstname_en }}</td>
+                <td>{{ item.employees.lastname_en }}</td>
+                <td>{{ item.employees.position_name_en }}</td>
+                <td>{{ item.employees.band }}</td>
+                <td>{{ item.employees.div_abb+"/"+item.employees.dept_abb }}</td>
+                <td>{{ item.last_status }}</td>
+                <td>
+                    <ng-container *ngIf="item.course_name_en === '';else show">
+                        <span>{{ item.remark }}</span>
+                    </ng-container>
+                    <ng-template #show>
+                        <span placement="bottom" ngbTooltip="{{ item.course_name_en }}">{{ item.remark }}</span>
+                    </ng-template>
+                </td>
+                <td class="text-center">
+                    <a href="javascript:;" (click)="fnDelete(item.emp_no)"><i class="far fa-trash-alt pointer"></i></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="tx-13 text-right">
+        Registration <span class="badge badge-primary">{{v_regis}}</span> 
+        Total <span class="badge badge-dark">{{v_total}}</span>
+        Wait  <span class="badge badge-warning">{{v_wait}}</span>
     </div>
-    <div class="modal-body text-capitalize">
-        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>
+</div>
+
+<div class="card card-body" *ngIf="!is_committee">
+    <p class="m-0">
+        This page for committee If you would like to see the status of registration, 
+        you can go to <a routerLink="./../course">Course</a> page.
+    </p>
+</div>

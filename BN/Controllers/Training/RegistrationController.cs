@@ -510,7 +510,8 @@ namespace api_hrgis.Controllers
                         // edits.seq_no = _seq_no;
                         if (_seq_no > model.capacity)
                         {
-                            edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
+                            // edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
+                            edits.last_status = _config.GetValue<string>("Status:wait");
                             edits.manager_approved_at = null;
                             edits.manager_approved_by = null;
                             edits.manager_approved_checked = null;

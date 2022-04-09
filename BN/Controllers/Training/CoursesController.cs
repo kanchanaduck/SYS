@@ -27,32 +27,17 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Courses
-        // GET: api/Courses?open_register=true
-        // GET: api/Courses?open_register=false
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tr_course>>> get_courses(string open_register)
         {
-            Console.WriteLine(open_register);
-            if(String.IsNullOrEmpty(open_register)){
-                return await _context.tr_course
+            return await _context.tr_course
                         .Include(e => e.courses_bands)
                         .Include(e => e.courses_trainers)
                         .Include(e => e.organization)
                         .AsNoTracking()
                         .OrderBy(e=>e.date_start)
                         .ToListAsync();
-            }
-            else{
-                return await _context.tr_course
-                        .Include(e => e.courses_bands)
-                        .Include(e => e.courses_trainers)
-                        .Include(e => e.organization)
-                        .Where(e => e.open_register.ToString() == open_register.ToString())
-                        .AsNoTracking()
-                        .OrderBy(e=>e.date_start)
-                        .ToListAsync();
-            }
         }
 
         // GET: api/Courses/5
@@ -64,8 +49,9 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses_trainers)
                         .Include(e => e.courses_registrations)
                         .Include(e => e.organization)
-                        .Where(e => e.course_no == course_no
-                        && e.status_active == true).FirstOrDefaultAsync();
+                        .AsNoTracking()
+                        .Where(e => e.course_no == course_no)
+                        .FirstOrDefaultAsync();
 
             if (tr_course == null)
             {
@@ -73,6 +59,81 @@ namespace api_hrgis.Controllers
             }
 
             return tr_course;
+        }
+
+        // GET: api/Courses/Open
+        [HttpGet("Open")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> course_open()
+        {
+            var tr_course = await _context.tr_course
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Include(e => e.organization)
+                        .Where(e => e.open_register == true)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound("Have no data");
+            }
+
+            return tr_course;
+        }
+
+        // GET: api/Courses/Owner/1210
+        [HttpGet("Owner/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> course_owner(string org_code)
+        {
+            var tr_course = await _context.tr_course
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Include(e => e.organization)
+                        .Where(e => e.org_code==org_code)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            return tr_course;
+        }
+
+        // GET: api/Courses/Owner/1210/Open
+        [HttpGet("Owner/{org_code}/Open")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> course_open_owner(string org_code)
+        {
+            var tr_course = await _context.tr_course
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Include(e => e.organization)
+                        .Where(e => e.open_register == true && e.org_code==org_code)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            return tr_course;
+        }
+        // GET: api/Courses/SuggestionCourseNumber/CPT-001
+        [HttpGet("SuggestionCourseNumber/{master_course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> Suggestion_Course_Number(string master_course_no)
+        {
+            var last_course = await _context.tr_course
+                                    .OrderByDescending(p => p.course_no)
+                                    .Where(p=>p.master_course_no==master_course_no)
+                                    .FirstOrDefaultAsync();
+        
+            var result = last_course.course_no.Substring(last_course.course_no.LastIndexOf('-') + 1);
+            return Ok(result);
         }
 
         // GET: api/Courses/Open/5
@@ -85,7 +146,9 @@ namespace api_hrgis.Controllers
                         .Include(e => e.courses_registrations)
                         .Include(e => e.organization)
                         .Where(e => e.course_no == course_no
-                        && e.status_active == true).FirstOrDefaultAsync();
+                        && e.open_register == true)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
 
             if (tr_course == null)
             {
@@ -95,17 +158,83 @@ namespace api_hrgis.Controllers
             return tr_course;
         }
 
-        // GET: api/Courses/OpenALL/5
-        [HttpGet("OpenALL/{course_no}")]
-        public async Task<ActionResult<tr_course>> Gettr_course_openALL(string course_no)
+        // GET: api/Courses/Trainers/5
+        [HttpGet("Trainers/{course_no}")]
+        public async Task<ActionResult<tr_course>> course_with_trainer(string course_no)
         {
             var tr_course = await _context.tr_course
                         .Include(e => e.courses_bands)
                         .Include(e => e.courses_trainers)
                         .Include(e => e.courses_registrations)
                         .Include(e => e.organization)
-                        .Where(e => e.course_no == course_no
-                        && e.status_active == true).FirstOrDefaultAsync();
+                        .Where(e => e.course_no == course_no)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+
+  
+            if (tr_course == null)
+            {
+                return NotFound();
+            }
+
+            var trainers_arr = new List<int>();
+            if(tr_course.courses_trainers.Count() > 0){
+                foreach (var item in tr_course.courses_trainers)
+                {
+                   trainers_arr.Add(item.trainer_no); 
+                }
+            }
+
+            var trainers = await (from trainer in _context.tr_trainer
+            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+            from emp in z.DefaultIfEmpty()
+            select new { 
+                trainer_no = trainer.trainer_no,
+                emp_no = trainer.emp_no,
+                title_name_en = trainer.title_name_en?? emp.title_name_en,
+                firstname_en = trainer.firstname_en?? emp.firstname_en,
+                lastname_en = trainer.lastname_en?? emp.lastname_en,
+                display_name = trainer.trainer_type=="External"? trainer.firstname_en+" "+trainer.lastname_en.Substring(0,1)+".":emp.firstname_en+" "+emp.lastname_en.Substring(0,1)+". ("+emp.dept_abb+")",
+                div_abb = emp.div_abb,
+                dept_abb = emp.dept_abb,
+                company = trainer.company,
+                trainer_owner_code = trainer.org_code,
+                trainer_owner_abb = trainer.organization.org_abb,
+                employed_status = emp.employed_status,
+                trainer_type = trainer.trainer_type,
+            })
+            .Where(trainer=>trainers_arr.Contains(trainer.trainer_no))
+            .ToListAsync();
+
+            return Ok(new { courses=tr_course, trainers=trainers});
+        }
+
+        // GET: api/Courses/Wait-Approve/1210
+        [HttpGet("Wait-Approve/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseWaitingForApprove(string org_code)
+        {
+
+            var registrator = await _context.tr_course_registration
+                            .Where(c=>c.last_status!="Approved")
+                            .Select(c => c.course_no)
+                            .Distinct()
+                            .ToListAsync();
+
+            var courses_arr = new List<string>();
+            if(registrator.Count() > 0){
+                foreach (var item in registrator)
+                {
+                   courses_arr.Add(item); 
+                }
+            }
+
+            var tr_course = await _context.tr_course
+                            .Include(e => e.courses_bands)
+                            .Include(e => e.courses_trainers)
+                            .Include(e => e.organization)
+                            .Where(e=>courses_arr.Contains(e.course_no)
+                            && e.org_code==org_code)
+                            .ToListAsync();
 
             if (tr_course == null)
             {
@@ -208,75 +337,9 @@ namespace api_hrgis.Controllers
         [HttpPut("{course_no}")]
         public async Task<IActionResult> Puttr_course(string course_no, tr_course tr_course)
         {
-            // ต้อง update [tr_course], [tr_course_band], [tr_course_trainer]
-            // Console.WriteLine(id);
-            /*if (id != tr_course.course_no)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                var chk_course = await _context.tr_course.Where(x => x.course_no == id && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
-                if (chk_course != null)
-                {
-                    chk_course.course_name_th = tr_course.course_name_th;
-                    chk_course.course_name_en = tr_course.course_name_en;
-                    chk_course.org_code = tr_course.org_code;
-                    chk_course.days = tr_course.days;
-                    chk_course.capacity = tr_course.capacity;
-                    chk_course.open_register = tr_course.open_register;
-                    chk_course.date_start = Convert.ToDateTime(tr_course.date_start);
-                    chk_course.date_end = Convert.ToDateTime(tr_course.date_end);
-                    // chk_course.time_in = TimeSpan.Parse(tr_course.time_in);
-                    // chk_course.time_out = TimeSpan.Parse(tr_course.time_out);
-                    chk_course.time_in = tr_course.time_in;
-                    chk_course.time_out = tr_course.time_out;
-                    chk_course.place = tr_course.place;
-                    chk_course.updated_at = DateTime.Now;
-                    chk_course.updated_by = User.FindFirst("emp_no").Value;
-                    await _context.SaveChangesAsync();
-                }
-
-                // await UpdateTBChild(id, tr_course);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!tr_courseExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }*/
-
-            Console.WriteLine("Edit courses");
             if(!user_is_commitee())
             {
                 return StatusCode(403,"Permission denied, only committee can manage data");
-            }
-
-            if (course_no != tr_course.course_no)
-            {
-                var course_delete = await _context.tr_course
-                            .Include(b => b.courses_bands)
-                            .Include(b => b.courses_trainers)
-                            .Where(b => b.course_no==course_no)
-                            .FirstOrDefaultAsync();
-                Console.WriteLine("Course delete: "+course_delete.course_no);
-            
-                if(course_delete == null)
-                {
-                    return StatusCode(400,"Course is not found");
-                } 
-
-                _context.tr_course.Remove(course_delete);
-                _context.SaveChanges();
-
-                await this.create_course(tr_course);
-
             }
 
             Console.WriteLine("COURSE NO TEMP: "+course_no);
@@ -301,8 +364,11 @@ namespace api_hrgis.Controllers
             course.course_name_th = tr_course.course_name_th;
             course.course_name_en = tr_course.course_name_en;
             course.org_code = tr_course.org_code;
+            course.date_start = tr_course.date_start;
+            course.date_end = tr_course.date_end;
             course.capacity = tr_course.capacity;
             course.days = tr_course.days;
+            course.open_register = tr_course.open_register;
             course.courses_bands = tr_course.courses_bands;
             course.courses_trainers = tr_course.courses_trainers;
             course.updated_at = DateTime.Now;
@@ -323,6 +389,11 @@ namespace api_hrgis.Controllers
                 return StatusCode(403,"Permission denied, only committee can manage data");
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var course = await _context.tr_course
                                         .Include(e=>e.courses_bands)
                                         .Include(e=>e.courses_trainers)
@@ -337,7 +408,7 @@ namespace api_hrgis.Controllers
                 tr_course.updated_by = User.FindFirst("emp_no").Value;
                 _context.tr_course.Add(tr_course);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("get_course", new { id = tr_course.course_no }, tr_course);
+                return CreatedAtAction("get_course", new { course_no = tr_course.course_no }, tr_course);
             }
             else
             {
@@ -445,17 +516,14 @@ namespace api_hrgis.Controllers
         public async Task<IActionResult> Deletetr_course(string id)
         {
             // ต้อง update [tr_course] status_active = false
-            var tr_course = await _context.tr_course.Where(x => x.course_no == id
-                            && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
+            var tr_course = await _context.tr_course.Where(x => x.course_no == id).FirstOrDefaultAsync();
+
             if (tr_course == null)
             {
                 return NotFound(_config.GetValue<string>("Text:not_found"));
             }
 
-            tr_course.status_active = false;
-            tr_course.updated_at = DateTime.Now;
-            tr_course.updated_by = User.FindFirst("emp_no").Value;
-
+            _context.tr_course.Remove(tr_course);
             await _context.SaveChangesAsync();
 
             return NoContent();

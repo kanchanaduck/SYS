@@ -215,21 +215,12 @@ export class TrainerComponent implements OnInit, OnDestroy {
     self.errors = {};
     })
     .catch(function (error) {
-      if(error.response.status==400){
         self.errors = error.response.data.errors
         Swal.fire({
           icon: 'error',
           title: error.response.status,
-          text: error.response.data.title
+          text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
         })
-      }
-      else{
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })
-      }
     });
     self.get_trainers()
   }
