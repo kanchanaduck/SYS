@@ -230,7 +230,9 @@ namespace api_hrgis.Controllers
         [HttpGet("History/{trainer_no}")]
         public async Task<ActionResult<tr_trainer>> trainer_history(int trainer_no)
         {
-            var trainer = await _context.tr_trainer.Where(t=>t.trainer_no==trainer_no).FirstOrDefaultAsync();
+            var trainer = await _context.tr_trainer
+                            .Where(t=>t.trainer_no==trainer_no)
+                            .FirstOrDefaultAsync();
 
             if (trainer == null)
             {
@@ -241,16 +243,16 @@ namespace api_hrgis.Controllers
                 return await _context.tr_trainer
                                 .Include(t => t.courses_trainers)
                                 .ThenInclude(e => e.courses)
-                                .AsNoTracking()
                                 .Where(t => t.emp_no== trainer.emp_no)
+                                .AsNoTracking()
                                 .FirstOrDefaultAsync();
             }
             else{
                 return await _context.tr_trainer
                                 .Include(t => t.courses_trainers)
                                 .ThenInclude(e => e.courses)
-                                .AsNoTracking()
                                 .Where(t => t.trainer_no==trainer_no)
+                                .AsNoTracking()
                                 .FirstOrDefaultAsync();
             }
 
