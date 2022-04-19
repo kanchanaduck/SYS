@@ -36,14 +36,13 @@ export class TrainerHistoryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.route.params.subscribe(params => {
       this.trainer_no = params['trainer_no'];
     });
 
     this.get_trainer()
-    this.get_trainer_history()
-
-    let trainer_no  = this.trainer_no
+    let trainer_no = this.trainer_no
 
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
@@ -94,12 +93,7 @@ export class TrainerHistoryComponent implements OnInit {
     };
 
 
-    this.route.params.subscribe(params => {
-      this.trainer_no = params['trainer_no'];
-    });
 
-    this.get_trainer()
-    this.get_trainer_history()
 
   }
 
@@ -109,7 +103,6 @@ async get_trainer_history(){
   await this.httpClient.get(`${environment.API_URL}Trainers/History/${this.trainer_no}`, this.headers)
   .subscribe((response: any) => {
     self.trainer_history = response;
-    self.trainer_history = self.trainer_history.courses_trainers;
     if (this.isDtInitialized) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.destroy();
@@ -132,6 +125,7 @@ async get_trainer() {
   .then(function (response) {
     console.log(response)
     self.trainer = response
+    self.get_trainer_history()
   }) 
   .catch(function (error) {
     console.log(error)

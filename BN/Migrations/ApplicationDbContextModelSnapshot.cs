@@ -508,6 +508,7 @@ namespace api_hrgis.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("master_course_no")
+                        .IsRequired()
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<bool>("open_register")
@@ -564,7 +565,8 @@ namespace api_hrgis.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("capacity")
+                    b.Property<int?>("capacity")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("category")
@@ -583,7 +585,8 @@ namespace api_hrgis.Migrations
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("days")
+                    b.Property<int?>("days")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("level")
@@ -669,15 +672,6 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("last_status")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("manager_approved_at")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("manager_approved_by")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("manager_approved_checked")
-                        .HasColumnType("bit");
 
                     b.Property<string>("post_test_grade")
                         .HasColumnType("nvarchar(max)");
@@ -950,7 +944,9 @@ namespace api_hrgis.Migrations
                 {
                     b.HasOne("api_hrgis.Models.tr_course_master", "course_master")
                         .WithMany()
-                        .HasForeignKey("master_course_no");
+                        .HasForeignKey("master_course_no")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("api_hrgis.Models.tb_organization", "organization")
                         .WithMany("courses")

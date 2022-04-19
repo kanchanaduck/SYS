@@ -2,7 +2,9 @@
     <div class="row">
         <div class="col-5 pr-0">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">MASTER COURSE NO.</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                    MASTER COURSE NO. <span class="tx-danger">*</span>
+                </label>
                 <ng-select 
                     name="course.master_course_no"
                     [(ngModel)]="course.master_course_no"
@@ -12,21 +14,27 @@
                     bindValue="course_no"
                     bindLabel="course_no"
                     allow-clear="true"
-                    (clear)="clear_data()"
-                    (ngModelChange)="fnGetCourse()">	
+                    (clear)="fnClear()"
+                    (ngModelChange)="fnGetCourse()"
+                    [ngClass]="{ 'is-invalid': errors && errors.master_course_no }" >	
                     <ng-template ng-option-tmp ng-label-tmp let-item="item">
                         {{item.course_no}}: {{item.course_name_th}}
                     </ng-template>	
                 </ng-select>
+                <p class="invalid-feedback-nc" *ngIf="errors && errors.master_course_no"> 
+                    <span *ngFor="let text of errors.master_course_no">{{ text }}</span>
+                </p>
             </div>
         </div>
         <div class="col-3 pl-1">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                    COURSE NO. <span class="tx-danger">*</span>
+                </label>
                 <input type="text" class="form-control"
                     name="course.course_no"
                     [(ngModel)]="course.course_no"
-                    placeholder="00X" 
+                    placeholder="CPT-000-00X" 
                     autofocus 
                     [ngClass]="{ 'is-invalid': errors && errors.course_no }" 
                     #course_no>
@@ -37,7 +45,9 @@
         </div>
         <div class="col-2">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">GROUP</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                    GROUP <span class="tx-danger">*</span>
+                </label>
                 <select name="txtgroup" #txtgroup class="form-control" readonly>
                     <option value="{{ _org_code }}">{{ _org_abb }}</option>
                 </select>
@@ -54,7 +64,9 @@
     <div class="row">
         <div class="col-6">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">THAI NAME</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                    THAI NAME <span class="tx-danger">*</span>
+                </label>
                 <input type="text" class="form-control" #course_name_th
                     [ngClass]="{ 'is-invalid': errors && errors.course_name_th }" 
                     name="course.course_name_th"
@@ -80,7 +92,9 @@
     <div class="row pt-1">
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">DAY</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                        DAY <span class="tx-danger">*</span>
+                    </label>
                     <input type="text" class="form-control" #day
                         [ngClass]="{ 'is-invalid': errors && errors.days }" 
                         name="course.days"
@@ -92,7 +106,8 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">capacity</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                        capacity <span class="tx-danger">*</span></label>
                     <input type="text" class="form-control" #capacity
                         [ngClass]="{ 'is-invalid': errors && errors.capacity }" 
                         name="course.capacity"
@@ -117,7 +132,8 @@
         <div class="row pt-1">
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">from</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                        from <span class="tx-danger">*</span></label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
@@ -144,7 +160,9 @@
             </div>
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">to</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                        to <span class="tx-danger">*</span>
+                    </label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
@@ -235,7 +253,8 @@
         <div class="row pt-1">
             <div class="col-3">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">place</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                        place <span class="tx-danger">*</span></label>
                     <input class="form-control" 
                         name="course.place"
                         [(ngModel)]="course.place"
@@ -249,7 +268,9 @@
                 <!-- //auto complete -->
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">trainer
-                    <i class="typcn typcn-document-add tx-20 lh--9 op-6 pointer" (click)="open(content)"></i>
+                    <a href="javascript:;"(click)="open(content)"> 
+                        <i class="typcn typcn-document-add tx-20 lh--9"></i>
+                    </a>
                 </label>
                     <ng-select 
                         [ngClass]="{ 'is-invalid': errors && errors.trainer }"

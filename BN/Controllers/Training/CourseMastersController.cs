@@ -376,7 +376,6 @@ namespace api_hrgis.Controllers
                     tb1.seq_no,
                     tb1.last_status,
                     tb1.remark,
-                    tb1.manager_approved_checked,
                     tb1.final_approved_checked,
                     table.div_code,
                     table.div_abb,

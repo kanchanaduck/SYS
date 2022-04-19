@@ -77,8 +77,6 @@ export class ApproveMgrComponent implements OnInit {
   ngOnInit() {
     this.form = this.formBuilder.group(
       {
-        frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
-        frm_course_name: ['', [Validators.required]],
         frm_emp_no: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(7)]],
         frm_emp_name: ['', [Validators.required]],
       },
@@ -87,6 +85,338 @@ export class ApproveMgrComponent implements OnInit {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
+    this.check_is_approver()
+    this.fnGetband();
+  }
+
+  async check_is_approver() {
+    let self = this
+    await this.service.gethttp('Stakeholder/approver/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_approver = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+        self.visableButton = true;
+        self.isreadonly = false;
+        self.get_courses()
+      }, (error: any) => {
+        console.log(error);
+        self.is_approver = false;
+        self.visableButton = false;
+        self.isreadonly = true;
+      }); 
+  }
+
+  async get_course() {
+    /* let self = this
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.response = response
+          self.course = self.response.courses
+          let trainers = self.response.trainers
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
+          self.get_courses()
+          // self.datatable()
+          self.fnGet()
+        })
+        .catch(function(error){
+          Swal.fire({
+            icon: 'error',
+            title: error.response.status,
+            text: error.response.data
+          })
+          self.course = {};
+          return false;
+      });      
+    } */
+      let self = this
+  
+      if(this.course_no==null)
+      {
+        return false;
+      }
+      else
+      {
+        self.data_grid = [];
+        axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+          .then(function(response){
+            self.response = response
+            self.course = self.response.courses
+            self.arr_band = self.response.courses.courses_bands;
+            let trainers = self.response.trainers
+            if(trainers.length>0){
+              self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+            }
+            else{
+              self.course.trainer_text = "-"
+            }
+            let bands = self.arr_band
+            if(bands.length>0){
+              self.course.band_text = bands.map(c => c.band).join(', ');
+            }
+            else{
+              self.course.band_text = "-"
+            }
+            self.fnGet()
+          })
+          .catch(function(error){
+            Swal.fire({
+              icon: 'error',
+              title: error.response.status,
+              text: error.response.data
+            })
+            self.course = {};
+            return false;
+        });      
+      }
+  }
+
+async get_courses(){
+  let self = this
+  await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+  .then(function(response){
+    self.courses = response
+  })
+  .catch(function(error){
+
+  });
+}
+
+custom_search_course_fn(term: string, item: any) {
+  term = term.toLowerCase();
+  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+}
+
+async clear_data() {
+  this.course = {};
+  this.data_grid = [];
+  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+    dtInstance.clear().draw();
+    dtInstance.destroy();
+    this.dtTrigger.next();
+  });
+}
+
+array_chk: any;
+  async fnGetband() {
+    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
+    this.array_chk.forEach(object => {
+      object.isChecked = false;
+    }); //console.log(this.array_chk);
+    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
+  }
+
+  get f(): { [key: string]: AbstractControl } {
+    return this.form.controls;
+  }
+
+  async fnSave() {
+    this.submitted = true;
+
+    if (this.form.invalid) {
+      return;
+    }
+
+
+    if(this.course_no===undefined){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+    // console.log(JSON.stringify(this.form.value, null, 2));
+
+    // console.log(this.dept_emp);
+    // console.log(this._org_abb)
+    // console.log(this.div_emp);
+    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
+      Swal.fire({
+        icon: 'error',
+        title: "",
+        text: environment.text.invalid_department
+        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
+      })
+
+      return;
+    }
+
+    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
+      Swal.fire({
+        icon: 'error',
+        title: "",
+        text: environment.text.unequal_band
+        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
+      })
+
+      return;
+    }
+
+    const send_data = {
+      course_no: this.course_no,
+      emp_no: this.form.controls['frm_emp_no'].value,
+      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? environment.text.wait : null,
+      remark: this.txt_not_pass
+    }
+    // console.log(send_data);
+    // await this.service.axios_post('Registration', send_data, environment.text.success);
+    // await this.fnGet(this.form.controls['frm_course'].value);
+    let self = this
+    await axios.post(`${environment.API_URL}Registration`, send_data, this.headers)
+    .then(function(response){
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: "Success",
+        showConfirmButton: false,
+        timer: 2000
+      })
+      self.fnGet();
+      self.fnClear()
+      self.datatable()
+    })
+    .catch(function(error){
+      self.errors = error.response.data.errors
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+      })
+      // self.fnGet(self.course_no);
+    })
+  }
+  async fnApproved() {
+    let text = "";
+    if (this.array_grid.length > 0) 
+    {
+      text = "you want to approve these trainees";
+    } 
+    else 
+    {
+      text = "you want to cancle approve these trainees"
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: text,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    })
+    .then(async (result) => {
+      if (result.value) {
+
+        for (var i = 0; i < this.data_grid.length; i++) {
+          this.data_grid[i].final_approved_checked = false;
+        }
+
+        for (const iterator of this.array_grid) {
+          let _objIndex = this.data_grid.findIndex((obj => obj.emp_no == iterator.emp_no));
+          this.data_grid[_objIndex].final_approved_checked = true;
+        }
+
+        Array.prototype.push.apply(this.array_grid, this.data_grid); // console.log(this.array_grid);
+        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); // console.log(removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
+
+        /* const send_data = {
+          course_no: this.course_no,
+          capacity: this.course.capacity,
+          array: this.array_grid
+        }
+        console.log('send data: ', send_data); */
+        console.log('GRID: ', this.array_grid);
+
+
+        this.selection.clear();
+        await this.service.axios_put(`Registration/MgrApprove/${this.course_no}`, this.array_grid, environment.text.success);
+        this.array_grid = [];
+        await this.fnGet();
+      }
+    })
+  }
+  fnClear() {
+    this.form.controls['frm_emp_no'].setValue("");
+    this.form.controls['frm_emp_name'].setValue("");
+    this.txtdept.nativeElement.value = "";
+    this.txtposition.nativeElement.value = "";
+    this.txtband.nativeElement.value = "";
+    this.txt_not_pass = "";
+  }
+  fnDelete(item) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'you want to delete this record',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then(async (result) => {
+      if (result.value) {
+        await this.service.axios_delete(`Registration/${item.course_no}/${item.emp_no}`, environment.text.delete);
+        // this.fnGet(item.course_no, this._org_abb);
+        this.fnGet();
+      }
+    })
+  }
+
+  res_course: any = [];
+  arr_band: any;
+
+  onKeyEmpno(event: any) {
+    if (event.target.value.length >= 6 && event.target.value.length <= 7) {
+      this.searchEmp(event.target.value);
+      this.searchPrevCourse(event.target.value);
+    } else if (event.target.value.length == 0) {
+      this.fnClear();
+    }
+  }
+
+  res_emp: any = [];
+  dept_emp: any = ''; div_emp: any = '';
+  async searchEmp(empno: any) {
+    this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
+    if (this.res_emp != null || this.res_emp != undefined) {
+      this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
+      this.dept_emp = this.res_emp.dept_abb;
+      this.div_emp = this.res_emp.div_abb_name;
+      this.txtdept.nativeElement.value = `${this.res_emp.div_abb}/${this.res_emp.dept_abb}`;
+      this.txtposition.nativeElement.value = this.res_emp.position_name_en;
+      this.txtband.nativeElement.value = this.res_emp.band;
+    } else {
+      this.form.controls['frm_emp_name'].setValue("");
+      this.txtdept.nativeElement.value = "";
+      this.txtposition.nativeElement.value = "";
+      this.txtband.nativeElement.value = "";
+    }
+  }
+  res_prev: any;
+  async searchPrevCourse(empno: any) {
+    let frm = this.form.value;
+    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+    if (this.res_prev != "" || this.res_prev != null) {
+      this.txt_not_pass = this.res_prev;
+      this.not_pass = true;
+    }
+  }
+
+  async datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -155,7 +485,6 @@ export class ApproveMgrComponent implements OnInit {
           } 
         ],
       },
-      container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
       order: [[1, 'asc']],
@@ -215,15 +544,7 @@ export class ApproveMgrComponent implements OnInit {
               {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
-              }, 
-              /*{
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
               },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },*/
             ]
           }
         ],
@@ -232,248 +553,6 @@ export class ApproveMgrComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
     };
-
-    this.check_is_approver()
-  }
-
-  async check_is_approver() {
-    let self = this
-    await this.service.gethttp('Stakeholder/approver/' + self._emp_no)
-      .subscribe((response: any) => {
-        console.log(response)
-        self.is_approver = true;
-        self._org_code = response.org_code
-        self._org_abb = response.organization.org_abb
-        self.visableButton = true;
-        self.isreadonly = false;
-        self.get_courses()
-      }, (error: any) => {
-        console.log(error);
-        self.is_approver = false;
-        self.visableButton = false;
-        self.isreadonly = true;
-      }); 
-  }
-
-  async get_course() {
-    let self = this
-
-    if(this.course_no==null)
-    {
-      return false;
-    }
-    else
-    {
-      self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-        .then(function(response){
-          self.response = response
-          self.course = self.response.courses
-          let trainers = self.response.trainers
-          if(trainers.length>0){
-            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
-          }
-          else{
-            self.course.trainer_text = "-"
-          }
-          self.get_courses()
-          // self.datatable()
-          self.fnGet()
-        })
-        .catch(function(error){
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
-          self.course = {};
-          return false;
-      });      
-    }
-  }
-
-async get_courses(){
-  let self = this
-  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/Open`, this.headers)
-  .then(function(response){
-    self.courses = response
-  })
-  .catch(function(error){
-
-  });
-}
-
-custom_search_course_fn(term: string, item: any) {
-  term = term.toLowerCase();
-  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-}
-
-async clear_data() {
-  this.course = {};
-  this.data_grid = [];
-  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.clear().draw();
-    dtInstance.destroy();
-    this.dtTrigger.next();
-  });
-}
-
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
-  }
-
-  async fnSave() {
-    this.submitted = true;
-
-    if (this.form.invalid) {
-      return;
-    }
-    // console.log(JSON.stringify(this.form.value, null, 2));
-
-    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.invalid_department
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-      })
-
-      return;
-    }
-
-    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.unequal_band
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
-      })
-
-      return;
-    }
-
-    const send_data = {
-      course_no: this.course_no,
-      emp_no: this.form.controls['frm_emp_no'].value,
-      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.txtqty.nativeElement.value ? environment.text.wait : null,
-      remark: this.txt_not_pass
-    }
-    // console.log(send_data);
-    await this.service.axios_post('Registration', send_data, environment.text.success);
-    // await this.fnGet(this.course_no, this._org_abb);
-    await this.fnGet();
-  }
-  async fnApproved() {
-    let text = "";
-    if (this.array_grid.length > 0) 
-    {
-      text = "you want to approve these trainees";
-    } 
-    else 
-    {
-      text = "you want to cancle approve these trainees"
-    }
-
-    Swal.fire({
-      title: 'Are you sure?',
-      text: text,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    })
-    .then(async (result) => {
-      if (result.value) {
-
-        for (var i = 0; i < this.data_grid.length; i++) {
-          this.data_grid[i].manager_approved_checked = false;
-        }
-
-        for (const iterator of this.array_grid) {
-          let _objIndex = this.data_grid.findIndex((obj => obj.emp_no == iterator.emp_no));
-          this.data_grid[_objIndex].manager_approved_checked = true;
-        }
-
-        Array.prototype.push.apply(this.array_grid, this.data_grid); // console.log(this.array_grid);
-        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); // console.log(removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
-
-        const send_data = {
-          course_no: this.course_no,
-          capacity: this.course.capacity,
-          array: this.array_grid
-        }
-        console.log('send data: ', send_data);
-
-        this.selection.clear();
-        this.array_grid = [];
-        await this.service.axios_put('/Registration/MgrApprove/' + this.course_no, send_data, environment.text.success);
-        await this.fnGet();
-      }
-    })
-  }
-  fnClear() {
-    this.form.controls['frm_emp_no'].setValue("");
-    this.form.controls['frm_emp_name'].setValue("");
-    this.txtdept.nativeElement.value = "";
-    this.txtposition.nativeElement.value = "";
-    this.txtband.nativeElement.value = "";
-    this.txt_not_pass = "";
-  }
-  fnDelete(item) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'you want to delete this record',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then(async (result) => {
-      if (result.value) {
-        await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
-        // this.fnGet(item.course_no, this._org_abb);
-        this.fnGet();
-      }
-    })
-  }
-
-  res_course: any = [];
-  arr_band: any;
-
-  onKeyEmpno(event: any) {
-    if (event.target.value.length >= 6 && event.target.value.length <= 7) {
-      this.searchEmp(event.target.value);
-      this.searchPrevCourse(event.target.value);
-    } else if (event.target.value.length == 0) {
-      this.fnClear();
-    }
-  }
-
-  res_emp: any = [];
-  dept_emp: any = ''; div_emp: any = '';
-  async searchEmp(empno: any) {
-    this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
-    if (this.res_emp != null || this.res_emp != undefined) {
-      this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
-      this.dept_emp = this.res_emp.dept_abb;
-      this.div_emp = this.res_emp.div_abb_name;
-      this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb;
-      this.txtposition.nativeElement.value = this.res_emp.position_name_en;
-      this.txtband.nativeElement.value = this.res_emp.band;
-    } else {
-      this.form.controls['frm_emp_name'].setValue("");
-      this.txtdept.nativeElement.value = "";
-      this.txtposition.nativeElement.value = "";
-      this.txtband.nativeElement.value = "";
-    }
-  }
-  res_prev: any;
-  async searchPrevCourse(empno: any) {
-    let frm = this.form.value;
-    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + frm.frm_course + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
-    if (this.res_prev != "" || this.res_prev != null) {
-      this.txt_not_pass = this.res_prev;
-      this.not_pass = true;
-    }
   }
 
   /** File Upload, Download */
@@ -600,7 +679,7 @@ async clear_data() {
         this.data_grid = response.your;
         this.data_grid_other = response.other;
 
-        let chk_true = response.your.filter(x => x.manager_approved_checked == true);
+        let chk_true = response.your.filter(x => x.last_status=="Approved");
         if (chk_true.length > 0) {
           this.selection = new SelectionModel<PeriodicElement>(true, chk_true)
           console.log("1", this.selection.selected);
@@ -610,7 +689,17 @@ async clear_data() {
           console.log("2", this.selection.selected);
         }
 
-        if (response.your.filter(x => x.manager_approved_checked == true).length > 0) { this.disabled_chkall = true; } else { this.disabled_chkall = false; }
+        let count_approve_your = response.your.filter(x => x.last_status=="Approved").length
+        let count_approve_other = response.other.filter(x => x.last_status=="Approved").length
+        
+        let count_your = response.your.length
+
+        if (count_your+count_approve_other>this.course.capacity) { 
+          this.disabled_chkall = true; 
+        } 
+        else { 
+          this.disabled_chkall = false; 
+        }
 
         // console.log('1: ',this.data_grid.filter(x => x.center_approved_checked == true).length);
         // console.log('2: ',this.data_grid_other.filter(x => x.center_approved_checked == true).length);
@@ -647,9 +736,40 @@ async clear_data() {
   }
 
   async fnGetCourse(course_no: any) {
+    // this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
+    // console.log('fnGetCourse: ', this.res_course);
+    // this.fnGet();
     this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
-    this.fnGet();
+    if (this.res_course != undefined) {
+      this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);
+      this.form.controls['frm_course_name_th'].setValue(this.res_course.course_name_th);
+      this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
+      this.txtqty.nativeElement.value = this.res_course.capacity;
+      this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
+      this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
+
+      this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
+
+      var nameArr = this.res_course.courses_bands; // console.log(nameArr);
+      for (const iterator of nameArr) {
+        this.array_chk.find(v => v.band === iterator.band).isChecked = true;
+      } // console.log(this.array_chk);
+      this.checkboxesDataList = this.array_chk;
+
+      this.fnGet();
+    } else {
+      this.form.controls['frm_course_name_en'].setValue("");
+      this.form.controls['frm_course_name_th'].setValue("");
+      this.txtgroup.nativeElement.value = "";
+      this.txtqty.nativeElement.value = "";
+      this.txtdate_from.nativeElement.value = "";
+      this.txtdate_to.nativeElement.value = "";
+      this.checkboxesDataList.forEach((value, index) => {
+        value.isChecked = false;
+      });
+      await this.fnGet();
+    }
   }
   // End Open popup Course
 
@@ -699,7 +819,6 @@ export interface PeriodicElement {
   firstname_en: string;
   lastname_en: string;
   last_status: string;
-  manager_approved_checked: boolean;
   position_code: string;
   position_name_en: string;
   remark: string;

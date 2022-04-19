@@ -1,7 +1,5 @@
 <div class="card card-body mb-3 tx-13">
     <dl class="row">
-        <!-- <dt class="col-sm-3">ID: </dt>
-        <dd class="col-sm-9">{{ trainer.trainer_no }}</dd> -->
       
         <dt class="col-sm-3">EMP NO:</dt>
         <dd class="col-sm-9">{{ trainer.emp_no || '-' }}</dd>
@@ -20,9 +18,9 @@
 
         <dt class="col-sm-3">DEPARTMENT: </dt>
         <dd class="col-sm-9">{{ trainer.dept_abb || '-' }}</dd>
-      
-        <dt class="col-sm-3">ORGANIZATION:</dt>
-        <dd class="col-sm-9">{{ trainer.organization || '-' }}</dd>
+
+        <dt class="col-sm-3">COMPANY: </dt>
+        <dd class="col-sm-9">{{ trainer.company }}</dd>
       
         <dt class="col-sm-3">STATUS:</dt>
         <dd class="col-sm-9">{{ trainer.employed_status || '-' }}</dd>
@@ -45,8 +43,8 @@
             <td>{{ i.courses.course_no }}</td>
             <td>{{ i.courses.course_name_th }}</td>
             <td>{{ i.courses.course_name_en }}</td>
-            <td>{{ i.courses.date_start | date:'dd-MMM-yy' }}</td>
-            <td>{{ i.courses.date_end | date:'dd-MMM-yy'}}</td>
+            <td>{{ i.courses.date_start | date:'dd-MMM-yy HH:mm' }}</td>
+            <td>{{ i.courses.date_end | date:'dd-MMM-yy HH:mm'}}</td>
             <td>{{ i.courses.place }}</td>
         </tr>
     </tbody>

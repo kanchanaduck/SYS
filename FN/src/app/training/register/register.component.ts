@@ -90,11 +90,7 @@ export class RegisterComponent implements OnInit {
     this.get_committee_of_emp_no();
 
     this.get_courses_open()
-
-
-
     this.fnGetband();
-    // this.fnGetStakeholder(this._emp_no);
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -130,7 +126,7 @@ export class RegisterComponent implements OnInit {
           else{
             self.course.band_text = "-"
           }
-          self.fnGet(self.course_no)
+          self.fnGet()
           self.datatable()
         })
         .catch(function(error){
@@ -387,7 +383,8 @@ async datatable(){
         showConfirmButton: false,
         timer: 2000
       })
-      self.fnGet(self.course_no);
+      self.fnGet();
+      self.fnClear()
     })
     .catch(function(error){
       self.errors = error.response.data.errors
@@ -470,6 +467,7 @@ async datatable(){
   }
   fnDelete(item) {
     // console.log('fn_delete', item);
+    let self = this
     Swal.fire({
       title: 'Are you sure?',
       text: 'you want to delete this record',
@@ -479,8 +477,21 @@ async datatable(){
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no + '/' + this.txtqty.nativeElement.value, environment.text.delete);
-        this.fnGet(item.course_no);
+        axios.delete(`${environment.API_URL}Registration/${item.course_no}/${item.emp_no}`, this.headers)
+        .then(function(response){
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: environment.text.delete,
+            showConfirmButton: false,
+            timer: 2000
+          })
+          self.fnGet();
+        })
+        .catch(function(){
+          
+        })
       }
     })
   }
@@ -518,7 +529,7 @@ async datatable(){
   res_prev: any;
   async searchPrevCourse(empno: any) {
     let frm = this.form.value;
-    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + frm.frm_course + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+    this.res_prev = await this.service.axios_get(`Registration/GetPrevCourse/${this.course_no}/${empno}`); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
@@ -597,7 +608,7 @@ async datatable(){
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
       this.nameFile = 'Choose file';
-      this.fnGet(this.course_no);
+      this.fnGet();
     }
   }
   /** End File Upload, Download */
@@ -640,27 +651,9 @@ async datatable(){
     }); 
   }
 
-  async fnGet(course_no) {
+  async fnGet() {
 
-    if (this.isDtInitialized) {
-      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-        dtInstance.clear().draw();
-        dtInstance.destroy();
-        this.dtTrigger.next();
-      });
-    }
-
-    if (this.isDtInitializedOther) {
-      this.dtElementOther.dtInstance.then((dtInstance1: DataTables.Api) => {
-        dtInstance1.clear().draw();
-        dtInstance1.destroy();
-        this.dtTriggerOther.next();
-      });
-    }
-
-
-
-    await this.service.gethttp(`Registration/GetGridView/${course_no}/${this.committee_org_code}`)
+    await this.service.gethttp(`Registration/GetGridView/${this.course_no}/${this.committee_org_code}`)
       .subscribe((response: any) => {
         this.data_grid = response.your;
         this.data_grid_other = response.other;
@@ -671,8 +664,7 @@ async datatable(){
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            this.isDtInitialized = true
+            // dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -683,12 +675,12 @@ async datatable(){
 
         if (this.isDtInitializedOther) {
           this.dtElementOther.dtInstance.then((dtInstance1: DataTables.Api) => {
-            dtInstance1.clear().draw();
+            // dtInstance1.clear().draw();
             dtInstance1.destroy();
             this.dtTriggerOther.next();
           });
         } else {
-          this.isDtInitializedOther = true
+          // this.isDtInitializedOther = true
           this.dtTriggerOther.next();
         }
 
@@ -726,7 +718,7 @@ async datatable(){
       } // console.log(this.array_chk);
       this.checkboxesDataList = this.array_chk;
 
-      this.fnGet(course_no);
+      this.fnGet();
     } else {
       this.form.controls['frm_course_name_en'].setValue("");
       this.form.controls['frm_course_name_th'].setValue("");
@@ -737,7 +729,7 @@ async datatable(){
       this.checkboxesDataList.forEach((value, index) => {
         value.isChecked = false;
       });
-      await this.fnGet("No");
+      await this.fnGet();
     }
   }
   // End Open popup Course

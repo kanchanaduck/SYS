@@ -206,32 +206,42 @@ export class CourseMasterComponent implements OnInit {
     })
   }
 
-  delete_course(data: any) {
+  delete_course(course_no: any) {
     let self = this
-    console.log(data);
-    
+    console.log(course_no)
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'you want to delete this record',
       icon: 'warning',
+      title: 'Do you sure to delete this record?',
+      text: 'Please confirm by enter Course no: ' + course_no + '. and press confirm Course no.',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      showLoaderOnConfirm: true,
+      preConfirm: (result) => {
+        // console.log(result);
+        if (result == "" || result == null || result == undefined) {
+          Swal.showValidationMessage(
+            `Request failed!`
+          )
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
     }).then(async (result) => {
-      try{
-      if (result.value) {
-        let response = await this.service.axios_delete(`CourseMasters/${data}`, 'Delete data success.');
-        console.log(response);
+      if (result.isConfirmed) {
+        if (course_no === result.value) {
+          await this.service.axios_delete(`CourseMasters/${course_no}`, 'Delete data success.');
+          self.get_courses();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            text: 'Course no. do not match.'
+          })
+        }
       }
-      self.get_courses();
-    }
-    catch(error){
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
-    }
     })
   }
   

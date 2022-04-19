@@ -20,10 +20,10 @@ namespace api_hrgis.Models
         [Column(TypeName = "datetime")]
         public DateTime? register_at { get; set; }
         public string register_by { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime? manager_approved_at { get; set; }
-        public string manager_approved_by { get; set; }
-        public bool? manager_approved_checked { get; set; }
+        // [Column(TypeName = "datetime")]
+        // public DateTime? manager_approved_at { get; set; }
+        // public string manager_approved_by { get; set; }
+        // public bool? manager_approved_checked { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? final_approved_at	 { get; set; }
         public string final_approved_by { get; set; }

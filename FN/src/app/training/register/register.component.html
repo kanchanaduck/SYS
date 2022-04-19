@@ -79,7 +79,7 @@
                         <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
                         <div *ngIf="f.frm_emp_no.errors.maxlength">Max 7 characters</div>
                     </div>
-                    <span class="text-warning" *ngIf="not_pass">{{txt_not_pass}}</span>
+                    <span class="text-warning tx-12" *ngIf="not_pass">{{txt_not_pass}}</span>
                 </div>
             </div>
             <div class="col-3">
@@ -246,6 +246,6 @@
 <div class="card card-body" *ngIf="!is_committee">
     <p class="m-0">
         This page for committee. If you would like to see the status of registration, 
-        you can go to <a routerLink="./../course">Final approve</a> page.
+        you can go to <a routerLink="./../course">Course</a> page.
     </p>
 </div>

@@ -244,6 +244,8 @@ namespace api_hrgis.Controllers
             return tr_course;
         }
 
+
+
         // GET: api/Courses/GetCourseRegister
         [HttpGet("GetCourseRegister")]
         public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseRegister()
@@ -366,6 +368,7 @@ namespace api_hrgis.Controllers
             course.org_code = tr_course.org_code;
             course.date_start = tr_course.date_start;
             course.date_end = tr_course.date_end;
+            course.place = tr_course.place;
             course.capacity = tr_course.capacity;
             course.days = tr_course.days;
             course.open_register = tr_course.open_register;
@@ -511,7 +514,7 @@ namespace api_hrgis.Controllers
             return CreatedAtAction("Gettr_course", new { id = tr_course.course_no }, tr_course); */
         }
 
-        // DELETE: api/Course/5
+        // DELETE: api/Courses/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletetr_course(string id)
         {
@@ -526,6 +529,22 @@ namespace api_hrgis.Controllers
             _context.tr_course.Remove(tr_course);
             await _context.SaveChangesAsync();
 
+            return NoContent();
+        }
+
+        [AllowAnonymous]
+        // GET: api/Courses/Close
+        [HttpGet("Close")]
+        public async Task<ActionResult<tr_course>> course_close(){
+            var course_close = await _context.tr_course.Where(x => x.date_end.Value.AddDays(5) <= DateTime.Now).ToListAsync();
+
+            foreach (var item in course_close)
+            {
+                item.open_register = false;
+                _context.Entry(item).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync(); 
             return NoContent();
         }
 

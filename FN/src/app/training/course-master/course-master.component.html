@@ -4,7 +4,8 @@
     <form (ngSubmit)="save_course_master()">
     <div class="row">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Course no.</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                Course no. <span class="tx-danger">*</span></label>
             <input type="hidden" name="course.course_no_temp" class="form-control" 
                 autofocus required 
                 [(ngModel)]="course.course_no_temp" 
@@ -19,7 +20,8 @@
             </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Thai Name</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                Thai Name <span class="tx-danger">*</span></label>
             <input type="text" name="course.course_name_th" class="form-control" required 
                 [(ngModel)]="course.course_name_th" 
                 [ngClass]="{ 'is-invalid': errors && errors.course_name_th }">
@@ -40,7 +42,8 @@
     
     <div class="row">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Group</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                Group <span class="tx-danger">*</span></label>
                 <select name="course.org_code" class="form-control"
                     [(ngModel)]="course.org_code">
                     <option value="{{ _org_code }}">{{ _org_abb }}</option>
@@ -50,7 +53,9 @@
                 </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Capacity</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                Capacity <span class="tx-danger">*</span>
+            </label>
             <input type="number" name="course.capacity" class="form-control"
                 [(ngModel)]="course.capacity" 
                 [ngClass]="{ 'is-invalid': errors && errors.capacity }">
@@ -79,7 +84,7 @@
 
     <div class="row">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Days</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Days <span class="tx-danger">*</span></label>
             <input type="text" name="course.days" class="form-control"
                 [(ngModel)]="course.days" 
                 [ngClass]="{ 'is-invalid': errors && errors.days }">

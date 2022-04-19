@@ -98,6 +98,10 @@ export class CourseComponent implements OnInit {
     this.check_is_committee()
     this.fnGet()
     this.fnGetband();
+    this.course.time_in_hh = "8"
+    this.course.time_in_mm = "30"
+    this.course.time_out_hh = "16"
+    this.course.time_out_mm = "30"
   }
 
   async get_courses(){
@@ -114,16 +118,6 @@ export class CourseComponent implements OnInit {
   custom_search_course_fn(term: string, item: any) {
     term = term.toLowerCase();
     return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-  }
-  
-  async clear_data() {
-    this.course = {};
-    this.data_grid = [];
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.clear().draw();
-      dtInstance.destroy();
-      this.dtTrigger.next();
-    });
   }
 
 
@@ -269,6 +263,11 @@ export class CourseComponent implements OnInit {
     });
     this.checkedIDs = [];
     this.selected_trainer_multiple = [];
+
+    this.course.time_in_hh = "8"
+    this.course.time_in_mm = "30"
+    this.course.time_out_hh = "16"
+    this.course.time_out_mm = "30"
   }
   CheckDate(date_end) {
     let result = true;
@@ -345,10 +344,6 @@ export class CourseComponent implements OnInit {
 
   }
 
-  alert1234(){
-    alert(this.course.time_out_hh)
-  }
-
   async fnUpdate() {
     let self = this
     this.submitted = true;
@@ -377,33 +372,33 @@ export class CourseComponent implements OnInit {
       });
     }
 
-    // const send_data = {
-    //   course_no: this.course.course_no,
-    //   master_course_no: this.course.master_course_no,
-    //   course_name_th: this.course.course_name_th,
-    //   course_name_en: this.course.course_name_en,
-    //   org_code: this._org_code,
-    //   days: this.course.days,
-    //   capacity: this.course.capacity,
-    //   open_register: this.course.open_register,
-    //   courses_bands: courses_bands,
-    //   date_start: this.course.date_start===undefined? "":`${this.convert_ngbdate(this.course.date_start)} ${(this.course.time_in_hh).padStart(2,"0")}:${(this.course.time_in_mm).padStart(2,"0")}:00`,
-    //   date_end: this.course.date_end===undefined? "":`${this.convert_ngbdate(this.course.date_end)} ${(this.course.time_out_hh).padStart(2,"0")}:${(this.course.time_out_mm).padStart(2,"0")}:00`,
-    //   place: this.course.place,
-    //   courses_trainers: courses_trainers
-    // }
-    // console.log('send data: ', send_data);
+    const send_data = {
+      course_no: this.course.course_no,
+      master_course_no: this.course.master_course_no,
+      course_name_th: this.course.course_name_th,
+      course_name_en: this.course.course_name_en,
+      org_code: this._org_code,
+      days: this.course.days,
+      capacity: this.course.capacity,
+      open_register: this.course.open_register,
+      courses_bands: courses_bands,
+      date_start: this.course.date_start===undefined? "":`${this.convert_ngbdate(this.course.date_start)} ${(this.course.time_in_hh).padStart(2,"0")}:${(this.course.time_in_mm).padStart(2,"0")}:00`,
+      date_end: this.course.date_end===undefined? "":`${this.convert_ngbdate(this.course.date_end)} ${(this.course.time_out_hh).padStart(2,"0")}:${(this.course.time_out_mm).padStart(2,"0")}:00`,
+      place: this.course.place,
+      courses_trainers: courses_trainers
+    }
+    console.log('send data: ', send_data);
 
-    // await this.service.axios_put(`Courses/${this.course.course_no}`, send_data, 'Update data success.');
-    // this.fnClear()
-    // this.fnGet();
+    await this.service.axios_put(`Courses/${this.course.course_no}`, send_data, 'Update data success.');
+    this.fnClear()
+    this.fnGet();
   }
   async fnDelete(course_no) {
     console.log(course_no)
     Swal.fire({
       icon: 'warning',
       title: 'Do you sure to delete this record?',
-      text: 'Please confirm by enter Course No: ' + course_no + '. and press confirm Course no.',
+      text: 'Please confirm by enter Course no: ' + course_no + '. and press confirm Course no.',
       input: 'text',
       inputAttributes: {
         autocapitalize: 'off'
@@ -430,7 +425,7 @@ export class CourseComponent implements OnInit {
         } else {
           Swal.fire({
             icon: 'error',
-            text: 'Courses no do not match.'
+            text: 'Course no. do not match.'
           })
         }
       }
@@ -543,12 +538,17 @@ export class CourseComponent implements OnInit {
   }
 
   async fnGetCourse() {
+    this.errors = {};
     this.response = await this.service.axios_get(`CourseMasters/SearchCourse/${this.course.master_course_no}/${this._org_code}`);
     console.log('fnGetCourse: ', this.response);
     if (this.response != undefined) {
 
       this.course = this.response;
       this.course.master_course_no = this.course.course_no;
+      this.course.time_in_hh = "8"
+      this.course.time_in_mm = "30"
+      this.course.time_out_hh = "16"
+      this.course.time_out_mm = "30"
 
       var nameArr = this.response.master_courses_bands;
       this.array_chk.forEach(object => {

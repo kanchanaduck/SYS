@@ -38,6 +38,7 @@ export class ConfirmationSheetComponent implements OnInit {
       'Content-Type': 'application/json'
     }
   }
+  response: any;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) {
     config.backdrop = 'static'; // popup
@@ -52,7 +53,32 @@ export class ConfirmationSheetComponent implements OnInit {
   ngOnInit(): void {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
+    this.fnGetStakeholder(this._emp_no)
+  }
 
+  async get_courses(){
+    let self = this
+    await axios.get(`${environment.API_URL}Courses`, this.headers)
+    .then(function(response){
+      self.courses = response
+      self.datatable()
+    })
+    .catch(function(error){
+
+    });
+  }
+
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
+  
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+  }
+
+  async datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -94,18 +120,20 @@ export class ConfirmationSheetComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              {
+              /* {
                 extend: 'csv',
                 text: '<i class="far fa-file-excel"></i> Csv</button>',
               },
               {
                 extend: 'pdf',
                 text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              }
+              } */
             ]
-          }, {
+          }, 
+          {
             text: '<i class="fas fa-envelope"></i> Trainee email</button>',
             key: '1',
+            className: this.isCheck && (this._org_code==this.course.org_code) ? 'd-block':'d-none',
             action: () => {
               if(this.course_org_code != ""){
                 this.fnSendMail();
@@ -118,54 +146,8 @@ export class ConfirmationSheetComponent implements OnInit {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       // order: [[1, 'desc']],
     };
-
-    // this.fnGet("NULL");
-    // this.fnGetCenter(this._emp_no);
-    this.fnGetStakeholder(this._emp_no)
-    this.get_courses()
   }
 
-  async get_courses(){
-    let self = this
-    await axios.get(`${environment.API_URL}Courses`, this.headers)
-    .then(function(response){
-      self.courses = response
-    })
-    .catch(function(error){
-
-    });
-  }
-
-  custom_search_course_fn(term: string, item: any) {
-    term = term.toLowerCase();
-    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-  }
-  
-  async clear_data() {
-    this.course = {};
-    this.data_grid = [];
-  }
-
-
- /*  async onKeyCourse(event: any) {
-    if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.fnGet(event.target.value);
-    } else if (event.target.value.length == 0) {
-      this.fnGet("NULL");
-    }
-  } */
-
-  // async fnGetCenter(emp_no: any) {
-  //   await this.service.gethttp('Center/' + emp_no)
-  //     .subscribe((response: any) => {
-  //       console.log(response);
-  //       this.isCenter = true;
-  //     }, (error: any) => {
-  //       console.log(error);
-  //       this.fnGet("No");
-  //       this.isCenter = false;
-  //     });
-  // }
 
   org_code: any;
   async fnGetStakeholder(emp_no: any) {
@@ -173,41 +155,19 @@ export class ConfirmationSheetComponent implements OnInit {
       .subscribe((response: any) => {
         if (response.role.toUpperCase() == environment.role.committee) {
           console.log(response);
-          this.org_code = response.org_code;     
+          this._org_code = response.org_code;
           this.isCheck = true;
+          this.get_courses()
         }
       }, (error: any) => {
         console.log(error);
         // this.fnGet("No");
         this.isCheck = false;
+        this.get_courses()
       });
   }
 
-  // Open popup Course
-  inputitem = 'course-confirmation-sheet';
-  /* openCourse(content) {
-    //   size: 'lg' //sm, mb, lg, xl
-    this.v_course_no = "";
-    const modalRef = this.modalService.open(content, { size: 'lg' });
-    modalRef.result.then(
-      (result) => {
-        console.log(result);
-        if (result != "OK") {
-          this.txtcourse_no.nativeElement.value = "";
-          this.fnGet("NULL");
-          this.v_course_no = "";
-        }else{
-          this.fnGet(this.txtcourse_no.nativeElement.value);
-        }
-      },
-      (reason) => {
-        console.log(reason);
-        this.txtcourse_no.nativeElement.value = "";
-        this.fnGet("NULL");
-        this.v_course_no = "";
-      }
-    );
-  } */
+
 
   v_course_no: string = "";
   addItemCourse(newItem: string) {
@@ -218,37 +178,62 @@ export class ConfirmationSheetComponent implements OnInit {
 
   mail_date: any; mail_time: any; mail_place: any; mail_course: any; course_org_code: string = "";
   async get_course() {
-
-    await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + this.course_no)
-      .subscribe((response: any) => {
-        console.log(response);
-        if (response.length > 0) {
-          this.mail_date = new Date(response[0].date_start).getDate() + "-" + new Date(response[0].date_end).getDate() + " " + new Date(response[0].date_start).toLocaleString('default', { month: 'long' }) + " " + new Date(response[0].date_start).getFullYear();
-          this.mail_time = response[0].time_in + "～" + response[0].time_out;
-          this.mail_place = response[0].place;
-          this.mail_course = response[0].course_no + "(" + response[0].course_name_th + ")";
-          this.course_org_code = response[0].org_code;
+    let self = this
+    axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+      .then(function(response){
+        self.response = response
+        self.course = self.response.courses
+        let trainers = self.response.trainers
+        if(trainers.length>0){
+          self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
         }
-
-        this.data_grid = response;
-
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            this.isDtInitialized = true
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
+        else{
+          self.course.trainer_text = "-"
         }
-      }, (error: any) => {
-        console.log(error);
-        this.data_grid = [];
-      });
+        self.get_registrant()
+      })
+      .catch(function(error){
+        Swal.fire({
+          icon: 'error',
+          title: error.response.status,
+          text: error.response.data
+        })
+        self.course = {};
+        return false;
+    });     
   }
+
+async get_registrant(){
+  await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + this.course_no)
+  .subscribe((response: any) => {
+    console.log(response);
+    if (response.length > 0) {
+      this.mail_date = new Date(response[0].date_start).getDate() + "-" + new Date(response[0].date_end).getDate() + " " + new Date(response[0].date_start).toLocaleString('default', { month: 'long' }) + " " + new Date(response[0].date_start).getFullYear();
+      this.mail_time = response[0].time_in + "～" + response[0].time_out;
+      this.mail_place = response[0].place;
+      this.mail_course = response[0].course_no + "(" + response[0].course_name_th + ")";
+      this.course_org_code = response[0].org_code;
+    }
+
+    this.data_grid = response;
+
+    // Calling the DT trigger to manually render the table
+    if (this.isDtInitialized) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.clear().draw();
+        this.isDtInitialized = true
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    } else {
+      this.isDtInitialized = true
+      this.dtTrigger.next();
+    }
+  }, (error: any) => {
+    console.log(error);
+    this.data_grid = [];
+  });
+}
 
   res_mail: any;
   res_file: any;

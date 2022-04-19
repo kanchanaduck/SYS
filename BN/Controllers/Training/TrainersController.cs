@@ -165,12 +165,12 @@ namespace api_hrgis.Controllers
 
             using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets["trainer_history"];
+                ExcelWorksheet worksheet = package.Workbook.Worksheets["internal_trainer_history"];
         
-                worksheet.Cells[1, 1].Value = "Trainer History"; 
+                worksheet.Cells[1, 1].Value = "Internal Trainer History"; 
 
                 worksheet.Cells[2, 1].Value = "TRAINER NO"; 
-                worksheet.Cells[2, 2].Value = "TITLE NAME"; 
+                worksheet.Cells[2, 2].Value = "TITLE"; 
                 worksheet.Cells[2, 3].Value = "FIRSTNAME"; 
                 worksheet.Cells[2, 4].Value = "LASTNAME"; 
                 worksheet.Cells[2, 5].Value = "COMPANY"; 
@@ -207,9 +207,9 @@ namespace api_hrgis.Controllers
                             worksheet.Cells[recordIndex, 10].Value = j.courses.course_name_th;
                             worksheet.Cells[recordIndex, 11].Value = j.courses.course_name_en;
                             worksheet.Cells[recordIndex, 12].Value = j.courses.date_start;
-                            worksheet.Cells[recordIndex, 12].Style.Numberformat.Format = "yyyy-mm-dd";
+                            worksheet.Cells[recordIndex, 12].Style.Numberformat.Format = "yyyy-mm-dd HH:MM";
                             worksheet.Cells[recordIndex, 13].Value = j.courses.date_end;
-                            worksheet.Cells[recordIndex, 13].Style.Numberformat.Format = "yyyy-mm-dd";
+                            worksheet.Cells[recordIndex, 13].Style.Numberformat.Format = "yyyy-mm-dd HH:MM";
                             worksheet.Cells[recordIndex, 14].Value = j.courses.place;
                             recordIndex++; 
                         }
@@ -217,7 +217,10 @@ namespace api_hrgis.Controllers
                     else{
                         recordIndex++; 
                     }
-                } 
+                }
+
+                worksheet = package.Workbook.Worksheets["external_trainer_history"];
+
                 package.SaveAs(new FileInfo(filepath));
                 package.Dispose();
             }  
@@ -228,8 +231,8 @@ namespace api_hrgis.Controllers
         
         // GET: api/Trainers/History/5
         [HttpGet("History/{trainer_no}")]
-        public async Task<ActionResult<tr_trainer>> trainer_history(int trainer_no)
-        {
+        public async Task<ActionResult<IEnumerable<tr_course_trainer>>> trainer_history(int trainer_no)
+        {                   
             var trainer = await _context.tr_trainer
                             .Where(t=>t.trainer_no==trainer_no)
                             .FirstOrDefaultAsync();
@@ -237,23 +240,33 @@ namespace api_hrgis.Controllers
             if (trainer == null)
             {
                 return NotFound();
-            }
-            
-            if(trainer.trainer_type=="Internal"){ 
-                return await _context.tr_trainer
-                                .Include(t => t.courses_trainers)
-                                .ThenInclude(e => e.courses)
-                                .Where(t => t.emp_no== trainer.emp_no)
+            }         
+
+            if(trainer.trainer_type=="Internal"){
+                
+                var trainers = await _context.tr_trainer
+                            .Where(t=>t.emp_no==trainer.emp_no)
+                            .ToListAsync();
+                
+                var c = new List<int>();
+                foreach (var item in trainers)
+                {
+                    Console.WriteLine(item.trainer_no);
+                    c.Add(item.trainer_no);
+                }
+
+                return await _context.tr_course_trainer
+                                .Include(e => e.courses)
+                                .Where(t => c.Contains(t.trainer_no))
                                 .AsNoTracking()
-                                .FirstOrDefaultAsync();
+                                .ToListAsync();            
             }
             else{
-                return await _context.tr_trainer
-                                .Include(t => t.courses_trainers)
-                                .ThenInclude(e => e.courses)
+                return await _context.tr_course_trainer
+                                .Include(e => e.courses)
                                 .Where(t => t.trainer_no==trainer_no)
                                 .AsNoTracking()
-                                .FirstOrDefaultAsync();
+                                .ToListAsync();  
             }
 
         }
@@ -527,10 +540,4 @@ namespace api_hrgis.Controllers
             return Ok("success");
         }
     }
-}
-
-public class trainer_owner
-{
-    public string org_code{ get; set; }
-    public string org_abb { get; set; }
 }

@@ -56,6 +56,7 @@ export class RegisterDataComponent implements OnInit {
   v_wait: number = 0;
   v_total: number = 0;
   arr_band: any;
+  committee_org_abb: any;
 
 
   constructor(private route: ActivatedRoute, private service: AppServiceService) { }
@@ -84,6 +85,7 @@ export class RegisterDataComponent implements OnInit {
         self.is_committee = false;
         this.get_courses()
       }); 
+
   }
 
   async get_committee_of_emp_no(){
@@ -92,6 +94,7 @@ export class RegisterDataComponent implements OnInit {
     .then(function (response) {
       self.committee = response
       self.committee_org_code = self.committee.org_code
+      self.committee_org_abb = self.committee.organization.org_abb
       self.has_committee = true;
     })
     .catch(function (error) {
@@ -134,7 +137,10 @@ export class RegisterDataComponent implements OnInit {
           else{
             self.course.band_text = "-"
           }
+          self.fnGet()
           self.datatable()
+
+          
 
         })
         .catch(function(error){
@@ -162,8 +168,6 @@ async get_courses(){
       self.course_no = params['course_no'];
     });
     self.get_course()
-    self.fnGet()
-    self.datatable()
   })
   .catch(function(error){
 
