@@ -7,10 +7,6 @@ namespace api_hrgis.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_tr_course_tr_course_master_master_course_no",
-                table: "tr_course");
-
             migrationBuilder.DropColumn(
                 name: "manager_approved_at",
                 table: "tr_course_registration");
@@ -44,10 +40,6 @@ namespace api_hrgis.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_tr_course_tr_course_master_master_course_no",
-                table: "tr_course");
-
             migrationBuilder.AddColumn<DateTime>(
                 name: "manager_approved_at",
                 table: "tr_course_registration",
@@ -73,14 +65,6 @@ namespace api_hrgis.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(10)");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_tr_course_tr_course_master_master_course_no",
-                table: "tr_course",
-                column: "master_course_no",
-                principalTable: "tr_course_master",
-                principalColumn: "course_no",
-                onDelete: ReferentialAction.Restrict);
         }
     }
 }

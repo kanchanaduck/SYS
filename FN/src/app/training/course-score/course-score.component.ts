@@ -501,6 +501,7 @@ export class CourseScoreComponent implements OnInit {
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });

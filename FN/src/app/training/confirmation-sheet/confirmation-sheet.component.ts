@@ -221,7 +221,6 @@ async get_registrant(){
     if (this.isDtInitialized) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         dtInstance.clear().draw();
-        this.isDtInitialized = true
         dtInstance.destroy();
         this.dtTrigger.next();
       });

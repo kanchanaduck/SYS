@@ -114,6 +114,7 @@ export class CenterComponent implements OnInit {
       this.centers = response;
         if (this.isDtInitialized) {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.clear().draw();
           dtInstance.destroy();
           this.dtTrigger.next();
         });

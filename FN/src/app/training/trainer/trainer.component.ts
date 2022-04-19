@@ -261,7 +261,9 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   async filter_trainer() {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.draw();
+      dtInstance.clear().draw();
+      dtInstance.destroy();
+      this.dtTrigger.next();
     });
   }
 

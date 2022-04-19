@@ -289,7 +289,6 @@ array_chk: any;
       })
       self.fnGet();
       self.fnClear()
-      self.datatable()
     })
     .catch(function(error){
       self.errors = error.response.data.errors
@@ -416,7 +415,8 @@ array_chk: any;
     }
   }
 
-  async datatable(){
+  datatable(){
+    alert("DATATABLE")
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -709,7 +709,8 @@ array_chk: any;
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
+            // dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -720,7 +721,8 @@ array_chk: any;
 
         if (this.isDtInitializedOther) {
           this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
+            // dtInstance.clear().draw();
+            this.isDtInitialized = true
             dtInstance.destroy();
             this.dtTriggerOther.next();
           });
@@ -728,10 +730,12 @@ array_chk: any;
           this.isDtInitializedOther = true
           this.dtTriggerOther.next();
         }
+        this.datatable()
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
         this.data_grid_other = [];
+        this.datatable()
       });
   }
 
@@ -768,7 +772,7 @@ array_chk: any;
       this.checkboxesDataList.forEach((value, index) => {
         value.isChecked = false;
       });
-      await this.fnGet();
+      this.fnGet();
     }
   }
   // End Open popup Course

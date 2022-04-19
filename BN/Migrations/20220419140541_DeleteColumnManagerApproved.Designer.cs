@@ -10,7 +10,7 @@ using api_hrgis.Data;
 namespace api_hrgis.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220419095228_DeleteColumnManagerApproved")]
+    [Migration("20220419140541_DeleteColumnManagerApproved")]
     partial class DeleteColumnManagerApproved
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
