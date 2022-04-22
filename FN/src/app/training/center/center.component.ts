@@ -80,7 +80,8 @@ export class CenterComponent implements OnInit {
             buttons: [
                 {
                     extend: 'excel',
-                    title: null,
+                    title: 'HRGIS/Training: Center',
+                    filename: 'HRGIS_Training_Center',
                     exportOptions: {
                       columns: [ 0,1,2,3,4,5,6,7 ]
                     },
@@ -142,21 +143,10 @@ export class CenterComponent implements OnInit {
     .then(function (response) {
       self.get_centers()
       self.reset_form_center()
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: "Success",
-        showConfirmButton: false,
-        timer: 2000
-      })
+      self.service.sweetalert_create()
     })
     .catch(function (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
+      self.service.sweetalert_error(error)
     });
   }
 
@@ -175,15 +165,12 @@ export class CenterComponent implements OnInit {
         await axios.delete(`${environment.API_URL}Center/${emp_no}`, this.headers)
         .then(function (response) {
           console.log(response)
+          self.service.sweetalert_delete()
           self.get_centers()
         }) 
         .catch(function (error) {
           console.log(error)
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
+          self.service.sweetalert_error(error)
         })
       }
     })

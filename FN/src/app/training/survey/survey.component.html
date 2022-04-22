@@ -17,8 +17,8 @@
         <tr *ngFor="let i of surveys">
             <td class="text-center tx-13">{{ i.year }}</td>
             <td class="text-center tx-13">{{ i.organization.org_abb }}</td>
-            <td class="text-center tx-13">{{ i.date_start | date:'dd-MMM-yy' }}</td>
-            <td class="text-center tx-13">{{ i.date_end | date:'dd-MMM-yy' }}</td>
+            <td class="text-center tx-13">{{ i.date_start | date:'yy/MM/dd' }}</td>
+            <td class="text-center tx-13">{{ i.date_end | date:'yy/MM/dd' }}</td>
             <td class="text-center"></td>
             <td class="text-center tx-13">
                 <a href="javascript:;"

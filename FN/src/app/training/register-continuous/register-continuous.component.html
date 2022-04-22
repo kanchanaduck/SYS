@@ -46,9 +46,9 @@
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>
-        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dd class="col-sm-4">{{ course.date_start | date:'yy/MM/dd HH:mm' }}</dd>
         <dt class="col-sm-2">TO:</dt>
-        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+        <dd class="col-sm-4">{{ course.date_end | date:'yy/MM/dd HH:mm' }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">TRAINER:</dt>
@@ -58,9 +58,9 @@
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">CREATED:</dt>
-        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dd class="col-sm-4">{{ course.created_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
         <dt class="col-sm-2">UPDATED:</dt>
-        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+        <dd class="col-sm-4">{{ course.updated_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
     </dl>
 </div>
 
@@ -176,7 +176,7 @@
             <td>{{ item.employees.lastname_en }}</td>
             <td class="text-center">{{ item.employees.band }}</td>
             <td class="text-center">{{ item.employees.div_abb+"/"+item.employees.dept_abb}}</td>
-            <td>{{ item.employees.entrance_date | date:'dd/MM/yy'}}</td>
+            <td>{{ item.employees.entrance_date | date:'yy/MM/dd'}}</td>
             <td class="text-center">
                 {{ item.pre_test_score==null? "":item.pre_test_score+" ("+item.pre_test_grade+")" }}
             </td>

@@ -3,6 +3,7 @@
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
             <ng-select 
+                autocomplete="false"
                 [(ngModel)]="course_no"
                 [items]="courses"
                 [ngModelOptions]="{standalone: true}"
@@ -24,26 +25,30 @@
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
         <dd class="col-sm-2">{{ course.course_no }}</dd>
-        <dt class="col-sm-2">THAI NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
-        <dt class="col-sm-2">ENGLISH  NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
     </dl>
     <dl class="row my-0">
-        <dt class="col-sm-1">GROUP:</dt>
-        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-        <dt class="col-sm-1">DAY: </dt>
-        <dd class="col-sm-2">{{ course.days }}</dd>
-        <dt class="col-sm-2">CAPACITY:</dt>
-        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
         <dt class="col-sm-2">OPEN REGISTER:</dt>
-        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+        <dd class="col-sm-4">{{ course.open_register? "OPEN":"CLOSE" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>
-        <dd class="col-sm-4">{{ course.date_start | date:'dd/MM/yy HH:mm' }}</dd>
+        <dd class="col-sm-4">{{ course.date_start | date:'yy/MM/dd HH:mm' }}</dd>
         <dt class="col-sm-2">TO:</dt>
-        <dd class="col-sm-4">{{ course.date_end | date:'dd/MM/yy HH:mm' }}</dd>
+        <dd class="col-sm-4">{{ course.date_end | date:'yy/MM/dd HH:mm' }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">TRAINER:</dt>
@@ -53,9 +58,9 @@
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">CREATED:</dt>
-        <dd class="col-sm-4">{{ course.created_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
+        <dd class="col-sm-4">{{ course.created_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.created_by+")" }}</dd> 
         <dt class="col-sm-2">UPDATED:</dt>
-        <dd class="col-sm-4">{{ course.updated_at | date:'dd/MM/yy HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
+        <dd class="col-sm-4">{{ course.updated_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
     </dl>
 </div>
 
@@ -82,8 +87,8 @@
                        <th class="text-center">seq</th>
                        <th class="text-center">emp no.</th>
                        <th class="text-center">title</th>
-                       <th class="text-center">firstname</th>
-                       <th class="text-center">lastname</th>
+                       <th class="text-center">first name</th>
+                       <th class="text-center">last name</th>
                        <th class="text-center">position</th>
                        <th class="text-center">band</th>
                        <th class="text-center">div/dept</th>
@@ -121,8 +126,8 @@
                        <th class="text-center">seq</th>
                        <th class="text-center">emp no.</th>
                        <th class="text-center">title</th>
-                       <th class="text-center">firstname</th>
-                       <th class="text-center">lastname</th>
+                       <th class="text-center">first name</th>
+                       <th class="text-center">last name</th>
                        <th class="text-center">position</th>
                        <th class="text-center">band</th>
                        <th class="text-center">div/dept</th>

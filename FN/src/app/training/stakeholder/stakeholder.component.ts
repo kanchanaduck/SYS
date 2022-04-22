@@ -94,10 +94,12 @@ export class StakeholderComponent implements OnInit {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
-              { 
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
+              {
+                text: '<i class="far fa-file-alt"></i> Report</button>',
+                action: function ( e, dt, node, config ) {
+                  window.open("http://cptsvs52t/HRGIS_REPORT/Report/Stakeholder","_blank")
+                }
+              }
               /* {
                 extend: 'excelHtml5',
                 filename: 'stakeholder',
@@ -175,6 +177,7 @@ export class StakeholderComponent implements OnInit {
   async get_employees() {
     let self = this
     let org_code = self.stakeholder.org_code
+
     await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/employed`,this.headers)
     .then(function (response) {
       self.employees = response
@@ -225,15 +228,21 @@ export class StakeholderComponent implements OnInit {
     return item.emp_no.toLowerCase().indexOf(term) > -1 ||  item.shortname_en.toLowerCase().indexOf(term) > -1 ;
   }
 
-  async get_stakeholder(org_code: string) {
-    console.log(org_code)
+  async get_stakeholder(org_code: any) {
     const self = this;
+    if(org_code==null){
+      self.reset_form_stakeholder()
+      return;
+    } 
+    console.log(org_code)
     self.stakeholder.org_code = org_code;
     self.get_employees()
     self.get_employees_j4up()
     await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers)
       .then(function (response) {
         self.stakeholder = response
+        self.get_employees();
+        self.get_employees_j4up();
       })
       .catch(function (error) {
         Swal.fire({

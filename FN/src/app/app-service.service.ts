@@ -258,4 +258,45 @@ export class AppServiceService {
     return decoded;
   }
 
+  sweetalert_error(error:any){
+    Swal.fire({
+      icon: 'error',
+      title: error.response.status,
+      text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+    })
+  }
+
+  sweetalert_create(){
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: "Create data success",
+      showConfirmButton: false,
+      timer: 2000
+    })
+  }
+
+  sweetalert_edit(){
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: "Edit data success",
+      showConfirmButton: false,
+      timer: 2000
+    })
+  }
+
+  sweetalert_delete(){
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: "Delete data success",
+      showConfirmButton: false,
+      timer: 2000
+    })
+  }
+
 }

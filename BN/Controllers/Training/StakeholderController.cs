@@ -110,6 +110,23 @@ namespace api_hrgis.Controllers
 
             return tr_stakeholder;
         }
+        // GET: api/Stakeholder/Approver/000001
+        [HttpGet("Approver/{emp_no}")]
+        public async Task<ActionResult<tr_stakeholder>> get_approver_by_emp_no(string emp_no)
+        {
+            var tr_stakeholder = await _context.tr_stakeholder
+                                    .Include(e => e.organization)
+                                    .AsNoTracking()
+                                    .Where(e => e.emp_no == emp_no && e.role.ToUpper() == "APPROVER") 
+                                    .FirstOrDefaultAsync();
+
+            if (tr_stakeholder == null)
+            {
+                return NotFound();
+            }
+
+            return tr_stakeholder;
+        }
         // GET: api/Stakeholder/Committee/Belong/000001
         [HttpGet("Committee/Belong/{emp_no}")]
         public async Task<ActionResult<tr_stakeholder>> get_committee_of_emp_no(string emp_no)
@@ -137,19 +154,29 @@ namespace api_hrgis.Controllers
 
             return tr_stakeholder;
         }
-        // GET: api/Stakeholder/Approver/000001
-        [HttpGet("Approver/{emp_no}")]
-        public async Task<ActionResult<tr_stakeholder>> get_approver_by_emp_no(string emp_no)
+        // GET: api/Stakeholder/Approver/Belong/000001
+        [HttpGet("Approver/Belong/{emp_no}")]
+        public async Task<ActionResult<tr_stakeholder>> get_approver_of_emp_no(string emp_no)
         {
+            var employee = await _context.tb_employee
+                                    .Where(e => e.emp_no == emp_no) 
+                                    .FirstOrDefaultAsync();
+
+            if (employee== null)
+            {
+                return NotFound("Not found this employee");
+            }
+
             var tr_stakeholder = await _context.tr_stakeholder
                                     .Include(e => e.organization)
                                     .AsNoTracking()
-                                    .Where(e => e.emp_no == emp_no && e.role.ToUpper() == "APPROVER") 
+                                    .Where(e => ( e.org_code==employee.div_code || e.org_code==employee.dept_code)
+                                    && e.role.ToUpper() == "APPROVER") 
                                     .FirstOrDefaultAsync();
 
             if (tr_stakeholder == null)
             {
-                return NotFound();
+                return NotFound("Not found approver. Please inform center to set approver in your organization");
             }
 
             return tr_stakeholder;

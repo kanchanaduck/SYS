@@ -13,6 +13,8 @@
   <ItemGroup>
     <None Remove="Data\nwind.db" />
     <None Remove="Data\reportsData.db" />
+    <None Remove="PredefinedReports\Courses.vsrepx" />
+    <None Remove="PredefinedReports\stakeholder.vsrepx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\nwind.db">
@@ -40,6 +42,12 @@
     <None Remove="PredefinedReports\TestReport.vsrepx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="PredefinedReports\Courses.cs">
+      <DependentUpon>Courses.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\Courses.Designer.cs">
+      <DependentUpon>Courses.vsrepx</DependentUpon>
+    </Compile>
     <Compile Update="PredefinedReports\ReportConfirmationSheet.cs">
       <DependentUpon>ReportConfirmationSheet.vsrepx</DependentUpon>
     </Compile>
@@ -57,6 +65,12 @@
     </Compile>
     <Compile Update="PredefinedReports\ReportTraining.Designer.cs">
       <DependentUpon>ReportTraining.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\stakeholder.cs">
+      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\stakeholder.Designer.cs">
+      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\TestReport.cs">
       <DependentUpon>TestReport.vsrepx</DependentUpon>

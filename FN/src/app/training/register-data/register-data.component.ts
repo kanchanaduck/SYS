@@ -117,6 +117,7 @@ export class RegisterDataComponent implements OnInit {
     else
     {
       self.data_grid = [];
+      self.data_grid_other = [];
       axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
         .then(function(response){
           self.response = response
@@ -156,6 +157,9 @@ export class RegisterDataComponent implements OnInit {
   }
 
   async redirect(){
+    if(this.course_no==null){
+     return; 
+    }
     location.href=`training/register-data/${this.course_no}`
   }
 
@@ -182,11 +186,7 @@ custom_search_course_fn(term: string, item: any) {
 async clear_data() {
   this.course = {};
   this.data_grid = [];
-  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.clear().draw();
-    dtInstance.destroy();
-    this.dtTrigger.next();
-  });
+  this.data_grid_other = [];
 }
 
   async datatable(){
@@ -256,16 +256,6 @@ async clear_data() {
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
       order: [[0, 'asc']],
-      columnDefs: [
-        {
-          targets: [10],
-          orderable: false
-        },
-        {
-          targets: [10],
-          visible: this.is_committee
-        }
-      ],
     };
     this.dtOptionsOther = {
       destroy: true,

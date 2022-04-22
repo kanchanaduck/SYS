@@ -34,8 +34,8 @@
                     <td>{{ item.course_no }}</td>
                     <td>{{ item.course_name_th }}</td>
                     <td>{{ item.course_name_en }}</td>
-                    <td>{{ item.date_start | date:'dd-MMM-yy' }}</td>
-                    <td>{{ item.date_end | date:'dd-MMM-yy' }}</td>
+                    <td>{{ item.date_start | date:'yy/MM/dd' }}</td>
+                    <td>{{ item.date_end | date:'yy/MM/dd' }}</td>
                     <td class="text-center">{{ item.course_owner_org_abb+" ("+item.course_owner_org_code+")" }}</td>
                     <td class="text-center">{{ item.pre_test_score==null? "":item.pre_test_score+" ("+item.pre_test_grade+")" }}</td>
                     <td class="text-center">{{ item.post_test_score==null? "":item.post_test_score+" ("+item.post_test_grade+")" }}</td>
@@ -48,8 +48,8 @@
                     <td>{{ item.course_no }}</td>
                     <td>{{ item.courses.course_name_th }}</td>
                     <td>{{ item.courses.course_name_en }}</td>
-                    <td>{{ item.courses.date_start | date:'dd-MMM-yy' }}</td>
-                    <td>{{ item.courses.date_end | date:'dd-MMM-yy' }}</td>
+                    <td>{{ item.courses.date_start | date:'yy/MM/dd' }}</td>
+                    <td>{{ item.courses.date_end | date:'yy/MM/dd' }}</td>
                     <td>{{ item.courses.organization.org_abb+" ("+item.courses.org_code+")" }}</td>
                     <td>{{ item.pre_test_score }}</td>
                     <td>{{ item.post_test_score }}</td>

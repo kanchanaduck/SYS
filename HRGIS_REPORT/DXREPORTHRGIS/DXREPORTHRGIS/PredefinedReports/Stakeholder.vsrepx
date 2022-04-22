@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="stakeholder" Margins="25, 25, 75, 76" PaperKind="A4" PageWidth="827" PageHeight="1169" Version="21.2" DataMember="V_STAKEHOLDER" DataSource="#Ref-0" Font="Arial, 9.75pt">
+  <Extensions>
+    <Item1 Ref="2" Key="VSReportExtInfo" Value=".vsrepx" />
+  </Extensions>
+  <Bands>
+    <Item1 Ref="3" ControlType="TopMarginBand" Name="TopMargin" HeightF="75" />
+    <Item2 Ref="4" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="76.1249542">
+      <Controls>
+        <Item1 Ref="5" ControlType="XRPageInfo" Name="pageInfo1" PageInfo="DateTime" SizeF="388.5,23" LocationFloat="0,10.0000248" StyleName="PageInfo" />
+        <Item2 Ref="6" ControlType="XRPageInfo" Name="pageInfo2" TextFormatString="Page {0} of {1}" TextAlignment="TopRight" SizeF="388.5,23" LocationFloat="388.499969,10.0000248" StyleName="PageInfo" />
+      </Controls>
+    </Item2>
+    <Item3 Ref="7" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="60.0000076">
+      <Controls>
+        <Item1 Ref="8" ControlType="XRLabel" Name="label1" Text="HRGIS/Training: Approver and committee" SizeF="777,24.194334" LocationFloat="0,0" StyleName="Title" />
+      </Controls>
+    </Item3>
+    <Item4 Ref="9" ControlType="GroupHeaderBand" Name="GroupHeader1" GroupUnion="WithFirstDetail" HeightF="27">
+      <GroupFields>
+        <Item1 Ref="10" FieldName="role" />
+      </GroupFields>
+      <Controls>
+        <Item1 Ref="11" ControlType="XRTable" Name="table1" SizeF="629.2357,25" LocationFloat="147.764252,2">
+          <Rows>
+            <Item1 Ref="12" ControlType="XRTableRow" Name="tableRow1" Weight="1">
+              <Cells>
+                <Item1 Ref="13" ControlType="XRTableCell" Name="tableCell1" Weight="0.075075323867443033" Text="ROLE:" StyleName="GroupCaption1" ForeColor="255,64,64,64" BackColor="Silver">
+                  <StylePriority Ref="14" UseForeColor="false" UseBackColor="false" />
+                </Item1>
+                <Item2 Ref="15" ControlType="XRTableCell" Name="tableCell2" Weight="0.73475185988886971" StyleName="GroupData1" ForeColor="255,64,64,64" BackColor="Silver">
+                  <ExpressionBindings>
+                    <Item1 Ref="16" EventName="BeforePrint" PropertyName="Text" Expression="[role]" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="17" UseForeColor="false" UseBackColor="false" />
+                </Item2>
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item1>
+      </Controls>
+    </Item4>
+    <Item5 Ref="18" ControlType="GroupHeaderBand" Name="GroupHeader2" GroupUnion="WithFirstDetail" Level="1" HeightF="27">
+      <GroupFields>
+        <Item1 Ref="19" FieldName="org_code" />
+      </GroupFields>
+      <Controls>
+        <Item1 Ref="20" ControlType="XRTable" Name="table2" SizeF="732.2083,25" LocationFloat="44.7916641,2">
+          <Rows>
+            <Item1 Ref="21" ControlType="XRTableRow" Name="tableRow2" Weight="1">
+              <Cells>
+                <Item1 Ref="22" ControlType="XRTableCell" Name="tableCell3" Weight="0.132525882883253" StyleName="GroupCaption1" BackColor="Gray">
+                  <ExpressionBindings>
+                    <Item1 Ref="23" EventName="BeforePrint" PropertyName="Text" Expression="Concat([level_name], ':')" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="24" UseBackColor="false" />
+                </Item1>
+                <Item2 Ref="25" ControlType="XRTableCell" Name="tableCell4" Weight="0.80982717848982488" StyleName="GroupData1" BackColor="Gray">
+                  <ExpressionBindings>
+                    <Item1 Ref="26" EventName="BeforePrint" PropertyName="Text" Expression="Concat([org_abb],' (',[org_code],')' )&#xA;" />
+                  </ExpressionBindings>
+                  <StylePriority Ref="27" UseBackColor="false" />
+                </Item2>
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item1>
+      </Controls>
+    </Item5>
+    <Item6 Ref="28" ControlType="GroupHeaderBand" Name="GroupHeader3" GroupUnion="WithFirstDetail" Level="2" HeightF="35.0000076">
+      <GroupFields>
+        <Item1 Ref="29" FieldName="parent_org_code" />
+      </GroupFields>
+      <Controls>
+        <Item1 Ref="30" ControlType="XRLabel" Name="label3" SizeF="777,2.08" LocationFloat="0,0" StyleName="GroupFooterBackground3" Borders="None">
+          <StylePriority Ref="31" UseBorders="false" />
+        </Item1>
+        <Item2 Ref="32" ControlType="XRTable" Name="table3" SizeF="777,25" LocationFloat="0,10.0000067">
+          <Rows>
+            <Item1 Ref="33" ControlType="XRTableRow" Name="tableRow3" Weight="1">
+              <Cells>
+                <Item1 Ref="34" ControlType="XRTableCell" Name="tableCell5" Weight="0.15531667073567709" Text="DIVISION:" StyleName="GroupCaption1">
+                  <ExpressionBindings>
+                    <Item1 Ref="35" EventName="BeforePrint" PropertyName="Text" Expression="concat([parent_level_name],': ')" />
+                  </ExpressionBindings>
+                </Item1>
+                <Item2 Ref="36" ControlType="XRTableCell" Name="tableCell6" Weight="0.84468335872144462" StyleName="GroupData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="37" EventName="BeforePrint" PropertyName="Text" Expression="Concat(Iif(IsNull([parent_org_abb]),[parent_org_name],[parent_org_abb]),' (',[parent_org_code],')' )" />
+                  </ExpressionBindings>
+                </Item2>
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item2>
+      </Controls>
+    </Item6>
+    <Item7 Ref="38" ControlType="GroupHeaderBand" Name="GroupHeader4" RepeatEveryPage="true" GroupUnion="WithFirstDetail" Level="3" HeightF="28">
+      <Controls>
+        <Item1 Ref="39" ControlType="XRTable" Name="table4" SizeF="628.7357,28" LocationFloat="147.764282,0">
+          <Rows>
+            <Item1 Ref="40" ControlType="XRTableRow" Name="tableRow4" Weight="1">
+              <Cells>
+                <Item1 Ref="41" ControlType="XRTableCell" Name="tableCell11" Weight="0.12313709687131813" Text="EMP NO." StyleName="DetailCaption1" />
+                <Item2 Ref="42" ControlType="XRTableCell" Name="tableCell12" Weight="0.08607124055440149" Text="TITLE" StyleName="DetailCaption1" />
+                <Item3 Ref="43" ControlType="XRTableCell" Name="tableCell13" Weight="0.23788083239623997" Text="FIRST NAME" StyleName="DetailCaption1" />
+                <Item4 Ref="44" ControlType="XRTableCell" Name="tableCell14" Weight="0.22253927329830905" Text="LAST NAME" StyleName="DetailCaption1" />
+                <Item5 Ref="45" ControlType="XRTableCell" Name="tableCell15" Weight="0.18752461904890308" Text="EMPLOYED STATUS" StyleName="DetailCaption1" />
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item1>
+      </Controls>
+    </Item7>
+    <Item8 Ref="46" ControlType="DetailBand" Name="Detail" HeightF="25">
+      <Controls>
+        <Item1 Ref="47" ControlType="XRTable" Name="table5" SizeF="629.2357,25" LocationFloat="147.764267,0" OddStyleName="DetailData3_Odd">
+          <Rows>
+            <Item1 Ref="48" ControlType="XRTableRow" Name="tableRow5" Weight="11.5">
+              <Cells>
+                <Item1 Ref="49" ControlType="XRTableCell" Name="tableCell27" Weight="0.12313710131970126" StyleName="DetailData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="50" EventName="BeforePrint" PropertyName="Text" Expression="[emp_no]" />
+                  </ExpressionBindings>
+                </Item1>
+                <Item2 Ref="51" ControlType="XRTableCell" Name="tableCell28" Weight="0.086071313582275849" StyleName="DetailData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="52" EventName="BeforePrint" PropertyName="Text" Expression="[title_name_en]" />
+                  </ExpressionBindings>
+                </Item2>
+                <Item3 Ref="53" ControlType="XRTableCell" Name="tableCell29" Weight="0.2378808171434906" StyleName="DetailData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="54" EventName="BeforePrint" PropertyName="Text" Expression="[firstname_en]" />
+                  </ExpressionBindings>
+                </Item3>
+                <Item4 Ref="55" ControlType="XRTableCell" Name="tableCell30" Weight="0.22253912278138255" StyleName="DetailData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="56" EventName="BeforePrint" PropertyName="Text" Expression="[lastname_en]" />
+                  </ExpressionBindings>
+                </Item4>
+                <Item5 Ref="57" ControlType="XRTableCell" Name="tableCell31" Weight="0.18820640701006386" StyleName="DetailData1">
+                  <ExpressionBindings>
+                    <Item1 Ref="58" EventName="BeforePrint" PropertyName="Text" Expression="[employed_status]" />
+                  </ExpressionBindings>
+                </Item5>
+              </Cells>
+            </Item1>
+          </Rows>
+        </Item1>
+      </Controls>
+    </Item8>
+  </Bands>
+  <StyleSheet>
+    <Item1 Ref="59" Name="Title" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 14.25pt" ForeColor="255,75,75,75" BackColor="Transparent" BorderColor="Black" Sides="None" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
+    <Item2 Ref="60" Name="GroupCaption1" BorderStyle="Inset" Padding="6,2,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="255,228,228,228" BackColor="255,75,75,75" BorderColor="White" Sides="Bottom" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item3 Ref="61" Name="GroupData1" BorderStyle="Inset" Padding="6,2,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Bottom" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item4 Ref="62" Name="DetailCaption1" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="White" BackColor="255,75,75,75" BorderColor="White" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item5 Ref="63" Name="DetailData1" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt" ForeColor="Black" BorderColor="Transparent" Sides="Left" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item6 Ref="64" Name="GroupFooterBackground3" BorderStyle="Inset" Padding="6,2,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="255,228,228,228" BackColor="255,131,131,131" BorderColor="White" Sides="Bottom" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="2" />
+    <Item7 Ref="65" Name="DetailData3_Odd" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt" ForeColor="Black" BackColor="255,231,231,231" BorderColor="Transparent" Sides="None" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" BorderWidthSerializable="1" />
+    <Item8 Ref="66" Name="PageInfo" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 8.25pt, style=Bold" ForeColor="255,75,75,75" StringFormat="Near;Near;0;None;Character;Default" />
+  </StyleSheet>
+  <ComponentStorage>
+    <Item1 Ref="0" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9TVEFLRUhPTERFUiI+PFRhYmxlcz48VGFibGUgTmFtZT0iVl9TVEFLRUhPTERFUiIgWD0iMzAiIFk9IjMwIiBXaWR0aD0iMTI1IiBIZWlnaHQ9IjQ2MyIgLz48L1RhYmxlcz48Q29sdW1ucz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJsZXZlbF9uYW1lIiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9Im9yZ19jb2RlIiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9Im9yZ19hYmIiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0icm9sZSIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJwYXJlbnRfb3JnX2NvZGUiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0icGFyZW50X29yZ19hYmIiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0icGFyZW50X29yZ19uYW1lIiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9ImVtcF9ubyIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJ0aXRsZV9uYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9ImZpcnN0bmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJsYXN0bmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0iYmFuZCIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJvcmdfbmFtZSIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJjcmVhdGVkX2F0IiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9ImNyZWF0ZWRfYnkiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0icmVtYXJrIiAvPjxDb2x1bW4gVGFibGU9IlZfU1RBS0VIT0xERVIiIE5hbWU9InVwZGF0ZWRfYXQiIC8+PENvbHVtbiBUYWJsZT0iVl9TVEFLRUhPTERFUiIgTmFtZT0idXBkYXRlZF9ieSIgLz48Q29sdW1uIFRhYmxlPSJWX1NUQUtFSE9MREVSIiBOYW1lPSJwYXJlbnRfbGV2ZWxfbmFtZSIgLz48L0NvbHVtbnM+PC9RdWVyeT48UmVzdWx0U2NoZW1hPjxEYXRhU2V0IE5hbWU9InNxbERhdGFTb3VyY2UxIj48VmlldyBOYW1lPSJWX1NUQUtFSE9MREVSIj48RmllbGQgTmFtZT0ibGV2ZWxfbmFtZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJvcmdfY29kZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJvcmdfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InJvbGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icGFyZW50X29yZ19jb2RlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBhcmVudF9vcmdfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBhcmVudF9vcmdfbmFtZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZW1wbG95ZWRfc3RhdHVzIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImJhbmQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ib3JnX25hbWUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY3JlYXRlZF9hdCIgVHlwZT0iRGF0ZVRpbWUiIC8+PEZpZWxkIE5hbWU9ImNyZWF0ZWRfYnkiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icmVtYXJrIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InVwZGF0ZWRfYXQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJ1cGRhdGVkX2J5IiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBhcmVudF9sZXZlbF9uYW1lIiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD48L1Jlc3VsdFNjaGVtYT48Q29ubmVjdGlvbk9wdGlvbnMgQ2xvc2VDb25uZWN0aW9uPSJ0cnVlIiAvPjwvU3FsRGF0YVNvdXJjZT4=" />
+  </ComponentStorage>
+</XtraReportsLayoutSerializer>

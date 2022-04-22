@@ -2,12 +2,9 @@
     <div>
         <h5>Responsibility of center</h5>
         <ul>
-            <li>Setting master data</li>
-            <li>Being able to see the learning and teaching information of the whole company, except add, edit, and delete data of committee</li>
-        </ul>
-        <ul>
-            <li>จัดทำ master data</li>
-            <li>สามารถมองเห็นข้อมูลการเรียนการสอนของทั้งบริษัท แต่ไม่สามารถเพิ่ม ลบ แก้ไขข้อมูลของ committee ได้</li>
+            <li>Setting center</li>
+            <li>Setting committee</li>
+            <li>Setting approver</li>
         </ul>
     </div>
 </div> 
@@ -80,9 +77,9 @@
         <tr>
             <th class="text-center">EMP NO.</th>
             <th class="text-center">TITLE</th>
-            <th class="text-center">FIRSTNAME</th>
-            <th class="text-center">LASTNAME</th>
-            <th class="text-center">POSITION NAME</th>
+            <th class="text-center">FIRST NAME</th>
+            <th class="text-center">LAST NAME</th>
+            <th class="text-center">POSITION</th>
             <th class="text-center">DIVISION</th>
             <th class="text-center">DEPARTMENT</th>
             <th class="text-center">STATUS</th>
@@ -98,7 +95,7 @@
             <td>{{ center.position_name_en }}</td>
             <td>{{ center.div_abb }}</td>
             <td>{{ center.dept_abb }}</td>
-            <td>{{ center.employed_status }}</td>
+            <td [ngClass]="center.employed_status=='RESIGNED'? 'text-danger':''">{{ center.employed_status }}</td>
             <td class="text-center not-export" *ngIf="is_center">
                 <a href="javascript:;" (click)="delete_center(center.emp_no)"><i class="far fa-trash-alt"></i></a>
             </td>

@@ -8,9 +8,12 @@ namespace api_hrgis.Models
 {
     public class tr_course_registration
     {
+        [Required]
+        [Display(Name = "COURSE NO.")]
         public string course_no	{ get; set; }
         public tr_course courses { get; set; }
         [Required]
+        [Display(Name = "EMP NO.")]
         public string emp_no { get; set; }
         public tb_employee employees { get; set; }
         [Required]
@@ -20,10 +23,6 @@ namespace api_hrgis.Models
         [Column(TypeName = "datetime")]
         public DateTime? register_at { get; set; }
         public string register_by { get; set; }
-        // [Column(TypeName = "datetime")]
-        // public DateTime? manager_approved_at { get; set; }
-        // public string manager_approved_by { get; set; }
-        // public bool? manager_approved_checked { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? final_approved_at	 { get; set; }
         public string final_approved_by { get; set; }

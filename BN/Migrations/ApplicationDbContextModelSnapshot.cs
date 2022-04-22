@@ -509,7 +509,7 @@ namespace api_hrgis.Migrations
 
                     b.Property<string>("master_course_no")
                         .IsRequired()
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("open_register")
                         .HasColumnType("bit");
@@ -536,8 +536,6 @@ namespace api_hrgis.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("course_no");
-
-                    b.HasIndex("master_course_no");
 
                     b.HasIndex("org_code");
 
@@ -942,19 +940,11 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tr_course", b =>
                 {
-                    b.HasOne("api_hrgis.Models.tr_course_master", "course_master")
-                        .WithMany()
-                        .HasForeignKey("master_course_no")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("api_hrgis.Models.tb_organization", "organization")
                         .WithMany("courses")
                         .HasForeignKey("org_code")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("course_master");
 
                     b.Navigation("organization");
                 });

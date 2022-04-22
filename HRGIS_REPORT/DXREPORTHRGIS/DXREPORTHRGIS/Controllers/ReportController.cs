@@ -46,8 +46,12 @@ namespace DXREPORTHRGIS.Controllers
         {
             return View();
         }
+        public IActionResult Stakeholder()
+        {
+            return View();
+        }
 
-        public IActionResult XtraReport1()
+        public IActionResult Courses()
         {
             return View();
         }

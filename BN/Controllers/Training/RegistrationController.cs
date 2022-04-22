@@ -550,11 +550,23 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        // POST: api/Registration
+        // POST: api/Registration/ByCommitteeEmp
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<tr_course_registration>> Posttr_course_registration(tr_course_registration registrant)
+        [HttpPost("ByCommitteeEmp")]
+        public async Task<ActionResult<tr_course_registration>> registration_by_committee_emp(tr_course_registration registrant)
         {
+            if(!is_staff_of_committee(registrant.emp_no)){
+                return StatusCode(400, "Please select staff in your own organization");
+            }
+
+            if(!is_in_band_of_course(registrant.course_no, registrant.emp_no)){
+                return StatusCode(400, "This band is not allowed");
+            }
+
+            if(is_employee_resigned(registrant.emp_no)){
+                return StatusCode(400, "Please select staff who not resigned");
+            }
+
             int seq = 0;
             var query = await _context.tr_course_registration
                         .Where(x => x.course_no == registrant.course_no && x.emp_no == registrant.emp_no)
@@ -594,6 +606,201 @@ namespace api_hrgis.Controllers
             }
 
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
+        }
+
+        // POST: api/Registration/ByApproverEmp
+        [HttpPost("ByApproverEmp")]
+        public async Task<ActionResult<tr_course_registration>> egistration_by_approver_emp(tr_course_registration registrant)
+        {
+            if(!is_staff_of_approver(registrant.emp_no)){
+                return StatusCode(400, "Please select staff in your own organization");
+            }
+
+            if(!is_in_band_of_course(registrant.course_no, registrant.emp_no)){
+                return StatusCode(400, "This band is not allowed");
+            }
+
+            if(is_employee_resigned(registrant.emp_no)){
+                return StatusCode(400, "Please select staff who not resigned");
+            }
+
+            int seq = 0;
+            var query = await _context.tr_course_registration
+                        .Where(x => x.course_no == registrant.course_no && x.emp_no == registrant.emp_no)
+                        .FirstOrDefaultAsync();
+
+            if (query != null)
+            {
+                return Conflict(_config.GetValue<string>("Text:duplication"));
+            }
+            else
+            {
+                var last = await _context.tr_course_registration
+                            .Where(x => x.course_no == registrant.course_no)
+                            .OrderByDescending(x => x.seq_no)
+                            .FirstOrDefaultAsync();
+
+                if (last == null)
+                {
+                    seq = 1;
+                }
+                else
+                {
+                    seq = last.seq_no + 1;
+                }
+
+                tr_course_registration tb = new tr_course_registration();
+                tb.course_no = registrant.course_no;
+                tb.emp_no = registrant.emp_no;
+                tb.seq_no = seq;
+                tb.last_status = registrant.last_status;
+                tb.remark = registrant.remark;
+                tb.register_at = DateTime.Now;
+                tb.register_by = User.FindFirst("emp_no").Value;
+
+                _context.tr_course_registration.Add(tb);
+                await _context.SaveChangesAsync();
+            }
+
+            return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
+        }
+
+        // POST: api/Registration/ByCommitteeCourse
+        [HttpPost("ByCommitteeCourse")]
+        public async Task<ActionResult<tr_course_registration>> registration_by_committee_course(tr_course_registration registrant)
+        {
+            if(!is_course_of_committee(registrant.course_no)){
+                return StatusCode(400, "Please select the course in your organization");
+            }
+
+            if(!is_in_band_of_course(registrant.course_no, registrant.emp_no)){
+                return StatusCode(400, "This band is not allowed");
+            }
+
+            if(is_employee_resigned(registrant.emp_no)){
+                return StatusCode(400, "Please select staff who not resigned");
+            }
+
+            int seq = 0;
+            var query = await _context.tr_course_registration
+                        .Where(x => x.course_no == registrant.course_no && x.emp_no == registrant.emp_no)
+                        .FirstOrDefaultAsync();
+
+            if (query != null)
+            {
+                return Conflict(_config.GetValue<string>("Text:duplication"));
+            }
+            else
+            {
+                var last = await _context.tr_course_registration
+                            .Where(x => x.course_no == registrant.course_no)
+                            .OrderByDescending(x => x.seq_no)
+                            .FirstOrDefaultAsync();
+
+                if (last == null)
+                {
+                    seq = 1;
+                }
+                else
+                {
+                    seq = last.seq_no + 1;
+                }
+
+                tr_course_registration tb = new tr_course_registration();
+                tb.course_no = registrant.course_no;
+                tb.emp_no = registrant.emp_no;
+                tb.seq_no = seq;
+                tb.last_status = registrant.last_status;
+                tb.remark = registrant.remark;
+                tb.register_at = DateTime.Now;
+                tb.register_by = User.FindFirst("emp_no").Value;
+
+                _context.tr_course_registration.Add(tb);
+                await _context.SaveChangesAsync();
+            }
+
+            return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
+        }
+
+        private bool is_course_of_committee(string course_no)
+        {
+            var emp_no = User.FindFirst("emp_no").Value;
+
+            var committee = _context.tr_stakeholder
+                                    .Include(e => e.organization)
+                                    .AsNoTracking()
+                                    .Where(e => e.emp_no == emp_no && e.role.ToUpper() == "COMMITTEE") 
+                                    .FirstOrDefault();
+
+            if(committee==null){
+                return false;
+            }
+
+            var course = _context.tr_course.Where(e => e.course_no == course_no).FirstOrDefault();
+
+            if(course.org_code==committee.org_code){
+                return true;
+            }
+            else{
+                return false;
+            }
+
+        }
+
+        private bool is_staff_of_approver(string emp_no)
+        {
+            var approver_emp_no = User.FindFirst("emp_no").Value;
+            var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
+            var approver = _context.tr_stakeholder
+                            .Where(e=>e.emp_no==approver_emp_no && e.role.ToUpper()=="APPROVER")
+                            .FirstOrDefault();
+            bool is_staff_of_approver = false;
+            if(employee.dept_code==approver.org_code || employee.div_code==approver.org_code){
+                is_staff_of_approver = true;
+            }
+            return is_staff_of_approver;
+        }
+
+        private bool is_employee_resigned(string emp_no)
+        {
+            var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
+            bool resigned = false;
+            if(employee.employed_status.ToUpper()=="RESIGNED"){
+                resigned = true;
+            }
+            return resigned;
+        }
+
+        private bool is_in_band_of_course(string course_no, string emp_no)
+        {
+            var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
+
+            var course = _context.tr_course.Where(e=>e.course_no==course_no)
+                            .Include(e=>e.courses_bands).FirstOrDefault();
+
+            bool match = false;
+            foreach (var item in course.courses_bands)
+            {
+                if(employee.band==item.band){
+                    match = true;
+                    break;
+                }
+            }
+            return match;
+        }
+
+        private bool is_staff_of_committee(string emp_no)
+        {
+            var committee_emp_no = User.FindFirst("emp_no").Value;
+            var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
+            var committee = _context.tr_stakeholder
+                            .Where(e=>e.emp_no==committee_emp_no && e.role.ToUpper()=="COMMITTEE")
+                            .FirstOrDefault();
+            bool is_staff_of_committee = false;
+            if(employee.dept_code==committee.org_code || employee.div_code==committee.org_code){
+                is_staff_of_committee = true;
+            }
+            return is_staff_of_committee;
         }
 
         // DELETE: api/Registration/{course_no}/{emp_no}

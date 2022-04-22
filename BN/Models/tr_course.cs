@@ -51,8 +51,8 @@ namespace api_hrgis.Models
         [Required]
         [Display(Name = "MASTER COURSE NO.")]
         public string master_course_no { get; set; }
-        [ForeignKey("master_course_no")]
-        public virtual tr_course_master course_master { get; set; }
+        // [ForeignKey("master_course_no")]
+        // public virtual tr_course_master course_master { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? created_at { get; set; } 
         public string created_by { get; set; }  

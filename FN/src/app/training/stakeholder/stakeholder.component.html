@@ -15,7 +15,7 @@
                 [compareWith]="compare_org"
                 [(ngModel)]="stakeholder.org_code" 
                 [ngModelOptions]="{standalone: true}"
-                (change)="get_employees(); get_employees_j4up();"
+                (ngModelChange)="get_stakeholder($event)"
                 >
                 <ng-template ng-label-tmp let-item="item">
                     {{ item.org_abb + '('+item.org_code+')' }}

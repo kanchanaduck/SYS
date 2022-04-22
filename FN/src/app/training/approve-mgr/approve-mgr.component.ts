@@ -29,13 +29,12 @@ export class ApproveMgrComponent implements OnInit {
   // datatable
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
-  @ViewChild(DataTableDirective)
-  dtElement: DataTableDirective;
+  @ViewChild(DataTableDirective) dtElement: DataTableDirective;
   isDtInitialized: boolean = false
+
   dtOptionsOther: any = {};
   dtTriggerOther: Subject<any> = new Subject();
-  // @ViewChild(DataTableDirective)
-  dtElementOther: DataTableDirective;
+  @ViewChild(DataTableDirective) dtElementOther: DataTableDirective;
   isDtInitializedOther: boolean = false
   // end datatable
   @ViewChild("txtgroup") txtgroup: any;
@@ -51,23 +50,28 @@ export class ApproveMgrComponent implements OnInit {
   visableButton: boolean = false;
   isreadonly: boolean = true;
   isIf: boolean = false;
-  txt_not_pass = '';
+  txt_not_pass = "";
+  emp_no: string = "";
+  emp_name: string = "";
+  checkboxesDataList: any[];
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
-  checkboxesDataList: any[];
-  form: FormGroup;
-  submitted = false;
-  is_approver: boolean;
-  _org_code: any;
+  _org_code: string = "";
 
+  submitted = false;
+  approver: any;
+
+  has_approver: boolean = false;
   approver_org_code: string;
+  is_approver: boolean;
   errors: any;
   
-  course_no:string;
+  course_no:string=null;
   course: any={};
   courses: any=[];
   response: any;
+  emp_status: any;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
@@ -75,23 +79,38 @@ export class ApproveMgrComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        frm_emp_no: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(7)]],
-        frm_emp_name: ['', [Validators.required]],
-      },
-    );
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
     this.check_is_approver()
+
+    this.get_approver_of_emp_no();
+    this.get_courses_open()
     this.fnGetband();
+  }
+
+  async get_approver_of_emp_no() {
+    let self = this
+    await axios.get(`${environment.API_URL}Stakeholder/Approver/Belong/${this._emp_no}`, this.headers)
+    .then(function (response) {
+      self.approver = response
+      self.approver_org_code = self.approver.org_code
+      self.has_approver = true;
+    })
+    .catch(function (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    }); 
   }
 
   async check_is_approver() {
     let self = this
-    await this.service.gethttp('Stakeholder/approver/' + self._emp_no)
+    await this.service.gethttp('Stakeholder/Approver/' + self._emp_no)
       .subscribe((response: any) => {
         console.log(response)
         self.is_approver = true;
@@ -99,7 +118,6 @@ export class ApproveMgrComponent implements OnInit {
         self._org_abb = response.organization.org_abb
         self.visableButton = true;
         self.isreadonly = false;
-        self.get_courses()
       }, (error: any) => {
         console.log(error);
         self.is_approver = false;
@@ -109,40 +127,6 @@ export class ApproveMgrComponent implements OnInit {
   }
 
   async get_course() {
-    /* let self = this
-
-    if(this.course_no==null)
-    {
-      return false;
-    }
-    else
-    {
-      self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-        .then(function(response){
-          self.response = response
-          self.course = self.response.courses
-          let trainers = self.response.trainers
-          if(trainers.length>0){
-            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
-          }
-          else{
-            self.course.trainer_text = "-"
-          }
-          self.get_courses()
-          // self.datatable()
-          self.fnGet()
-        })
-        .catch(function(error){
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
-          self.course = {};
-          return false;
-      });      
-    } */
       let self = this
   
       if(this.course_no==null)
@@ -172,6 +156,7 @@ export class ApproveMgrComponent implements OnInit {
               self.course.band_text = "-"
             }
             self.fnGet()
+            self.datatable()
           })
           .catch(function(error){
             Swal.fire({
@@ -185,7 +170,7 @@ export class ApproveMgrComponent implements OnInit {
       }
   }
 
-async get_courses(){
+async get_courses_open(){
   let self = this
   await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
   .then(function(response){
@@ -220,56 +205,13 @@ array_chk: any;
     this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
   }
 
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
-  }
-
   async fnSave() {
     this.submitted = true;
 
-    if (this.form.invalid) {
-      return;
-    }
-
-
-    if(this.course_no===undefined){
-      console.log(this.course_no)
-      this.errors =  {
-        course_no: ["Please select course no."]
-      };
-      console.log(this.errors.course_no)
-      return;
-    }
-    // console.log(JSON.stringify(this.form.value, null, 2));
-
-    // console.log(this.dept_emp);
-    // console.log(this._org_abb)
-    // console.log(this.div_emp);
-    if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.invalid_department
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-      })
-
-      return;
-    }
-
-    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.unequal_band
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
-      })
-
-      return;
-    }
 
     const send_data = {
       course_no: this.course_no,
-      emp_no: this.form.controls['frm_emp_no'].value,
+      emp_no: this.emp_no,
       last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? environment.text.wait : null,
       remark: this.txt_not_pass
     }
@@ -277,7 +219,7 @@ array_chk: any;
     // await this.service.axios_post('Registration', send_data, environment.text.success);
     // await this.fnGet(this.form.controls['frm_course'].value);
     let self = this
-    await axios.post(`${environment.API_URL}Registration`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Registration/ByApproverEmp`, send_data, this.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -351,8 +293,9 @@ array_chk: any;
     })
   }
   fnClear() {
-    this.form.controls['frm_emp_no'].setValue("");
-    this.form.controls['frm_emp_name'].setValue("");
+    this.errors = {}
+    this.emp_no = "";
+    this.emp_name = "";
     this.txtdept.nativeElement.value = "";
     this.txtposition.nativeElement.value = "";
     this.txtband.nativeElement.value = "";
@@ -379,10 +322,10 @@ array_chk: any;
   arr_band: any;
 
   onKeyEmpno(event: any) {
-    if (event.target.value.length >= 6 && event.target.value.length <= 7) {
-      this.searchEmp(event.target.value);
-      this.searchPrevCourse(event.target.value);
-    } else if (event.target.value.length == 0) {
+    if (this.emp_no.length >= 6 && this.emp_no.length <= 7) {
+      this.searchEmp(this.emp_no);
+      this.searchPrevCourse(this.emp_no);
+    } else if (this.emp_no.length == 0) {
       this.fnClear();
     }
   }
@@ -392,14 +335,16 @@ array_chk: any;
   async searchEmp(empno: any) {
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
-      this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
+      this.emp_name = this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en;
       this.dept_emp = this.res_emp.dept_abb;
-      this.div_emp = this.res_emp.div_abb_name;
+      this.div_emp = this.res_emp.div_abb;
+      this.emp_status = this.res_emp.employed_status
       this.txtdept.nativeElement.value = `${this.res_emp.div_abb}/${this.res_emp.dept_abb}`;
       this.txtposition.nativeElement.value = this.res_emp.position_name_en;
       this.txtband.nativeElement.value = this.res_emp.band;
     } else {
-      this.form.controls['frm_emp_name'].setValue("");
+      this.emp_name= "";
+      this.emp_status = "";
       this.txtdept.nativeElement.value = "";
       this.txtposition.nativeElement.value = "";
       this.txtband.nativeElement.value = "";
@@ -407,7 +352,6 @@ array_chk: any;
   }
   res_prev: any;
   async searchPrevCourse(empno: any) {
-    let frm = this.form.value;
     this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
@@ -416,8 +360,8 @@ array_chk: any;
   }
 
   datatable(){
-    alert("DATATABLE")
     this.dtOptions = {
+      destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
@@ -485,6 +429,7 @@ array_chk: any;
           } 
         ],
       },
+      container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
       order: [[1, 'asc']],
@@ -549,7 +494,7 @@ array_chk: any;
           }
         ],
       },
-      container: "#example_wrapper .col-md-6:eq(0)",
+      container: "#example2_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
     };
@@ -706,11 +651,13 @@ array_chk: any;
         this._checkbox = this.data_grid.filter(x => x.final_approved_checked == true).length + this.data_grid_other.filter(x => x.final_approved_checked == true).length;
         // console.log('3: ',this._checkbox);
 
+        console.log(this.dtElement);
+        console.log(this.dtElementOther);
+
         // Calling the DT trigger to manually render the table
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            // dtInstance.clear().draw();
-            this.isDtInitialized = true
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -721,21 +668,18 @@ array_chk: any;
 
         if (this.isDtInitializedOther) {
           this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
-            // dtInstance.clear().draw();
-            this.isDtInitialized = true
+            dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTriggerOther.next();
           });
         } else {
-          this.isDtInitializedOther = true
+          // this.isDtInitializedOther = true
           this.dtTriggerOther.next();
         }
-        this.datatable()
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
         this.data_grid_other = [];
-        this.datatable()
       });
   }
 
@@ -746,12 +690,6 @@ array_chk: any;
     this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
     console.log('fnGetCourse: ', this.res_course);
     if (this.res_course != undefined) {
-      this.form.controls['frm_course_name_en'].setValue(this.res_course.course_name_en);
-      this.form.controls['frm_course_name_th'].setValue(this.res_course.course_name_th);
-      this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
-      this.txtqty.nativeElement.value = this.res_course.capacity;
-      this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
-      this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
 
       this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
 
@@ -763,12 +701,6 @@ array_chk: any;
 
       this.fnGet();
     } else {
-      this.form.controls['frm_course_name_en'].setValue("");
-      this.form.controls['frm_course_name_th'].setValue("");
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
       this.checkboxesDataList.forEach((value, index) => {
         value.isChecked = false;
       });

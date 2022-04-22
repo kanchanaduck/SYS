@@ -21,7 +21,7 @@ namespace api_hrgis.Models
         public string fullname_th{
             get
             {
-                return firstname_en + " " + lastname_en;
+                return firstname_th + " " + lastname_th;
             }
         }
         public string fullname_en{
