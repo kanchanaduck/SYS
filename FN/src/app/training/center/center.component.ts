@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 import { AppServiceService } from 'src/app/app-service.service';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
-
 @Component({
   selector: 'app-center',
   templateUrl: './center.component.html',
@@ -113,13 +112,14 @@ export class CenterComponent implements OnInit {
     await this.httpClient.get(`${environment.API_URL}Center`, this.headers)
     .subscribe((response: any) => {
       this.centers = response;
-        if (this.isDtInitialized) {
+      if (this.isDtInitialized) {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.clear().draw();
           dtInstance.destroy();
           this.dtTrigger.next();
         });
-      } else {
+      } 
+      else {
         this.isDtInitialized = true
         this.dtTrigger.next();
       }

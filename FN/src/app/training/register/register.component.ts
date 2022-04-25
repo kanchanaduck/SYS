@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import { DataTableDirective } from 'angular-datatables';
@@ -7,13 +7,13 @@ import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
 import { Subject } from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit {
+export class RegisterComponent implements OnInit {
 
   headers: any = {
     headers: {
@@ -22,26 +22,24 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
 
-
   data_grid: any = [];
   data_grid_other: any = [];
 
   // datatable
+  @ViewChild(DataTableDirective) 
+  dtElement: DataTableDirective;
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
-  dtElement: DataTableDirective;
-  // isDtInitialized: boolean = false
+  isDtInitialized: boolean = false
 
+  @ViewChild(DataTableDirective) 
+  dtElementOther: DataTableDirective;
   dtOptionsOther: any = {};
   dtTriggerOther: Subject<any> = new Subject();
-  dtElementOther: DataTableDirective;
-  // isDtInitializedOther: boolean = false
-
-  // @ViewChildren(DataTableDirective)
-  // dtElements: QueryList;
-  // dtOptions: any = [];
+  isDtInitializedOther: boolean = false
 
   // end datatable
+
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
   @ViewChild("txtdate_from") txtdate_from: any;
@@ -52,7 +50,6 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit {
   checkboxesDataList: any[];
   not_pass: boolean = false;
   isreadonly: boolean = true;
-  isIf: boolean = false;
   txt_not_pass = "";
   emp_no: string = "";
   emp_name: string = "";
@@ -81,21 +78,19 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit {
     private modalService: NgbModal, 
     config: NgbModalConfig, 
     private service: AppServiceService, 
-    private exportexcel: ExportService) 
+    private exportexcel: ExportService,
+    private httpClient: HttpClient) 
   {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
   }
 
   ngOnInit() {
- 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
     this.check_is_committee()
-    this.get_committee_of_emp_no();
     this.get_courses_open()
-
     this.dtOptions = {
       destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
@@ -262,56 +257,39 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit {
           else{
             self.course.band_text = "-"
           }
-          self.fnGet()
-          self.rerender()
+          self.get_registrant()
         })
         .catch(function(error){
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
-          self.course = {};
+          self.service.sweetalert_error(error)
+          self.clear_data()
           return false;
       });      
     }
   }
 
-async get_courses_open(){
-  let self = this
-  await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
-  .then(function(response){
-    self.courses = response
-  })
-  .catch(function(error){
+  async get_courses_open(){
+    let self = this
+    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+    .then(function(response){
+      self.courses = response
+      self.course_no = 'AOF-001-001'
+      self.get_course()
+    })
+    .catch(function(error){
 
-  });
-}
+    });
+  }
 
-custom_search_course_fn(term: string, item: any) {
-  term = term.toLowerCase();
-  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-}
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
 
-async clear_data() {
-  this.course = {};
-  this.data_grid = [];
-  this.data_grid_other = [];
-  this.rerender()
-}
-
-rerender(){
-  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.destroy();
-    this.dtTrigger.next();
-  });
-
-  this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.destroy();
-    this.dtTriggerOther.next();
-  }); 
-}
-
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+    this.data_grid_other = [];
+  }
 
   async fnSave() {
     this.submitted = true;
@@ -334,16 +312,12 @@ rerender(){
         showConfirmButton: false,
         timer: 2000
       })
-      self.fnGet();
+      self.get_registrant();
       self.fnClear()
     })
     .catch(function(error){
       self.errors = error.response.data.errors
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
-      })
+      self.service.sweetalert_error(error)
     })
   }
   res_mail: any;
@@ -400,7 +374,7 @@ rerender(){
     }
   }
 
-  fnClear() {
+  async fnClear() {
     this.errors = {}
     this.emp_no = "";
     this.emp_name = "";
@@ -410,7 +384,7 @@ rerender(){
     this.txt_not_pass = "";
   }
 
-  fnDelete(item) {
+  async fnDelete(item) {
     // console.log('fn_delete', item);
     let self = this
     Swal.fire({
@@ -432,7 +406,7 @@ rerender(){
             showConfirmButton: false,
             timer: 2000
           })
-          self.fnGet();
+          self.get_registrant();
         })
         .catch(function(){
           
@@ -553,11 +527,10 @@ rerender(){
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
       this.nameFile = 'Choose file';
-      this.fnGet();
+      this.get_registrant();
     }
   }
   /** End File Upload, Download */
-
 
   async check_is_committee() {
     let self = this
@@ -575,36 +548,64 @@ rerender(){
       }); 
   }
 
-
-  async get_committee_of_emp_no(){
-    let self = this
-    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, this.headers)
-    .then(function (response) {
-      self.committee = response
-      self.committee_org_code = self.committee.org_code
-      self.has_committee = true;
-    })
-    .catch(function (error) {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
-    }); 
-  }
-
-  async fnGet() {
-
-    if(this.course_no==null){
-      this.data_grid = [];
-      this.data_grid_other = [];
-    }
-
-    await this.service.gethttp(`Registration/GetGridView/${this.course_no}/${this.committee_org_code}`)
+  async get_registrant() {
+    await this.httpClient.get(
+      `${environment.API_URL}Registration/GetGridView/${this.course_no}/${this._org_code}`,
+      this.headers
+      )
       .subscribe((response: any) => {
         this.data_grid = response.your;
         this.data_grid_other = response.other;
+
+        console.log(this.dtElement);
+        console.log(this.dtElementOther);
+
+        // if (this.isDtInitialized) {
+        //   this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        //     dtInstance.clear().draw();
+        //     dtInstance.destroy();
+        //     this.dtTrigger.next();
+        //   });
+        // } 
+        // else {
+        //   this.isDtInitialized = true
+        //   this.dtTrigger.next();
+        // }
+        
+        // this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        //   dtInstance.destroy();
+        //   this.dtTrigger.next();
+        // });
+
+        // this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
+        //   dtInstance.destroy();
+        //   this.dtTriggerOther.next();
+        // });
+        
+        // if (this.isDtInitialized) {
+        //   alert(1)
+        //   this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        //     // dtInstance.clear().draw();
+        //     dtInstance.destroy();
+        //     this.dtTrigger.next();
+        //   });
+        // } 
+        // else {
+        //   alert(2)
+        //   this.isDtInitialized = true
+        //   this.dtTrigger.next();
+        // }
+        // if (this.isDtInitializedOther) {
+        //   this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
+        //     dtInstance.clear().draw();
+        //     dtInstance.destroy();
+        //     this.dtTriggerOther.next();
+        //   });
+        // } 
+        // else {
+        //   this.isDtInitializedOther = true
+        //   this.dtTriggerOther.next();
+        // }
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
@@ -612,13 +613,13 @@ rerender(){
       });
   } 
 
-  ngAfterViewInit(): void {
-    this.dtTrigger.next();
-    this.dtTriggerOther.next();
-  }
+  // ngAfterViewInit(): void {
+  //   this.dtTrigger.next();
+  //   this.dtTriggerOther.next();
+  // }
 
-  ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
-    this.dtTriggerOther.unsubscribe();
-  }
+  // ngOnDestroy(): void {
+  //   this.dtTrigger.unsubscribe();
+  //   this.dtTriggerOther.unsubscribe();
+  // }
 }
