@@ -55,5 +55,9 @@ namespace DXREPORTHRGIS.Controllers
         {
             return View();
         }
+        public IActionResult TrainerHistory()
+        {
+            return View();
+        }
     }
 }

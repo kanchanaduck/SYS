@@ -13,7 +13,12 @@ export class AppServiceService {
   constructor(private http: HttpClient) {}
 
   gethttp(url: any) {
-    return this.http.get(environment.API_URL + url, { headers: { Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), Pragma: 'no-cache' } });
+    return this.http.get(environment.API_URL + url, { 
+      headers: { 
+        Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'), 
+        Pragma: 'no-cache' 
+      } 
+    });
   }
 
   async axios_get(url: any) {

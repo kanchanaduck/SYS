@@ -298,21 +298,21 @@ export class TrainerComponent implements OnInit, OnDestroy {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
-                {
-                  extend: 'excel',
-                  text: '<i class="far fa-file-excel"></i> Excel</button>',
-                  title: 'HRGIS/Training: Trainer',
-                  filename: 'HRGIS_Training_Trainer',
-                  exportOptions: {
-                    columns: [ 0,1,2,3,4,5,6,7,8 ]
-                  },
+              {
+                extend: 'excel',
+                text: '<i class="far fa-file-excel"></i> Excel</button>',
+                title: 'HRGIS/Training: Trainer',
+                filename: 'HRGIS_Training_Trainer',
+                exportOptions: {
+                  columns: [ 0,1,2,3,4,5,6,7,8 ]
                 },
-                /* {
-                  text: '<i class="far fa-file-excel"></i> History</button>',
-                  action: function ( e, dt, node, config ) {
-                    location.href = `${environment.API_URL}Trainers/HistoryExcel`
-                  }
-                }, */
+              },
+              {
+                text: '<i class="far fa-file-alt"></i> Whole history</button>',
+                action: function ( e, dt, node, config ) {
+                  window.open("http://cptsvs52t/HRGIS_REPORT/Report/TrainerHistory","_blank")
+                }
+              }
             ]
           },
         ],

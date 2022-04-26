@@ -87,7 +87,6 @@ export class ApproveMgrComponent implements OnInit {
 
     this.get_approver_of_emp_no();
     this.get_courses_open()
-    this.fnGetband();
   }
 
   async get_approver_of_emp_no() {
@@ -100,11 +99,7 @@ export class ApproveMgrComponent implements OnInit {
     })
     .catch(function (error) {
       console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
+      self.service.sweetalert_error(error)
     }); 
   }
 
@@ -116,58 +111,52 @@ export class ApproveMgrComponent implements OnInit {
         self.is_approver = true;
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
-        self.visableButton = true;
         self.isreadonly = false;
       }, (error: any) => {
         console.log(error);
         self.is_approver = false;
-        self.visableButton = false;
         self.isreadonly = true;
       }); 
   }
 
   async get_course() {
-      let self = this
-  
-      if(this.course_no==null)
-      {
-        return false;
-      }
-      else
-      {
-        self.data_grid = [];
-        axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-          .then(function(response){
-            self.response = response
-            self.course = self.response.courses
-            self.arr_band = self.response.courses.courses_bands;
-            let trainers = self.response.trainers
-            if(trainers.length>0){
-              self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
-            }
-            else{
-              self.course.trainer_text = "-"
-            }
-            let bands = self.arr_band
-            if(bands.length>0){
-              self.course.band_text = bands.map(c => c.band).join(', ');
-            }
-            else{
-              self.course.band_text = "-"
-            }
-            self.fnGet()
-            self.datatable()
-          })
-          .catch(function(error){
-            Swal.fire({
-              icon: 'error',
-              title: error.response.status,
-              text: error.response.data
-            })
-            self.course = {};
-            return false;
-        });      
-      }
+    let self = this
+
+    if(this.course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      self.data_grid = [];
+      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.response = response
+          self.course = self.response.courses
+          self.arr_band = self.response.courses.courses_bands;
+          let trainers = self.response.trainers
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
+          let bands = self.arr_band
+          if(bands.length>0){
+            self.course.band_text = bands.map(c => c.band).join(', ');
+          }
+          else{
+            self.course.band_text = "-"
+          }
+          self.fnGet()
+          self.datatable()
+        })
+        .catch(function(error){
+          self.service.sweetalert_error(error)
+          self.course = {};
+          return false;
+      });      
+    }
   }
 
 async get_courses_open(){
@@ -175,6 +164,8 @@ async get_courses_open(){
   await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
   .then(function(response){
     self.courses = response
+    self.course_no = 'AOF-001-001'
+    self.get_course()
   })
   .catch(function(error){
 
@@ -196,14 +187,6 @@ async clear_data() {
   });
 }
 
-array_chk: any;
-  async fnGetband() {
-    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
-    this.array_chk.forEach(object => {
-      object.isChecked = false;
-    }); //console.log(this.array_chk);
-    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
-  }
 
   async fnSave() {
     this.submitted = true;
@@ -613,11 +596,9 @@ array_chk: any;
     this._checkbox = this.array_grid.length + this.data_grid_other.filter(x => x.final_approved_checked == true).length;
     // console.log('3: ',this._checkbox);
   }
-  // End Check box
 
-  // async fnGet(course_no, dept_abb) {
 
-    async fnGet() {
+  async fnGet() {
     await this.service.gethttp('Registration/GetGridView/' + this.course_no + '/' + this._org_code)
       .subscribe((response: any) => {
         // console.log(response);
@@ -629,7 +610,8 @@ array_chk: any;
           this.selection = new SelectionModel<PeriodicElement>(true, chk_true)
           console.log("1", this.selection.selected);
         }
-        else{
+        else
+        {
           this.selection = new SelectionModel<PeriodicElement>(true, []);
           console.log("2", this.selection.selected);
         }
@@ -682,32 +664,6 @@ array_chk: any;
         this.data_grid_other = [];
       });
   }
-
-  async fnGetCourse(course_no: any) {
-    // this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
-    // console.log('fnGetCourse: ', this.res_course);
-    // this.fnGet();
-    this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
-    console.log('fnGetCourse: ', this.res_course);
-    if (this.res_course != undefined) {
-
-      this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-
-      var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-      for (const iterator of nameArr) {
-        this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-      } // console.log(this.array_chk);
-      this.checkboxesDataList = this.array_chk;
-
-      this.fnGet();
-    } else {
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-      this.fnGet();
-    }
-  }
-  // End Open popup Course
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();

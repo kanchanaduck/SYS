@@ -259,3 +259,5 @@ D:\HRGIS\BN.Tests\obj\Debug\net5.0\BN.Tests.dll
 D:\HRGIS\BN.Tests\obj\Debug\net5.0\ref\BN.Tests.dll
 D:\HRGIS\BN.Tests\obj\Debug\net5.0\BN.Tests.pdb
 D:\HRGIS\BN.Tests\obj\Debug\net5.0\BN.Tests.genruntimeconfig.cache
+D:\HRGIS\BN.Tests\bin\Debug\net5.0\Castle.Core.dll
+D:\HRGIS\BN.Tests\bin\Debug\net5.0\Moq.dll

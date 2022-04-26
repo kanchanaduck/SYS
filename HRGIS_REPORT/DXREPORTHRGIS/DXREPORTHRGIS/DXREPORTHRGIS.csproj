@@ -15,6 +15,8 @@
     <None Remove="Data\reportsData.db" />
     <None Remove="PredefinedReports\Courses.vsrepx" />
     <None Remove="PredefinedReports\stakeholder.vsrepx" />
+    <None Remove="PredefinedReports\TestReport.vsrepx" />
+    <None Remove="PredefinedReports\TrainerHistory.vsrepx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\nwind.db">
@@ -37,9 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PredefinedReports\*.vsrepx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="PredefinedReports\TestReport.vsrepx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="PredefinedReports\Courses.cs">
@@ -77,6 +76,12 @@
     </Compile>
     <Compile Update="PredefinedReports\TestReport.Designer.cs">
       <DependentUpon>TestReport.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\TrainerHistory.cs">
+      <DependentUpon>TrainerHistory.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\TrainerHistory.Designer.cs">
+      <DependentUpon>TrainerHistory.vsrepx</DependentUpon>
     </Compile>
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="LibraryManagerRestore" Condition="!Exists('node_modules') ">

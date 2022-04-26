@@ -33,14 +33,14 @@ namespace api_hrgis.Controllers
 
         // GET: api/Account
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tb_user>>> Gettb_user()
+        public async Task<ActionResult<IEnumerable<tb_user>>> get_user()
         {
             return await _context.tb_user.ToListAsync();
         }
 
         // GET: api/Account/5
         [HttpGet("{username}")]
-        public async Task<ActionResult<tb_user>> Gettb_user(string username)
+        public async Task<ActionResult<tb_user>> get_user(string username)
         {
             var tb_user = await _context.tb_user.Where(x => x.username == username).FirstOrDefaultAsync();
 
@@ -55,7 +55,7 @@ namespace api_hrgis.Controllers
         // PUT: api/Account/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{username}")]
-        public async Task<IActionResult> Puttb_user(string username, tb_user tb_user)
+        public async Task<IActionResult> update_user(string username, tb_user tb_user)
         {
             if (username != tb_user.username)
             {
@@ -70,7 +70,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tb_userExists(username))
+                if (!user_exists(username))
                 {
                     return NotFound();
                 }
@@ -85,7 +85,7 @@ namespace api_hrgis.Controllers
 
         // DELETE: api/Account/5
         [HttpDelete("{username}")]
-        public async Task<IActionResult> Deletetb_user(string username)
+        public async Task<IActionResult> delete_user(string username)
         {
             var tb_user = await _context.tb_user.Where(x => x.username == username).FirstOrDefaultAsync();
             if (tb_user == null)
@@ -99,15 +99,15 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        private bool tb_userExists(string username)
+        private bool user_exists(string username)
         {
             return _context.tb_user.Any(e => e.username == username);
         }
 
-        // POST: api/Account/Registers
+        // POST: api/Account/Register
         [AllowAnonymous]
-        [HttpPost("Registers")]
-        public async Task<ActionResult<tb_user>> Registers(InputModel Input)
+        [HttpPost("Register")]
+        public async Task<ActionResult<tb_user>> Register(InputModel Input)
         {
             if (Input.password != Input.confirmpassword)
             {
@@ -138,7 +138,7 @@ namespace api_hrgis.Controllers
             }
             catch (DbUpdateException)
             {
-                if (tb_userExists(Input.username))
+                if (user_exists(Input.username))
                 {
                     return Conflict();
                 }

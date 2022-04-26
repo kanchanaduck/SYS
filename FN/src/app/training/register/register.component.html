@@ -166,7 +166,7 @@
 
     <div class="tab-content card-body bd bd-t-0 " id="myTabContent">
         <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
-            <table datatable id="example1" [dtOptions]="dtOptions" class="table table-bordered table-hover table-sm">
+            <table datatable id="example1" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">seq.</th>
@@ -209,7 +209,7 @@
             </table>
         </div>
         <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
-            <table datatable id="example2" [dtOptions]="dtOptionsOther" class="table table-bordered table-hover table-sm">
+            <table datatable id="example2" [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">seq.</th>
