@@ -43,7 +43,9 @@ export class TrainerHistoryComponent implements OnInit {
 
     this.get_trainer()
     let trainer_no = this.trainer_no
+  }
 
+  datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
       "<'row'<'col-sm-12'tr>>" +
@@ -74,16 +76,11 @@ export class TrainerHistoryComponent implements OnInit {
             extend: 'collection',
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
-                {
-                    extend: 'excel',
-                    text: '<i class="far fa-file-excel"></i> Excel</button>',
-                },
-                {
-                    text: '<i class="far fa-file-excel"></i> History</button>',
-                    action: function ( e, dt, node, config ) {
-                      location.href = `${environment.API_URL}Trainers/HistoryExcel/${trainer_no}`
-                    }
-                },
+              {
+                  extend: 'excel',
+                  title: `${this.trainer.title_name_en}${this.trainer.firstname_en} ${this.trainer.lastname_en}`,
+                  text: '<i class="far fa-file-excel"></i> Excel</button>',
+              },
             ]
           },
         ],
@@ -91,48 +88,42 @@ export class TrainerHistoryComponent implements OnInit {
       order: [[0, 'asc']],
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
-
-
-
-
   }
 
-
-async get_trainer_history(){
-  let self = this
-  await this.httpClient.get(`${environment.API_URL}Trainers/History/${this.trainer_no}`, this.headers)
-  .subscribe((response: any) => {
-    self.trainer_history = response;
-    if (this.isDtInitialized) {
-      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-        dtInstance.clear().draw();
+  async get_trainer_history(){
+    let self = this
+    await this.httpClient.get(`${environment.API_URL}Trainers/History/${this.trainer_no}`, this.headers)
+    .subscribe((response: any) => {
+      self.trainer_history = response;
+      if (this.isDtInitialized) {
+        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          this.isDtInitialized = true
+          dtInstance.destroy();
+          this.dtTrigger.next();
+        });
+      } 
+      else {
         this.isDtInitialized = true
-        dtInstance.destroy();
         this.dtTrigger.next();
-      });
-    } 
-    else {
-      this.isDtInitialized = true
-      this.dtTrigger.next();
-    }
-  },
-  (error: any) => {
-    console.log(error);
-  });
-}
+      }
+    },
+    (error: any) => {
+      console.log(error);
+    });
+  }
 
-async get_trainer() {
-  let self =this
-  await axios.get(`${environment.API_URL}Trainers/${this.trainer_no}`,this.headers)
-  .then(function (response) {
-    console.log(response)
-    self.trainer = response
-    self.get_trainer_history()
-  }) 
-  .catch(function (error) {
-    console.log(error)
-  }) 
-}
-
+  async get_trainer() {
+    let self =this
+    await axios.get(`${environment.API_URL}Trainers/${this.trainer_no}`,this.headers)
+    .then(function (response) {
+      console.log(response)
+      self.trainer = response
+      self.datatable()
+      self.get_trainer_history()
+    }) 
+    .catch(function (error) {
+      console.log(error)
+    }) 
+  }
 
 }

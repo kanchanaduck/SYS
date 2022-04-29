@@ -19,31 +19,29 @@
         </div>
     </div>
 </div>
-<div class="row mt-3" *ngIf="(course | json) != '{}'">
-    <div class="card card-body tx-13">
-        <dl class="row mb-1">
-            <dt class="col-sm-2">COURSE NO.: </dt>
-            <dd class="col-sm-2">{{ course.course_no }}</dd>
-            <dt class="col-sm-3">THAI COURSE NAME:</dt>
-            <dd class="col-sm-5">{{ course.course_name_th || '-' }}</dd>
-        </dl>
-        <dl class="row mt-1">
-            <dt class="col-sm-3 offset-4">ENGLISH COURSE NAME:</dt>
-            <dd class="col-sm-5">{{ course.course_name_en || '-' }}</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">GROUP:</dt>
-            <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-            <dt class="col-sm-2">DAY: </dt>
-            <dd class="col-sm-2">{{ course.days }}</dd>
-            <dt class="col-sm-2">CAPACITY:</dt>
-            <dd class="col-sm-2">{{ course.capacity }}</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">BAND TARGET:</dt>
-            <dd class="col-sm-3">{{ course.band_text }}</dd> 
-        </dl>
-    </div>
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="(course | json) != '{}'">
+    <dl class="row my-0">
+        <dt class="col-sm-2">COURSE NO.: </dt>
+        <dd class="col-sm-2">{{ course.course_no }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
+        <dt class="col-sm-2">BAND:</dt>
+        <dd class="col-sm-4">{{ course.band_text }}</dd> 
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
+    </dl>
 </div>
 <div class="row mt-3">
     <div class="col-12">
@@ -54,8 +52,8 @@
                     <th class="text-center">course no.</th>
                     <th class="text-center">emp no</th>
                     <th class="text-center">title</th>
-                    <th class="text-center">firstname</th>
-                    <th class="text-center">lastname</th>
+                    <th class="text-center">first name</th>
+                    <th class="text-center">last name</th>
                     <th class="text-center">division</th>
                     <th class="text-center">department</th>
                     <th class="text-center">band</th>

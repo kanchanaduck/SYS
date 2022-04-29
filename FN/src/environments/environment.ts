@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
+  API_URL: 'https://localhost:5001/api/',
+  // API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
   REPORT_URL: 'http://cptsvs52t/',
   img_garoon: 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/',
   status: {

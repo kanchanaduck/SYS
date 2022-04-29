@@ -52,7 +52,6 @@ export class CourseScoreComponent implements OnInit {
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
-  form: FormGroup;
   submitted = false;
   is_committee: boolean;
   _org_code: any;
@@ -60,6 +59,16 @@ export class CourseScoreComponent implements OnInit {
   course:any= {};
   response: any;
   course_no: any;
+  emp_no: any;
+  pre_test_score: number;
+  pre_test_grade: string;
+  post_test_score: any;
+  post_test_grade: string;
+  emp_name: string;
+  emp_status: any;
+  txt_not_pass: any;
+  not_pass: boolean;
+  errors: {};
 
   constructor(private modalService: NgbModal, config: NgbModalConfig,private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
@@ -67,24 +76,12 @@ export class CourseScoreComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        frm_emp_no: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(7)]],
-        frm_emp_name: ['', [Validators.required]],
-        frm_pre_test_score: [''],
-        frm_post_test_score: [''],
-      },
-    );
-
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
 
-    this.fnGetband();
     this.check_is_committee()
   }
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
-  }
+
 
   async check_is_committee() {
     let self = this
@@ -247,143 +244,46 @@ export class CourseScoreComponent implements OnInit {
   
 
   async fnSave() {
-    this.submitted = true;
 
-    console.log(this.form)
-
-    if (this.form.invalid) {
-      alert('SAVE1')
-      return;
-    }
-    console.log(JSON.stringify(this.form.value, null, 2));
-
-    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: "",
-    //     text: environment.text.invalid_department
-    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-    //   })
-
-    //   return;
-    // }
-
-    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
-      alert('SAVE2')
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.unequal_band
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
-      })
-
-      return;
-    }
-
-    let frm = this.form.value;
-    var array = [{
-      emp_no: frm.frm_emp_no,
-      pre_test_score: frm.frm_pre_test_score,
-      pre_test_grade: this.txtpre_test_grade.nativeElement.value,
-      post_test_score: frm.frm_post_test_score,
-      post_test_grade: this.txtpost_test_grade.nativeElement.value
-    }];
-    const send_data = {
+    var send_data = {
       course_no: this.course_no,
-      array: array
-    }
-    console.log(send_data);
+      emp_no: this.emp_no,
+      pre_test_score: this.pre_test_score,
+      pre_test_grade: this.pre_test_grade,
+      post_test_score: this.post_test_score,
+      post_test_grade: this.pre_test_grade,
+    };
 
-    if (array.length > 0) {
-      await this.service.axios_post("RegisterScore", send_data, environment.text.success);
+
+    if( this.data_grid.some(x => x.emp_no == this.emp_no)){
+      await this.service.axios_put(`Registration/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
     }
+    else{
+      await this.service.axios_post("Registration/ByCommitteeCourse", send_data, environment.text.success);
+    }
+
     this.fnGet();
   }
-  async fnUpdate() {
-    this.submitted = true;
 
-    if (this.form.invalid) {
-      alert('UPDATE1')
-      return;
-    }
-    // console.log(JSON.stringify(this.form.value, null, 2));
-    // console.log(this.form.value);
-
-    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: "",
-    //     text: environment.text.invalid_department
-    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-    //   })
-
-    //   return;
-    // }
-
-    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
-      alert('UPDATE2')
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.unequal_band
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
-      })
-
-      return;
-    }
-
-    let frm = this.form.value;
-    var array = [{
-      emp_no: frm.frm_emp_no,
-      pre_test_score: frm.frm_pre_test_score,
-      pre_test_grade: this.txtpre_test_grade.nativeElement.value,
-      post_test_score: frm.frm_post_test_score,
-      post_test_grade: this.txtpost_test_grade.nativeElement.value
-    }];
-    const send_data = {
-      course_no: frm.frm_course,
-      array: array
-    }
-    console.log(send_data);
-
-    if (array.length > 0) {
-      await this.service.axios_put("RegisterScore/" + this.course_no, send_data, environment.text.success);
-    }
-    this.fnGet();
-  }
   fnClear() {
-    this.form.controls['frm_emp_no'].setValue("");
-    this.txtfull_name.nativeElement.value = "";
+    this.errors = {}
+    this.emp_no = "";
+    this.emp_name = "";
     this.txtdept.nativeElement.value = "";
     this.txtposition.nativeElement.value = "";
     this.txtband.nativeElement.value = "";
-    this.form.controls['frm_pre_test_score'].setValue("");
-    this.txtpre_test_grade.nativeElement.value = "";
-    this.form.controls['frm_post_test_score'].setValue("");
-    this.txtpost_test_grade.nativeElement.value = "";
-    this.visableSave = true;
-    this.visableUpdate = false;
-    this.isreadonly = false;
+    this.txt_not_pass = "";
   }
+
   fnEdit(item) {
-    this.form.controls['frm_emp_no'].setValue(item.employees.emp_no);
-    this.form.controls['frm_emp_name'].setValue(item.employees.title_name_en + ' ' + item.employees.firstname_en + ' ' + item.employees.lastname_en);
-    this.txtdept.nativeElement.value = item.employees.dept_code + ':' + item.employees.dept_abb;
+    this.errors = {};
+    this.emp_no = item.employees.emp_no;
+    this.emp_name = `${item.employees.title_name_en}${item.employees.firstname_en} ${item.employees.lastname_en}`;
+    this.txtdept.nativeElement.value = `${item.employees.div_abb}/${item.employees.dept_abb}`;
     this.txtposition.nativeElement.value = item.employees.position_name_en;
     this.txtband.nativeElement.value = item.employees.band;
-
-    this.form.controls['frm_pre_test_score'].setValue(item.pre_test_score);
-    this.form.controls['frm_post_test_score'].setValue(item.post_test_score);
-    this.txtpre_test_grade.nativeElement.value = item.pre_test_grade;
-    this.txtpost_test_grade.nativeElement.value = item.post_test_grade;
-
-    this.dept_emp = item.employees.dept_abb;
-    this.div_emp = item.employees.div_abb_name;
-
-    this.visableSave = false;
-    this.visableUpdate = true;
-    this.isreadonly = true;
   }
+
   fnDelete(item) {
     Swal.fire({
       title: 'Are you sure?',
@@ -394,7 +294,7 @@ export class CourseScoreComponent implements OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('RegisterScore/' + this.course_no + '/' + item.emp_no, environment.text.delete);
+        await this.service.axios_delete('Registration/' + this.course_no + '/' + item.emp_no, environment.text.delete);
         this.fnGet();
       }
     })
@@ -403,38 +303,49 @@ export class CourseScoreComponent implements OnInit {
   res_course: any = [];
   arr_band: any;
 
-  onKeyEmpno(event: any) {
-    if (event.target.value.length >= 6 && event.target.value.length <= 7) {
-      this.searchEmp(event.target.value);
-    } else if (event.target.value.length == 0) {
+  onKeyEmpno() {
+    if (this.emp_no.length >= 6 && this.emp_no.length <= 7) {
+      this.searchEmp(this.emp_no);
+      this.searchPrevCourse(this.emp_no);
+    } 
+    else if (this.emp_no.length == 0) {
       this.fnClear();
     }
   }
+
   res_emp: any = [];
   dept_emp: any = ''; div_emp: any = '';
   async searchEmp(empno: any) {
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
-      this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
+      this.emp_name = this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en;
       this.dept_emp = this.res_emp.dept_abb;
-      this.div_emp = this.res_emp.div_abb_name;
-      this.txtdept.nativeElement.value = this.res_emp.dept_code + ":" + this.res_emp.dept_abb;
+      this.div_emp = this.res_emp.div_abb;
+      this.emp_status = this.res_emp.employed_status
+      this.txtdept.nativeElement.value = `${this.res_emp.div_abb}/${this.res_emp.dept_abb}`;
       this.txtposition.nativeElement.value = this.res_emp.position_name_en;
       this.txtband.nativeElement.value = this.res_emp.band;
     } else {
-      this.form.controls['frm_emp_name'].setValue("");
+      this.emp_name= "";
+      this.emp_status = "";
       this.txtdept.nativeElement.value = "";
       this.txtposition.nativeElement.value = "";
       this.txtband.nativeElement.value = "";
     }
   }
-
+  res_prev: any;
+  async searchPrevCourse(empno: any) {
+    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+    if (this.res_prev != "" || this.res_prev != null) {
+      this.txt_not_pass = this.res_prev;
+      this.not_pass = true;
+    }
+  }
   onKeyPreTestScore(event) {
-    // console.log(event.target.value);
-    this.txtpre_test_grade.nativeElement.value = fnGrade(event.target.value);
+    this.pre_test_grade = fnGrade(event.target.value);
   }
   onKeyPostTestScore(event) {
-    this.txtpost_test_grade.nativeElement.value = fnGrade(event.target.value);
+    this.post_test_grade = fnGrade(event.target.value);
   }
 
   /** File Upload, Download */
@@ -465,7 +376,7 @@ export class CourseScoreComponent implements OnInit {
   }
   result: any;
   async upload() {
-    if (this.form.controls['frm_course'].value == "") {
+    if (this.course_no == "") {
       return;
     }
 
@@ -475,11 +386,11 @@ export class CourseScoreComponent implements OnInit {
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
       
-      this.result = await this.service.axios_formdata_post('/RegisterScore/UploadCourseScore/' + this.course_no, formData, environment.text.success);
+      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseScore/' + this.course_no, formData, environment.text.success);
       // // console.log('result: ', this.result.data);
       if (this.result.data.length > 0) {
         let element = this.result.data;
-        this.exportexcel.exportJSONToExcel(element, 'ResultRegisterScore');
+        this.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
       }
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
@@ -490,7 +401,7 @@ export class CourseScoreComponent implements OnInit {
   /** End File Upload, Download */
 
   async fnGet() {
-    await this.service.gethttp('RegisterScore/' + this.course_no)
+    await this.service.gethttp(`Registration/${this.course_no}/Approved`)
       .subscribe((response: any) => {
         console.log(response);
 
@@ -515,18 +426,6 @@ export class CourseScoreComponent implements OnInit {
       });
   }
 
-  array_chk: any;
-  async fnGetband() {
-    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
-    this.array_chk.forEach(object => {
-      object.isChecked = false;
-    }); //console.log(this.array_chk);
-    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
-  }
-
-
-
-
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
@@ -545,19 +444,7 @@ function fnGrade(score) {
 
   return grade;
 }
-function formatDate(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
 
-  if (month.length < 2)
-    month = '0' + month;
-  if (day.length < 2)
-    day = '0' + day;
-
-  return [year, month, day].join('-');
-}
 
 export interface PeriodicElement {
   emp_no: string;

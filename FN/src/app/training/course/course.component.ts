@@ -298,9 +298,9 @@ export class CourseComponent implements OnInit {
     let self = this
     await axios.get(`${environment.API_URL}Courses/${course_no}`, this.headers)
     .then(function(response){
+
       self.course = response
       
-
       self.course.time_in_hh = (new Date(self.course.date_start).getHours()).toString();
       self.course.time_in_mm = (new Date(self.course.date_start).getMinutes()).toString();
       self.course.time_out_hh = ( new Date(self.course.date_end).getHours()).toString();
@@ -315,14 +315,15 @@ export class CourseComponent implements OnInit {
                                             new Date(self.course.date_end).getMonth()+1, 
                                             new Date(self.course.date_end).getDate()); 
                                             
-
       self.array_chk.forEach(object => {
         object.isChecked = false; 
       }); 
+
       for (const iterator of self.course.courses_bands) {
         console.log(iterator)
         self.array_chk.find(v => v.band === iterator.band).isChecked = true;
       }
+
       self.checkboxesDataList = self.array_chk;
 
       self.fetchCheckedIDs();

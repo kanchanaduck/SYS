@@ -375,7 +375,7 @@ async clear_data() {
         this.data_grid_other = [];
       });
 
-      await this.service.gethttp(`RegisterScore/${this.course_no}`)
+      await this.service.gethttp(`Registration/${this.course_no}`)
       .subscribe((response: any) => {
         this.response = response
         this.v_regis = this.response.filter(x => x.last_status != environment.text.wait).length;

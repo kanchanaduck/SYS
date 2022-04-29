@@ -1,7 +1,9 @@
 <div class="row mb-3" *ngIf="is_committee">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.
+                <small class="text-muted">&lt;Display all courses of {{ _org_abb }}&gt;</small>
+            </label>     
             <ng-select 
                 [(ngModel)]="course_no"
                 [items]="courses"
@@ -17,7 +19,6 @@
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            <small class="text-muted">Display all courses of {{ _org_abb }}</small>
             <p class="invalid-feedback" *ngIf="errors && errors.course_no"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
             </p>
@@ -29,20 +30,24 @@
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
         <dd class="col-sm-2">{{ course.course_no }}</dd>
-        <dt class="col-sm-2">THAI NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
-        <dt class="col-sm-2">ENGLISH  NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
     </dl>
     <dl class="row my-0">
-        <dt class="col-sm-1">GROUP:</dt>
-        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-        <dt class="col-sm-1">DAY: </dt>
-        <dd class="col-sm-2">{{ course.days }}</dd>
-        <dt class="col-sm-2">CAPACITY:</dt>
-        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
         <dt class="col-sm-2">OPEN REGISTER:</dt>
-        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+        <dd class="col-sm-4">{{ course.open_register? "OPEN":"CLOSE" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>
@@ -154,17 +159,17 @@
 <table *ngIf="is_committee" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
     <thead>
         <tr>
-            <th>no.</th>
-            <th>emp no</th>
-            <th>title</th>
-            <th>firstname</th>
-            <th>lastname</th>
-            <th>band</th>
-            <th>div/dept</th>
-            <th>ENTRANCE</th>
-            <th>PRE-TEST</th>
-            <th>POST-TEST</th>
-            <th>manage</th>
+            <th class="text-center">no.</th>
+            <th class="text-center">emp no</th>
+            <th class="text-center">title</th>
+            <th class="text-center">first name</th>
+            <th class="text-center">last name</th>
+            <th class="text-center">band</th>
+            <th class="text-center">div/dept</th>
+            <th class="text-center">ENTRANCE</th>
+            <th class="text-center">PRE-TEST</th>
+            <th class="text-center">POST-TEST</th>
+            <th class="text-center">manage</th>
         </tr>
     </thead>
     <tbody>

@@ -304,7 +304,7 @@ async clear_data() {
   res_course: any = [];
   arr_band: any;
 
-  onKeyEmpno(event: any) {
+  onKeyEmpno() {
     if (this.emp_no.length >= 6 && this.emp_no.length <= 7) {
       this.searchEmp(this.emp_no);
       this.searchPrevCourse(this.emp_no);
@@ -404,10 +404,7 @@ async clear_data() {
             className: 'btn-indigo',
             key: '1',
             action: () => {
-              // ถ้า Mgr. กด Approve ให้ส่งเมล์หา committee ด้วย
-              if (this.visableButton == true) {
                 this.fnApproved();
-              }
             }
           } 
         ],
@@ -425,6 +422,7 @@ async clear_data() {
     };
 
     this.dtOptionsOther = {
+      destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",

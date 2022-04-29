@@ -1,7 +1,10 @@
+<form (ngSubmit)="fnSave()">
 <div class="row mb-3" *ngIf="is_committee">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.
+                <small class="text-muted">&lt;Display all courses of {{ _org_abb }}&gt;</small>
+            </label>     
             <ng-select 
                 [(ngModel)]="course_no"
                 [items]="courses"
@@ -16,7 +19,6 @@
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            <small class="text-muted">Display all courses of {{ _org_abb }}</small>
         </div>
     </div>
 </div>
@@ -25,20 +27,24 @@
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
         <dd class="col-sm-2">{{ course.course_no }}</dd>
-        <dt class="col-sm-2">THAI NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
-        <dt class="col-sm-2">ENGLISH  NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
     </dl>
     <dl class="row my-0">
-        <dt class="col-sm-1">GROUP:</dt>
-        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-        <dt class="col-sm-1">DAY: </dt>
-        <dd class="col-sm-2">{{ course.days }}</dd>
-        <dt class="col-sm-2">CAPACITY:</dt>
-        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
         <dt class="col-sm-2">OPEN REGISTER:</dt>
-        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+        <dd class="col-sm-4">{{ course.open_register? "OPEN":"CLOSE" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>
@@ -60,7 +66,7 @@
     </dl>
 </div>
 
-<div class="card mb-3" *ngIf="is_committee" [formGroup]="form">
+<div class="card mb-3" *ngIf="is_committee">
     <div class="card-header">
         Register
     </div>
@@ -69,74 +75,62 @@
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
-                    <input type="text" class="form-control" [readonly]="isreadonly" placeholder="Enter key..." (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
-                    <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_emp_no.errors.required">Emp no is required</div>
-                        <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
-                        <div *ngIf="f.frm_emp_no.errors.maxlength">Max 7 characters</div>
-                    </div>
+                    <input type="text" class="form-control" placeholder="0XXXXX" 
+                    (keyup)="onKeyEmpno()" name="emp_no" [(ngModel)]="emp_no"
+                    #txtemp_no>
                 </div>
             </div>
 
             <div class="col-3">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-8 pr-0">
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600">pre-test</label>
-                            <input type="text" class="form-control" formControlName="frm_pre_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_pre_test_score.errors }" (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
-                            <div *ngIf="submitted && f.frm_pre_test_score.errors" class="invalid-feedback">
-                                <div *ngIf="f.frm_pre_test_score.errors.required">Required</div>
-                                <div *ngIf="f.frm_pre_test_score.errors.minlength">Min 1 characters</div>
-                                <div *ngIf="f.frm_pre_test_score.errors.maxlength">Max 3 characters</div>
-                            </div>
+                            <input type="text" class="form-control"
+                            name="pre_test_score" [(ngModel)]="pre_test_score"
+                            (keyup)="onKeyPreTestScore($event)" #txtpre_test_score>
                         </div>
                     </div>
-                    <div class="col-6" style="margin-left: -25px;">
+                    <div class="col-4 pl-1">
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">pre_test_grade</label>
-                            <input type="text" class="form-control" readonly="" #txtpre_test_grade>
+                            <input type="text" class="form-control" readonly="" #txtpre_test_grade
+                            name="pre_test_grade" [(ngModel)]="pre_test_grade">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-3">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-8 pr-0">
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600">post-test</label>
-                            <input type="text" class="form-control" formControlName="frm_post_test_score" [ngClass]="{ 'is-invalid': submitted && f.frm_post_test_score.errors }" (keyup)="onKeyPostTestScore($event)" #txtpost_test_score>
-                            <div *ngIf="submitted && f.frm_post_test_score.errors" class="invalid-feedback">
-                                <div *ngIf="f.frm_post_test_score.errors.required">Required</div>
-                                <div *ngIf="f.frm_post_test_score.errors.minlength">Min 1 characters</div>
-                                <div *ngIf="f.frm_post_test_score.errors.maxlength">Max 3 characters</div>
-                            </div>
+                            <input type="text" class="form-control" (keyup)="onKeyPostTestScore($event)" 
+                            name="post_test_score" [(ngModel)]="post_test_score"
+                            #txtpost_test_score>
                         </div>
                     </div>
-                    <div class="col-6" style="margin-left: -25px;">
+                    <div class="col-4 pl-1">
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">post_test_grade</label>
-                            <input type="text" class="form-control" readonly="" #txtpost_test_grade>
+                            <input type="text" class="form-control" readonly="" #txtpost_test_grade
+                            name="post_test_grade" [(ngModel)]="post_test_grade">
                         </div>
                     </div>
                 </div>
             </div>
-
-
             <div class="col-3 text-right pt-3">
-                <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
-                <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" (click)="fnUpdate()">Save</button>
-                <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
             </div>
         </div>
         <div class="row pt-1">
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">name</label>
-                    <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" 
-                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
-                    <div *ngIf="submitted && f.frm_emp_name.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_emp_name.errors.required">Emp name is required</div>
-                    </div>
+                    <input type="text" class="form-control" readonly=""
+                        name="emp_name" [(ngModel)]="emp_name"
+                        #txtfull_name>
                 </div>
             </div>
             <div class="col-3">
@@ -192,35 +186,36 @@
         </div>
     </div>
 </div>
+</form>
 
 <div class="row">
     <div class="col-12">
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
-                <tr class="text-uppercase">
-                    <th>no.</th>
-                    <th>emp no.</th>
-                    <th>title</th>
-                    <th>firstname</th>
-                    <th>lastname</th>
-                    <th>band</th>
-                    <th>department</th>
-                    <th>ENTRANCE DATE</th>
-                    <th>PRE-TEST</th>
-                    <th>POST-TEST</th>
-                    <th>manage</th>
+                <tr>
+                    <th class="text-center">no.</th>
+                    <th class="text-center">emp no.</th>
+                    <th class="text-center">title</th>
+                    <th class="text-center">first name</th>
+                    <th class="text-center">last name</th>
+                    <th class="text-center">band</th>
+                    <th class="text-center">DIV/DEPT</th>
+                    <th class="text-center">ENTRANCE DATE</th>
+                    <th class="text-center">PRE-TEST</th>
+                    <th class="text-center">POST-TEST</th>
+                    <th class="text-center">manage</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <td>{{ i + 1 }}</td>
+                    <td class="text-right">{{ i + 1 }}</td>
                     <td>{{ item.emp_no }}</td>
                     <td>{{ item.employees.title_name_en }}</td>
                     <td>{{ item.employees.firstname_en }}</td>
                     <td>{{ item.employees.lastname_en }}</td>
-                    <td>{{ item.employees.band }}</td>
-                    <td>{{ item.employees.dept_code}}:{{ item.employees.dept_abb }}</td>
-                    <td>{{ item.employees.entrance_date | date:'yy/MM/dd'}}</td>
+                    <td class="text-center">{{ item.employees.band }}</td>
+                    <td>{{ item.employees.div_abb+"/"+item.employees.dept_abb }}</td>
+                    <td class="text-center">{{ item.employees.entrance_date | date:'yy/MM/dd'}}</td>
                     <td>
                         <div *ngIf="item.pre_test_grade != '' && item.pre_test_grade != null; else elseBlock">{{ item.pre_test_score }} : {{ item.pre_test_grade }}</div>
                         <ng-template #elseBlock>
@@ -234,8 +229,8 @@
                         </ng-template>
                     </td>
                     <td class="text-center">
-                        <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit pointer"></i></a>
-                        <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt pointer"></i></a>
+                        <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit"></i></a>
+                        <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt"></i></a>
                     </td>
                 </tr>
             </tbody>

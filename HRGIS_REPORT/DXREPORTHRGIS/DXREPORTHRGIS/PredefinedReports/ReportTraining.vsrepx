@@ -4,8 +4,8 @@
     <Item1 Ref="2" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
   <Parameters>
-    <Item1 Ref="5" Description="Course No" ValueSourceSettings="#Ref-3" MultiValue="true" AllowNull="true" Name="course_no" />
-    <Item2 Ref="6" Visible="false" Description="Mgr" ValueInfo="นาย ซาโต ฟูมิฮิโกะ" Name="mrg_org" />
+    <Item1 Ref="5" Description="COURSE NO." ValueSourceSettings="#Ref-3" MultiValue="true" AllowNull="true" Name="course_no" />
+    <Item2 Ref="6" Visible="false" Description="MTP MANAGER" ValueInfo="นาย ซาโต ฟูมิฮิโกะ" Name="mrg_org" />
   </Parameters>
   <Bands>
     <Item1 Ref="7" ControlType="TopMarginBand" Name="TopMargin" HeightF="47" />

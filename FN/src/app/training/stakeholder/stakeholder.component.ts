@@ -97,7 +97,7 @@ export class StakeholderComponent implements OnInit {
               {
                 text: '<i class="far fa-file-alt"></i> Report</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs52t/HRGIS_REPORT/Report/Stakeholder","_blank")
+                  window.open("http://cptsvs52t/HRGIS_REPORT/Training/Stakeholder","_blank")
                 }
               }
               /* {

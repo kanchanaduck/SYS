@@ -32,7 +32,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
     }
   }
 
-  filter_trainer_owner: string;
+  filter_trainer_owner: string = "";
   filter_trainer_type: string = "";
 
   _getjwt: any;
@@ -261,7 +261,6 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   async filter_trainer() {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.clear().draw();
       dtInstance.destroy();
       this.dtTrigger.next();
     });
@@ -310,7 +309,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
               {
                 text: '<i class="far fa-file-alt"></i> Whole history</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs52t/HRGIS_REPORT/Report/TrainerHistory","_blank")
+                  window.open("http://cptsvs52t/HRGIS_REPORT/Training/TrainerHistory","_blank")
                 }
               }
             ]

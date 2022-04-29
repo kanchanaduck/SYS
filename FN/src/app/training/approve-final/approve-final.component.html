@@ -1,7 +1,10 @@
+<form (ngSubmit)="fnSave()">
 <div class="row mb-3" *ngIf="is_committee">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.</label>     
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.
+                <small class="text-muted">&lt;Display all of the opening courses of {{ _org_abb }}&gt;</small>
+            </label>     
             <ng-select 
                 [(ngModel)]="course_no"
                 [items]="courses"
@@ -16,8 +19,9 @@
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            
-            <small class="text-muted">Display all of the opening courses of {{ _org_abb }}</small>
+            <p class="invalid-feedback" *ngIf="errors && errors.course_no"> 
+                <span *ngFor="let text of errors.course_no">{{ text }}</span>
+            </p>
         </div>
     </div>
 </div>
@@ -26,20 +30,24 @@
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
         <dd class="col-sm-2">{{ course.course_no }}</dd>
-        <dt class="col-sm-2">THAI NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
-        <dt class="col-sm-2">ENGLISH  NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
     </dl>
     <dl class="row my-0">
-        <dt class="col-sm-1">GROUP:</dt>
-        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-        <dt class="col-sm-1">DAY: </dt>
-        <dd class="col-sm-2">{{ course.days }}</dd>
-        <dt class="col-sm-2">CAPACITY:</dt>
-        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
         <dt class="col-sm-2">OPEN REGISTER:</dt>
-        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+        <dd class="col-sm-4">{{ course.open_register? "OPEN":"CLOSE" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>
@@ -61,7 +69,7 @@
     </dl>
 </div>
 
-<div class="card mb-3" *ngIf="is_committee" [formGroup]="form">
+<div class="card mb-3" *ngIf="is_committee">
     <div class="card-header">
         Register
     </div>
@@ -70,25 +78,23 @@
             <div class="col-2">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
-                    <input type="text" class="form-control" placeholder="Enter key..." 
-                        (keyup)="onKeyEmpno($event)" formControlName="frm_emp_no" 
-                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_no.errors }" #txtemp_no>
-                    <div *ngIf="submitted && f.frm_emp_no.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_emp_no.errors.required">Emp no is required</div>
-                        <div *ngIf="f.frm_emp_no.errors.minlength">Min 6 characters</div>
-                        <div *ngIf="f.frm_emp_no.errors.maxlength">Max 7 characters</div>
-                    </div>
+                    <input type="text" class="form-control" placeholder="0XXXXX" autofocus
+                                name="emp_no" 
+                                (keyup)="onKeyEmpno()" 
+                                [ngClass]="{ 'is-invalid': errors && errors.emp_no }" 
+                                #txtemp_no
+                                [(ngModel)]="emp_no">
+                    <p class="invalid-feedback" *ngIf="errors && errors.emp_no"> 
+                        <span *ngFor="let text of errors.emp_no">{{ text }}</span>
+                    </p>
                     <span class="text-warning" *ngIf="not_pass">{{txt_not_pass}}</span>
                 </div>
             </div>
             <div class="col-3">
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">name</label>
-                    <input type="text" class="form-control" readonly="" formControlName="frm_emp_name" 
-                        [ngClass]="{ 'is-invalid': submitted && f.frm_emp_name.errors }" #txtfull_name>
-                    <div *ngIf="submitted && f.frm_emp_name.errors" class="invalid-feedback">
-                        <div *ngIf="f.frm_emp_name.errors.required">Emp name is required</div>
-                    </div>
+                    <input type="text" class="form-control" readonly="" #txtfull_name
+                            name="emp_name" [(ngModel)]="emp_name">
                 </div>
             </div>
             <div class="col-2">
@@ -110,29 +116,33 @@
                 </div>
             </div>
             <div class="col-2 text-right pt-4">
-                <button type="button" class="btn btn-az-primary btn-sm" (click)="fnSave()">Save</button>
+                <button type="submti" class="btn btn-az-primary btn-sm">Save</button>
                 <button type="button" class="btn btn-dark btn-sm" (click)="fnClear()">Clear</button>
             </div>
         </div>
     </div>
 </div>
+</form>
 
 <div class="card card-body mb-3" *ngIf="is_committee">
     <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
                 <th class="text-center">
+                    <label class="ckbox pt-0">
                     <input type="checkbox" (change)="$event ? masterToggle() : null" 
                         [checked]="selection.hasValue() && isAllSelected()" 
                         [indeterminate]="selection.hasValue() && !isAllSelected()" 
                         [attr.aria-label]="checkboxLabel()" 
                         [disabled]="disabled_chkall">
+                        <span></span>
+                    </label>
                 </th>
                 <th class="text-center">seq</th>
                 <th class="text-center">emp no.</th>
                 <th class="text-center">title</th>
-                <th class="text-center">firstname</th>
-                <th class="text-center">lastname</th>
+                <th class="text-center">first name</th>
+                <th class="text-center">last name</th>
                 <th class="text-center">position</th>
                 <th class="text-center">band</th>
                 <th class="text-center">div/dept</th>
@@ -144,11 +154,14 @@
         <tbody>
             <tr *ngFor="let item of data_grid; let i = index">
                 <th class="text-center">
+                    <label class="ckbox pt-0">
                     <input type="checkbox" (click)="$event.stopPropagation()" 
                         (change)="$event ? toggleSelection(item) : null" 
                         [checked]="selection.isSelected(item) == true" 
                         [disabled]="(selection.selected.length === course.capacity) && !selection.isSelected(item)" 
                         [attr.aria-label]="checkboxLabel(item)">
+                        <span></span>
+                    </label>
                 </th>
                 <td class="text-right">{{ item.seq_no }}</td>
                 <td>{{ item.emp_no }}</td>

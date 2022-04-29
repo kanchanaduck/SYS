@@ -13,10 +13,16 @@
   <ItemGroup>
     <None Remove="Data\nwind.db" />
     <None Remove="Data\reportsData.db" />
+    <None Remove="PredefinedReports\CourseAttendeeFromMasterCourse.vsrepx" />
+    <None Remove="PredefinedReports\CourseCountTrainee.vsrepx" />
+    <None Remove="PredefinedReports\CourseMap.vsrepx" />
     <None Remove="PredefinedReports\Courses.vsrepx" />
+    <None Remove="PredefinedReports\CourseTarget.vsrepx" />
+    <None Remove="PredefinedReports\EmployeeTraining.vsrepx" />
     <None Remove="PredefinedReports\stakeholder.vsrepx" />
     <None Remove="PredefinedReports\TestReport.vsrepx" />
     <None Remove="PredefinedReports\TrainerHistory.vsrepx" />
+    <None Remove="Views\Training\CourseMap.vsrepx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\nwind.db">
@@ -41,17 +47,68 @@
     <EmbeddedResource Include="PredefinedReports\*.vsrepx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="PredefinedReports\CourseAttendeeFromMasterCourse.cs">
+      <DependentUpon>CourseAttendeeFromMasterCourse.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseAttendeeFromMasterCourse.Designer.cs">
+      <DependentUpon>CourseAttendeeFromMasterCourse.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseCountTrainee.cs">
+      <DependentUpon>CourseCountTrainee.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseCountTrainee.Designer.cs">
+      <DependentUpon>CourseCountTrainee.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseMap.cs">
+      <DependentUpon>CourseMap.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseMap.Designer.cs">
+      <DependentUpon>CourseMap.vsrepx</DependentUpon>
+    </Compile>
     <Compile Update="PredefinedReports\Courses.cs">
       <DependentUpon>Courses.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\Courses.Designer.cs">
       <DependentUpon>Courses.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\ReportConfirmationSheet.cs">
-      <DependentUpon>ReportConfirmationSheet.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\CourseTarget - Copy %282%29.cs">
+      <SubType>XtraReport</SubType>
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\ReportConfirmationSheet.Designer.cs">
-      <DependentUpon>ReportConfirmationSheet.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\CourseTarget - Copy %282%29.Designer.cs">
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget - Copy - Copy.cs">
+      <SubType>XtraReport</SubType>
+      <DependentUpon>CourseTarget - Copy.cs</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget - Copy - Copy.Designer.cs">
+      <DependentUpon>CourseTarget - Copy.Designer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget - Copy.cs">
+      <SubType>XtraReport</SubType>
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget - Copy.Designer.cs">
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget.cs">
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseTarget.Designer.cs">
+      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\EmployeeTraining.cs">
+      <DependentUpon>EmployeeTraining.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\EmployeeTraining.Designer.cs">
+      <DependentUpon>EmployeeTraining.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\ConfirmationSheet.cs">
+      <DependentUpon>ConfirmationSheet.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\ConfirmationSheet.Designer.cs">
+      <DependentUpon>ConfirmationSheet.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\ReportSignatureSheet.cs">
       <DependentUpon>ReportSignatureSheet.vsrepx</DependentUpon>

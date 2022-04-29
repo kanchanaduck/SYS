@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
@@ -54,7 +53,6 @@ export class ApproveFinalComponent implements OnInit {
   v_total: number = 0;
   open_register: boolean = false;
 
-  form: FormGroup;
   submitted = false;
   is_committee: boolean;
   committee_org_code: string;
@@ -64,28 +62,20 @@ export class ApproveFinalComponent implements OnInit {
   course: any={};
   courses: any=[];
   response: any;
+  emp_no: string = "";
+  emp_name: string;
+  emp_status: string;
 
-  constructor(private modalService: NgbModal, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
+  constructor(private modalService: NgbModal, private service: AppServiceService, private exportexcel: ExportService) {
 
   }
 
   ngOnInit() {
-    this.form = this.formBuilder.group(
-      {
-        frm_emp_no: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(7)]],
-        frm_emp_name: ['', [Validators.required]],
-      },
-    );
-    // console.log(this.barChartData2);
+
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
-
-    this.fnGetband();
     this.check_is_committee()
-  }
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
   }
 
   async datatable(){
@@ -157,9 +147,7 @@ export class ApproveFinalComponent implements OnInit {
             className: "btn-indigo",
             key: '1',
             action: () => {
-              // if (this.visableButton == true) {
                 this.fnApproved();
-              // }
             }
           }
         ],
@@ -231,8 +219,6 @@ export class ApproveFinalComponent implements OnInit {
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
-        // self.get_courses()
-        // self.datatable()
       }); 
   }
 
@@ -270,93 +256,74 @@ export class ApproveFinalComponent implements OnInit {
           self.fnGet()
         })
         .catch(function(error){
-          Swal.fire({
-            icon: 'error',
-            title: error.response.status,
-            text: error.response.data
-          })
+          self.service.sweetalert_error(error)
           self.course = {};
           return false;
       });      
     }
   }
 
-async get_courses_owner(){
-  let self = this
-  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/Open`, this.headers)
-  .then(function(response){
-    self.courses = response
-  })
-  .catch(function(error){
+  async get_courses_owner(){
+    let self = this
+    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/Open`, this.headers)
+    .then(function(response){
+      self.courses = response
+    })
+    .catch(function(error){
 
-  });
-}
+    });
+  }
 
-custom_search_course_fn(term: string, item: any) {
-  term = term.toLowerCase();
-  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-}
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
 
-async clear_data() {
-  this.course = {};
-  this.data_grid = [];
-  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.clear().draw();
-    dtInstance.destroy();
-    this.dtTrigger.next();
-  });
-}
+  async clear_data() {
+    this.course = {};
+    this.data_grid = [];
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.clear().draw();
+      dtInstance.destroy();
+      this.dtTrigger.next();
+    });
+  }
 
   async fnSave() {
-    this.submitted = true;
-
-    if (this.form.invalid) {
-      return;
-    }
-    // console.log(JSON.stringify(this.form.value, null, 2));
-
-    if(this._org_code != this.course.org_code){ 
-      Swal.fire({
-        icon: 'error',
-        text: environment.text.invalid_course
-      })
-      return; 
-    }
-    ////////// หลังจากเปลี่ยนจาก center เป็น committee > committee เจ้าของ course เท่านั้นที่สามารถเพิ่มพนักงานได้
-    // if (this.dept_emp != this._org_abb && this.div_emp != this._org_abb) {
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: "",
-    //     text: environment.text.invalid_department
-    //     // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่ได้อยู่ใน DEPARTMENT ของคุณ.
-    //   })
-
-    //   return;
-    // }
-
-    if (!this.arr_band.some(x => x.band == this.txtband.nativeElement.value)) {
-      Swal.fire({
-        icon: 'error',
-        title: "",
-        text: environment.text.unequal_band
-        // ไม่สามารถเพิ่มข้อมูลได้ เนื่องจากพนักงานไม่อยู่ใน band ที่กำหนด.
-      })
-
-      return;
-    }
 
     const send_data = {
       course_no: this.course_no,
-      emp_no: this.form.controls['frm_emp_no'].value,
+      emp_no: this.emp_no,
       last_status: (this.data_grid.length + 1) > this.course.capacity ? environment.text.wait : 'Approved',
       remark: this.txt_not_pass
     }
     // console.log(send_data);
-    await this.service.axios_post('Registration', send_data, environment.text.success);
-    await this.fnGet();
+    let self = this
+    await axios.post(`${environment.API_URL}Registration/ByCommitteeCourse`, send_data, this.headers)
+    .then(function(response){
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: "Success",
+        showConfirmButton: false,
+        timer: 2000
+      })
+      self.fnGet();
+      self.fnClear()
+    })
+    .catch(function(error){
+      self.errors = error.response.data.errors
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
+      })
+      // self.fnGet(self.course_no);
+    })
   }
-  fnApproved() {  //////// committee เจ้าของ course เท่านั้นที่สามารถ Approve ได้
-    alert("approved")
+  
+  fnApproved() {  
     if(this._org_code != this.course.org_code){ 
       Swal.fire({
         icon: 'error',
@@ -366,9 +333,11 @@ async clear_data() {
     }
 
     let text = "";
+
     if (this.array_grid.length > 0) {
       text = "you want to approve these trainees";
-    } else {
+    } 
+    else {
       text = "you want to cancle approve these trainees"
     }
 
@@ -393,14 +362,7 @@ async clear_data() {
         Array.prototype.push.apply(this.array_grid, this.data_grid); //console.log('array_grid: ', this.array_grid);
         this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); //console.log('remove: ', removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
 
-        const send_data = {
-          course_no: this.course_no,
-          capacity: this.course.capacity,
-          array: this.array_grid
-        }
-        //console.log('send data: ', send_data);
-
-        await this.service.axios_put('/Registration/FinalApprove/' + this.course_no, send_data, environment.text.success);
+        await this.service.axios_put(`Registration/FinalApprove/${this.course_no}`, this.array_grid, environment.text.success);
         await this.fnGet();
         this.selection.clear();
         this.array_grid = [];
@@ -410,13 +372,15 @@ async clear_data() {
 
 
   fnClear() {
-    this.form.controls['frm_emp_no'].setValue("");
-    this.form.controls['frm_emp_name'].setValue("");
+    this.errors = {}
+    this.emp_no = "";
+    this.emp_name = "";
     this.txtdept.nativeElement.value = "";
     this.txtposition.nativeElement.value = "";
     this.txtband.nativeElement.value = "";
     this.txt_not_pass = "";
   }
+  
   fnDelete(emp_no) {
     Swal.fire({
       title: 'Are you sure?',
@@ -427,7 +391,7 @@ async clear_data() {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('Registration/' + this.course_no + '/' + emp_no + '/' + this.course.capacity, environment.text.delete);
+        await this.service.axios_delete(`Registration/${this.course_no}/${emp_no}`, environment.text.delete);
         this.fnGet();
       }
     })
@@ -435,66 +399,13 @@ async clear_data() {
 
   res_course: any = [];
   arr_band: any;
-/*   async onKeyCourse(event: any) { // console.log(event.target.value);
-    if (event.target.value.length >= 11 && event.target.value.length < 12) {
-      this.res_course = await this.service.axios_get('Courses/Open/' + event.target.value);
-      //console.log(this.res_course);
-      if (this.res_course != undefined) {
-        this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
-        this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
-        this.txtqty.nativeElement.value = this.res_course.capacity;
-        this.v_capacity = this.res_course.capacity;
-        this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in;
-        this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out;
-        this.open_register = this.res_course.open_register;
 
-        this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-
-        this.array_chk.forEach(object => {
-          object.isChecked = false; // reset isChecked => false
-        }); //console.log(this.array_chk);
-        var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-        for (const iterator of nameArr) {
-          this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-        } // console.log(this.array_chk);
-        this.checkboxesDataList = this.array_chk;
-
-        console.log(this._org_code);
-        console.log(this.res_course.organization.org_code);
-            
-        if(this._org_code == this.res_course.organization.org_code){
-          await this.fnGet();
-        }
-        else{
-          Swal.fire({
-            icon: 'error',
-            title: "",
-            text: environment.text.invalid_course
-          })
-        }
-      }
-    } else if (event.target.value.length < 11) {
-      this.form.controls['frm_course_name'].setValue("");
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-      this.fnClear();
-    }
-
-    if (event.target.value.length == 0) {
-      await this.fnGet();
-    }
-  } */
-
-  onKeyEmpno(event: any) {
-    if (event.target.value.length >= 6 && event.target.value.length <= 7) {
-      this.searchEmp(event.target.value);
-      this.searchPrevCourse(event.target.value);
-    } else if (event.target.value.length == 0) {
+  onKeyEmpno() {
+    if (this.emp_no.length >= 6 && this.emp_no.length <= 7) {
+      this.searchEmp(this.emp_no);
+      this.searchPrevCourse(this.emp_no);
+    } 
+    else if (this.emp_no.length == 0) {
       this.fnClear();
     }
   }
@@ -504,13 +415,16 @@ async clear_data() {
   async searchEmp(empno: any) {
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
-      this.form.controls['frm_emp_name'].setValue(this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en);
-      // this.dept_emp = this.res_emp.dept_abb;
-      this.txtdept.nativeElement.value = this.res_emp.div_abb + "/" + this.res_emp.dept_abb;
+      this.emp_name = this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en;
+      this.dept_emp = this.res_emp.dept_abb;
+      this.div_emp = this.res_emp.div_abb;
+      this.emp_status = this.res_emp.employed_status
+      this.txtdept.nativeElement.value = `${this.res_emp.div_abb}/${this.res_emp.dept_abb}`;
       this.txtposition.nativeElement.value = this.res_emp.position_name_en;
       this.txtband.nativeElement.value = this.res_emp.band;
     } else {
-      this.form.controls['frm_emp_name'].setValue("");
+      this.emp_name= "";
+      this.emp_status = "";
       this.txtdept.nativeElement.value = "";
       this.txtposition.nativeElement.value = "";
       this.txtband.nativeElement.value = "";
@@ -518,7 +432,6 @@ async clear_data() {
   }
   res_prev: any;
   async searchPrevCourse(empno: any) {
-    let frm = this.form.value;
     this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
@@ -581,31 +494,27 @@ async clear_data() {
   }
   /** End File Upload, Download */
 
-  // Start Check box
+
   selection = new SelectionModel<DataTablesResponse>(true, []);
   array_grid = [];
-  /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.data_grid.length;
     return numSelected === numRows;
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
+
   masterToggle() {
     if (this.isAllSelected()) {
       this.selection.clear();
       return;
     }
-
     this.selection.select(...this.data_grid);
   }
 
-  /** The label for the checkbox on the passed row */
   checkboxLabel(row?: DataTablesResponse): string {
     if (!row) {
       this.array_grid = this.selection.selected;
-
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.emp_no + 1}`;
@@ -615,11 +524,8 @@ async clear_data() {
     if ((this.selection.selected.length < this.v_capacity) || this.selection.isSelected(row)) {
       this.selection.toggle(row);
     }
-
     this.array_grid = this.selection.selected;
-    // console.log(this.array_grid);
   }
-  // End Check box
 
   res_chart: any = [];
   chartmax: any;
@@ -627,7 +533,7 @@ async clear_data() {
   _org_code:any;
 
   async fnGet() {
-    await this.service.gethttp(`RegisterScore/${this.course_no}`)
+    await this.service.gethttp(`Registration/GetGridView/${this.course_no}`)
       .subscribe((response: any) => {
         this.data_grid = response;
         this.v_regis = this.data_grid.filter(x => x.last_status != environment.text.wait).length;
@@ -636,7 +542,7 @@ async clear_data() {
 
         if (this.isDtInitialized) {
           this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
+            // dtInstance.clear().draw();
             dtInstance.destroy();
             this.dtTrigger.next();
           });
@@ -645,120 +551,19 @@ async clear_data() {
           this.isDtInitialized = true
           this.dtTrigger.next();
         }
+
     }, (error: any) => {
         console.log(error);
         this.data_grid = [];
       });
   }
 
-
-  // async fnGet() {
-  //   await this.service.gethttp(`RegisterScore/${this.course_no}`)
-  //     .subscribe((response: any) => {
-  //       this.data_grid = response;
-
-  //       this.v_regis = this.data_grid.filter(x => x.last_status != environment.text.wait).length;
-  //       this.v_wait = this.data_grid.filter(x => x.last_status == environment.text.wait).length;
-  //       this.v_total = this.data_grid.length;
-
-  //       let chk_true = this.data_grid.filter(x => x.final_approved_checked == true);
-  //       if (chk_true.length > 0) {
-  //         this.selection = new SelectionModel<DataTablesResponse>(true, chk_true)
-  //         //console.log("1", this.selection.selected);
-  //       } 
-  //       else {
-  //         this.selection = new SelectionModel<DataTablesResponse>(true, []);
-  //         //console.log("2", this.selection);
-  //       }
-  //       if (this.data_grid.filter(x => x.final_approved_checked == true).length > 0) { this.disabled_chkall = true; } else { this.disabled_chkall = false; }
-
-  //       // Calling the DT trigger to manually render the table
-  //       if (this.isDtInitialized) {
-  //         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-  //           dtInstance.clear().draw();
-  //           dtInstance.destroy();
-  //           this.dtTrigger.next();
-  //         });
-  //       } else {
-  //         this.isDtInitialized = true
-  //         this.dtTrigger.next();
-  //       }
-  //     }, (error: any) => {
-  //       console.log(error);
-  //       this.data_grid = [];
-  //     });
-  // }
-
-  array_chk: any;
-  async fnGetband() {
-    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
-    this.array_chk.forEach(object => {
-      object.isChecked = false;
-    }); //console.log(this.array_chk);
-    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
-  }
-
-  async fnGetCourse(course_no: any) {
-    this.res_course = await this.service.axios_get('Courses/Open/' + course_no);
-    // console.log('fnGetCourse: ', this.res_course);    
-    if (this.res_course != undefined) {
-      // this.form.controls['frm_course_name'].setValue(this.res_course.course_name_en);
-      // this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
-      // this.txtqty.nativeElement.value = this.res_course.capacity;
-      // this.v_capacity = this.res_course.capacity;
-      // this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
-      // this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
-      // this.open_register = this.res_course.open_register;
-
-      this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-
-      var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-      for (const iterator of nameArr) {
-        this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-      } // console.log(this.array_chk);
-      this.checkboxesDataList = this.array_chk;
-            
-      await this.fnGet();        
-    } else {
-      this.form.controls['frm_course_name'].setValue("");
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-      await this.fnGet();
-    }
-  }
-  // End Open popup Course
-
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
 }
 
-function formatDate(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
 
-  if (month.length < 2)
-    month = '0' + month;
-  if (day.length < 2)
-    day = '0' + day;
-
-  return [year, month, day].join('-');
-}
-function displayTime(ticksInSecs) {
-  // console.log(ticksInSecs);
-  var min = ticksInSecs.Minutes < 10 ? "0" + ticksInSecs.Minutes : ticksInSecs.Minutes;
-  var sec = ticksInSecs.Seconds < 10 ? "0" + ticksInSecs.Seconds : ticksInSecs.Seconds;
-  var hour = ticksInSecs.Hours < 10 ? "0" + ticksInSecs.Hours : ticksInSecs.Hours;
-  // return hour + ':' + min + ':' + sec;
-  return hour + ':' + min;
-}
 function removeDuplicateObjectFromArray(array, key) {
   return array.filter((obj, index, self) =>
     index === self.findIndex((el) => (

@@ -80,7 +80,7 @@
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">emp no.</label>
                     <input type="text" class="form-control" placeholder="0XXXXX" autofocus
                                 name="emp_no" 
-                                (keyup)="onKeyEmpno($event)" 
+                                (keyup)="onKeyEmpno()" 
                                 [ngClass]="{ 'is-invalid': errors && errors.emp_no }" 
                                 #txtemp_no
                                 [(ngModel)]="emp_no">
@@ -173,7 +173,8 @@
 
     <div class="tab-content card-body bd bd-t-0 " id="myTabContent">
         <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
-            <table datatable #example [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+            <table datatable id="example1" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" 
+                class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">
@@ -235,10 +236,11 @@
             </table>
         </div>
         <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
-            <table datatable #example2 [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" class="table table-bordered table-hover table-sm">
+            <table datatable id="example2" [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" 
+                class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
-                        <th class="text-center">seq.</th>
+                        <th class="text-center">seq</th>
                         <th class="text-center">emp no.</th>
                         <th class="text-center">title</th>
                         <th class="text-center">first name</th>

@@ -41,48 +41,49 @@ namespace api_hrgis.Controllers
             return await _context.tr_course_registration.ToListAsync();
         }
 
-        // GET: api/Registration/5
+        
+        // GET: api/Registration/{course_no}
         [HttpGet("{course_no}")]
-        public async Task<ActionResult<tr_course_registration>> Gettr_course_registration(string course_no)
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> get_registrant_approved(string course_no)
         {
-            var tr_course_registration = await _context.tr_course_registration.Where(x => x.course_no == course_no).FirstOrDefaultAsync();
+            var course_score = await _context.tr_course_registration
+                        .Include(e => e.employees)
+                        .Where(e => e.course_no == course_no)
+                        .OrderBy(x => x.emp_no)
+                        .AsNoTracking()
+                        .ToListAsync();
 
-            if (tr_course_registration == null)
+            if (course_score==null)
             {
                 return NotFound();
             }
 
-            return tr_course_registration;
+            return Ok(course_score);
         }
 
-        // GET: api/Registration/5
-        [HttpGet("Get_course")]
-        public async Task<ActionResult<IEnumerable<tr_course_registration>>> Get_course()
+        // GET: api/Registration/{course_no}/Approved
+        [HttpGet("{course_no}/Approved")]
+        public async Task<ActionResult<tr_course_registration>> Gettr_course_registration(string course_no)
         {
-            var tr_course_registration = await (from tb in _context.tr_course_registration
-                                                join tb1 in _context.tr_course on tb.course_no equals tb1.course_no
-                                                join tb2 in _context.tb_organization on tb1.org_code equals tb2.org_code
-                                                where tb.last_status == _config.GetValue<string>("Status:approved")
-                                                select new
-                                                {
-                                                    course_no = tb.course_no.Substring(0, 7).ToString(),
-                                                    tb1.course_name_en,
-                                                    tb1.course_name_th,
-                                                    tb1.org_code,
-                                                    tb2.org_abb
-                                                }
-                                        ).Distinct().ToListAsync();
+            var course_score = await _context.tr_course_registration
+                        .Include(e => e.employees)
+                        .Where(e => e.course_no == course_no && e.last_status == "Approved")
+                        .OrderBy(x => x.emp_no)
+                        .AsNoTracking()
+                        .ToListAsync();
 
-            return Ok(tr_course_registration);
+            if (course_score==null)
+            {
+                return NotFound();
+            }
+
+            return Ok(course_score);
         }
 
         // GET: api/Registration/GetGridView/{course_no}/{org_code}
         [HttpGet("GetGridView/{course_no}/{org_code}")]
         public async Task<ActionResult> GetGridView(string course_no, string org_code)
         {
-            // string _org = "";
-            // _org = org_code == _config.GetValue<string>("Text:all") ? "" : dept_abb;
-
             var query = await (
                 from tb1 in _context.tr_course_registration
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
@@ -201,7 +202,6 @@ namespace api_hrgis.Controllers
         }
 
         // PUT: api/Registration/MgrApprove/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("MgrApprove/{course_no}")]
         public async Task<IActionResult> PutMgrApprove(string course_no, List<tr_course_registration> registrant)
         {
@@ -255,41 +255,7 @@ namespace api_hrgis.Controllers
                 }
                 _context.tr_course_registration.UpdateRange(list);
                 await _context.SaveChangesAsync();
-
-                /////////// ทำการเรียงลำดับ เฉพาะสถานะ approved, เรียงลำดับตาม manager_approved_at
-                List<tr_course_registration> list1 = new List<tr_course_registration>();
-                var seq1 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status == _config.GetValue<string>("Status:approved"))
-                                .OrderBy(x => x.final_approved_at).ToListAsync();
-                int _seq1 = 0;
-                for (var j = 0; j < seq1.Count(); j++)
-                {
-                    var item1 = seq1[j];
-                    _seq1 = _seq1 + 1;
-
-                    var edits1 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item1.emp_no).FirstOrDefault();
-                    edits1.seq_no = _seq1;
-                    list1.Add(edits1);
-                }
-                _context.tr_course_registration.UpdateRange(list1);
-                await _context.SaveChangesAsync();
-                /////////// ทำการเรียงลำดับ ที่ไม่ใช่สถานะ approved, เรียงลำดับตาม register_at
-                List<tr_course_registration> list2 = new List<tr_course_registration>();
-                var seq2 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status != _config.GetValue<string>("Status:approved")).OrderBy(x => x.register_at).ToListAsync();
-                int _seq2 = _seq1;
-                for (var k = 0; k < seq2.Count(); k++)
-                {
-                    var item2 = seq2[k];
-                    _seq2 = _seq2 + 1;
-
-                    var edits2 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item2.emp_no).FirstOrDefault();
-                    edits2.seq_no = _seq2;
-                    edits2.last_status = _seq2>course.capacity? _config["Status:wait"]:null;
-                    list2.Add(edits2);
-                }
-                _context.tr_course_registration.UpdateRange(list2);
-                await _context.SaveChangesAsync();
+                await Sorting(course_no);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -305,136 +271,43 @@ namespace api_hrgis.Controllers
 
             return NoContent();
         }
-
-        protected async Task HaveFinal(string course_no, List<tr_course_registration> registrant)
-        {
+        private async Task Sorting(string course_no){
             var course = await _context.tr_course
                                     .Where(e => e.course_no==course_no)
                                     .FirstOrDefaultAsync();
-    
-            List<tr_course_registration> list = new List<tr_course_registration>();
-            int _seq_no = 0;
-            var query_seq = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status == _config.GetValue<string>("Status:approved")).OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
-            _seq_no = query_seq == null ? _seq_no : query_seq.seq_no;
-
-            for (var i = 0; i < registrant.Count(); i++)
+            /////////// ทำการเรียงลำดับ เฉพาะสถานะ approved, เรียงลำดับตาม manager_approved_at
+            List<tr_course_registration> list1 = new List<tr_course_registration>();
+            var seq1 = await _context.tr_course_registration.Where(x => x.course_no == course_no
+                            && x.last_status == _config.GetValue<string>("Status:approved"))
+                            .OrderBy(x => x.final_approved_at).ToListAsync();
+            int _seq1 = 0;
+            for (var j = 0; j < seq1.Count(); j++)
             {
-                var item = registrant[i];
-                // _seq_no = i + 1;
-                if (item.final_approved_checked == true)
-                {
-                    var edits = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                    && x.emp_no == item.emp_no && x.last_status != _config.GetValue<string>("Status:approved")).FirstOrDefaultAsync();
-                    if (edits != null)
-                    {
-                        _seq_no = _seq_no + 1;
-                        edits.seq_no = _seq_no;
-                        edits.last_status = _config.GetValue<string>("Status:approved");
-                        edits.final_approved_at = DateTime.Now;
-                        edits.final_approved_by = User.FindFirst("emp_no").Value;
-                        edits.final_approved_checked = true;
-                        // Console.WriteLine("===== 1: " + item.emp_no + " : " + _seq_no);
+                var item1 = seq1[j];
+                _seq1 = _seq1 + 1;
 
-                        list.Add(edits);
-                    }
-                }
+                var edits1 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item1.emp_no).FirstOrDefault();
+                edits1.seq_no = _seq1;
+                list1.Add(edits1);
             }
-            _context.tr_course_registration.UpdateRange(list);
+            _context.tr_course_registration.UpdateRange(list1);
             await _context.SaveChangesAsync();
-
-            // อัปเดต seq_no ที่เหลือจากอันไม่ติ๊ก
-            var strtb = "";
-            strtb = String.Join(",", registrant.Where(x => x.final_approved_checked == false).Select(p => p.emp_no));
-            // Console.WriteLine("===== 00: " + strtb);
-
-            List<tr_course_registration> list_after = new List<tr_course_registration>();
-            int _seq_no_after = _seq_no;
-            var query_after = (from c in _context.tr_course_registration
-                               where c.course_no == course_no && c.last_status != _config.GetValue<string>("Status:approved") && strtb.Contains(c.emp_no)
-                               select c).OrderBy(x => x.register_at).ToList();
-            for (var j = 0; j < query_after.Count(); j++)
+            /////////// ทำการเรียงลำดับ ที่ไม่ใช่สถานะ approved, เรียงลำดับตาม register_at
+            List<tr_course_registration> list2 = new List<tr_course_registration>();
+            var seq2 = await _context.tr_course_registration.Where(x => x.course_no == course_no
+                            && x.last_status != _config.GetValue<string>("Status:approved")).OrderBy(x => x.register_at).ToListAsync();
+            int _seq2 = _seq1;
+            for (var k = 0; k < seq2.Count(); k++)
             {
-                var item_after = query_after[j];
-                _seq_no_after = _seq_no_after + 1;
-                // Console.WriteLine("===== 2 : " + item_after.emp_no + " : " + _seq_no_after);
+                var item2 = seq2[k];
+                _seq2 = _seq2 + 1;
 
-                var edits_after = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item_after.emp_no).FirstOrDefault();
-                edits_after.seq_no = _seq_no_after;
-                edits_after.last_status = edits_after.last_status == _config.GetValue<string>("Status:approved") ? edits_after.last_status : _config.GetValue<string>("Status:wait");
-                edits_after.final_approved_at = edits_after.last_status == _config.GetValue<string>("Status:approved") ? edits_after.final_approved_at : null;
-                edits_after.final_approved_by = edits_after.last_status == _config.GetValue<string>("Status:approved") ? edits_after.final_approved_by : null;
-                edits_after.final_approved_checked = edits_after.last_status == _config.GetValue<string>("Status:approved") ? edits_after.final_approved_checked : null;
-
-                list_after.Add(edits_after);
+                var edits2 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item2.emp_no).FirstOrDefault();
+                edits2.seq_no = _seq2;
+                edits2.last_status = _seq2>course.capacity? _config["Status:wait"]:null;
+                list2.Add(edits2);
             }
-            _context.tr_course_registration.UpdateRange(list_after);
-            await _context.SaveChangesAsync();
-        }
-        protected async Task NonFinal(string course_no, List<tr_course_registration> registrant)
-        {
-            var course = await _context.tr_course
-                                    .Where(e => e.course_no==course_no)
-                                    .FirstOrDefaultAsync();
-
-            List<tr_course_registration> list = new List<tr_course_registration>();
-            int _seq_no = 0;
-            var query_seq = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status == _config.GetValue<string>("Status:approved")).OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
-            _seq_no = query_seq == null ? _seq_no : query_seq.seq_no;
-
-            for (var i = 0; i < registrant.Count(); i++)
-            {
-                var item = registrant[i];
-                if (item.final_approved_checked == true)
-                {
-                    var edits = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                    && x.emp_no == item.emp_no && x.last_status != _config.GetValue<string>("Status:approved")).FirstOrDefaultAsync();
-                    if (edits != null)
-                    {
-                        _seq_no = _seq_no + 1;
-                        edits.seq_no = _seq_no;
-                        edits.last_status = _config.GetValue<string>("Status:approved");
-                        edits.final_approved_at = DateTime.Now;
-                        edits.final_approved_by = User.FindFirst("emp_no").Value;
-                        edits.final_approved_checked = true;
-                        // Console.WriteLine("===== 1: " + item.emp_no + " : " + _seq_no);
-
-                        list.Add(edits);
-                    }
-                }
-            }
-            _context.tr_course_registration.UpdateRange(list);
-            await _context.SaveChangesAsync();
-
-            // อัปเดต seq_no ที่เหลือจากอันไม่ติ๊ก
-            var strtb = "";
-            strtb = String.Join(",", registrant.Where(x => x.final_approved_checked == false).Select(p => p.emp_no));
-            // Console.WriteLine("===== 0: " + strtb);
-            // Console.WriteLine("===== 0: " + _seq_no);
-
-            List<tr_course_registration> list_after = new List<tr_course_registration>();
-            int _seq_no_after = _seq_no;
-            var query_after = (from c in _context.tr_course_registration
-                               where c.course_no == course_no && c.last_status != _config.GetValue<string>("Status:approved")
-                               || (c.course_no == course_no && strtb.Contains(c.emp_no))
-                               select c).OrderBy(x => x.register_at).ToList();
-            for (var j = 0; j < query_after.Count(); j++)
-            {
-                var item_after = query_after[j];
-                _seq_no_after = _seq_no_after + 1;
-                // Console.WriteLine("===== 3 : " + item_after.emp_no + " : " + _seq_no_after);
-
-                var edits_after = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item_after.emp_no).FirstOrDefault();
-                edits_after.seq_no = _seq_no_after;
-                edits_after.last_status = null;
-                edits_after.final_approved_at = null;
-                edits_after.final_approved_by = null;
-                edits_after.final_approved_checked = null;
-
-                list_after.Add(edits_after);
-            } // เรียงลำดับของคนที่เหลือ
-            _context.tr_course_registration.UpdateRange(list_after);
+            _context.tr_course_registration.UpdateRange(list2);
             await _context.SaveChangesAsync();
         }
 
@@ -502,38 +375,7 @@ namespace api_hrgis.Controllers
                 _context.tr_course_registration.UpdateRange(list);
                 await _context.SaveChangesAsync();
 
-                /////////// ทำการเรียงลำดับ เฉพาะสถานะ approved, เรียงลำดับตาม center_approved_at
-                List<tr_course_registration> list1 = new List<tr_course_registration>();
-                var seq1 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status == _config.GetValue<string>("Status:approved")).OrderBy(x => x.final_approved_at).ToListAsync();
-                int _seq1 = 0;
-                for (var j = 0; j < seq1.Count(); j++)
-                {
-                    var item1 = seq1[j];
-                    _seq1 = _seq1 + 1;
-
-                    var edits1 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item1.emp_no).FirstOrDefault();
-                    edits1.seq_no = _seq1;
-                    list1.Add(edits1);
-                }
-                _context.tr_course_registration.UpdateRange(list1);
-                await _context.SaveChangesAsync();
-                /////////// ทำการเรียงลำดับ ที่ไม่ใช่สถานะ approved, เรียงลำดับตาม register_at
-                List<tr_course_registration> list2 = new List<tr_course_registration>();
-                var seq2 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                                && x.last_status != _config.GetValue<string>("Status:approved")).OrderBy(x => x.register_at).ToListAsync();
-                int _seq2 = _seq1;
-                for (var k = 0; k < seq2.Count(); k++)
-                {
-                    var item2 = seq2[k];
-                    _seq2 = _seq2 + 1;
-
-                    var edits2 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item2.emp_no).FirstOrDefault();
-                    edits2.seq_no = _seq2;
-                    list2.Add(edits2);
-                }
-                _context.tr_course_registration.UpdateRange(list2);
-                await _context.SaveChangesAsync();
+                await Sorting(course_no);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -722,6 +564,66 @@ namespace api_hrgis.Controllers
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
         }
 
+        // PUT: api/Registration/ByCommitteeCourse/{course_no}/{emp_no}
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("ByCommitteeCourse/{course_no}/{emp_no}")]
+        public async Task<IActionResult> Puttr_course_registration(string course_no, string emp_no, tr_course_registration r)
+        {
+            var registrant = await _context.tr_course_registration
+                            .Where(e=>e.emp_no==emp_no && e.course_no==course_no)
+                            .FirstOrDefaultAsync();
+
+            if(registrant==null){
+                return BadRequest("Not found the trainee");
+            }
+
+            registrant.pre_test_score = r.pre_test_score;
+            registrant.pre_test_grade = r.pre_test_grade;
+            registrant.post_test_score = r.post_test_score;
+            registrant.post_test_grade = r.post_test_grade;
+            registrant.scored_at = DateTime.Now;
+            registrant.scored_by = User.FindFirst("emp_no").Value;
+
+            _context.Entry(registrant).State = EntityState.Modified;
+            await _context.SaveChangesAsync(); 
+
+            return NoContent();
+        }
+
+        // POST: api/Registation/Continuous
+        [HttpPost("Continuous")]
+        public async Task<ActionResult<tr_course_registration>> PostContinuous(List<tr_course_registration> registration)
+        {
+            foreach (var item in registration)
+            {
+                var last = await _context.tr_course_registration.Where(x => x.course_no == registration[0].course_no)
+                .OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
+                if (last == null)
+                {
+                    item.seq_no = 1;
+                }
+                else
+                {
+                    item.seq_no = last.seq_no + 1;
+                }
+                item.pre_test_grade = item.pre_test_grade==""? null:item.pre_test_grade;
+                item.post_test_grade = item.post_test_grade==""? null:item.post_test_grade;
+                item.remark = _config.GetValue<string>("Text:continuous");
+                item.last_status = _config.GetValue<string>("Status:approved");
+                item.register_at = DateTime.Now;
+                item.register_by = User.FindFirst("emp_no").Value;
+                item.final_approved_at = DateTime.Now;
+                item.final_approved_by = User.FindFirst("emp_no").Value;
+                item.scored_at = DateTime.Now;
+                item.scored_by = User.FindFirst("emp_no").Value;
+
+                await _context.tr_course_registration.AddAsync(item);
+                await _context.SaveChangesAsync();
+            }
+
+            return CreatedAtAction("Getcourse_score", new { id = registration[0].course_no }, registration);
+        }
+
         private bool is_course_of_committee(string course_no)
         {
             var emp_no = User.FindFirst("emp_no").Value;
@@ -828,7 +730,8 @@ namespace api_hrgis.Controllers
 
         // POST: api/Registration/UploadCourseRegistration/{course_no}
         [HttpPost("UploadCourseRegistration/{course_no}")]
-        public async Task<ActionResult<IEnumerable<tr_course_registration>>> UploadCourseRegistration(string course_no, [FromForm] req_fileform model)
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> UploadCourseRegistration(
+            string course_no, [FromForm] req_fileform model)
         {
             string rootFolder = Directory.GetCurrentDirectory();
             string pathString = @"\API site\files\file-hrgis\upload\";

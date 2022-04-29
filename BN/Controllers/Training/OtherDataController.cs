@@ -61,7 +61,7 @@ namespace api_hrgis.Controllers
         [HttpGet("GetCountAttendee")]
         public IActionResult GetCountAttendee(string course_no)
         {
-            var query = string.Format(@"SELECT * FROM V_COUNT_ATTENDEE
+            var query = string.Format(@"SELECT * FROM V_COURSE_ATTENDEE
                         where course_no like '%{0}%'
                         and (last_status = '{1}')"
                         , course_no, _config.GetValue<string>("Status:approved"));

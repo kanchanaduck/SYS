@@ -19,24 +19,28 @@
         </div>
     </div>
 </div>
-<div class="card card-body tx-13 mb-3" *ngIf=" (course | json) != '{}'">
+<div class="card card-body tx-13 mt-3 mb-3" *ngIf="(course | json) != '{}'">
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
         <dd class="col-sm-2">{{ course.course_no }}</dd>
-        <dt class="col-sm-2">THAI NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_th || '-' }}</dd>
-        <dt class="col-sm-2">ENGLISH  NAME:</dt>
-        <dd class="col-sm-2">{{ course.course_name_en || '-' }}</dd>
     </dl>
     <dl class="row my-0">
-        <dt class="col-sm-1">GROUP:</dt>
-        <dd class="col-sm-2">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
-        <dt class="col-sm-1">DAY: </dt>
-        <dd class="col-sm-2">{{ course.days }}</dd>
-        <dt class="col-sm-2">CAPACITY:</dt>
-        <dd class="col-sm-1">{{ course.capacity }}</dd>
+        <dt class="col-sm-2">THAI NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_th || '-' }}</dd>
+        <dt class="col-sm-2">ENGLISH  NAME:</dt>
+        <dd class="col-sm-4">{{ course.course_name_en || '-' }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">GROUP:</dt>
+        <dd class="col-sm-4">{{ course.organization.org_abb+" ("+course.org_code+")" }}</dd>
         <dt class="col-sm-2">OPEN REGISTER:</dt>
-        <dd class="col-sm-1">{{ course.open_register? "open":"close" }}</dd>
+        <dd class="col-sm-4">{{ course.open_register? "OPEN":"CLOSE" }}</dd>
+    </dl>
+    <dl class="row my-0">
+        <dt class="col-sm-2">DAY: </dt>
+        <dd class="col-sm-4">{{ course.days }}</dd>
+        <dt class="col-sm-2">CAPACITY:</dt>
+        <dd class="col-sm-4">{{ course.capacity }}</dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">FROM:</dt>

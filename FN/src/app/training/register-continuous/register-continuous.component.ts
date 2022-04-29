@@ -290,7 +290,7 @@ async check_is_committee() {
     }
     console.log(form_data)
     if(form_data.length>0){
-      axios.post(`${environment.API_URL}RegisterScore/Continuous`,form_data,this.headers)
+      axios.post(`${environment.API_URL}Registration/Continuous`,form_data,this.headers)
       .then(function (response) {
         self.fnGet(self.course_no);
         self.datatable()
@@ -317,7 +317,7 @@ async check_is_committee() {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('RegisterScore/' + item.course_no + '/' + item.emp_no, environment.text.delete);
+        await this.service.axios_delete('Registration/' + item.course_no + '/' + item.emp_no, environment.text.delete);
         this.fnGet(item.course_no);
       }
     })
@@ -358,7 +358,7 @@ async check_is_committee() {
 
   res_conflict: any;
   async fnGet(course_no) {
-    await this.service.gethttp(`RegisterScore/${course_no}`)
+    await this.service.gethttp(`Registration/${course_no}`)
       .subscribe((response: any) => {
         console.log(response);
 
