@@ -178,6 +178,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
     try {
       const response = await axios.get(`${environment.API_URL}Trainers/${trainer_no}`, this.headers);
       this.trainer = response
+      this.trainer.org_code  = this.trainer.trainer_owner_code
       return response;
     } 
     catch (error) {

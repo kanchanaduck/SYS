@@ -233,63 +233,6 @@ namespace api_hrgis.Controllers
             }
             await _context.tr_course_registration.AddRangeAsync(registration);
             await _context.SaveChangesAsync();
-            /* try
-            {
-                int seq = 0;
-                List<tr_course_registration> list = new List<tr_course_registration>();
-                for (int i = 0; i < model.array.Count(); i++)
-                {
-                    var item = model.array[i];
-                    var query = await _context.tr_course_registration.Where(x => x.course_no == model.course_no
-                    && x.emp_no == item.emp_no).FirstOrDefaultAsync();
-                    if (query != null)
-                    {
-                        return Conflict(_config.GetValue<string>("Text:duplication"));
-                    }
-                    else
-                    {
-                        var last = await _context.tr_course_registration.Where(x => x.course_no == model.course_no)
-                        .OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
-                        if (last == null)
-                        {
-                            seq = 1;
-                        }
-                        else
-                        {
-                            seq = last.seq_no + 1;
-                        }
-                    }
-
-                    tr_course_registration tb = new tr_course_registration();
-                    tb.course_no = model.course_no;
-                    tb.emp_no = item.emp_no;
-                    tb.seq_no = seq;
-                    tb.pre_test_score = item.pre_test_score;
-                    tb.pre_test_grade = item.pre_test_grade;
-                    tb.post_test_score = item.post_test_score;
-                    tb.post_test_grade = item.post_test_grade;
-                    tb.last_status = _config.GetValue<string>("Status:approved");
-                    tb.remark = _config.GetValue<string>("Text:continuous");
-                    tb.register_at = DateTime.Now;
-                    tb.register_by = User.FindFirst("emp_no").Value;
-                    tb.scored_at = DateTime.Now;
-                    tb.scored_by = User.FindFirst("emp_no").Value;
-                    list.Add(tb);
-                    await _context.tr_course_registration.AddRangeAsync(list);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (DbUpdateException)
-            {
-                if (course_scoreExists(model.course_no))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            } */
 
             return CreatedAtAction("Getcourse_score", new { id = registration[0].course_no }, registration);
         }

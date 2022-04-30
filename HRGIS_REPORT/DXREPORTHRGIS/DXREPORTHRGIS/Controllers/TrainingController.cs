@@ -50,11 +50,6 @@ namespace DXREPORTHRGIS.Controllers
         {
             return View();
         }
-
-        public IActionResult Courses()
-        {
-            return View();
-        }
         public IActionResult TrainerHistory()
         {
             return View();
@@ -72,6 +67,10 @@ namespace DXREPORTHRGIS.Controllers
             return View();
         }
         public IActionResult CourseCountTrainee()
+        {
+            return View();
+        }
+        public IActionResult CourseAttendeeFromMasterCourse()
         {
             return View();
         }

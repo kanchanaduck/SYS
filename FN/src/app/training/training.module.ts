@@ -25,7 +25,6 @@ import { ApproveMgrComponent } from './approve-mgr/approve-mgr.component';
 import { ApproveFinalComponent } from './approve-final/approve-final.component';
 import { ConfirmationSheetComponent } from './confirmation-sheet/confirmation-sheet.component';
 import { RegisterContinuousComponent } from './register-continuous/register-continuous.component';
-import { SignatureSheetComponent } from './signature-sheet/signature-sheet.component';
 import { CourseScoreComponent } from './course-score/course-score.component';
 import { CourseAttendeeComponent } from './course-attendee/course-attendee.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
@@ -46,7 +45,6 @@ const routes: Routes = [
   { path: 'course-confirmation-sheet', component: ConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course', active: true } },
   { path: 'course', component: CourseComponent, data: { title: 'Course', active: true } },
-  { path: 'signature-sheet', component: SignatureSheetComponent, data: { title: 'Signature sheet', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true} },
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
   { path: 'survey-setting', component: SurveySettingComponent, data: { title: 'Need survey setting', active: true } },
@@ -72,7 +70,6 @@ const routes: Routes = [
     ApproveFinalComponent,
     ConfirmationSheetComponent,
     RegisterContinuousComponent,
-    SignatureSheetComponent,
     CourseScoreComponent,
     CourseAttendeeComponent,
     StakeholderComponent,

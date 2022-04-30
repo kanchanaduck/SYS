@@ -16,7 +16,6 @@
     <None Remove="PredefinedReports\CourseAttendeeFromMasterCourse.vsrepx" />
     <None Remove="PredefinedReports\CourseCountTrainee.vsrepx" />
     <None Remove="PredefinedReports\CourseMap.vsrepx" />
-    <None Remove="PredefinedReports\Courses.vsrepx" />
     <None Remove="PredefinedReports\CourseTarget.vsrepx" />
     <None Remove="PredefinedReports\EmployeeTraining.vsrepx" />
     <None Remove="PredefinedReports\stakeholder.vsrepx" />
@@ -64,33 +63,6 @@
     </Compile>
     <Compile Update="PredefinedReports\CourseMap.Designer.cs">
       <DependentUpon>CourseMap.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\Courses.cs">
-      <DependentUpon>Courses.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\Courses.Designer.cs">
-      <DependentUpon>Courses.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy %282%29.cs">
-      <SubType>XtraReport</SubType>
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy %282%29.Designer.cs">
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy - Copy.cs">
-      <SubType>XtraReport</SubType>
-      <DependentUpon>CourseTarget - Copy.cs</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy - Copy.Designer.cs">
-      <DependentUpon>CourseTarget - Copy.Designer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy.cs">
-      <SubType>XtraReport</SubType>
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\CourseTarget - Copy.Designer.cs">
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\CourseTarget.cs">
       <DependentUpon>CourseTarget.vsrepx</DependentUpon>

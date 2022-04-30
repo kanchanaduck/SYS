@@ -1,141 +1,131 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="0" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="CourseMap" VerticalContentSplitting="Smart" HorizontalContentSplitting="Smart" Landscape="true" Margins="25, 25, 75, 75" PaperKind="A4" PageWidth="1169" PageHeight="827" Version="21.2" Font="Arial, 9.75pt">
+<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="0" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="CourseMap" VerticalContentSplitting="Smart" HorizontalContentSplitting="Smart" Landscape="true" Margins="25, 25, 75, 61" PaperKind="A4" PageWidth="1169" PageHeight="827" Version="21.2" Font="Arial, 9.75pt">
   <Extensions>
     <Item1 Ref="1" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
-  <Parameters>
-    <Item1 Ref="4" Description="DIVISION" ValueSourceSettings="#Ref-2" AllowNull="true" Name="DIV" />
-    <Item2 Ref="6" Description="DEPARTMENT" ValueSourceSettings="#Ref-5" MultiValue="true" AllowNull="true" Name="DEPT" />
-  </Parameters>
-  <CalculatedFields>
-    <Item1 Ref="8" Name="MASTER_COURSE" Expression="CONCAT([master_course_no],': ',[master_course_name_th])" DataSource="#Ref-7" DataMember="V_COURSE_MAP" />
-  </CalculatedFields>
   <Bands>
-    <Item1 Ref="9" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="30.0130215">
+    <Item1 Ref="2" ControlType="ReportHeaderBand" Name="ReportHeader" HeightF="30.0130157">
       <Controls>
-        <Item1 Ref="10" ControlType="XRLabel" Name="label1" Text="Course Map" SizeF="140.169418,30.0130157" LocationFloat="0,0" StyleName="TitleStyle" />
+        <Item1 Ref="3" ControlType="XRLabel" Name="label1" Text="COURSE MAP" TextAlignment="MiddleCenter" SizeF="1119,30.0130157" LocationFloat="0,0" StyleName="TitleStyle">
+          <StylePriority Ref="4" UseTextAlignment="false" />
+        </Item1>
       </Controls>
     </Item1>
-    <Item2 Ref="11" ControlType="DetailBand" Name="Detail" HeightF="450">
+    <Item2 Ref="5" ControlType="DetailBand" Name="Detail" HeightF="1665">
       <Controls>
-        <Item1 Ref="12" ControlType="XRCrossTab" Name="crossTab1" GeneralStyleName="crossTabGeneralStyle" DataAreaStyleName="crossTabDataStyle" HeaderAreaStyleName="crossTabHeaderStyle" TotalAreaStyleName="crossTabTotalStyle" DataSource="#Ref-7" DataMember="V_COURSE_MAP" FilterString="[dept_abb] In (?DEPT) And [div_abb] = ?DIV" SizeF="1025.28186,450" LocationFloat="0,0">
-          <Parameters>
-            <Item1 Ref="14" Name="DEPT" Parameter="#Ref-6" />
-            <Item2 Ref="15" Name="DIV" Parameter="#Ref-4" />
-          </Parameters>
+        <Item1 Ref="7" ControlType="XRCrossTab" Name="crossTab1" GeneralStyleName="crossTabGeneralStyle" DataAreaStyleName="crossTabDataStyle" HeaderAreaStyleName="crossTabHeaderStyle" TotalAreaStyleName="crossTabTotalStyle" DataSource="#Ref-6" DataMember="V_COURSE_MAP" SizeF="822.9166,400" LocationFloat="0,0">
           <RowFields>
-            <Item1 Ref="16" FieldName="emp_no" />
-            <Item2 Ref="17" FieldName="title_name_en" />
-            <Item3 Ref="18" FieldName="firstname_en" />
-            <Item4 Ref="19" FieldName="lastname_en" />
-            <Item5 Ref="20" FieldName="div_abb" />
-            <Item6 Ref="21" FieldName="dept_abb" />
-            <Item7 Ref="22" FieldName="band" />
-            <Item8 Ref="23" FieldName="position_name_en" />
-            <Item9 Ref="24" FieldName="employed_status" />
+            <Item1 Ref="8" FieldName="emp_no" />
+            <Item2 Ref="9" FieldName="title_name_en" />
+            <Item3 Ref="10" FieldName="firstname_en" />
+            <Item4 Ref="11" FieldName="lastname_en" />
+            <Item5 Ref="12" FieldName="div_abb" />
+            <Item6 Ref="13" FieldName="dept_abb" />
+            <Item7 Ref="14" FieldName="band" />
+            <Item8 Ref="15" FieldName="position_name_en" />
+            <Item9 Ref="16" FieldName="employed_status" />
           </RowFields>
           <ColumnFields>
-            <Item1 Ref="25" FieldName="MASTER_COURSE" />
+            <Item1 Ref="17" FieldName="master_course_no" />
           </ColumnFields>
           <DataFields>
-            <Item1 Ref="26" SummaryType="Count" FieldName="emp_no" />
+            <Item1 Ref="18" SummaryType="Count" FieldName="emp_no" />
           </DataFields>
           <ColumnDefinitions>
-            <Item1 Ref="27" Width="95.52729" />
-            <Item2 Ref="28" Width="68.9919357" />
-            <Item3 Ref="29" Width="132.676773" />
-            <Item4 Ref="30" Width="132.6768" />
-            <Item5 Ref="31" Width="79.60608" AutoWidthMode="ShrinkAndGrow" />
-            <Item6 Ref="32" Width="79.60608" AutoWidthMode="ShrinkAndGrow" />
-            <Item7 Ref="33" Width="72.97224" AutoWidthMode="ShrinkAndGrow" />
-            <Item8 Ref="34" Width="159.212158" AutoWidthMode="ShrinkAndGrow" />
-            <Item9 Ref="35" Width="109.568993" AutoWidthMode="ShrinkAndGrow" />
-            <Item10 Ref="36" Width="47.22178" AutoWidthMode="ShrinkAndGrow" />
-            <Item11 Ref="37" Width="47.22178" Visible="false" />
+            <Item1 Ref="19" Width="75" AutoWidthMode="ShrinkAndGrow" />
+            <Item2 Ref="20" Width="55.20833" AutoWidthMode="ShrinkAndGrow" />
+            <Item3 Ref="21" AutoWidthMode="ShrinkAndGrow" />
+            <Item4 Ref="22" AutoWidthMode="ShrinkAndGrow" />
+            <Item5 Ref="23" Width="57.2916565" AutoWidthMode="ShrinkAndGrow" />
+            <Item6 Ref="24" Width="57.2916565" AutoWidthMode="ShrinkAndGrow" />
+            <Item7 Ref="25" Width="56.25" AutoWidthMode="ShrinkAndGrow" />
+            <Item8 Ref="26" AutoWidthMode="ShrinkAndGrow" />
+            <Item9 Ref="27" Width="81.25" />
+            <Item10 Ref="28" Width="40.625" />
+            <Item11 Ref="29" Visible="false" />
           </ColumnDefinitions>
           <RowDefinitions>
-            <Item1 Ref="38" Height="200" />
-            <Item2 Ref="39" />
-            <Item3 Ref="40" Visible="false" />
-            <Item4 Ref="41" Visible="false" />
-            <Item5 Ref="42" Visible="false" />
-            <Item6 Ref="43" Visible="false" />
-            <Item7 Ref="44" Visible="false" />
-            <Item8 Ref="45" Visible="false" />
-            <Item9 Ref="46" Visible="false" />
-            <Item10 Ref="47" Visible="false" />
-            <Item11 Ref="48" />
+            <Item1 Ref="30" Height="150" />
+            <Item2 Ref="31" />
+            <Item3 Ref="32" Visible="false" />
+            <Item4 Ref="33" Visible="false" />
+            <Item5 Ref="34" Visible="false" />
+            <Item6 Ref="35" Visible="false" />
+            <Item7 Ref="36" Visible="false" />
+            <Item8 Ref="37" Visible="false" />
+            <Item9 Ref="38" Visible="false" />
+            <Item10 Ref="39" Visible="false" />
+            <Item11 Ref="40" />
           </RowDefinitions>
           <Cells>
-            <Item1 Ref="49" ControlType="XRCrossTabCell" Name="crossTabCell1" ColumnIndex="0" RowIndex="0" Text="EMP NO." TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item2 Ref="50" ControlType="XRCrossTabCell" Name="crossTabCell2" ColumnIndex="1" RowIndex="0" Text="TITLE" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item3 Ref="51" ControlType="XRCrossTabCell" Name="crossTabCell3" ColumnIndex="2" RowIndex="0" Text="FIRST NAME" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item4 Ref="52" ControlType="XRCrossTabCell" Name="crossTabCell4" ColumnIndex="3" RowIndex="0" Text="LAST NAME" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item5 Ref="53" ControlType="XRCrossTabCell" Name="crossTabCell5" ColumnIndex="4" RowIndex="0" Text="DIV" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item6 Ref="54" ControlType="XRCrossTabCell" Name="crossTabCell6" ColumnIndex="5" RowIndex="0" Text="DEPT" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item7 Ref="55" ControlType="XRCrossTabCell" Name="crossTabCell7" ColumnIndex="6" RowIndex="0" Text="BAND" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item8 Ref="56" ControlType="XRCrossTabCell" Name="crossTabCell8" ColumnIndex="7" RowIndex="0" Text="POSITION" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item9 Ref="57" ControlType="XRCrossTabCell" Name="crossTabCell9" ColumnIndex="8" RowIndex="0" Text="STATUS" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item10 Ref="58" ControlType="XRCrossTabCell" Name="crossTabCell10" ColumnIndex="9" RowIndex="1" TextAlignment="TopCenter" />
-            <Item11 Ref="59" ControlType="XRCrossTabCell" Name="crossTabCell11" Angle="90" ColumnIndex="9" RowIndex="0" TextAlignment="BottomCenter" Padding="6,6,0,6,100" />
-            <Item12 Ref="60" ControlType="XRCrossTabCell" Name="crossTabCell14" ColumnIndex="0" RowIndex="1" RowSpan="8" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item13 Ref="61" ControlType="XRCrossTabCell" Name="crossTabCell15" ColumnIndex="1" RowIndex="1" RowSpan="7" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item14 Ref="62" ControlType="XRCrossTabCell" Name="crossTabCell16" ColumnIndex="2" RowIndex="1" RowSpan="6" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item15 Ref="63" ControlType="XRCrossTabCell" Name="crossTabCell17" ColumnIndex="3" RowIndex="1" RowSpan="5" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item16 Ref="64" ControlType="XRCrossTabCell" Name="crossTabCell18" ColumnIndex="4" RowIndex="1" RowSpan="4" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item17 Ref="65" ControlType="XRCrossTabCell" Name="crossTabCell19" ColumnIndex="5" RowIndex="1" RowSpan="3" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item18 Ref="66" ControlType="XRCrossTabCell" Name="crossTabCell20" ColumnIndex="6" RowIndex="1" RowSpan="2" TextAlignment="TopCenter" Font="Arial, 9.75pt" />
-            <Item19 Ref="67" ControlType="XRCrossTabCell" Name="crossTabCell21" ColumnIndex="7" RowIndex="1" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item20 Ref="68" ControlType="XRCrossTabCell" Name="crossTabCell22" ColumnIndex="8" RowIndex="1" TextAlignment="TopLeft" Font="Arial, 9.75pt" />
-            <Item21 Ref="69" ControlType="XRCrossTabCell" Name="crossTabCell23" TextFormatString="Total {0}" ColumnIndex="7" RowIndex="2" ColumnSpan="2" />
-            <Item22 Ref="70" ControlType="XRCrossTabCell" Name="crossTabCell24" TextFormatString="Total {0}" ColumnIndex="6" RowIndex="3" ColumnSpan="3" />
-            <Item23 Ref="71" ControlType="XRCrossTabCell" Name="crossTabCell25" TextFormatString="Total {0}" ColumnIndex="5" RowIndex="4" ColumnSpan="4" />
-            <Item24 Ref="72" ControlType="XRCrossTabCell" Name="crossTabCell26" TextFormatString="Total {0}" ColumnIndex="4" RowIndex="5" ColumnSpan="5" />
-            <Item25 Ref="73" ControlType="XRCrossTabCell" Name="crossTabCell27" TextFormatString="Total {0}" ColumnIndex="3" RowIndex="6" ColumnSpan="6" />
-            <Item26 Ref="74" ControlType="XRCrossTabCell" Name="crossTabCell28" TextFormatString="Total {0}" ColumnIndex="2" RowIndex="7" ColumnSpan="7" />
-            <Item27 Ref="75" ControlType="XRCrossTabCell" Name="crossTabCell29" TextFormatString="Total {0}" ColumnIndex="1" RowIndex="8" ColumnSpan="8" />
-            <Item28 Ref="76" ControlType="XRCrossTabCell" Name="crossTabCell30" TextFormatString="Total {0}" ColumnIndex="0" RowIndex="9" ColumnSpan="9" />
-            <Item29 Ref="77" ControlType="XRCrossTabCell" Name="crossTabCell31" ColumnIndex="0" RowIndex="10" ColumnSpan="9" Text="Grand Total" TextAlignment="TopLeft" />
-            <Item30 Ref="78" ControlType="XRCrossTabCell" Name="crossTabCell32" ColumnIndex="9" RowIndex="2" />
-            <Item31 Ref="79" ControlType="XRCrossTabCell" Name="crossTabCell33" ColumnIndex="9" RowIndex="3" />
-            <Item32 Ref="80" ControlType="XRCrossTabCell" Name="crossTabCell34" ColumnIndex="9" RowIndex="4" />
-            <Item33 Ref="81" ControlType="XRCrossTabCell" Name="crossTabCell35" ColumnIndex="9" RowIndex="5" />
-            <Item34 Ref="82" ControlType="XRCrossTabCell" Name="crossTabCell36" ColumnIndex="9" RowIndex="6" />
-            <Item35 Ref="83" ControlType="XRCrossTabCell" Name="crossTabCell37" ColumnIndex="9" RowIndex="7" />
-            <Item36 Ref="84" ControlType="XRCrossTabCell" Name="crossTabCell38" ColumnIndex="9" RowIndex="8" />
-            <Item37 Ref="85" ControlType="XRCrossTabCell" Name="crossTabCell39" ColumnIndex="9" RowIndex="9" />
-            <Item38 Ref="86" ControlType="XRCrossTabCell" Name="crossTabCell40" ColumnIndex="9" RowIndex="10" TextAlignment="TopCenter" />
-            <Item39 Ref="87" ControlType="XRCrossTabCell" Name="crossTabHeaderCell2" ColumnIndex="10" RowIndex="0" Text="Grand Total" />
-            <Item40 Ref="88" ControlType="XRCrossTabCell" Name="crossTabTotalCell1" ColumnIndex="10" RowIndex="1" />
-            <Item41 Ref="89" ControlType="XRCrossTabCell" Name="crossTabTotalCell2" ColumnIndex="10" RowIndex="2" />
-            <Item42 Ref="90" ControlType="XRCrossTabCell" Name="crossTabTotalCell3" ColumnIndex="10" RowIndex="3" />
-            <Item43 Ref="91" ControlType="XRCrossTabCell" Name="crossTabTotalCell4" ColumnIndex="10" RowIndex="4" />
-            <Item44 Ref="92" ControlType="XRCrossTabCell" Name="crossTabTotalCell5" ColumnIndex="10" RowIndex="5" />
-            <Item45 Ref="93" ControlType="XRCrossTabCell" Name="crossTabTotalCell6" ColumnIndex="10" RowIndex="6" />
-            <Item46 Ref="94" ControlType="XRCrossTabCell" Name="crossTabTotalCell7" ColumnIndex="10" RowIndex="7" />
-            <Item47 Ref="95" ControlType="XRCrossTabCell" Name="crossTabTotalCell8" ColumnIndex="10" RowIndex="8" />
-            <Item48 Ref="96" ControlType="XRCrossTabCell" Name="crossTabTotalCell9" ColumnIndex="10" RowIndex="9" />
-            <Item49 Ref="97" ControlType="XRCrossTabCell" Name="crossTabTotalCell10" ColumnIndex="10" RowIndex="10" TextAlignment="TopCenter" />
+            <Item1 Ref="41" ControlType="XRCrossTabCell" Name="crossTabCell1" ColumnIndex="0" RowIndex="0" Text="EMP NO." Font="Arial, 8.25pt, style=Bold" />
+            <Item2 Ref="42" ControlType="XRCrossTabCell" Name="crossTabCell2" ColumnIndex="1" RowIndex="0" Text="TITLE" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item3 Ref="43" ControlType="XRCrossTabCell" Name="crossTabCell3" ColumnIndex="2" RowIndex="0" Text="FIRST NAME" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item4 Ref="44" ControlType="XRCrossTabCell" Name="crossTabCell4" ColumnIndex="3" RowIndex="0" Text="LAST NAME" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item5 Ref="45" ControlType="XRCrossTabCell" Name="crossTabCell5" ColumnIndex="4" RowIndex="0" Text="DIV" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item6 Ref="46" ControlType="XRCrossTabCell" Name="crossTabCell6" ColumnIndex="5" RowIndex="0" Text="DEPT" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item7 Ref="47" ControlType="XRCrossTabCell" Name="crossTabCell7" ColumnIndex="6" RowIndex="0" Text="BAND" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item8 Ref="48" ControlType="XRCrossTabCell" Name="crossTabCell8" ColumnIndex="7" RowIndex="0" Text="POSITION " TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item9 Ref="49" ControlType="XRCrossTabCell" Name="crossTabCell9" ColumnIndex="9" RowIndex="1" TextAlignment="MiddleCenter" Font="Arial, 8.25pt" />
+            <Item10 Ref="50" ControlType="XRCrossTabCell" Name="crossTabCell10" Angle="90" ColumnIndex="9" RowIndex="0" TextAlignment="BottomCenter" Font="Arial, 8.25pt, style=Bold, charSet=0">
+              <ExpressionBindings>
+                <Item1 Ref="51" EventName="BeforePrint" PropertyName="Text" Expression="Concat([master_course_no],': ',[master_course_name_en])" />
+              </ExpressionBindings>
+            </Item10>
+            <Item11 Ref="52" ControlType="XRCrossTabCell" Name="crossTabCell13" ColumnIndex="10" RowIndex="0" Text="Grand Total" />
+            <Item12 Ref="53" ControlType="XRCrossTabCell" Name="crossTabCell15" ColumnIndex="10" RowIndex="1" />
+            <Item13 Ref="54" ControlType="XRCrossTabCell" Name="crossTabCell16" ColumnIndex="0" RowIndex="1" RowSpan="8" Font="Arial, 8.25pt, style=Bold" />
+            <Item14 Ref="55" ControlType="XRCrossTabCell" Name="crossTabCell17" ColumnIndex="1" RowIndex="1" RowSpan="7" Font="Arial, 8.25pt, style=Bold" />
+            <Item15 Ref="56" ControlType="XRCrossTabCell" Name="crossTabCell18" ColumnIndex="2" RowIndex="1" RowSpan="6" Font="Arial, 8.25pt, style=Bold" />
+            <Item16 Ref="57" ControlType="XRCrossTabCell" Name="crossTabCell19" ColumnIndex="3" RowIndex="1" RowSpan="5" Font="Arial, 8.25pt, style=Bold" />
+            <Item17 Ref="58" ControlType="XRCrossTabCell" Name="crossTabCell20" ColumnIndex="4" RowIndex="1" RowSpan="4" Font="Arial, 8.25pt, style=Bold" />
+            <Item18 Ref="59" ControlType="XRCrossTabCell" Name="crossTabCell21" ColumnIndex="5" RowIndex="1" RowSpan="3" Font="Arial, 8.25pt, style=Bold" />
+            <Item19 Ref="60" ControlType="XRCrossTabCell" Name="crossTabCell22" ColumnIndex="6" RowIndex="1" RowSpan="2" Font="Arial, 8.25pt, style=Bold" />
+            <Item20 Ref="61" ControlType="XRCrossTabCell" Name="crossTabCell23" ColumnIndex="7" RowIndex="1" Font="Arial, 8.25pt, style=Bold" />
+            <Item21 Ref="62" ControlType="XRCrossTabCell" Name="crossTabCell24" TextFormatString="Total {0}" ColumnIndex="6" RowIndex="3" ColumnSpan="3" />
+            <Item22 Ref="63" ControlType="XRCrossTabCell" Name="crossTabCell25" TextFormatString="Total {0}" ColumnIndex="5" RowIndex="4" ColumnSpan="4" />
+            <Item23 Ref="64" ControlType="XRCrossTabCell" Name="crossTabCell26" TextFormatString="Total {0}" ColumnIndex="4" RowIndex="5" ColumnSpan="5" />
+            <Item24 Ref="65" ControlType="XRCrossTabCell" Name="crossTabCell27" TextFormatString="Total {0}" ColumnIndex="3" RowIndex="6" ColumnSpan="6" />
+            <Item25 Ref="66" ControlType="XRCrossTabCell" Name="crossTabCell28" TextFormatString="Total {0}" ColumnIndex="2" RowIndex="7" ColumnSpan="7" />
+            <Item26 Ref="67" ControlType="XRCrossTabCell" Name="crossTabCell29" TextFormatString="Total {0}" ColumnIndex="1" RowIndex="8" ColumnSpan="8" />
+            <Item27 Ref="68" ControlType="XRCrossTabCell" Name="crossTabCell30" TextFormatString="Total {0}" ColumnIndex="0" RowIndex="9" ColumnSpan="9" />
+            <Item28 Ref="69" ControlType="XRCrossTabCell" Name="crossTabCell31" ColumnIndex="0" RowIndex="10" ColumnSpan="9" Text="Grand Total" />
+            <Item29 Ref="70" ControlType="XRCrossTabCell" Name="crossTabCell32" ColumnIndex="9" RowIndex="3" />
+            <Item30 Ref="71" ControlType="XRCrossTabCell" Name="crossTabCell33" ColumnIndex="9" RowIndex="4" />
+            <Item31 Ref="72" ControlType="XRCrossTabCell" Name="crossTabCell34" ColumnIndex="9" RowIndex="5" />
+            <Item32 Ref="73" ControlType="XRCrossTabCell" Name="crossTabCell35" ColumnIndex="9" RowIndex="6" />
+            <Item33 Ref="74" ControlType="XRCrossTabCell" Name="crossTabCell36" ColumnIndex="9" RowIndex="7" />
+            <Item34 Ref="75" ControlType="XRCrossTabCell" Name="crossTabCell37" ColumnIndex="9" RowIndex="8" />
+            <Item35 Ref="76" ControlType="XRCrossTabCell" Name="crossTabCell38" ColumnIndex="9" RowIndex="9" />
+            <Item36 Ref="77" ControlType="XRCrossTabCell" Name="crossTabCell39" ColumnIndex="9" RowIndex="10" />
+            <Item37 Ref="78" ControlType="XRCrossTabCell" Name="crossTabCell48" ColumnIndex="10" RowIndex="3" />
+            <Item38 Ref="79" ControlType="XRCrossTabCell" Name="crossTabCell49" ColumnIndex="10" RowIndex="4" />
+            <Item39 Ref="80" ControlType="XRCrossTabCell" Name="crossTabCell50" ColumnIndex="10" RowIndex="5" />
+            <Item40 Ref="81" ControlType="XRCrossTabCell" Name="crossTabCell51" ColumnIndex="10" RowIndex="6" />
+            <Item41 Ref="82" ControlType="XRCrossTabCell" Name="crossTabCell52" ColumnIndex="10" RowIndex="7" />
+            <Item42 Ref="83" ControlType="XRCrossTabCell" Name="crossTabCell53" ColumnIndex="10" RowIndex="8" />
+            <Item43 Ref="84" ControlType="XRCrossTabCell" Name="crossTabCell54" ColumnIndex="10" RowIndex="9" />
+            <Item44 Ref="85" ControlType="XRCrossTabCell" Name="crossTabCell55" ColumnIndex="10" RowIndex="10" />
+            <Item45 Ref="86" ControlType="XRCrossTabCell" Name="crossTabHeaderCell1" ColumnIndex="8" RowIndex="0" Text="STATUS" TextAlignment="MiddleCenter" Font="Arial, 8.25pt, style=Bold, charSet=0" />
+            <Item46 Ref="87" ControlType="XRCrossTabCell" Name="crossTabHeaderCell2" ColumnIndex="8" RowIndex="1" Font="Arial, 8.25pt, style=Bold" />
+            <Item47 Ref="88" ControlType="XRCrossTabCell" Name="crossTabHeaderCell3" TextFormatString="Total {0}" ColumnIndex="7" RowIndex="2" ColumnSpan="2" />
+            <Item48 Ref="89" ControlType="XRCrossTabCell" Name="crossTabTotalCell1" ColumnIndex="9" RowIndex="2" />
+            <Item49 Ref="90" ControlType="XRCrossTabCell" Name="crossTabTotalCell2" ColumnIndex="10" RowIndex="2" />
           </Cells>
         </Item1>
       </Controls>
     </Item2>
-    <Item3 Ref="98" ControlType="TopMarginBand" Name="TopMargin" HeightF="75" />
-    <Item4 Ref="99" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="75" />
-    <Item5 Ref="100" ControlType="PageFooterBand" Name="PageFooter" />
+    <Item3 Ref="91" ControlType="TopMarginBand" Name="TopMargin" HeightF="75" />
+    <Item4 Ref="92" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="60.61198" />
   </Bands>
   <StyleSheet>
-    <Item1 Ref="101" Name="TitleStyle" BorderStyle="Inset" Padding="2,2,0,0,100" Font="Arial, 18pt" StringFormat="Near;Near;0;None;Character;Default" />
-    <Item2 Ref="102" Name="crossTabGeneralStyle" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 9.75pt" BorderColor="255,230,232,234" Sides="All" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
-    <Item3 Ref="103" Name="crossTabHeaderStyle" BorderStyle="Inset" Font="Arial, 9.75pt, style=Bold" BackColor="255,250,251,252" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" />
-    <Item4 Ref="104" Name="crossTabDataStyle" BorderStyle="Inset" StringFormat="Far;Center;0;None;Character;Default" TextAlignment="MiddleRight" />
-    <Item5 Ref="105" Name="crossTabTotalStyle" BorderStyle="Inset" Font="Arial, 9.75pt, style=Bold" BackColor="White" StringFormat="Far;Center;0;None;Character;Default" TextAlignment="MiddleRight" />
+    <Item1 Ref="93" Name="TitleStyle" BorderStyle="Inset" Padding="2,2,0,0,100" Font="Arial, 18pt" StringFormat="Near;Near;0;None;Character;Default" />
+    <Item2 Ref="94" Name="crossTabGeneralStyle" BorderStyle="Inset" Padding="6,6,0,0,100" Font="Arial, 9.75pt" BorderColor="255,230,232,234" Sides="All" StringFormat="Near;Near;0;None;Character;Default" BorderWidthSerializable="1" />
+    <Item3 Ref="95" Name="crossTabHeaderStyle" BorderStyle="Inset" Font="Arial, 9.75pt, style=Bold" BackColor="255,251,251,251" StringFormat="Near;Center;0;None;Character;Default" TextAlignment="MiddleLeft" />
+    <Item4 Ref="96" Name="crossTabDataStyle" BorderStyle="Inset" StringFormat="Far;Center;0;None;Character;Default" TextAlignment="MiddleRight" />
+    <Item5 Ref="97" Name="crossTabTotalStyle" BorderStyle="Inset" Font="Arial, 9.75pt, style=Bold" BackColor="255,251,251,251" StringFormat="Far;Center;0;None;Character;Default" TextAlignment="MiddleRight" />
   </StyleSheet>
   <ComponentStorage>
-    <Item1 Ref="7" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9DT1VSU0VfTUFQIj48VGFibGVzPjxUYWJsZSBOYW1lPSJWX0NPVVJTRV9NQVAiIFg9IjMwIiBZPSIzMCIgV2lkdGg9IjEyNSIgSGVpZ2h0PSI1NDMiIC8+PC9UYWJsZXM+PENvbHVtbnM+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJtYXN0ZXJfY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25hbWVfdGgiIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImNhcGFjaXR5IiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF0ZV9zdGFydCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRhdGVfZW5kIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF5cyIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBsYWNlIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZW1wX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX3RoIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGl2X2FiYiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRlcHRfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0id2NfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iYmFuZCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBvc2l0aW9uX25hbWVfZW4iIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJtYXN0ZXJfY291cnNlX25hbWVfdGgiIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJtYXN0ZXJfY291cnNlX25hbWVfZW4iIC8+PC9Db2x1bW5zPjwvUXVlcnk+PFJlc3VsdFNjaGVtYT48RGF0YVNldCBOYW1lPSJzcWxEYXRhU291cmNlMSI+PFZpZXcgTmFtZT0iVl9DT1VSU0VfTUFQIj48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2Vfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2FwYWNpdHkiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJkYXRlX3N0YXJ0IiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV9lbmQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXlzIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icGxhY2UiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZW1wX25vIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImRpdl9hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGVwdF9hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0id2NfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImJhbmQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zaXRpb25fbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im1hc3Rlcl9jb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
+    <Item1 Ref="6" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9DT1VSU0VfTUFQIj48VGFibGVzPjxUYWJsZSBOYW1lPSJWX0NPVVJTRV9NQVAiIC8+PC9UYWJsZXM+PENvbHVtbnM+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJtYXN0ZXJfY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX3RoIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25hbWVfdGgiIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImNhcGFjaXR5IiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF0ZV9zdGFydCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRhdGVfZW5kIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF5cyIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBsYWNlIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZW1wX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX3RoIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGl2X2FiYiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRlcHRfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0id2NfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iYmFuZCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBvc2l0aW9uX25hbWVfZW4iIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIC8+PC9Db2x1bW5zPjwvUXVlcnk+PFJlc3VsdFNjaGVtYT48RGF0YVNldCBOYW1lPSJzcWxEYXRhU291cmNlMSI+PFZpZXcgTmFtZT0iVl9DT1VSU0VfTUFQIj48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJtYXN0ZXJfY291cnNlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImNvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjYXBhY2l0eSIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9ImRhdGVfc3RhcnQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlX2VuZCIgVHlwZT0iRGF0ZVRpbWUiIC8+PEZpZWxkIE5hbWU9ImRheXMiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJwbGFjZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGl2X2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkZXB0X2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ3Y19hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iYmFuZCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJwb3NpdGlvbl9uYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImVtcGxveWVkX3N0YXR1cyIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
   </ComponentStorage>
-  <ObjectStorage>
-    <Item1 Ref="2" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-7" DataMember="V_COURSE_MAP" ValueMember="div_abb" DisplayMember="div_abb" SortOrder="Ascending" />
-    <Item2 Ref="5" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-7" DataMember="V_COURSE_MAP" ValueMember="dept_abb" DisplayMember="dept_abb" SortMember="dept_abb" SortOrder="Ascending" />
-  </ObjectStorage>
 </XtraReportsLayoutSerializer>

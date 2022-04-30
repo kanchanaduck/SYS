@@ -19,7 +19,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.Detail = reportInitializer.GetControl<DevExpress.XtraReports.UI.DetailBand>("Detail");
             this.TopMargin = reportInitializer.GetControl<DevExpress.XtraReports.UI.TopMarginBand>("TopMargin");
             this.BottomMargin = reportInitializer.GetControl<DevExpress.XtraReports.UI.BottomMarginBand>("BottomMargin");
-            this.PageFooter = reportInitializer.GetControl<DevExpress.XtraReports.UI.PageFooterBand>("PageFooter");
             this.label1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label1");
             this.crossTab1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRCrossTab>("crossTab1");
             this.crossTabCell1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell1");
@@ -32,8 +31,7 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.crossTabCell8 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell8");
             this.crossTabCell9 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell9");
             this.crossTabCell10 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell10");
-            this.crossTabCell11 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell11");
-            this.crossTabCell14 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell14");
+            this.crossTabCell13 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell13");
             this.crossTabCell15 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell15");
             this.crossTabCell16 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell16");
             this.crossTabCell17 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell17");
@@ -59,28 +57,22 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.crossTabCell37 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell37");
             this.crossTabCell38 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell38");
             this.crossTabCell39 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell39");
-            this.crossTabCell40 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell40");
+            this.crossTabCell48 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell48");
+            this.crossTabCell49 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell49");
+            this.crossTabCell50 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell50");
+            this.crossTabCell51 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell51");
+            this.crossTabCell52 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell52");
+            this.crossTabCell53 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell53");
+            this.crossTabCell54 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell54");
+            this.crossTabCell55 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabCell55");
+            this.crossTabHeaderCell1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabHeaderCell1");
             this.crossTabHeaderCell2 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabHeaderCell2");
+            this.crossTabHeaderCell3 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabHeaderCell3");
             this.crossTabTotalCell1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell1");
             this.crossTabTotalCell2 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell2");
-            this.crossTabTotalCell3 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell3");
-            this.crossTabTotalCell4 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell4");
-            this.crossTabTotalCell5 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell5");
-            this.crossTabTotalCell6 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell6");
-            this.crossTabTotalCell7 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell7");
-            this.crossTabTotalCell8 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell8");
-            this.crossTabTotalCell9 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell9");
-            this.crossTabTotalCell10 = reportInitializer.GetControl<DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell>("crossTabTotalCell10");
-
-            // Parameters
-            this.DIV = reportInitializer.GetParameter("DIV");
-            this.DEPT = reportInitializer.GetParameter("DEPT");
 
             // Data Sources
             this.sqlDataSource1 = reportInitializer.GetDataSource<DevExpress.DataAccess.Sql.SqlDataSource>("sqlDataSource1");
-
-            // Calculated Fields
-            this.MASTER_COURSE = reportInitializer.GetCalculatedField("MASTER_COURSE");
 
             // Styles
             this.TitleStyle = reportInitializer.GetStyle("TitleStyle");
@@ -93,7 +85,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.DetailBand Detail;
         private DevExpress.XtraReports.UI.TopMarginBand TopMargin;
         private DevExpress.XtraReports.UI.BottomMarginBand BottomMargin;
-        private DevExpress.XtraReports.UI.PageFooterBand PageFooter;
         private DevExpress.XtraReports.UI.XRLabel label1;
         private DevExpress.XtraReports.UI.XRCrossTab crossTab1;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell1;
@@ -106,8 +97,7 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell8;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell9;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell10;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell11;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell14;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell13;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell15;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell16;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell17;
@@ -133,26 +123,24 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell37;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell38;
         private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell39;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell40;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabHeaderCell2;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell1;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell2;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell3;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell4;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell5;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell6;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell7;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell8;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell9;
-        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell10;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell48;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell49;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell50;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell51;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell52;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell53;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell54;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabCell55;
         private DevExpress.DataAccess.Sql.SqlDataSource sqlDataSource1;
         private DevExpress.XtraReports.UI.XRControlStyle TitleStyle;
         private DevExpress.XtraReports.UI.XRControlStyle crossTabGeneralStyle;
         private DevExpress.XtraReports.UI.XRControlStyle crossTabHeaderStyle;
         private DevExpress.XtraReports.UI.XRControlStyle crossTabDataStyle;
         private DevExpress.XtraReports.UI.XRControlStyle crossTabTotalStyle;
-        private DevExpress.XtraReports.UI.CalculatedField MASTER_COURSE;
-        private DevExpress.XtraReports.Parameters.Parameter DIV;
-        private DevExpress.XtraReports.Parameters.Parameter DEPT;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabHeaderCell1;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabHeaderCell2;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabHeaderCell3;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell1;
+        private DevExpress.XtraReports.UI.CrossTab.XRCrossTabCell crossTabTotalCell2;
     }
 }
