@@ -12,7 +12,7 @@ namespace DXREPORTHRGIS.PredefinedReports {
     
     public partial class ConfirmationSheet : DevExpress.XtraReports.UI.XtraReport {
         private void InitializeComponent() {
-            DevExpress.XtraReports.ReportInitializer reportInitializer = new DevExpress.XtraReports.ReportInitializer(this, "DXREPORTHRGIS.PredefinedReports.ReportConfirmationSheet.vsrepx");
+            DevExpress.XtraReports.ReportInitializer reportInitializer = new DevExpress.XtraReports.ReportInitializer(this, "DXREPORTHRGIS.PredefinedReports.ConfirmationSheet.vsrepx");
 
             // Controls
             this.TopMargin = reportInitializer.GetControl<DevExpress.XtraReports.UI.TopMarginBand>("TopMargin");

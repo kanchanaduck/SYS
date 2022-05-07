@@ -4,7 +4,7 @@
     <Item1 Ref="2" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
   <Parameters>
-    <Item1 Ref="5" Description="Course No" ValueSourceSettings="#Ref-3" Name="course_no" />
+    <Item1 Ref="5" Description="COURSE NO." ValueSourceSettings="#Ref-3" Name="course_no" />
     <Item2 Ref="6" Visible="false" Description="Mgr" ValueInfo="นาย ซาโต ฟูมิฮิโกะ" Name="mgr_org" />
   </Parameters>
   <Bands>
@@ -108,7 +108,7 @@
                 <Item1 Ref="67" ControlType="XRTableCell" Name="tableCell8" Weight="0.34265267073653122" Multiline="true" Text="NO" TextAlignment="MiddleCenter">
                   <StylePriority Ref="68" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="69" ControlType="XRTableCell" Name="tableCell9" Weight="0.45687021051654364" Multiline="true" Text="EMP NO" />
+                <Item2 Ref="69" ControlType="XRTableCell" Name="tableCell9" Weight="0.45687021051654364" Multiline="true" Text="EMP NO." />
                 <Item3 Ref="70" ControlType="XRTableCell" Name="tableCell10" Weight="2.1701335487656914" Multiline="true" Text="ENGLISH NAME" />
                 <Item4 Ref="71" ControlType="XRTableCell" Name="tableCell11" Weight="1.9797709533458452" Multiline="true" Text="THAI NAME" />
                 <Item5 Ref="72" ControlType="XRTableCell" Name="tableCell12" Weight="1.5990457887139939" Multiline="true" Text="POSITION" />
@@ -141,11 +141,18 @@
       </Controls>
     </Item4>
   </Bands>
+  <ExportOptions Ref="87">
+    <Email Ref="88">
+      <AdditionalRecipients>
+        <Item1 Ref="89" ContactName="KANCHANA.S" Address="kanchana@mail.canon" />
+      </AdditionalRecipients>
+    </Email>
+  </ExportOptions>
   <ComponentStorage>
-    <Item1 Ref="87" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJDdXN0b21TcWxRdWVyeSIgTmFtZT0iUXVlcnkiPjxTcWw+c2VsZWN0IGRpc3RpbmN0IGNvdXJzZV9ubyBmcm9tIHRyX2NvdXJzZV9yZWdpc3RyYXRpb24NCndoZXJlIChsYXN0X3N0YXR1cyA9ICdDZW50ZXIgYXBwcm92ZWQnIG9yIChsYXN0X3N0YXR1cyA9ICdDb250aW51b3VzJykpPC9TcWw+PC9RdWVyeT48UmVzdWx0U2NoZW1hPjxEYXRhU2V0IE5hbWU9InNxbERhdGFTb3VyY2UxIj48VmlldyBOYW1lPSJRdWVyeSI+PEZpZWxkIE5hbWU9ImNvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
+    <Item1 Ref="90" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJDdXN0b21TcWxRdWVyeSIgTmFtZT0iUXVlcnkiPjxTcWw+c2VsZWN0IGRpc3RpbmN0IGNvdXJzZV9ubyBmcm9tIHRyX2NvdXJzZV9yZWdpc3RyYXRpb24NCndoZXJlIChsYXN0X3N0YXR1cyA9ICdBcHByb3ZlZCcgb3IgKGxhc3Rfc3RhdHVzID0gJ0NvbnRpbnVvdXMnKSk8L1NxbD48L1F1ZXJ5PjxSZXN1bHRTY2hlbWE+PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxWaWV3IE5hbWU9IlF1ZXJ5Ij48RmllbGQgTmFtZT0iY291cnNlX25vIiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD48L1Jlc3VsdFNjaGVtYT48Q29ubmVjdGlvbk9wdGlvbnMgQ2xvc2VDb25uZWN0aW9uPSJ0cnVlIiAvPjwvU3FsRGF0YVNvdXJjZT4=" />
     <Item2 Ref="0" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource2" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9HRVRSRUdJU1RSQVRJT04iPjxUYWJsZXM+PFRhYmxlIE5hbWU9IlZfR0VUUkVHSVNUUkFUSU9OIiBYPSIzMCIgWT0iMzAiIFdpZHRoPSIxMjUiIEhlaWdodD0iNzQzIiAvPjwvVGFibGVzPjxDb2x1bW5zPjxBbGxDb2x1bW5zIFRhYmxlPSJWX0dFVFJFR0lTVFJBVElPTiIgLz48L0NvbHVtbnM+PC9RdWVyeT48UmVzdWx0U2NoZW1hPjxEYXRhU2V0IE5hbWU9InNxbERhdGFTb3VyY2UyIj48VmlldyBOYW1lPSJWX0dFVFJFR0lTVFJBVElPTiI+PEZpZWxkIE5hbWU9ImNvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkYXRlX3N0YXJ0IiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV9lbmQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJ0aW1lX2luIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpbWVfb3V0IiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBsYWNlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im9yZ19jb2RlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im9yZ19hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iaWRfY2FyZF9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV90aF9tYWxlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGhfZmVtYWxlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImJhbmQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zaXRpb25fbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkZXB0X2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkaXZfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3Rfc3RhdHVzIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InByZV90ZXN0X3Njb3JlIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icHJlX3Rlc3RfZ3JhZGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zdF90ZXN0X3Njb3JlIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icG9zdF90ZXN0X2dyYWRlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImZ1bGxfdHJhaW5lciIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzEiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzIiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzMiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJEYXRlRGlmZnMiIFR5cGU9IkludDMyIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
   </ComponentStorage>
   <ObjectStorage>
-    <Item1 Ref="3" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-87" DataMember="Query" ValueMember="course_no" DisplayMember="course_no" />
+    <Item1 Ref="3" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-90" DataMember="Query" ValueMember="course_no" DisplayMember="course_no" />
   </ObjectStorage>
 </XtraReportsLayoutSerializer>

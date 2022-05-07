@@ -20,9 +20,11 @@ namespace api_hrgis.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly List<string> _j4up;
         public EmployeesController(ApplicationDbContext context)
         {
             _context = context;
+            _j4up = new List<string>() {"J4","M1","M2","JP"};
         }
 
         // GET: api/Employees
@@ -35,12 +37,11 @@ namespace api_hrgis.Controllers
         // GET: api/Employees/J4Up
         // GET: api/Employees/J4Up?org_code=2230&employed_status=employed
         // GET: api/Employees/J4Up
-        [HttpGet("J4Up")]
-        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee_J4_up(string org_code, string employed_status)
+        [HttpGet("Up")]
+        public async Task<ActionResult<IEnumerable<tb_employee>>> get_employee__up(string org_code, string employed_status)
         {
-            string[] j4up_band = {"J4","M1","M2","JP"};
 
-            var j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+            var j4 = await _context.tb_employee.Where(e=>_j4up.Contains(e.band) &&
                                 e.employed_status.ToUpper()==employed_status.ToUpper() &&
                                 e.dept_code==org_code
                                 ).ToListAsync();
@@ -52,7 +53,7 @@ namespace api_hrgis.Controllers
 
                 var organization = await _context.tb_organization.Include(e=>e.org_code==org_code).FirstOrDefaultAsync();
                 Console.WriteLine("Parent: "+organization.parent_org_code);
-                j4 = await _context.tb_employee.Where(e=>j4up_band.Contains(e.band) &&
+                j4 = await _context.tb_employee.Where(e=>_j4up.Contains(e.band) &&
                                 e.employed_status.ToUpper()==employed_status.ToUpper() &&
                                 e.div_code==organization.parent_org_code)
                                 .ToListAsync();
@@ -125,6 +126,18 @@ namespace api_hrgis.Controllers
                             .AsNoTracking()
                             .ToListAsync();
             }
+        }
+        // GET: api/Employees/CheckIsj4Up/014496
+        [HttpGet("CheckIsj4Up/{emp_no}")]
+        public async Task<ActionResult<tb_employee>> check_is_j4_up(string emp_no)
+        {
+            var j4 = await _context.tb_employee
+                    .Where(e=>_j4up.Contains(e.band) && e.emp_no==emp_no)
+                    .FirstOrDefaultAsync();
+            if(j4==null){
+                return NotFound("Not J4 UP");
+            }
+            return j4;
         }
 
         // GET: api/Employees/Organization/55/j4up

@@ -272,6 +272,27 @@ namespace api_hrgis.Migrations
                     b.ToTable("tb_holiday");
                 });
 
+            modelBuilder.Entity("api_hrgis.Models.tb_hrms", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("updated_by")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tb_hrms");
+                });
+
             modelBuilder.Entity("api_hrgis.Models.tb_menus", b =>
                 {
                     b.Property<int>("menu_code")
@@ -416,14 +437,18 @@ namespace api_hrgis.Migrations
 
             modelBuilder.Entity("api_hrgis.Models.tb_user", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("username")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("emailconfirmed")
                         .HasColumnType("bit");
@@ -437,14 +462,28 @@ namespace api_hrgis.Migrations
                     b.Property<bool?>("phonenumberconfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("removed_at")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("removed_by")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("reset_password_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("reset_password_by")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<byte[]>("storedsalt")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("username")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("datetime");
 
-                    b.HasKey("id");
+                    b.Property<string>("updated_by")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("username");
 
                     b.ToTable("tb_user");
                 });

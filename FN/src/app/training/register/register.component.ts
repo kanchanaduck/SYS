@@ -411,29 +411,31 @@ async fnSave() {
   }
 
   rerender(){
-    if (this.isDtInitialized) {
+    console.log("RREEEE")
+    this.dtTrigger.next();
+    /* if (this.isDtInitialized) {
       this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
         // dtInstance.clear().draw();
-        dtInstance.destroy();
+        // dtInstance.destroy();
         this.dtTrigger.next();
       });
     } 
     else {
-      this.isDtInitialized = true
+      // this.isDtInitialized = true
       this.dtTrigger.next();
     }
 
     if (this.isDtInitializedOther) {
       this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
         // dtInstance.clear().draw();
-        dtInstance.destroy();
+        // dtInstance.destroy();
         this.dtTriggerOther.next();
       });
     } 
     else {
-      this.isDtInitializedOther = true
+      // this.isDtInitializedOther = true
       this.dtTriggerOther.next();
-    }
+    } */
   
 
   }
@@ -508,7 +510,7 @@ async fnSave() {
       console.log(this.dtElement);
       console.log(this.dtElementOther);
 
-      this.rerender()
+      // this.rerender()
     }
 
     await this.service.gethttp(`Registration/GetGridView/${this.course_no}/${this._org_code}`)
@@ -522,6 +524,7 @@ async fnSave() {
 
         this.rerender()
 
+
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
@@ -530,7 +533,7 @@ async fnSave() {
         console.log(this.dtElement);
         console.log(this.dtElementOther);
 
-        this.rerender()
+        // this.rerender()
       });
   }
 

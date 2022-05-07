@@ -34,6 +34,10 @@ namespace DXREPORTHRGIS.Controllers
     }
     public class TrainingController : Controller
     {
+        public IActionResult Index()
+        {
+            return View();
+        }
         public IActionResult SignatureSheet()
         {
             return View();

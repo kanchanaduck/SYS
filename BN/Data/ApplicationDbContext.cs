@@ -102,6 +102,7 @@ namespace api_hrgis.Data
                 .WithMany(b => b.courses_registrations)
                 .HasForeignKey(mb => mb.course_no);
         }
+        public DbSet<tb_hrms> tb_hrms { get; set; }
         public DbSet<tb_band> tb_band { get; set; }
         public DbSet<tb_employee> tb_employee { get; set; }
         public DbSet<tb_employee_temp> tb_employee_temp { get; set; }

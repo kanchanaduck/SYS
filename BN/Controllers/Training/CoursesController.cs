@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using api_hrgis.Data;
 using api_hrgis.Models;
+using System.Net.Mail;
+using OfficeOpenXml;
+using System.IO;
 
 namespace api_hrgis.Controllers
 {
@@ -546,6 +549,96 @@ namespace api_hrgis.Controllers
 
             await _context.SaveChangesAsync(); 
             return NoContent();
+        }
+        // GET: api/Courses/ConfirmationSheet
+        [HttpGet("ConfirmationSheet/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no="AOF-001-001"){
+            MailMessage mail = new MailMessage();
+            SmtpClient SmtpServer = new SmtpClient("nonauth-smtp.global.canon.co.jp");
+            mail.From = new MailAddress("<kanchana@mail.canon>");
+            mail.Subject = "Hello ";
+
+            string msg = "This E-mail have both Thai and English version \n";
+
+            mail.Body = msg;
+            SmtpServer.Port = 25;
+
+            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
+                            .Include(e=>e.organization)
+                            .FirstOrDefaultAsync();
+
+            if(course==null){
+                return NotFound("Course no. is not full");
+            }
+
+            var student = await _context.tr_course_registration
+                            .Include(e=>e.employees)
+                            .Where(e=>e.course_no==course_no && e.last_status=="Approved")
+                            .ToListAsync();
+
+            if(student==null){
+                return NotFound("Student is not full");
+            }
+
+            var from = await _context.tr_stakeholder
+                            .Where(e=>e.role=="COMMITTEE" && 
+                                e.org_code==course.org_code && 
+                                e.emp_no==User.FindFirst("emp_no").Value)
+                            .FirstOrDefaultAsync();
+            
+            if(from==null){
+                return StatusCode(403,"Permission denied, only committee can send confirmation email");
+            }
+
+            
+            var fileName = $"Confirmation_Sheet_{course.course_no}.xlsx";
+            var filepath = $"wwwroot/excel/Confirmation_Sheet/{fileName}";
+            var originalFileName = $"Confirmation_Sheet.xlsx";
+            var originalFilePath = $"wwwroot/excel/Confirmation_Sheet/{originalFileName}";
+
+            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets["CONFIRMATION_SHEET"];
+
+                worksheet.Cells["B3"].Value = course.course_no;
+                worksheet.Cells["E3"].Value = course.course_name_th+" ("+course.course_name_en+")";
+                worksheet.Cells["B4"].Value = course.date_start+"-"+course.date_end;
+                worksheet.Cells["B3"].Value = course.date_start+"-"+course.date_end;
+                worksheet.Cells["G4"].Value = course.place;
+                worksheet.Cells["B5"].Value = course.trainer_text;
+                worksheet.Cells["G5"].Value = course.organization.org_abb+" ("+course.org_code+")";
+
+                int recordIndex = 9; 
+                foreach (var i in student) 
+                { 
+                    worksheet.Cells[recordIndex, 1].Value = i.seq_no; 
+                    worksheet.Cells[recordIndex, 2].Value = i.emp_no;
+                    worksheet.Cells[recordIndex, 3].Value = i.employees.fullname_en;
+                    worksheet.Cells[recordIndex, 4].Value = i.employees.fullname_th;
+                    worksheet.Cells[recordIndex, 6].Value = i.employees.position_name_en; 
+                    worksheet.Cells[recordIndex, 7].Value = i.employees.div_abb; 
+                    worksheet.Cells[recordIndex, 8].Value = i.employees.dept_abb; 
+                    recordIndex++; 
+                }
+
+                package.SaveAs(new FileInfo(filepath));
+                package.Dispose();
+            }  
+
+
+
+            try	
+            {	
+                SmtpServer.Send(mail);	
+                mail.Dispose();	
+            }	
+            catch (Exception ex)	
+            {	
+                string strError = ex.ToString();	
+
+            }	
+
+            return Ok();
         }
 
         private bool tr_courseExists(string id)

@@ -77,7 +77,7 @@ namespace DXREPORTHRGIS {
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}");
+                pattern: "{controller=Training}/{action=Index}");
             });
         }
     }

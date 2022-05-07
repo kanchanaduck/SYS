@@ -35,7 +35,28 @@ namespace api_hrgis.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tb_user>>> get_user()
         {
-            return await _context.tb_user.ToListAsync();
+            var users = await (from user in _context.tb_user
+            join data in  _context.tb_employee on user.username equals data.emp_no into z
+             from emp in z.DefaultIfEmpty()
+            select new { 
+                username = user.username,
+                emp_no = emp.emp_no,
+                title_name_en = emp.title_name_en,
+                firstname_en = emp.firstname_en,
+                lastname_en = emp.lastname_en,
+                position_name_en = emp.position_name_en,
+                band = emp.band,
+                full_name_en = emp.fullname_en,
+                div_abb = emp.div_abb,
+                dept_abb = emp.dept_abb,
+                div_code = emp.div_code,
+                dept_code = emp.dept_code,
+                employed_status = emp.employed_status,
+            })
+            .AsNoTracking()
+            .ToListAsync();
+            
+            return Ok(users);
         }
 
         // GET: api/Account/5
@@ -107,7 +128,7 @@ namespace api_hrgis.Controllers
         // POST: api/Account/Register
         [AllowAnonymous]
         [HttpPost("Register")]
-        public async Task<ActionResult<tb_user>> Register(InputModel Input)
+        public async Task<ActionResult<tb_user>> Register(tb_user Input)
         {
             if (Input.password != Input.confirmpassword)
             {
@@ -148,6 +169,44 @@ namespace api_hrgis.Controllers
                 }
             }
         }
+        // GET: api/Account/ResetPassword
+        [HttpGet("ResetPassword/{emp_no}")]
+        public async Task<ActionResult<tb_user>> reset_password(string emp_no)
+        {
+            var tb_user = await _context.tb_user.Where(x => x.username == emp_no)
+                            .FirstOrDefaultAsync();
+            if (tb_user == null)
+            {
+                return NotFound();
+            }
+
+            tb_user.username = emp_no;
+            var hashsalt = _repository.EncryptPassword(emp_no);
+            tb_user.passwordhash = hashsalt.Hash;
+            tb_user.storedsalt = hashsalt.Salt;
+            tb_user.reset_password_at = DateTime.Now;
+            tb_user.reset_password_by = User.FindFirst("emp_no").Value;
+
+            _context.Entry(tb_user).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!user_exists(emp_no))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
         [AllowAnonymous]
         [HttpGet("register_users")]
         public async Task<ActionResult<tb_employee>> register_users()
@@ -185,7 +244,7 @@ namespace api_hrgis.Controllers
     }
 }
 
-public class InputModel
+/* public class InputModel
 {
     [Required]
     public string username { get; set; }
@@ -199,4 +258,4 @@ public class InputModel
     [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     public string confirmpassword { get; set; }
     public string phonenumber { get; set; }
-}
+} */

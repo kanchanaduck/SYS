@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
+import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
@@ -22,8 +23,10 @@ export class AssessmentFileComponent implements OnInit {
   courses: any = [];
   course: any = {};
   download_button_disabled: boolean = true;
+  response: any;
+  arr_band: any;
 
-  constructor() { }
+  constructor(private service: AppServiceService) { }
 
   ngOnInit(): void {
     this.get_courses();
@@ -42,20 +45,33 @@ export class AssessmentFileComponent implements OnInit {
   async get_course(){
     let self = this
     if(this.course_no!=null){
-      axios.get(`${environment.API_URL}Courses/${this.course_no}`,self.headers)
-      .then(function(response){
-        self.course = response
-        self.download_button_disabled = false;
-      })
-      .catch(function(error){
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
+      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+        .then(function(response){
+          self.response = response
+          self.course = self.response.courses
+          self.arr_band = self.response.courses.courses_bands
+          let trainers = self.response.trainers
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
+          let bands = self.arr_band
+          if(bands.length>0){
+            self.course.band_text = bands.map(c => c.band).join(', ');
+          }
+          else{
+            self.course.band_text = "-"
+          }
+          self.download_button_disabled = false;
         })
-        self.download_button_disabled = true;
-        self.course = {};
-      });
+        .catch(function(error){
+          self.service.sweetalert_error(error)
+          self.download_button_disabled = true;
+          self.course = {};
+          return false;
+      });       
     }
   }
 

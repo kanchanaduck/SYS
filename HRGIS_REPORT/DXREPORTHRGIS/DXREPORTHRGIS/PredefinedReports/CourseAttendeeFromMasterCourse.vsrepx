@@ -189,7 +189,7 @@
             </Item1>
           </Controls>
         </Item1>
-        <Item2 Ref="97" ControlType="GroupHeaderBand" Name="GroupHeader1" RepeatEveryPage="true" HeightF="120.532356">
+        <Item2 Ref="97" ControlType="GroupHeaderBand" Name="GroupHeader1" RepeatEveryPage="true" HeightF="94.13897">
           <GroupFields>
             <Item1 Ref="98" FieldName="course_no" />
           </GroupFields>
@@ -198,7 +198,7 @@
             <Item1 Ref="100" ControlType="XRLabel" Name="label29" Multiline="true" Text="Count:" TextAlignment="MiddleLeft" SizeF="55.6246338,20.8333282" LocationFloat="1000.20917,73.30564" Font="Arial, 8.25pt, style=Bold, Italic" Padding="2,2,0,0,100">
               <StylePriority Ref="101" UseFont="false" UseTextAlignment="false" />
             </Item1>
-            <Item2 Ref="102" ControlType="XRLabel" Name="label28" Multiline="true" TextAlignment="MiddleLeft" SizeF="61.8746338,20.8333282" LocationFloat="1055.83374,73.30564" Font="Arial, 8.25pt, style=Italic" Padding="2,2,0,0,96">
+            <Item2 Ref="102" ControlType="XRLabel" Name="label28" Multiline="true" TextAlignment="MiddleLeft" SizeF="61.8746338,20.8333282" LocationFloat="1055.83374,73.30564" Font="Arial, 8.25pt, style=Italic" Padding="2,2,0,0,100">
               <Summary Ref="103" Running="Group" />
               <ExpressionBindings>
                 <Item1 Ref="104" EventName="BeforePrint" PropertyName="Text" Expression="sumCount([emp_no])" />
@@ -259,7 +259,7 @@
               </ExpressionBindings>
               <StylePriority Ref="135" UseFont="false" UseTextAlignment="false" />
             </Item14>
-            <Item15 Ref="136" ControlType="XRTable" Name="table1" SizeF="1119,25" LocationFloat="0,95.53236" Padding="2,2,0,0,96">
+            <Item15 Ref="136" ControlType="XRTable" Name="table1" SizeF="1119,25" LocationFloat="0,69.13897" Padding="2,2,0,0,96">
               <Rows>
                 <Item1 Ref="137" ControlType="XRTableRow" Name="tableRow1" Weight="1">
                   <Cells>
