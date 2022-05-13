@@ -1,4 +1,4 @@
-<form (ngSubmit)="fnSave()">
+<form (ngSubmit)="register()">
 <div class="row mb-3" *ngIf="is_approver">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
@@ -13,14 +13,13 @@
                 bindValue="course_no"
                 bindLabel="course_no"
                 allow-clear="true"
-                (clear)="clear_data()"
                 (change)="get_course()"
                 [ngClass]="{ 'is-invalid': errors && errors.course_no }">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            <p class="invalid-feedback" *ngIf="errors && errors.course_no"> 
+            <p class="invalid-feedback-nc" *ngIf="errors && errors.course_no"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
             </p>
         </div>
@@ -115,9 +114,9 @@
                     <input type="text" class="form-control" readonly="" #txtdept>
                 </div>
             </div>
-            <div class="col-2 text-right pt-4">
-                <button type="submit" *ngIf="visableButton" class="btn btn-az-primary btn-sm">Save</button>
-                <button type="button" *ngIf="visableButton" class="btn btn-dark btn-sm " (click)="fnClear()">Clear</button>
+            <div class="col-2 pt-4">
+                <button type="submit" class="btn btn-az-primary btn-sm">Save</button>
+                <button type="button" class="btn btn-dark btn-sm " (click)="fnClear()">Clear</button>
             </div>
         </div>
         <hr>
@@ -173,7 +172,7 @@
 
     <div class="tab-content card-body bd bd-t-0 " id="myTabContent">
         <div class="tab-pane fade show active" id="your" role="tabpanel" aria-labelledby="your-tab">
-            <table datatable id="example1" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" 
+            <table datatable id="example1" [dtOptions]="dtOptions[0]" [dtTrigger]="dtTrigger[0]" 
                 class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
@@ -236,8 +235,8 @@
             </table>
         </div>
         <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
-            <table datatable id="example2" [dtOptions]="dtOptionsOther" [dtTrigger]="dtTriggerOther" 
-                class="table table-bordered table-hover table-sm">
+            <table datatable id="example2" [dtOptions]="dtOptions[1]" [dtTrigger]="dtTrigger[1]"
+            class="table table-bordered table-hover table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">seq</th>

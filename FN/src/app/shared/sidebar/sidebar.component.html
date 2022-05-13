@@ -18,16 +18,7 @@
     <div class="az-sidebar-body">
         <ul class="nav">
             <li class="nav-label mb-3">Main Menu</li>
-            <a routerLink="users" class="nav-link">User</a>
-            <a routerLink="training" class="nav-link">Training</a>
-            <!-- <a *ngFor="let menu of menus" 
-                routerLink="{{ menu.url }}" 
-                class="nav-link" 
-                [ngClass]="{'active': menu.url == activeUrl  }"
-                [ngClass]="{'d-none': _emp_no != '014496' && ( menu.menu_name=='User' || menu.menu_name=='Menu') }">
-                  {{ menu.menu_name }}
-            <div *ngIf="(menu.url == activeUrl )" class="badge badge-danger badge-pill">Active</div>       </a>-->
-
+            <a routerLink="training" class="nav-link active">Training</a>
         </ul>
         <!-- nav -->
     </div>

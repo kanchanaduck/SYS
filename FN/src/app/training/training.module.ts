@@ -26,7 +26,6 @@ import { ApproveFinalComponent } from './approve-final/approve-final.component';
 import { ConfirmationSheetComponent } from './confirmation-sheet/confirmation-sheet.component';
 import { RegisterContinuousComponent } from './register-continuous/register-continuous.component';
 import { CourseScoreComponent } from './course-score/course-score.component';
-import { CourseAttendeeComponent } from './course-attendee/course-attendee.component';
 import { StakeholderComponent } from './stakeholder/stakeholder.component';
 import { CenterComponent } from './center/center.component';
 import { TrainerComponent } from './trainer/trainer.component';
@@ -52,7 +51,6 @@ const routes: Routes = [
   { path: 'survey-detail/:year/:course_owner', component: SurveyApproveComponent, data: { title: 'Need survey detail', active: true } },
   { path: 'register', component: RegisterComponent, data: { title: 'Committee register ', active: true } },
   { path: 'register-continuous', component: RegisterContinuousComponent, data: { title: 'Register continuous employee no.', active: true } },
-  { path: 'course-attendee', component: CourseAttendeeComponent, data: { title: 'Course attendee', active: true } },
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
   { path: 'assessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
   { path: 'register-data/:course_no', component: RegisterDataComponent, data: { title: 'Register data', active: true } },
@@ -71,7 +69,6 @@ const routes: Routes = [
     ConfirmationSheetComponent,
     RegisterContinuousComponent,
     CourseScoreComponent,
-    CourseAttendeeComponent,
     StakeholderComponent,
     TrainerHistoryComponent,
     CenterComponent,

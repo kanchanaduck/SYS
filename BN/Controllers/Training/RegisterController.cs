@@ -23,26 +23,24 @@ namespace api_hrgis.Controllers
     [Authorize] // Microsoft.AspNetCore.Authorization; // [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class RegistrationController : ControllerBase
+    public class RegisterController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _config; // using Microsoft.Extensions.Configuration;
 
-        public RegistrationController(ApplicationDbContext context, IConfiguration config)
+        public RegisterController(ApplicationDbContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
 
-        // GET: api/Registration
+        // GET: api/Register
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tr_course_registration>>> Gettr_course_registration()
         {
             return await _context.tr_course_registration.ToListAsync();
         }
-
-        
-        // GET: api/Registration/{course_no}
+        // GET: api/Register/{course_no}
         [HttpGet("{course_no}")]
         public async Task<ActionResult<IEnumerable<tr_course_registration>>> get_registrant_approved(string course_no)
         {
@@ -61,7 +59,7 @@ namespace api_hrgis.Controllers
             return Ok(course_score);
         }
 
-        // GET: api/Registration/{course_no}/Approved
+        // GET: api/Register/{course_no}/Approved
         [HttpGet("{course_no}/Approved")]
         public async Task<ActionResult<tr_course_registration>> Gettr_course_registration(string course_no)
         {
@@ -80,9 +78,9 @@ namespace api_hrgis.Controllers
             return Ok(course_score);
         }
 
-        // GET: api/Registration/GetGridView/{course_no}/{org_code}
-        [HttpGet("GetGridView/{course_no}/{org_code}")]
-        public async Task<ActionResult> GetGridView(string course_no, string org_code)
+        // GET: api/Register/YouOther/{course_no}/{org_code}
+        [HttpGet("YourOther/{course_no}/{org_code}")]
+        public async Task<ActionResult> YourOther(string course_no, string org_code)
         {
             var query = await (
                 from tb1 in _context.tr_course_registration
@@ -145,7 +143,7 @@ namespace api_hrgis.Controllers
             });
         }
         [AllowAnonymous]
-        // GET: api/Registration/GetPrevCourse/{course_no}/{emp_no}
+        // GET: api/Register/GetPrevCourse/{course_no}/{emp_no}
         [HttpGet("GetPrevCourse/{course_no}/{emp_no}")]
         public async Task<ActionResult> GetPrevCourse(string course_no, string emp_no)
         {
@@ -201,7 +199,7 @@ namespace api_hrgis.Controllers
             return result;
         }
 
-        // PUT: api/Registration/MgrApprove/5
+        // PUT: api/Register/MgrApprove/5
         [HttpPut("MgrApprove/{course_no}")]
         public async Task<IActionResult> PutMgrApprove(string course_no, List<tr_course_registration> registrant)
         {
@@ -216,40 +214,30 @@ namespace api_hrgis.Controllers
             {
                 List<tr_course_registration> list = new List<tr_course_registration>();
                 int _seq_no = 0;
-                for (var i = 0; i < registrant.Count(); i++)
+                for (var i = 0; i<registrant.Count(); i++)
                 {
                     var item = registrant[i];
                     _seq_no = i + 1;
 
-                    var edits = await _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item.emp_no).FirstOrDefaultAsync();
+                    var edits = await _context.tr_course_registration
+                                    .Where(x => x.course_no == course_no && x.emp_no == item.emp_no)
+                                    .FirstOrDefaultAsync();
                     if (edits != null)
                     {
-                        // edits.seq_no = _seq_no;
-                        if (_seq_no > course.capacity)
+                        if (item.final_approved_checked == true)
                         {
-                            edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
-                            edits.final_approved_at = null;
-                            edits.final_approved_by = null;
-                            edits.final_approved_checked = null;
+                            edits.last_status = _config.GetValue<string>("Status:approved");
+                            edits.final_approved_at = DateTime.Now;
+                            edits.final_approved_by = User.FindFirst("emp_no").Value;
+                            edits.final_approved_checked = item.final_approved_checked;
                         }
                         else
                         {
-                            if (item.final_approved_checked == true)
-                            {
-                                edits.last_status = _config.GetValue<string>("Status:approved");
-                                edits.final_approved_at = DateTime.Now;
-                                edits.final_approved_by = User.FindFirst("emp_no").Value;
-                                edits.final_approved_checked = item.final_approved_checked;
-                            }
-                            else
-                            {
-                                edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
-                                edits.final_approved_at = null;
-                                edits.final_approved_by = null;
-                                edits.final_approved_checked = null;
-                            }
+                            edits.last_status = null;
+                            edits.final_approved_at = null;
+                            edits.final_approved_by = null;
+                            edits.final_approved_checked = item.final_approved_checked;;
                         }
-
                         list.Add(edits);
                     }
                 }
@@ -278,16 +266,20 @@ namespace api_hrgis.Controllers
             /////////// ทำการเรียงลำดับ เฉพาะสถานะ approved, เรียงลำดับตาม manager_approved_at
             List<tr_course_registration> list1 = new List<tr_course_registration>();
             var seq1 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                            && x.last_status == _config.GetValue<string>("Status:approved"))
+                            && x.final_approved_checked==true)
                             .OrderBy(x => x.final_approved_at).ToListAsync();
             int _seq1 = 0;
             for (var j = 0; j < seq1.Count(); j++)
             {
                 var item1 = seq1[j];
                 _seq1 = _seq1 + 1;
+                Console.WriteLine("SEQ1: "+_seq1+" "+item1.emp_no);
 
-                var edits1 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item1.emp_no).FirstOrDefault();
+                var edits1 = await _context.tr_course_registration
+                        .Where(x => x.course_no == course_no && x.emp_no == item1.emp_no)
+                        .FirstOrDefaultAsync();
                 edits1.seq_no = _seq1;
+                edits1.last_status = _seq1>course.capacity? _config["Status:wait"]:_config["Status:approved"];
                 list1.Add(edits1);
             }
             _context.tr_course_registration.UpdateRange(list1);
@@ -295,23 +287,25 @@ namespace api_hrgis.Controllers
             /////////// ทำการเรียงลำดับ ที่ไม่ใช่สถานะ approved, เรียงลำดับตาม register_at
             List<tr_course_registration> list2 = new List<tr_course_registration>();
             var seq2 = await _context.tr_course_registration.Where(x => x.course_no == course_no
-                            && x.last_status != _config.GetValue<string>("Status:approved")).OrderBy(x => x.register_at).ToListAsync();
+                            && x.final_approved_checked==false)
+                            .OrderBy(x => x.register_at).ToListAsync();
             int _seq2 = _seq1;
             for (var k = 0; k < seq2.Count(); k++)
             {
                 var item2 = seq2[k];
+                // if(item2.last_status==_config["Status:approved"]){
                 _seq2 = _seq2 + 1;
-
+                Console.WriteLine("SEQ2: "+_seq2+" "+item2.emp_no);
+                // }
                 var edits2 = _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item2.emp_no).FirstOrDefault();
-                edits2.seq_no = _seq2;
-                edits2.last_status = _seq2>course.capacity? _config["Status:wait"]:null;
+                edits2.seq_no =  _seq2;
+                edits2.last_status = _seq2>course.capacity? _config["Status:wait"]:(item2.final_approved_checked==true)? _config["Status:approved"]:null;
                 list2.Add(edits2);
             }
             _context.tr_course_registration.UpdateRange(list2);
             await _context.SaveChangesAsync();
         }
-
-        // PUT: api/Registration/FinalApprove/5
+        // PUT: api/Register/FinalApprove/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("FinalApprove/{course_no}")]
         public async Task<IActionResult> PutFinalApprove(string course_no, List<tr_course_registration> registrant)
@@ -336,37 +330,20 @@ namespace api_hrgis.Controllers
                     var edits = await _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == item.emp_no).FirstOrDefaultAsync();
                     if (edits != null)
                     {
-                        // edits.seq_no = _seq_no;
-                        if (_seq_no > course.capacity)
+
+                        if (item.final_approved_checked == true)
                         {
-                            // edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
-                            edits.last_status = _config.GetValue<string>("Status:wait");
-                            edits.final_approved_at = null;
-                            edits.final_approved_by = null;
-                            edits.final_approved_checked = null;
-                            edits.final_approved_at = null;
-                            edits.final_approved_by = null;
-                            edits.final_approved_checked = null;
+                            edits.last_status = _config.GetValue<string>("Status:approved");
+                            edits.final_approved_at = DateTime.Now;
+                            edits.final_approved_by = User.FindFirst("emp_no").Value;
+                            edits.final_approved_checked = item.final_approved_checked;
                         }
                         else
                         {
-                            if (item.final_approved_checked == true)
-                            {
-                                edits.last_status = _config.GetValue<string>("Status:approved");
-                                edits.final_approved_at = DateTime.Now;
-                                edits.final_approved_by = User.FindFirst("emp_no").Value;
-                                edits.final_approved_checked = item.final_approved_checked;
-                            }
-                            else
-                            {
-                                edits.last_status = edits.last_status == _config.GetValue<string>("Status:wait") ? edits.last_status : null;
-                                edits.final_approved_at = null;
-                                edits.final_approved_by = null;
-                                edits.final_approved_checked = null;
-                                edits.final_approved_at = null;
-                                edits.final_approved_by = null;
-                                edits.final_approved_checked = null;
-                            }
+                            edits.last_status = null;
+                            edits.final_approved_at = null;
+                            edits.final_approved_by = null;
+                            edits.final_approved_checked = item.final_approved_checked;;
                         }
 
                         list.Add(edits);
@@ -392,11 +369,15 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
-        // POST: api/Registration/ByCommitteeEmp
+        // POST: api/Register/ByCommitteeEmp
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("ByCommitteeEmp")]
         public async Task<ActionResult<tr_course_registration>> registration_by_committee_emp(tr_course_registration registrant)
         {
+            if(!is_employee_exist(registrant.emp_no)){
+                return StatusCode(400, "Please select exist staff");
+            }
+
             if(!is_staff_of_committee(registrant.emp_no)){
                 return StatusCode(400, "Please select staff in your own organization");
             }
@@ -416,7 +397,7 @@ namespace api_hrgis.Controllers
 
             if (query != null)
             {
-                return Conflict(_config.GetValue<string>("Text:duplication"));
+                return Conflict(_config["Text:duplication"]);
             }
             else
             {
@@ -449,10 +430,9 @@ namespace api_hrgis.Controllers
 
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
         }
-
-        // POST: api/Registration/ByApproverEmp
+        // POST: api/Register/ByApproverEmp
         [HttpPost("ByApproverEmp")]
-        public async Task<ActionResult<tr_course_registration>> egistration_by_approver_emp(tr_course_registration registrant)
+        public async Task<ActionResult<tr_course_registration>> registration_by_approver_emp(tr_course_registration registrant)
         {
             if(!is_staff_of_approver(registrant.emp_no)){
                 return StatusCode(400, "Please select staff in your own organization");
@@ -466,7 +446,7 @@ namespace api_hrgis.Controllers
                 return StatusCode(400, "Please select staff who not resigned");
             }
 
-            int seq = 0;
+
             var query = await _context.tr_course_registration
                         .Where(x => x.course_no == registrant.course_no && x.emp_no == registrant.emp_no)
                         .FirstOrDefaultAsync();
@@ -477,40 +457,35 @@ namespace api_hrgis.Controllers
             }
             else
             {
-                var last = await _context.tr_course_registration
-                            .Where(x => x.course_no == registrant.course_no)
-                            .OrderByDescending(x => x.seq_no)
-                            .FirstOrDefaultAsync();
-
-                if (last == null)
-                {
-                    seq = 1;
-                }
-                else
-                {
-                    seq = last.seq_no + 1;
-                }
-
                 tr_course_registration tb = new tr_course_registration();
                 tb.course_no = registrant.course_no;
                 tb.emp_no = registrant.emp_no;
-                tb.seq_no = seq;
-                tb.last_status = registrant.last_status;
+                tb.seq_no = 0;
+                tb.last_status = "Approved";
                 tb.remark = registrant.remark;
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
+                tb.final_approved_at = DateTime.Now;
+                tb.final_approved_by = User.FindFirst("emp_no").Value;
+                tb.final_approved_checked = true;
 
                 _context.tr_course_registration.Add(tb);
                 await _context.SaveChangesAsync();
             }
+            string course_no = registrant.course_no;            
+            await Sorting(course_no);
 
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
         }
 
-        // POST: api/Registration/ByCommitteeCourse
+        // POST: api/Register/ByCommitteeCourse
         [HttpPost("ByCommitteeCourse")]
         public async Task<ActionResult<tr_course_registration>> registration_by_committee_course(tr_course_registration registrant)
         {
+             if(!is_employee_exist(registrant.emp_no)){
+                return StatusCode(400, "Please select exist staff");
+            }
+
             if(!is_course_of_committee(registrant.course_no)){
                 return StatusCode(400, "Please select the course in your organization");
             }
@@ -556,16 +531,19 @@ namespace api_hrgis.Controllers
                 tb.remark = registrant.remark;
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
+                tb.final_approved_at = DateTime.Now;
+                tb.final_approved_by = User.FindFirst("emp_no").Value;
+                tb.final_approved_checked = true;
 
                 _context.tr_course_registration.Add(tb);
                 await _context.SaveChangesAsync();
             }
+            string course_no = registrant.course_no;
+            await Sorting(course_no);
 
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
         }
-
-        // PUT: api/Registration/ByCommitteeCourse/{course_no}/{emp_no}
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: api/Register/ByCommitteeCourse/{course_no}/{emp_no}
         [HttpPut("ByCommitteeCourse/{course_no}/{emp_no}")]
         public async Task<IActionResult> Puttr_course_registration(string course_no, string emp_no, tr_course_registration r)
         {
@@ -589,7 +567,6 @@ namespace api_hrgis.Controllers
 
             return NoContent();
         }
-
         // POST: api/Registation/Continuous
         [HttpPost("Continuous")]
         public async Task<ActionResult<tr_course_registration>> PostContinuous(List<tr_course_registration> registration)
@@ -623,6 +600,22 @@ namespace api_hrgis.Controllers
 
             return CreatedAtAction("Getcourse_score", new { id = registration[0].course_no }, registration);
         }
+        // GET: api/Register/GetEmailInformApprover/{course_no}/{org_code}
+        [HttpGet("GetEmailInformApprover/{course_no}/{org_code}")]
+        public async Task<ActionResult<IEnumerable<tr_stakeholder>>> get_email_inform_approver(
+            string course_no, string org_code){
+                
+            var approver = await _context.tr_stakeholder.Where(e=>e.role=="Approver" && e.org_code==org_code)
+                    .Include(e=>e.employee)
+                    .ToListAsync();
+
+            Console.WriteLine(approver==null);
+
+            if(approver==null || approver.Count()<=0){
+                return NotFound("Not found approver, please inform center to set your approver");
+            }
+            return approver;
+        }
 
         private bool is_course_of_committee(string course_no)
         {
@@ -648,7 +641,6 @@ namespace api_hrgis.Controllers
             }
 
         }
-
         private bool is_staff_of_approver(string emp_no)
         {
             var approver_emp_no = User.FindFirst("emp_no").Value;
@@ -662,17 +654,14 @@ namespace api_hrgis.Controllers
             }
             return is_staff_of_approver;
         }
-
+        private bool is_employee_exist(string emp_no)
+        {
+            return _context.tb_employee.Any(e=>e.emp_no==emp_no);
+        }
         private bool is_employee_resigned(string emp_no)
         {
-            var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
-            bool resigned = false;
-            if(employee.employed_status.ToUpper()=="RESIGNED"){
-                resigned = true;
-            }
-            return resigned;
+            return _context.tb_employee.Any(e=>e.emp_no==emp_no && e.employed_status=="RESIGNED");
         }
-
         private bool is_in_band_of_course(string course_no, string emp_no)
         {
             var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
@@ -690,7 +679,6 @@ namespace api_hrgis.Controllers
             }
             return match;
         }
-
         private bool is_staff_of_committee(string emp_no)
         {
             var committee_emp_no = User.FindFirst("emp_no").Value;
@@ -704,10 +692,9 @@ namespace api_hrgis.Controllers
             }
             return is_staff_of_committee;
         }
-
-        // DELETE: api/Registration/{course_no}/{emp_no}
+        // DELETE: api/Register/{course_no}/{emp_no}
         [HttpDelete("{course_no}/{emp_no}")]
-        public async Task<IActionResult> Deletetr_course_registration(string course_no, string emp_no)
+        public async Task<IActionResult> delete_registration(string course_no, string emp_no)
         {
             var tr_course_registration = await _context.tr_course_registration
                         .Where(x => x.course_no == course_no && x.emp_no == emp_no)
@@ -720,6 +707,8 @@ namespace api_hrgis.Controllers
             _context.tr_course_registration.Remove(tr_course_registration);
             await _context.SaveChangesAsync();
 
+            await Sorting(course_no);
+
             return NoContent();
         }
 
@@ -728,9 +717,9 @@ namespace api_hrgis.Controllers
             return _context.tr_course_registration.Any(e => e.course_no == course_no);
         }
 
-        // POST: api/Registration/UploadCourseRegistration/{course_no}
-        [HttpPost("UploadCourseRegistration/{course_no}")]
-        public async Task<ActionResult<IEnumerable<tr_course_registration>>> UploadCourseRegistration(
+        // POST: api/Register/UploadCourseRegister/ByCommitteeEmp/{course_no}
+        [HttpPost("UploadCourseRegister/ByCommitteeEmp/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> upload_register_by_committee_emp(
             string course_no, [FromForm] req_fileform model)
         {
             string rootFolder = Directory.GetCurrentDirectory();
@@ -751,7 +740,30 @@ namespace api_hrgis.Controllers
                 stream.Close();
             }
 
-            List<respons_course_registration> respons = new List<respons_course_registration>();
+            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
+                                .Include(e=>e.courses_bands)
+                                .FirstOrDefaultAsync();
+
+            if(course==null){
+                return StatusCode(400,"Course is not found");
+            }
+
+            List<string> course_bands = new List<string>();
+
+            foreach (var item in course.courses_bands)
+            {
+                course_bands.Add(item.band);
+            }
+
+            var committee = await _context.tr_stakeholder
+                            .Where(e=>e.role=="COMMITTEE" && e.emp_no == User.FindFirst("emp_no").Value)
+                            .FirstOrDefaultAsync();
+
+            if(committee==null){
+                return StatusCode(403,"Permission denied, only committee can use this function");
+            }
+
+            List<response_course_registration> response = new List<response_course_registration>();
             if (System.IO.File.Exists(filePath))
             {
                 // Console.WriteLine("File exists.");
@@ -771,100 +783,272 @@ namespace api_hrgis.Controllers
                             int _seq_no = 0;
                             string _last_status = "";
 
-                            var query_emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
-                            if (query_emp.dept_abb == model.dept_abb)
-                            {
-                                var query_course = await _context.tr_course_band.Where(x => x.course_no == course_no && x.band.Contains(query_emp.band)).FirstOrDefaultAsync();
-                                if (query_course != null)
-                                {
-                                    var query_seq = await _context.tr_course_registration.Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
-                                    if (query_seq == null)
-                                    {
-                                        _seq_no = 1;
-                                    }
-                                    else
-                                    {
-                                        _seq_no = query_seq.seq_no + 1;
-                                    }
+                            var emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
 
-                                    _last_status = _seq_no > model.capacity ? _config.GetValue<string>("Status:wait") : null; // Check
-                                    var query = await _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == _emp_no).FirstOrDefaultAsync();
-                                    if (query == null)
-                                    {
-                                        _context.Add(new tr_course_registration
-                                        {
-                                            course_no = course_no,
-                                            emp_no = _emp_no,
-                                            seq_no = _seq_no,
-                                            last_status = _last_status,
-                                            remark = await GetPrevCourseNo(course_no, _emp_no),
-                                            register_at = DateTime.Now,
-                                            register_by = User.FindFirst("emp_no").Value
-                                        });
-                                        await _context.SaveChangesAsync();
-                                    }
-                                    else
-                                    {
-                                        respons.Add(new respons_course_registration
-                                        {
-                                            emp_no = _emp_no,
-                                            seq_no = ws_seq_no,
-                                            last_status = _config.GetValue<string>("Text:duplication")
-                                        });
-                                    } // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
-                                }
-                                else
-                                {
-                                    respons.Add(new respons_course_registration
-                                    {
-                                        emp_no = _emp_no,
-                                        seq_no = ws_seq_no,
-                                        last_status = _config.GetValue<string>("Text:unequal_band")
-                                    });
-                                } // Unequal band. : band ของพนักงานใน row ไม่ตรงกับที่ band ที่ตั้งค่า course
+                            var query_seq = await _context.tr_course_registration
+                                            .Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no)
+                                            .FirstOrDefaultAsync();
+
+                            if (query_seq == null)
+                            {
+                                _seq_no = 1;
                             }
                             else
                             {
-                                respons.Add(new respons_course_registration
+                                _seq_no = query_seq.seq_no + 1;
+                            }
+
+                            _last_status = _seq_no > course.capacity ? _config.GetValue<string>("Status:wait") : null; // Check
+                            var query = await _context.tr_course_registration
+                                        .Where(x => x.course_no == course_no && x.emp_no == _emp_no)
+                                        .FirstOrDefaultAsync();
+
+                            if(emp==null){
+                                response.Add(new response_course_registration
                                 {
                                     emp_no = _emp_no,
                                     seq_no = ws_seq_no,
-                                    last_status = _config.GetValue<string>("Text:invalid_department")
+                                    error_message = _config["Text:staff_not_exist"]
                                 });
-                            } // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                            } 
+                            else{
+                                if(emp.employed_status=="RESIGNED"){
+                                    // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                    response.Add(new response_course_registration
+                                    {
+                                        emp_no = _emp_no,
+                                        seq_no = ws_seq_no,
+                                        error_message = _config["Text:staff_resigned"]
+                                    });
+                                }
+                                else{
+                                    if(committee.org_code==emp.div_code || committee.org_code==emp.dept_code ){
+                                        if(!course_bands.Contains(emp.band)){
+                                            response.Add(new response_course_registration
+                                            {
+                                                emp_no = _emp_no,
+                                                seq_no = ws_seq_no,
+                                                error_message = _config.GetValue<string>("Text:unequal_band")
+                                            });
+                                        }
+                                        else{
+                                            if (query == null){
+                                                _context.Add(new tr_course_registration
+                                                {
+                                                    course_no = course_no,
+                                                    emp_no = _emp_no,
+                                                    seq_no = _seq_no,
+                                                    last_status = _last_status,
+                                                    remark = await GetPrevCourseNo(course_no, _emp_no),
+                                                    register_at = DateTime.Now,
+                                                    register_by = User.FindFirst("emp_no").Value
+                                                });
+                                                await _context.SaveChangesAsync();
+                                            }
+                                            else{
+                                                // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
+                                                response.Add(new response_course_registration
+                                                {
+                                                    emp_no = _emp_no,
+                                                    seq_no = ws_seq_no,
+                                                    error_message = _config.GetValue<string>("Text:duplication")
+                                                });
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                        response.Add(new response_course_registration
+                                        {
+                                            emp_no = _emp_no,
+                                            seq_no = ws_seq_no,
+                                            error_message = _config.GetValue<string>("Text:invalid_department")
+                                        });
+                                    } 
+                                }
+                            }           
                         }
                     }
                 }
             }
+            await Sorting(course_no);
             System.IO.File.Delete(filePath);  //Delete file
+            return Ok(response);
+        } 
+        // POST: api/Register/UploadCourseRegister/ByApproverEmp/{course_no}
+        [HttpPost("UploadCourseRegister/ByApproverEmp/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> upload_register_by_approver_emp(
+            string course_no, [FromForm] req_fileform model)
+        {
+            string rootFolder = Directory.GetCurrentDirectory();
+            string pathString = @"\API site\files\file-hrgis\upload\";
+            string serverPath = rootFolder.Substring(0, rootFolder.LastIndexOf(@"\")) + pathString;
+            // Create Directory
+            if (!Directory.Exists(serverPath))
+            {
+                Directory.CreateDirectory(serverPath);
+            }
 
-            return Ok(respons);
-        }
+            // string fullpath = serverPath + model.file_name;
+            string filePath = Path.Combine(serverPath + model.file_name);
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            {
+                model.file_form.CopyTo(stream);
+                stream.Dispose();
+                stream.Close();
+            }
 
+            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
+                                .Include(e=>e.courses_bands)
+                                .FirstOrDefaultAsync();
+
+            if(course==null){
+                return StatusCode(400,"Course is not found");
+            }
+
+            List<string> course_bands = new List<string>();
+
+            foreach (var item in course.courses_bands)
+            {
+                course_bands.Add(item.band);
+            }
+
+            var approver = await _context.tr_stakeholder
+                            .Where(e=>e.role=="APPROVER" && e.emp_no == User.FindFirst("emp_no").Value)
+                            .FirstOrDefaultAsync();
+
+            if(approver==null){
+                return StatusCode(403,"Permission denied, only committee can use this function");
+            }
+
+            List<response_course_registration> response = new List<response_course_registration>();
+            if (System.IO.File.Exists(filePath))
+            {
+                // Console.WriteLine("File exists.");
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+                    // Console.WriteLine("rowCount: " + rowCount);
+
+                    for (int row = 4; row <= rowCount; row++)
+                    {
+                        if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
+                        {
+                            string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
+                            int ws_seq_no = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            int _seq_no = 0;
+                            string _last_status = "";
+
+                            var emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
+
+                            var query_seq = await _context.tr_course_registration
+                                            .Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no)
+                                            .FirstOrDefaultAsync();
+
+                            if (query_seq == null)
+                            {
+                                _seq_no = 1;
+                            }
+                            else
+                            {
+                                _seq_no = query_seq.seq_no + 1;
+                            }
+
+                            _last_status = _seq_no > course.capacity ? _config.GetValue<string>("Status:wait") : null; // Check
+                            var query = await _context.tr_course_registration
+                                        .Where(x => x.course_no == course_no && x.emp_no == _emp_no)
+                                        .FirstOrDefaultAsync();
+
+                            if(emp==null){
+                                response.Add(new response_course_registration
+                                {
+                                    emp_no = _emp_no,
+                                    seq_no = ws_seq_no,
+                                    error_message = _config["Text:staff_not_exist"]
+                                });
+                            } 
+                            else{
+                                if(emp.employed_status=="RESIGNED"){
+                                    // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                    response.Add(new response_course_registration
+                                    {
+                                        emp_no = _emp_no,
+                                        seq_no = ws_seq_no,
+                                        error_message = _config["Text:staff_resigned"]
+                                    });
+                                }
+                                else{
+                                    if(approver.org_code==emp.div_code || approver.org_code==emp.dept_code ){
+                                        if(!course_bands.Contains(emp.band)){
+                                            response.Add(new response_course_registration
+                                            {
+                                                emp_no = _emp_no,
+                                                seq_no = ws_seq_no,
+                                                error_message = _config.GetValue<string>("Text:unequal_band")
+                                            });
+                                        }
+                                        else{
+                                            if (query == null){
+                                                _context.Add(new tr_course_registration
+                                                {
+                                                    course_no = course_no,
+                                                    emp_no = _emp_no,
+                                                    seq_no = _seq_no,
+                                                    last_status = _last_status,
+                                                    remark = await GetPrevCourseNo(course_no, _emp_no),
+                                                    register_at = DateTime.Now,
+                                                    register_by = User.FindFirst("emp_no").Value,
+                                                    final_approved_at = DateTime.Now,
+                                                    final_approved_by = User.FindFirst("emp_no").Value,
+                                                    final_approved_checked = true
+                                                });
+                                                await _context.SaveChangesAsync();
+                                            }
+                                            else{
+                                                // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
+                                                response.Add(new response_course_registration
+                                                {
+                                                    emp_no = _emp_no,
+                                                    seq_no = ws_seq_no,
+                                                    error_message = _config.GetValue<string>("Text:duplication")
+                                                });
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                        response.Add(new response_course_registration
+                                        {
+                                            emp_no = _emp_no,
+                                            seq_no = ws_seq_no,
+                                            error_message = _config.GetValue<string>("Text:invalid_department")
+                                        });
+                                    } 
+                                }
+                            }           
+                        }
+                    }
+                }
+            }
+            await Sorting(course_no);
+            System.IO.File.Delete(filePath);  //Delete file
+            return Ok(response);
+        } 
     }
 }
-public class req_array_regis
-{
-    public string course_no { get; set; }
-    public string emp_no { get; set; }
-    public int seq_no { get; set; }
-    public string last_status { get; set; }
-    public string remark { get; set; }
-    public bool? final_approved_checked { get; set; }
-    public int position { get; set; }
-}
-
 public class req_fileform
 {
     public IFormFile file_form { get; set; }
     public string file_name { get; set; }
-    public string dept_abb { get; set; }
-    public int capacity { get; set; }
 }
 
-public class respons_course_registration
+public class response_course_registration
 {
-    public int seq_no { get; set; }
     public string emp_no { get; set; }
-    public string last_status { get; set; }
+    public int seq_no { get; set; }
+    public string error_message { get; set; }
 }

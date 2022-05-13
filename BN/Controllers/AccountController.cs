@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using api_hrgis.Data;
 using api_hrgis.Models;
 using api_hrgis.Repository;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_hrgis.Controllers
 {
@@ -59,86 +60,18 @@ namespace api_hrgis.Controllers
             return Ok(users);
         }
 
-        // GET: api/Account/5
-        [HttpGet("{username}")]
-        public async Task<ActionResult<tb_user>> get_user(string username)
-        {
-            var tb_user = await _context.tb_user.Where(x => x.username == username).FirstOrDefaultAsync();
-
-            if (tb_user == null)
-            {
-                return NotFound();
-            }
-
-            return tb_user;
-        }
-
-        // PUT: api/Account/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{username}")]
-        public async Task<IActionResult> update_user(string username, tb_user tb_user)
-        {
-            if (username != tb_user.username)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tb_user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!user_exists(username))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/Account/5
-        [HttpDelete("{username}")]
-        public async Task<IActionResult> delete_user(string username)
-        {
-            var tb_user = await _context.tb_user.Where(x => x.username == username).FirstOrDefaultAsync();
-            if (tb_user == null)
-            {
-                return NotFound();
-            }
-
-            _context.tb_user.Remove(tb_user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         private bool user_exists(string username)
         {
             return _context.tb_user.Any(e => e.username == username);
         }
 
         // POST: api/Account/Register
-        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<ActionResult<tb_user>> Register(tb_user Input)
         {
             if (Input.password != Input.confirmpassword)
             {
                 return Conflict("The password and confirmation password do not match.");
-            }
-
-            var tb_user = await _context.tb_user.Where(x => x.username == Input.username).FirstOrDefaultAsync();
-            if (tb_user != null)
-            {
-                return Conflict();
             }
 
             tb_user tb = new tb_user();
@@ -150,6 +83,8 @@ namespace api_hrgis.Controllers
             tb.storedsalt = hashsalt.Salt;
             tb.phonenumber = Input.phonenumber;
             tb.phonenumberconfirmed = true;
+            tb.created_at = DateTime.Now;
+            tb.created_by = User.FindFirst("emp_no").Value;;
 
             _context.tb_user.Add(tb);
             try
@@ -207,7 +142,57 @@ namespace api_hrgis.Controllers
 
             return NoContent();
         }
-        [AllowAnonymous]
+        // POST: api/Account/Register
+        [HttpPost("ChangePassword/{emp_no}")]
+        public async Task<ActionResult<tb_user>> change_password(string emp_no, change_password Input)
+        {
+
+            if(User.FindFirst("emp_no").Value!=emp_no){
+                return StatusCode(403,"Permission denied, only account owner can change password");
+            }
+
+            var tb_user = await _context.tb_user.Where(x => x.username == emp_no)
+                            .FirstOrDefaultAsync();
+            if (tb_user == null)
+            {
+                return NotFound();
+            }
+
+            var store = _context.tb_user.FirstOrDefault(u => u.username == emp_no);
+            var user = _repository.VerifyPassword(Input.old_password, store.storedsalt, store.passwordhash);
+            if (!user)
+            {
+                return StatusCode(403,"Password not match, please fill the right password");
+            }
+
+            tb_user.username = emp_no;
+            var hashsalt = _repository.EncryptPassword(Input.new_password);
+            tb_user.passwordhash = hashsalt.Hash;
+            tb_user.storedsalt = hashsalt.Salt;
+            tb_user.reset_password_at = DateTime.Now;
+            tb_user.reset_password_by = User.FindFirst("emp_no").Value;
+
+            _context.Entry(tb_user).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!user_exists(emp_no))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        /* [AllowAnonymous]
         [HttpGet("register_users")]
         public async Task<ActionResult<tb_employee>> register_users()
         {
@@ -239,23 +224,20 @@ namespace api_hrgis.Controllers
             Console.WriteLine("...End register");
             return Ok();
     
-        }
+        } */
 
     }
 }
-
-/* public class InputModel
+public class change_password
 {
-    [Required]
-    public string username { get; set; }
-    [EmailAddress]
-    public string email { get; set; }
-    [Required]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     [DataType(DataType.Password)]
-    public string password { get; set; }
+    public string old_password { get; set; }
+    [NotMapped]
     [DataType(DataType.Password)]
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-    public string confirmpassword { get; set; }
-    public string phonenumber { get; set; }
-} */
+    [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+    public string new_password { get; set; }
+    [NotMapped]
+    [DataType(DataType.Password)]
+    [Compare("new_password", ErrorMessage = "Confirm password does not match, type again")]
+    public string confirm_password { get; set; }
+}

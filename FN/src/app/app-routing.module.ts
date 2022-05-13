@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'menus', loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule), data: { title: 'Menu', active: true } },
   { path: 'employee', loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule), data: { title: 'Employee', active: true } },
   { path: 'training', loadChildren: () => import('./training/training.module').then(m => m.TrainingModule), data: { title: 'Training', active: true } },
+  { path: 'task-schedule', loadChildren: () => import('./task-schedule/task-schedule.module').then(m => m.TaskScheduleModule), data: { title: 'Task schedule', active: true } },
   { path: '**', redirectTo: 'general-pages/page-404' },
 ];
 

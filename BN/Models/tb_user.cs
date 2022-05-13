@@ -19,7 +19,7 @@ namespace api_hrgis.Models
         public string password { get; set; }
         [NotMapped]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Confirm password doesn't match, Type again !")]
+        [Compare("Password", ErrorMessage = "Confirm password does not match, type again")]
         public string confirmpassword { get; set; }
         public string passwordhash { get; set; }
         public byte[] storedsalt { get; set; }

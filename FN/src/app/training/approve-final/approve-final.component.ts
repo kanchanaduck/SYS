@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import Swal from 'sweetalert2';
 import { Subject } from 'rxjs';
@@ -8,13 +7,14 @@ import { environment } from '../../../environments/environment';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-approve-final',
   templateUrl: './approve-final.component.html',
   styleUrls: ['./approve-final.component.scss']
 })
-export class ApproveFinalComponent implements OnInit {
+export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
 
   headers: any = {
     headers: {
@@ -32,7 +32,6 @@ export class ApproveFinalComponent implements OnInit {
   // end datatable
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
-  v_capacity = 0;
   @ViewChild("txtdate_from") txtdate_from: any;
   @ViewChild("txtdate_to") txtdate_to: any;
   @ViewChild("txtposition") txtposition: any;
@@ -65,20 +64,16 @@ export class ApproveFinalComponent implements OnInit {
   emp_no: string = "";
   emp_name: string;
   emp_status: string;
+  _checkbox: any = 0;
 
   constructor(private modalService: NgbModal, private service: AppServiceService, private exportexcel: ExportService) {
 
   }
-
   ngOnInit() {
-
-
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
     this.check_is_committee()
-  }
 
-  async datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -87,14 +82,6 @@ export class ApproveFinalComponent implements OnInit {
         paginate: {
           next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
         }
       },
       buttons: {
@@ -132,14 +119,6 @@ export class ApproveFinalComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              /* {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              }, */
             ]
           }, 
           {
@@ -147,7 +126,7 @@ export class ApproveFinalComponent implements OnInit {
             className: "btn-indigo",
             key: '1',
             action: () => {
-                this.fnApproved();
+                this.approve();
             }
           }
         ],
@@ -162,6 +141,12 @@ export class ApproveFinalComponent implements OnInit {
         }
       ],
     };
+  }
+  ngAfterViewInit(): void {
+    this.dtTrigger.next();
+  }
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
   }
 
   // barChartData2 = [{
@@ -206,6 +191,72 @@ export class ApproveFinalComponent implements OnInit {
     }
   ];
 
+  async open(content) {
+
+    this.res_chart = await this.service.axios_get('OtherData/GetChartFinal?course_no=' + this.course.master_course_no);
+    console.log(this.res_chart);
+    this.c_course_no = this.course.master_course_no
+    this.c_course_name_en = `${this.res_chart.master_course.course_name_th}(${this.res_chart.master_course.course_name_en})`
+    if(this.res_chart.data.length > 0){
+      var total = this.res_chart.data.map(function (item) {
+        return item.total;
+      }); // console.log(total);
+
+      // console.log(((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total)));
+      // console.log(((Math.ceil((Math.max(27) / 10)) * 10) - Math.max(27)));
+
+      this.chartmax = Math.max(...total) + ((Math.ceil((Math.max(...total) / 10)) * 10) - Math.max(...total));
+
+      var chartlabels = this.res_chart.chartlabels.map(function (item) {
+        return item.dept_abb;
+      }); // console.log(chartlabels);
+
+      this.barChartData2 = [{
+        // label: '# of Value',
+        labels: total,
+        data: total,
+      }];
+      this.barChartLabels = chartlabels;
+      this.barChartOptions = {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              fontSize: 10,
+              min: 0,
+              max: this.chartmax
+            }
+          }],
+          xAxes: [{
+            barPercentage: 0.6,
+            ticks: {
+              beginAtZero: true,
+              fontSize: 11
+            }
+          }]
+        },
+        legend: {
+          display: false
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        }
+      };
+
+      this.modalService.open(content, {
+        size: 'lg' //sm, mb, lg, xl
+      });
+    }
+    else{
+      Swal.fire({
+        icon: 'warning',
+        text: 'There is no data to show'
+      })
+    }
+  } // Popup chart
+
   async check_is_committee() {
     let self = this
     await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
@@ -215,21 +266,20 @@ export class ApproveFinalComponent implements OnInit {
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
         self.get_courses_owner()
-        self.datatable()
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
       }); 
   }
 
-  
-
   async get_course() {
     let self = this
 
     if(this.course_no==null)
     {
-      return false;
+      this.course = {};
+      this.data_grid = [];
+      self.get_registrant()
     }
     else
     {
@@ -253,7 +303,7 @@ export class ApproveFinalComponent implements OnInit {
           else{
             self.course.band_text = "-"
           }
-          self.fnGet()
+          self.get_registrant()
         })
         .catch(function(error){
           self.service.sweetalert_error(error)
@@ -268,6 +318,7 @@ export class ApproveFinalComponent implements OnInit {
     await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/Open`, this.headers)
     .then(function(response){
       self.courses = response
+      self.get_course()
     })
     .catch(function(error){
 
@@ -279,27 +330,16 @@ export class ApproveFinalComponent implements OnInit {
     return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
   }
 
-  async clear_data() {
-    this.course = {};
-    this.data_grid = [];
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.clear().draw();
-      dtInstance.destroy();
-      this.dtTrigger.next();
-    });
-  }
 
-  async fnSave() {
-
+  async register() {
     const send_data = {
       course_no: this.course_no,
       emp_no: this.emp_no,
       last_status: (this.data_grid.length + 1) > this.course.capacity ? environment.text.wait : 'Approved',
       remark: this.txt_not_pass
     }
-    // console.log(send_data);
     let self = this
-    await axios.post(`${environment.API_URL}Registration/ByCommitteeCourse`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, this.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -309,7 +349,7 @@ export class ApproveFinalComponent implements OnInit {
         showConfirmButton: false,
         timer: 2000
       })
-      self.fnGet();
+      self.get_registrant();
       self.fnClear()
     })
     .catch(function(error){
@@ -319,11 +359,11 @@ export class ApproveFinalComponent implements OnInit {
         title: error.response.status,
         text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
       })
-      // self.fnGet(self.course_no);
     })
   }
+
   
-  fnApproved() {  
+  approve() {  
     if(this._org_code != this.course.org_code){ 
       Swal.fire({
         icon: 'error',
@@ -356,14 +396,15 @@ export class ApproveFinalComponent implements OnInit {
 
         for (const iterator of this.array_grid) {
           let _objIndex = this.data_grid.findIndex((obj => obj.emp_no == iterator.emp_no));
+          this.data_grid[_objIndex].last_status = "Approved"
           this.data_grid[_objIndex].final_approved_checked = true;
         }
 
-        Array.prototype.push.apply(this.array_grid, this.data_grid); //console.log('array_grid: ', this.array_grid);
-        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); //console.log('remove: ', removeDuplicateObjectFromArray(this.array_grid, 'emp_no'));
+        Array.prototype.push.apply(this.array_grid, this.data_grid); 
+        this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); 
 
-        await this.service.axios_put(`Registration/FinalApprove/${this.course_no}`, this.array_grid, environment.text.success);
-        await this.fnGet();
+        await this.service.axios_put(`Register/FinalApprove/${this.course_no}`, this.array_grid, environment.text.success);
+        await this.get_registrant();
         this.selection.clear();
         this.array_grid = [];
       }
@@ -391,8 +432,8 @@ export class ApproveFinalComponent implements OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete(`Registration/${this.course_no}/${emp_no}`, environment.text.delete);
-        this.fnGet();
+        await this.service.axios_delete(`Register/${this.course_no}/${emp_no}`, environment.text.delete);
+        this.get_registrant();
       }
     })
   }
@@ -432,7 +473,7 @@ export class ApproveFinalComponent implements OnInit {
   }
   res_prev: any;
   async searchPrevCourse(empno: any) {
-    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
@@ -482,7 +523,7 @@ export class ApproveFinalComponent implements OnInit {
       formData.append('capacity', this.txtqty.nativeElement.value)
     }
 
-    this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.course_no, formData, environment.text.success);
+    this.result = await this.service.axios_formdata_post('/Register/UploadCourseRegistration/' + this.course_no, formData, environment.text.success);
     // console.log('result: ', this.result.data);
     if (this.result.data.length > 0) {
       let element = this.result.data;
@@ -490,7 +531,7 @@ export class ApproveFinalComponent implements OnInit {
     }
 
     this.nameFile = 'Choose file';
-    await this.fnGet();
+    await this.get_registrant();
   }
   /** End File Upload, Download */
 
@@ -521,7 +562,7 @@ export class ApproveFinalComponent implements OnInit {
   }
 
   toggleSelection(row) {
-    if ((this.selection.selected.length < this.v_capacity) || this.selection.isSelected(row)) {
+    if ((this.selection.selected.length < this.course.capacity) || this.selection.isSelected(row)) {
       this.selection.toggle(row);
     }
     this.array_grid = this.selection.selected;
@@ -532,35 +573,43 @@ export class ApproveFinalComponent implements OnInit {
   c_course_no: any; c_course_name_en: any;
   _org_code:any;
 
-  async fnGet() {
-    await this.service.gethttp(`Registration/GetGridView/${this.course_no}`)
+  async get_registrant() {
+
+    if(this.course_no==null){
+      this.rerender();
+    }
+
+    await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         this.data_grid = response;
         this.v_regis = this.data_grid.filter(x => x.last_status != environment.text.wait).length;
         this.v_wait = this.data_grid.filter(x => x.last_status == environment.text.wait).length;
         this.v_total = this.data_grid.length;
-
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            // dtInstance.clear().draw();
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } 
-        else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
+        if(this.course.capacity<this.v_regis){
+          this.disabled_chkall = true
         }
-
+        this.rerender();
     }, (error: any) => {
         console.log(error);
         this.data_grid = [];
+        this.rerender();
       });
   }
 
-  ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
+  rerender(){
+    if (this.isDtInitialized) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.clear().draw()
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    } 
+    else {
+      this.isDtInitialized = true
+      this.dtTrigger.next();
+    }
   }
+
 }
 
 

@@ -11,7 +11,8 @@
                 bindLabel="course_no"
                 allow-clear="true"
                 (clear)="clear_data()"
-                (change)="get_course()">	
+                (change)="get_course()"
+                autocomplete="disabled">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
@@ -61,39 +62,32 @@
         <dd class="col-sm-4">{{ course.updated_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
     </dl>
 </div>
-<div class="row mt-3">
-    <div class="col-12">
-        <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm" id="example">
-            <thead>
-                <tr class="text-uppercase">
-                    <th class="text-center">no.</th>
-                    <th class="text-center">emp no</th>
-                    <th class="text-center">title en</th>
-                    <th class="text-center">firstname en</th>
-                    <th class="text-center">lastname en</th>
-                    <th class="text-center">title th</th>
-                    <th class="text-center">firstname th</th>
-                    <th class="text-center">lastname th</th>
-                    <th class="text-center">position</th>
-                    <th class="text-center">division</th>
-                    <th class="text-center">department</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of data_grid; let i = index">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ item.emp_no }}</td>
-                    <td>{{ item.title_name_en }}</td>
-                    <td>{{ item.firstname_en }}</td>
-                    <td>{{ item.lastname_en }}</td>
-                    <td>{{ item.title_name_th }}</td>
-                    <td>{{ item.firstname_th }}</td>
-                    <td>{{ item.lastname_th }}</td>
-                    <td>{{ item.position_name_en }}</td>
-                    <td>{{ item.div_abb }}</td>
-                    <td>{{ item.dept_abb }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+
+<div class="card mt-2" *ngIf="email && email.registrant" >
+    <div class="card-header tx-medium">
+        To <small>(Student)</small>
+        <a href="javascript:;" (click)="copy_to_clipboard('to')" class="badge badge-secondary float-right">Copy</a>
+    </div><!-- card-header -->
+    <div class="card-body">
+        {{ email.to }}
+    </div><!-- card-body -->
+</div><!-- card -->
+
+<div class="card mt-2" *ngIf="email && email.approver && email.trainer">
+    <div class="card-header tx-medium">
+        CC <small>(Student's approver, Trainer, Center)</small>
+        <a href="javascript:;" (click)="copy_to_clipboard('cc')" class="badge badge-secondary float-right">Copy</a>
+    </div><!-- card-header -->
+    <div class="card-body">
+        {{ email.cc }}
+    </div><!-- card-body -->
+</div><!-- card -->
+
+<div class="card mt-2" *ngIf="email && email.content">
+    <div class="card-header tx-medium">
+        Content 
+        <a href="javascript:;" (click)="copy_to_clipboard('content')" class="badge badge-secondary float-right">Copy</a>
+    </div><!-- card-header -->
+    <div class="card-body" [innerHTML]="email.content">
+    </div><!-- card-body -->
+</div><!-- card -->

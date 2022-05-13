@@ -1,4 +1,4 @@
-<form (ngSubmit)="fnSave()">
+<form (ngSubmit)="register()">
 <div class="row mb-3" *ngIf="is_committee">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
@@ -13,13 +13,12 @@
                 bindValue="course_no"
                 bindLabel="course_no"
                 allow-clear="true"
-                (clear)="clear_data()"
                 (change)="get_course()">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
                     {{item.course_no}}: {{item.course_name_th}}
                 </ng-template>	
             </ng-select>
-            <p class="invalid-feedback" *ngIf="errors && errors.course_no"> 
+            <p class="invalid-feedback-nc" *ngIf="errors && errors.course_no"> 
                 <span *ngFor="let text of errors.course_no">{{ text }}</span>
             </p>
         </div>
@@ -29,7 +28,12 @@
 <div class="card card-body tx-13 mt-3 mb-3" *ngIf="is_committee && (course | json) != '{}'">
     <dl class="row my-0">
         <dt class="col-sm-2">COURSE NO.: </dt>
-        <dd class="col-sm-2">{{ course.course_no }}</dd>
+        <dd class="col-sm-4">{{ course.course_no }}
+        </dd>
+        <dd class="col-sm-6">
+            <button type="button" class="btn btn-sm btn-outline-indigo float-right" (click)="open(content)">
+                <i class="fas fa-chart-bar"></i> Click to see graph</button>
+        </dd>
     </dl>
     <dl class="row my-0">
         <dt class="col-sm-2">THAI NAME:</dt>
@@ -125,7 +129,7 @@
 </form>
 
 <div class="card card-body mb-3" *ngIf="is_committee">
-    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
+    <table datatable id="example" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
         <thead>
             <tr>
                 <th class="text-center">
@@ -151,16 +155,17 @@
                 <th class="text-center">manage</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody><!-- 
+                        [disabled]="(selection.selected.length === course.capacity) && !selection.isSelected(item)"  -->
             <tr *ngFor="let item of data_grid; let i = index">
                 <th class="text-center">
                     <label class="ckbox pt-0">
                     <input type="checkbox" (click)="$event.stopPropagation()" 
                         (change)="$event ? toggleSelection(item) : null" 
-                        [checked]="selection.isSelected(item) == true" 
-                        [disabled]="(selection.selected.length === course.capacity) && !selection.isSelected(item)" 
+                        [checked]="(selection.isSelected(item) == true || (item.final_approved_checked && item.last_status=='Approved'))" 
+                        [disabled]="(_checkbox === course.capacity) && !selection.isSelected(item)"
                         [attr.aria-label]="checkboxLabel(item)">
-                        <span></span>
+                        <span>{{ selection.isSelected(item) }}</span>
                     </label>
                 </th>
                 <td class="text-right">{{ item.seq_no }}</td>
@@ -199,3 +204,19 @@
         you can go to <a routerLink="./../course">Course</a> page.
     </p>
 </div>
+
+<ng-template #content let-modal animation>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Registrant in course no. {{c_course_no}} – {{c_course_name_en}} </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <canvas baseChart [chartType]="'bar'" [datasets]="barChartData2" [labels]="barChartLabels" [options]="barChartOptions" [colors]="barChartColors2"></canvas>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -1,27 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { DataTableDirective } from 'angular-datatables';
 import Swal from 'sweetalert2';
-import { Subject } from 'rxjs';
 import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
 import axios from 'axios';
-import { NgbModal, NgbModalConfig, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
-
+import { formatDate } from '@angular/common';
 @Component({
   selector: 'app-confirmation-sheet',
   templateUrl: './confirmation-sheet.component.html',
   styleUrls: ['./confirmation-sheet.component.scss']
 })
 export class ConfirmationSheetComponent implements OnInit {
-  data_grid: any = [];
-  // datatable
-  dtOptions: any = {};
-  dtTrigger: Subject<any> = new Subject();
-  @ViewChild(DataTableDirective)
-  dtElement: DataTableDirective;
-  isDtInitialized: boolean = false
-  // end datatable
-  @ViewChild("txtcourse_no") txtcourse_no;
   _getjwt: any;
   _emp_no: any;
   _org_abb: string = "";
@@ -39,29 +27,25 @@ export class ConfirmationSheetComponent implements OnInit {
     }
   }
   response: any;
+  email: any;
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig, processbar: NgbProgressbarConfig, private service: AppServiceService) {
-    config.backdrop = 'static'; // popup
-    config.keyboard = false;
+  constructor(private service: AppServiceService) {
 
-    processbar.max = 1000;  // processbar
-    processbar.striped = true;
-    processbar.animated = true;
-    processbar.type = 'primary';
    }
 
   ngOnInit(): void {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
-    this.fnGetStakeholder(this._emp_no)
+    this.get_courses();
   }
 
   async get_courses(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
     .then(function(response){
       self.courses = response
-      self.datatable()
+      self.course_no = 'AOF-001-001'
+      self.get_course()
     })
     .catch(function(error){
 
@@ -75,108 +59,8 @@ export class ConfirmationSheetComponent implements OnInit {
   
   async clear_data() {
     this.course = {};
-    this.data_grid = [];
   }
 
-  async datatable(){
-    this.dtOptions = {
-      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-      language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      buttons: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-right"
-          },
-          "button": {
-            tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
-          },
-        },
-        "buttons": [
-          {
-            extend: 'pageLength',
-          },
-          {
-            extend: 'copy',
-            text: '<i class="fas fa-copy"></i> Copy</button>',
-          },
-          {
-            extend: 'print',
-            text: '<i class="fas fa-print"></i> Print</button>',
-          },
-          {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-              {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-              /* {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              } */
-            ]
-          }, 
-          {
-            text: '<i class="fas fa-envelope"></i> Trainee email</button>',
-            key: '1',
-            className: this.isCheck && (this._org_code==this.course.org_code) ? 'd-block':'d-none',
-            action: () => {
-              if(this.course_org_code != ""){
-                this.fnSendMail();
-              }
-            }
-          }
-        ],
-      },
-      container: "#example_wrapper .col-md-6:eq(0)",
-      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      // order: [[1, 'desc']],
-    };
-  }
-
-
-  org_code: any;
-  async fnGetStakeholder(emp_no: any) {
-    await this.service.gethttp('Stakeholder/Employee/' + emp_no)
-      .subscribe((response: any) => {
-        if (response.role.toUpperCase() == environment.role.committee) {
-          console.log(response);
-          this._org_code = response.org_code;
-          this.isCheck = true;
-          this.get_courses()
-        }
-      }, (error: any) => {
-        console.log(error);
-        // this.fnGet("No");
-        this.isCheck = false;
-        this.get_courses()
-      });
-  }
-
-
-
-  v_course_no: string = "";
-  addItemCourse(newItem: string) {
-    this.v_course_no = newItem;
-    this.txtcourse_no.nativeElement.value = newItem;
-  }
-  // End Open popup Course
-
-  mail_date: any; mail_time: any; mail_place: any; mail_course: any; course_org_code: string = "";
   async get_course() {
     let self = this
     axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
@@ -190,7 +74,7 @@ export class ConfirmationSheetComponent implements OnInit {
         else{
           self.course.trainer_text = "-"
         }
-        self.get_registrant()
+        self.get_email()
       })
       .catch(function(error){
         Swal.fire({
@@ -203,296 +87,64 @@ export class ConfirmationSheetComponent implements OnInit {
     });     
   }
 
-async get_registrant(){
-  await this.service.gethttp('OtherData/GetGETREGISTRATION?course_no=' + this.course_no)
-  .subscribe((response: any) => {
-    console.log(response);
-    if (response.length > 0) {
-      this.mail_date = new Date(response[0].date_start).getDate() + "-" + new Date(response[0].date_end).getDate() + " " + new Date(response[0].date_start).toLocaleString('default', { month: 'long' }) + " " + new Date(response[0].date_start).getFullYear();
-      this.mail_time = response[0].time_in + "～" + response[0].time_out;
-      this.mail_place = response[0].place;
-      this.mail_course = response[0].course_no + "(" + response[0].course_name_th + ")";
-      this.course_org_code = response[0].org_code;
-    }
-
-    this.data_grid = response;
-
-    // Calling the DT trigger to manually render the table
-    if (this.isDtInitialized) {
-      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-        dtInstance.clear().draw();
-        dtInstance.destroy();
-        this.dtTrigger.next();
-      });
-    } else {
-      this.isDtInitialized = true
-      this.dtTrigger.next();
-    }
-  }, (error: any) => {
-    console.log(error);
-    this.data_grid = [];
-  });
-}
-
-  res_mail: any;
-  res_file: any;
-  array_to: any = [];
-  async fnSendMail_old() {
-    if(this.org_code != this.course_org_code){ 
-      Swal.fire({
-        icon: 'error',
-        text: environment.text.invalid_course
-      })
-      return; 
-    }
-
-    if (this.isCheck == true) {
-      if (this.course_no != "" && this.mail_date != undefined) {
-        this.loading = true;
-
-        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.course_no);
-        console.log(this.res_mail);
-        Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
-        Array.prototype.push.apply(this.array_to, this.res_mail.trainner);
-        Array.prototype.push.apply(this.array_to, this.res_mail.manager);
-        Array.prototype.push.apply(this.array_to, this.res_mail.center);
-        Array.prototype.push.apply(this.array_to, this.res_mail.approver);
-
-        this.array_to = removeDuplicateObjectFromArray(this.array_to, 'emp_no'); // console.log('remove: ', this.array_to);
-        this.array_to = this.array_to.filter(x => x.email != null && x.email != '');
-        if (this.array_to.length > 0) {
-          const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no);  console.log(filter_form);
-          const filter_to = this.array_to; console.log(filter_to); // console.log(filter_to.map(a => a.email).join());
-
-          Swal.fire({
-            title: 'Are you sure? \n you want to send e-mail to',
-            text: filter_to.map(a => a.email).join("; "),
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-          }).then(async (result) => {
-            if (result.value) {
-
-              // this.res_file = await this.service.axios_get('OtherData/ConfirmationExcel?course_no=' + this.txtcourse_no.nativeElement.value);
-              // console.log(this.res_file);
-
-              var formData_M = new FormData();
-              let mailform = filter_form[0].email;
-              let subject = "Confirm Training : " + this.mail_course + " : " + this.mail_date;
-              formData_M.append('from', mailform);
-
-              let select_data = filter_to.map(a => a.emp_no);
-              let emp_to = filter_to.filter(function (item) {
-                return select_data.includes(item.emp_no)
-              }); //console.log(emp_to);
-              for (var i = 0; i < emp_to.length; i++) {
-                if (emp_to[i].email != null) {
-                  formData_M.append('to', emp_to[i].email); // console.log(emp_to[i].email);
-                }
-              }
-
-              let dear = filter_to.map(a => a.fullname).join(", "); // console.log(dear);
-              formData_M.append('subject', "[TEST][HRGIS TRAINING] " + subject);
-              formData_M.append('text', "Dear: " + dear + " \n\n" +
-                "I would like to confirm about the lists :\n" +
-                "****************************************************************************************\n" +
-                "Course          :   \"" + this.mail_course + "\"\n" +
-                "Date            :   " + this.mail_date + "\n" +
-                "Time            :   " + this.mail_time + " (Please arrive 10 minutes early to allow us enough time to check your list.)\n" +
-                "Place           :   " + this.mail_place + "\n" +
-                "Trainer         :   " + this.res_mail.trainner.map(a => a.fullname).join(", ") + "	\n" +
-                "Please try to be punctual, so we can start the training on time.\n" +
-                "****************************************************************************************\n" +
-                "Prepare     : Eraser\n" +
-                "            : Pencil\n" +                
-                "Please click the link. http://cptsvs52t/HRGIS_TEST \n\n" +
-                "Best Regards");
-              var url = "http://cptsvs531:1000/middleware/email/sendmail";
-              // this.service.axios_formdata_post(url, formData_M, 'Send mail success.');
-
-              // for (var pair of formData_M.entries()) {
-              //   console.log(pair[0] + ', ' + pair[1]);
-              // }
-            }
-          })
-        }
-
-        this.loading = false;
-      }
-      else{
-        Swal.fire({
-          icon: 'error',
-          text: environment.text.not_sendmail
-        })
-      }
-    }
-    else{
-      Swal.fire({
-        icon: 'error',
-        text: environment.text.committee_only
-      })
-    }
-  }
-
-  async fnSendMail() {
-    if(this.org_code != this.course_org_code){ 
-      Swal.fire({
-        icon: 'error',
-        text: environment.text.invalid_course
-      })
-      return; 
-    }
-
-    if (this.isCheck == true) {
-      if (this.course_no != "" && this.mail_date != undefined) {
-        this.loading = true;
-
-        this.res_mail = await this.service.axios_get('OtherData/GetSendMailConfirmation?course_no=' + this.course_no);
-        console.log(this.res_mail);
-        Array.prototype.push.apply(this.array_to, this.res_mail.trainee);
-        Array.prototype.push.apply(this.array_to, this.res_mail.trainner);
-        Array.prototype.push.apply(this.array_to, this.res_mail.manager);
-        Array.prototype.push.apply(this.array_to, this.res_mail.center);
-        Array.prototype.push.apply(this.array_to, this.res_mail.approver);
-
-        this.array_to = removeDuplicateObjectFromArray(this.array_to, 'emp_no'); // console.log('remove: ', this.array_to);
-        this.array_to = this.array_to.filter(x => x.email != null && x.email != '');
-        if (this.array_to.length > 0) {
-          const filter_form = this.array_to.filter(e => e.emp_no == this._emp_no);  console.log(filter_form);
-          const filter_to = this.array_to; console.log(filter_to); // console.log(filter_to.map(a => a.email).join());
-
-          Swal.fire({
-            // title: 'Are you sure? \n you want to send e-mail to',
-            title: 'List e-mail to',
-            text: filter_to.map(a => a.email).join("; "),
-            // icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-          }).then(async (result) => {
-            if (result.value) {
-              let mailform = filter_form[0].email;
-              let subject = "Confirm Training : " + this.mail_course + " : " + this.mail_date;
-              let dear = filter_to.map(a => a.fullname).join(", "); // console.log(dear); 
-                           
-              var mailOptions = {
-                from: mailform,
-                to: filter_to.map(a => a.email).join("; "),
-                subject: "[TEST][HRGIS TRAINING] " + subject,
-                text: "Dear: " + dear + " \n\n" +
-                "I would like to confirm about the lists :\n" +
-                "****************************************************************************************\n" +
-                "Course          :   \"" + this.mail_course + "\"\n" +
-                "Date            :   " + this.mail_date + "\n" +
-                "Time            :   " + this.mail_time + " (Please arrive 10 minutes early to allow us enough time to check your list.)\n" +
-                "Place           :   " + this.mail_place + "\n" +
-                "Trainer         :   " + this.res_mail.trainner.map(a => a.fullname).join(", ") + "	\n" +
-                "Please try to be punctual, so we can start the training on time.\n" +
-                "****************************************************************************************\n" +
-                "Prepare     : Eraser\n" +
-                "            : Pencil\n" +                
-                "Please click the link. http://cptsvs52t/HRGIS_TEST \n\n" +
-                "Best Regards"
-              };
-              console.log('mailOptions: ',mailOptions);
-              
-              // location.href = "mailto:nuttaya001@gmail.com?" + mailOptions;
-            }
-          })
-        }
-
-        this.loading = false;
-      }
-      else{
-        Swal.fire({
-          icon: 'error',
-          text: environment.text.not_sendmail
-        })
-      }
-    }
-    else{
-      Swal.fire({
-        icon: 'error',
-        text: environment.text.committee_only
-      })
-    }
-  }  
-
-  ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
-  }
-
-  nameFile: string = 'Attached file';
-  file: any;
-  fileName: any;
-  @ViewChild('customFile') customFile: any;
-  chooseFile(e: any) {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      this.file = e.target.files[0];
-      this.fileName = e.target.files[0].name;
-      console.log(this.file);
-      console.log(this.fileName);
-      this.nameFile = this.fileName;
-    }
-  }
-
-  // Exemple
-  async fnSendMailExemple(course_no) {
-    var formData_M = new FormData();
-    let mailform = 'nuttaya001@mail.canon';
-    let subject = "Request for approval to participate in the training.";
-    formData_M.append('from', mailform);
-
-    let alllst_data = [{ emp_no: "014748", email: "nuttaya001@mail.canon" }, { emp_no: "014749", email: "natirut@mail.canon" }];
-    // let select_data = ["014748", "014749"];
-    let select_data = ["014748"];
-    let emp_to = alllst_data.filter(function (item) {
-      return select_data.includes(item.emp_no)
+  async get_email(){
+    this.email = await this.service.axios_get(`Courses/ConfirmationSheet/${this.course_no}`);    
+    var text_to = "";
+    this.email.registrant.forEach(element => {
+      text_to += element.email+"; "
     });
-    for (var i = 0; i < emp_to.length; i++) {
-      if (emp_to[i].email != null) {
-        formData_M.append('to', emp_to[i].email);
-      }
-    }
+    var text_cc = "";
+    this.email.approver.forEach(element => {
+      text_cc += element.employee.email+"; "
+    });
+    this.email.trainer.forEach(element => {
+      text_cc += element.email+"; "
+    });
+    this.email.to = text_to
+    this.email.cc = text_cc
+    this.email.content = `Confirm Training : ${this.course.course_name_th}: ${formatDate(this.course.date_start,'MMMM dd,yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd,yyyy','en-US')}<br><br> 
+    To Whom It May Concern,<br> <br> 
+    
+    I would like to confirm about the lists :<br> 
+    ****************************************************************************************<br> <br> 
 
-    // this.res_file = this.service.axios_get('OtherData/ConfirmationExcel?course_no=' + course_no);
-    // let attachments = [
-    //   {
-    //     filename: 'Confirmation_Sheet_Result.xlsx',
-    //     path: `${environment.API_URL}wwwroot/excel/Confirmation_Sheet/Confirmation_Sheet_Result.xlsx`,
-    //     cid: 'Confirmation_Sheet_Result.xlsx'
-    //   }
-    // ]
-    console.log(this.file);
-    if (this.file != undefined) {
-      formData_M.append('attachment', this.file);
-    }
-
-    let dear = "MISS.NUTTAYA K(ICD), MR.NATIRUT S(ICD)"
-    formData_M.append('subject', "[HRGIS TRAINING] " + subject);
-    formData_M.append('text', "Dear: " + dear + " \n\n" +
-      "I would like to notify that your members request to participate in the training.\n" +
-      "Please click the link to approve. http://cptsvs52t/HRGIS_TEST \n\n" +
-      "Best Regards");
-    var url = "http://cptsvs531:1000/middleware/email/sendmail";
-    // this.service.axios_formdata_post(url, formData_M, 'Send mail success.');
-
-    // for (var pair of formData_M.entries()) {
-    //   console.log(pair[0] + ', ' + pair[1]);
-    // }
+    Course: ${this.course.course_name_th} <br>
+    Date: ${formatDate(this.course.date_start,'MMMM dd,yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd,yyyy','en-US')}<br> 
+    Time: ${formatDate(this.course.date_start,'HH:mm','en-US')} ~ ${formatDate(this.course.date_end,'HH:mm','en-US')} 
+    (Please arrive 10 minutes early to allow us enough time to check your list.) <br>
+    Place: ${this.course.place} <br>
+    Trainer: ${this.course.trainer_text} <br>
+    Please try to be punctual, so we can start the training on time. <br>
+    Prepare : Eraser, Pencil <br>
+    Please click the link. <a href="http://cptsvs52t/HRGIS_TEST">http://cptsvs52t/HRGIS_TEST</a> to see more detail`
+    console.log(this.email);
   }
-  // end Exemple
 
-}
-
-function removeDuplicateObjectFromArray(array, key) {
-  return array.filter((obj, index, self) =>
-    index === self.findIndex((el) => (
-      el[key] === obj[key]
-    ))
-  )
+  async copy_to_clipboard(content){
+    var text = ""
+    if(content=="to"){
+      text = this.email.to
+    }
+    else if(content=="cc"){
+      text = this.email.cc
+    }
+    else if(content=="content"){
+      text = this.email.content.replace(/<[^>]*>/g, '')
+    }
+    else{
+      text = ""
+    }
+    if(text==""){
+      alert("Text is empty. Nothing to copy.")
+    }
+    else{
+      document.addEventListener('copy', (e: ClipboardEvent) => {
+        e.clipboardData.setData('text/plain', (text));
+        e.preventDefault();
+        document.removeEventListener('copy', null);
+      });
+      document.execCommand('copy');
+      alert("Copied text: "+text)
+    }
+  }
 }

@@ -29,23 +29,16 @@ export class CourseComponent implements OnInit {
   _emp_no: any;
   _org_abb: string = "";
   _org_code: string = "";
-  @ViewChild("txtgroup") txtgroup;
-  @ViewChild("txtdate_from") txtdate_from;
-  @ViewChild("txtdate_to") txtdate_to;
-  form: FormGroup;
-  submitted = false;
-  isreadonly = false;
-  visableSave = true;
-  visableUpdate = false;
-  visableClear = true;
+
+  visibleSave = true;
+  visibleUpdate = false;
+  visibleClear = true;
   open_regis: boolean = false;
-  chk_disable: boolean = false;
   isdisabled: boolean = true;
   value_trainer: any;
   selected_trainer_multiple: any = [];
   course: any = {};
   errors: any;
-  master_course_no: string;
 
   headers: any = {
     headers: {
@@ -54,31 +47,17 @@ export class CourseComponent implements OnInit {
     }
   }
   is_committee: boolean;
-  courses: any;
+  master_course_no: string;
+  master_courses: any;
+  check_bands: any[];
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig, public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private service: AppServiceService) {
+  constructor(private modalService: NgbModal, config: NgbModalConfig, public activeModal: NgbActiveModal, private service: AppServiceService) {
     // popup
     config.backdrop = 'static';
     config.keyboard = false;
   }
 
   ngOnInit() {
-      this.form = this.formBuilder.group(
-        {
-          frm_course: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(20)]],
-          frm_course_th: ['', [Validators.required]],
-          frm_course_en: [''],
-          frm_day: ['', [Validators.required]],
-          frm_qty: ['', [Validators.required]],
-          frm_time_in_hh: ['', [Validators.required]],
-          frm_time_in_mm: ['', [Validators.required]],
-          frm_time_out_hh: ['', [Validators.required]],
-          frm_time_out_mm: ['', [Validators.required]],
-          frm_place: ['', [Validators.required]],
-          frm_trainer: ['', [Validators.required]]
-        },
-      );
-
     for (var i = 0; i <= 23; i++) {
       let theOption: any = {};
       theOption.name = ("0" + i).slice(-2).toString();
@@ -96,23 +75,52 @@ export class CourseComponent implements OnInit {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
     this.check_is_committee()
-    this.fnGet()
-    this.fnGetband();
+    this.get_courses();
+    this.get_band();
     this.course.time_in_hh = "8"
     this.course.time_in_mm = "30"
     this.course.time_out_hh = "16"
     this.course.time_out_mm = "30"
+    this.datatable()
+  }
+
+  async get_master_courses() {
+    this.master_courses = await this.service.axios_get(`CourseMasters/Owner/${this._org_code}`)
   }
 
   async get_courses(){
-    let self = this
-    await axios.get(`${environment.API_URL}CourseMasters/Org/${this._org_code}`, this.headers)
-    .then(function(response){
-      self.courses = response
-    })
-    .catch(function(error){
+    await this.service.gethttp('Courses')
+      .subscribe((response: any) => {
+        console.log(response);
+        this.data_grid = response;
 
-    });
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+      }, (error: any) => {
+        console.log(error);
+
+        this.data_grid = [];
+        // Calling the DT trigger to manually render the table
+        if (this.isDtInitialized) {
+          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+            dtInstance.clear().draw();
+            dtInstance.destroy();
+            this.dtTrigger.next();
+          });
+        } else {
+          this.isDtInitialized = true
+          this.dtTrigger.next();
+        }
+      });
   }
 
   custom_search_course_fn(term: string, item: any) {
@@ -184,9 +192,7 @@ export class CourseComponent implements OnInit {
     };
   }
 
-  async fnSave() {
-    this.submitted = true;
-
+  async create_course() {
     let self = this
     let courses_trainers = []
     let courses_bands = []
@@ -201,8 +207,12 @@ export class CourseComponent implements OnInit {
       });
     }
 
-    if( this.checkedIDs.length > 0 ){
-      this.checkedIDs.forEach(element => {
+    this.check_bands = this.checkboxesDataList.filter((value, index) => {
+      return value.isChecked;
+    });
+
+    if( this.check_bands.length > 0 ){
+      this.check_bands.forEach(element => {
         let band = {
           course_no: self.course.course_no,
           band: element.band
@@ -233,7 +243,7 @@ export class CourseComponent implements OnInit {
       await axios.post(`${environment.API_URL}Courses`, form_data , this.headers)
       .then(function (response) {
         self.fnClear()
-        self.fnGet();
+        self.get_courses();
       })
       .catch(function (error) {
         self.errors = error.response.data.errors
@@ -255,8 +265,8 @@ export class CourseComponent implements OnInit {
 
     this.errors = {};
     this.course = {};
-    this.visableSave = true;
-    this.visableUpdate = false;
+    this.visibleSave = true;
+    this.visibleUpdate = false;
 
     this.checkboxesDataList.forEach((value, index) => {
       value.isChecked = false;
@@ -288,8 +298,8 @@ export class CourseComponent implements OnInit {
     return result;
   }
   async fnEdit(course_no) {
-    this.visableSave = false;
-    this.visableUpdate = true;
+    this.visibleSave = false;
+    this.visibleUpdate = true;
 
     this.course = {};
     this.errors = {};
@@ -326,8 +336,6 @@ export class CourseComponent implements OnInit {
 
       self.checkboxesDataList = self.array_chk;
 
-      self.fetchCheckedIDs();
-
       self.selected_trainer_multiple = [];
       console.log('self.course.trainer: ',self.course.courses_trainers);
 
@@ -347,9 +355,6 @@ export class CourseComponent implements OnInit {
 
   async fnUpdate() {
     let self = this
-    this.submitted = true;
-
-
     let courses_trainers = []
     let courses_bands = []
 
@@ -363,8 +368,12 @@ export class CourseComponent implements OnInit {
       });
     }
 
-    if( this.checkedIDs.length > 0 ){
-      this.checkedIDs.forEach(element => {
+    this.check_bands = this.checkboxesDataList.filter((value, index) => {
+      return value.isChecked;
+    });
+
+    if( this.check_bands.length > 0 ){
+      this.check_bands.forEach(element => {
         let band = {
           course_no: self.course.course_no,
           band: element.band
@@ -392,8 +401,9 @@ export class CourseComponent implements OnInit {
 
     await this.service.axios_put(`Courses/${this.course.course_no}`, send_data, 'Update data success.');
     this.fnClear()
-    this.fnGet();
+    this.get_courses();
   }
+
   async fnDelete(course_no) {
     console.log(course_no)
     Swal.fire({
@@ -421,7 +431,7 @@ export class CourseComponent implements OnInit {
       if (result.isConfirmed) {
         if (course_no === result.value) {
           await this.service.axios_delete('Courses/' + result.value, 'Delete data success.');
-          this.fnGet();
+          this.get_courses();
           this.fnClear();
         } else {
           Swal.fire({
@@ -445,38 +455,6 @@ export class CourseComponent implements OnInit {
     );
   } 
 
-  // // Open popup Course
-  // inputitem = 'course-open';
-  // openCourse(content) {
-  //   //   size: 'lg' //sm, mb, lg, xl
-  //   this.v_course_no = "";
-  //   const modalRef = this.modalService.open(content, { size: 'lg' });
-  //   modalRef.result.then(
-  //     (result) => {
-  //       console.log(result);
-  //       if (result != "OK") {
-  //         this.fnGetCourse("NULL");
-  //         this.v_course_no = "";
-  //       }
-  //     },
-  //     (reason) => {
-  //       console.log(reason);
-  //       this.fnGetCourse("NULL");
-  //       this.v_course_no = "";
-  //     }
-  //   );
-  // } 
-
-
-  // v_course_no: string = "";
-  // addItemCourse(newItem: string) {
-  //   this.visableSave = true;
-  //   this.visableUpdate = false;
-  //   this.v_course_no = newItem;
-  //   this.errors = {};
-  //   this.fnGetCourse(newItem);
-  // }
-
   response: any = [];
 
 
@@ -493,32 +471,6 @@ export class CourseComponent implements OnInit {
   checkedIDs = [];
   checkboxesDataList: any[];
 
-  changeSelection() {
-    this.fetchSelectedItems();
-    this.fetchCheckedIDs();
-  }
-  fetchSelectedItems() {
-    this.selectedItemsList = this.checkboxesDataList.filter((value, index) => {
-      return value.isChecked;
-    });
-  }
-  fetchCheckedIDs() {
-    this.checkedIDs = []
-    let course_no = this.course.course_no
-    this.checkboxesDataList.forEach((value, index) => {
-      if (value.isChecked) {
-        let band = {
-          course_no: course_no,
-          band: value.band
-        }
-        this.checkedIDs.push(band);
-      }
-    });
-    console.log('checkedIDs: ', this.checkedIDs);
-  }
-  // End Multiple Checkbox
-
-
 
   async check_is_committee() {
     let self = this
@@ -528,9 +480,9 @@ export class CourseComponent implements OnInit {
         self.is_committee = true;
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
+        self.get_master_courses()
         self.get_courses()
-        self.fnGetTrainer();
-        this.datatable()
+        self.get_trainer();
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
@@ -538,9 +490,14 @@ export class CourseComponent implements OnInit {
       }); 
   }
 
-  async fnGetCourse() {
+  async get_master_course() {
+
+    if(this.visibleUpdate){
+      return;
+    }
+
     this.errors = {};
-    this.response = await this.service.axios_get(`CourseMasters/SearchCourse/${this.course.master_course_no}/${this._org_code}`);
+    this.response = await this.service.axios_get(`CourseMasters/${this.course.master_course_no}`);
     console.log('fnGetCourse: ', this.response);
     if (this.response != undefined) {
 
@@ -559,8 +516,6 @@ export class CourseComponent implements OnInit {
         this.array_chk.find(v => v.band === iterator.band).isChecked = true;
       } 
       this.checkboxesDataList = this.array_chk;
-      this.fetchCheckedIDs();      
-
       this.isdisabled = false;
     } 
     else {
@@ -572,74 +527,22 @@ export class CourseComponent implements OnInit {
     }
   }
 
-  async fnGet() {
-    await this.service.gethttp('Courses')
-      .subscribe((response: any) => {
-        console.log(response);
-        this.data_grid = response;
 
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
-        }
-      }, (error: any) => {
-        console.log(error);
-
-        this.data_grid = [];
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
-        }
-      });
-  }
-
-  async fnGetTrainer() {
-    // this.value_trainer = await this.service.axios_get('Trainers/FullTrainers'); // console.log('fnGetTrainer: ', this.value_trainer);
+  async get_trainer() {
     this.value_trainer = await this.service.axios_get(`Trainers/Owner/${this._org_code}`)
   }
 
 
   array_chk: any;
-  async fnGetband() {
-    this.array_chk = await this.service.axios_get('Bands'); //console.log(this.array_chk);
+  async get_band() {
+    this.array_chk = await this.service.axios_get('Bands');
     this.array_chk.forEach(object => {
-      object.isChecked = false; // set isChecked => false
-    }); //console.log(this.array_chk);
-    this.checkboxesDataList = this.array_chk; //console.log(this.checkboxesDataList);
+      object.isChecked = false; 
+    }); 
+    this.checkboxesDataList = this.array_chk; 
   }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
-}
-
-function formatDate(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
-  console.log(date)
-  
-  console.log(d)
-
-  if (month.length < 2)
-    month = '0' + month;
-  if (day.length < 2)
-    day = '0' + day;
-
-  return [year, month, day].join('-');
 }

@@ -256,10 +256,10 @@ export class CourseScoreComponent implements OnInit {
 
 
     if( this.data_grid.some(x => x.emp_no == this.emp_no)){
-      await this.service.axios_put(`Registration/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
+      await this.service.axios_put(`Register/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
     }
     else{
-      await this.service.axios_post("Registration/ByCommitteeCourse", send_data, environment.text.success);
+      await this.service.axios_post("Register/ByCommitteeCourse", send_data, environment.text.success);
     }
 
     this.fnGet();
@@ -294,7 +294,7 @@ export class CourseScoreComponent implements OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('Registration/' + this.course_no + '/' + item.emp_no, environment.text.delete);
+        await this.service.axios_delete('Register/' + this.course_no + '/' + item.emp_no, environment.text.delete);
         this.fnGet();
       }
     })
@@ -335,7 +335,7 @@ export class CourseScoreComponent implements OnInit {
   }
   res_prev: any;
   async searchPrevCourse(empno: any) {
-    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
@@ -386,7 +386,7 @@ export class CourseScoreComponent implements OnInit {
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
       
-      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseScore/' + this.course_no, formData, environment.text.success);
+      this.result = await this.service.axios_formdata_post('/Register/UploadCourseScore/' + this.course_no, formData, environment.text.success);
       // // console.log('result: ', this.result.data);
       if (this.result.data.length > 0) {
         let element = this.result.data;
@@ -401,7 +401,7 @@ export class CourseScoreComponent implements OnInit {
   /** End File Upload, Download */
 
   async fnGet() {
-    await this.service.gethttp(`Registration/${this.course_no}/Approved`)
+    await this.service.gethttp(`Register/${this.course_no}/Approved`)
       .subscribe((response: any) => {
         console.log(response);
 

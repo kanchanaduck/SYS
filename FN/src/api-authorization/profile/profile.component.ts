@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import axios from 'axios';
+import { AppServiceService } from 'src/app/app-service.service';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -7,12 +10,54 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileComponent implements OnInit {
 
+  menus: any = [];
+  _data: any;
+  _fullname: any;
+  _positions: any;
+  img_garoon: any = environment.img_garoon;
+  images: any;
+  activeUrl: any;
+  headers: any = {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
+      'Content-Type': 'application/json'
+    }
+  }
+  _emp_no: any;
+  password: any = {};
+  errors: any = {};
 
-  constructor() { }
+
+  constructor(
+    private service: AppServiceService, 
+    private router: Router, 
+    private route: ActivatedRoute
+  ) { }
 
   switch1 = false;
 
-  ngOnInit() {
+  async ngOnInit() {
+
+    if (localStorage.getItem('token_hrgis') != null) {
+      this._data = await this.service.service_jwt(); 
+      this._fullname = this._data.user.fullname_en;
+      this._emp_no = this._data.user.emp_no;
+      this._positions = this._data.user.position_name_en;
+      this.images = `${this.img_garoon}/${this._data.user.emp_no}.jpg`;
+    }
+  }
+
+  change_password(){
+    let self =this
+    axios.post(`${environment.API_URL}Account/ChangePassword/${this._emp_no}`, this.password,  this.headers)
+    .then(function(){
+      self.service.sweetalert_edit()  
+      self.password =  {};
+      
+    })
+    .catch(function(error){
+      self.service.sweetalert_error(error)
+    })
   }
 
 }

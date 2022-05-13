@@ -64,6 +64,8 @@ namespace api_hrgis.Controllers
                                        tb.title_name_en,
                                        tb.firstname_en,
                                        tb.lastname_en,
+                                       tb.fullname_en,
+                                       tb.shortname_en,
                                        tb.div_code,
                                        tb.div_abb,
                                        tb.dept_code,

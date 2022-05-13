@@ -1,21 +1,18 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { SelectionModel } from '@angular/cdk/collections';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
+import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
-
+import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit, OnInit{
+export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
 
   headers: any = {
     headers: {
@@ -26,17 +23,12 @@ export class RegisterComponent implements OnInit, OnInit{
 
   data_grid: any = [];
   data_grid_other: any = [];
-  // datatable
-  dtOptions: any = {};
-  dtTrigger: Subject<any> = new Subject();
-  @ViewChild(DataTableDirective, { static: false }) dtElement: DataTableDirective;
-  isDtInitialized: boolean = false
 
-  dtOptionsOther: any = {};
-  dtTriggerOther: Subject<any> = new Subject();
-  @ViewChild(DataTableDirective, { static: false }) dtElementOther: DataTableDirective;
-  isDtInitializedOther: boolean = false
-  // end datatable
+  @ViewChildren(DataTableDirective)
+  dtElements: any;
+  dtTrigger: any = [];
+  dtOptions: any = [];
+  
   @ViewChild("txtgroup") txtgroup: any;
   @ViewChild("txtqty") txtqty: any;
   v_capacity = 0;
@@ -73,9 +65,7 @@ export class RegisterComponent implements OnInit, OnInit{
   response: any;
   emp_status: any;
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
-    config.backdrop = 'static'; // popup
-    config.keyboard = false;
+  constructor(private service: AppServiceService, private exportexcel: ExportService) {
   }
 
   ngOnInit() {
@@ -87,26 +77,25 @@ export class RegisterComponent implements OnInit, OnInit{
 
     this.get_committee_of_emp_no();
     this.get_courses_open()
-  }
+    
+    this.dtTrigger[0] = new Subject();
+    this.dtTrigger[1] = new Subject();
 
-  async datatable(){
-        this.dtOptions = {
+    this.dtOptions[0] = {
       destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
       language: {
-        paginate: {
-          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
+        "paginate": {
+          "next": '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          "previous": '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        },
+        aria: {
+          paginate: {
+              previous: 'Previous',
+              next:     'Next'
+          }
         }
       },
       buttons: {
@@ -143,8 +132,15 @@ export class RegisterComponent implements OnInit, OnInit{
               {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
-              }
+              },
             ]
+          },
+          {
+            text: '<i class="fas fa-envelope"></i> Send email to approver</button>',
+            className: 'btn-indigo',
+            action: () => {
+              this.send_email();
+            }
           },
         ],
       },
@@ -159,7 +155,7 @@ export class RegisterComponent implements OnInit, OnInit{
       ],
     };
 
-    this.dtOptionsOther = {
+    this.dtOptions[1] = {
       destroy: true,
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -168,14 +164,6 @@ export class RegisterComponent implements OnInit, OnInit{
         paginate: {
           next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
           previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-        }
-      },
-      filter: {
-        "dom": {
-          "container": {
-            tag: "div",
-            className: "dt-buttons btn-group flex-wrap float-left"
-          },
         }
       },
       buttons: {
@@ -219,6 +207,83 @@ export class RegisterComponent implements OnInit, OnInit{
 
   }
 
+  async send_email() {
+    let self =this
+    if(!this.course_no){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+    await axios.get(`${environment.API_URL}Register/GetEmailInformApprover/${this.course_no}/${this._org_code}`, this.headers)
+    .then(function(response:any){
+      var email_to = "";
+      var email_dear = "";
+      response.forEach(element => {
+        email_to += element.employee.email+"; "
+        if(element.employee.band=="JP"){
+          email_dear += `${element.employee.lastname_en} san,`
+        }
+        else{
+          email_dear += `Khun ${element.employee.firstname_en}, `
+        }
+      });
+
+      var email_subject = "[HRGIS] Request for approval to participate in the training."
+
+      var email_body = `Dear : ${email_dear} <br><br>
+
+I would like to notify that your members request to participate in the training. 
+Please click the link to approve. <a href="${environment.WEB_URL}">${environment.WEB_URL}</a>`
+
+      var email_text_show = `<p class="text-left">
+      <strong>To:</strong> ${email_to} <br>
+      <strong>Subject:</strong>  ${email_subject} <br>
+      <strong>Text:</strong> <br> <br>${email_body} </p>
+      `
+      
+      Swal.fire({
+        title: '<h4>Are you sure you want send email to inform approver?</h4>',
+        width: 600,
+        html:  email_text_show,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then(async (result) => {
+        if (result.value) {
+          let body = {
+            "from": "kanchana@mail.canon;",
+            "to": "kanchana@mail.canon;",
+            "subject": email_subject,
+            "text": email_body.replace(/<[^>]*>/g, ''),
+          }
+          axios.post(`http://cptsvs531:1000/middleware/email/sendmail`, body)
+          .then(function(response){
+            self.get_registrant();
+          })
+        }
+      })
+    })
+    .catch(function(error){
+      self.service.sweetalert_error(error)
+    })
+  }
+
+  ngAfterViewInit() {
+    this.dtTrigger.forEach(element => {
+      element.next();
+    });
+  }
+
+  ngOnDestroy() {
+    this.dtTrigger.forEach(element => {
+      element.unsubscribe();
+    });
+  }
+
   async get_committee_of_emp_no() {
     let self = this
     await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, this.headers)
@@ -241,7 +306,7 @@ export class RegisterComponent implements OnInit, OnInit{
         self.is_committee = true;
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
-        self.datatable()
+        // self.datatable()
       }, (error: any) => {
         console.log(error);
         self.is_committee = false;
@@ -251,13 +316,16 @@ export class RegisterComponent implements OnInit, OnInit{
   async get_course() {
     let self = this
 
-    if(this.course_no==null)
+    if(!this.course_no)
     {
-      return false;
+      this.course = {};
+      this.data_grid = [];
+      this.data_grid_other = [];
+      this.get_registrant()
     }
     else
     {
-      self.data_grid = [];
+      this.errors = {};
       axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
         .then(function(response){
           self.response = response
@@ -277,7 +345,7 @@ export class RegisterComponent implements OnInit, OnInit{
           else{
             self.course.band_text = "-"
           }
-          self.fnGet()
+          self.get_registrant()
         })
         .catch(function(error){
           self.service.sweetalert_error(error)
@@ -287,30 +355,24 @@ export class RegisterComponent implements OnInit, OnInit{
     }
   }
 
-async get_courses_open(){
-  let self = this
-  await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
-  .then(function(response){
-    self.courses = response
-    // self.course_no = 'AOF-001-001'
-  })
-  .catch(function(error){
+  async get_courses_open(){
+    let self = this
+    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+    .then(function(response){
+      self.courses = response
+      self.get_course()
+    })
+    .catch(function(error){
 
-  });
-}
+    });
+  }
 
-custom_search_course_fn(term: string, item: any) {
-  term = term.toLowerCase();
-  return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
-}
+  custom_search_course_fn(term: string, item: any) {
+    term = term.toLowerCase();
+    return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
+  }
 
-async clear_data() {
-  this.course = {};
-  this.data_grid = [];
-}
-
-
-async fnSave() {
+  async register() {
     this.submitted = true;
 
     const send_data = {
@@ -321,7 +383,7 @@ async fnSave() {
     }
 
     let self = this
-    await axios.post(`${environment.API_URL}Registration/ByCommitteeEmp`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Register/ByCommitteeEmp`, send_data, this.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -331,8 +393,8 @@ async fnSave() {
         showConfirmButton: false,
         timer: 2000
       })
-      self.fnGet();
-      self.fnClear()
+      self.get_registrant();
+      self.clear_register_form()
     })
     .catch(function(error){
       self.errors = error.response.data.errors
@@ -340,7 +402,7 @@ async fnSave() {
     })
   }
 
-  fnClear() {
+  clear_register_form() {
     this.errors = {}
     this.emp_no = "";
     this.emp_name = "";
@@ -360,8 +422,8 @@ async fnSave() {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete(`Registration/${this.course_no}/${item.emp_no}`, environment.text.delete);
-        this.fnGet();
+        await this.service.axios_delete(`Register/${this.course_no}/${item.emp_no}`, environment.text.delete);
+        this.get_registrant();
       }
     })
   }
@@ -375,13 +437,15 @@ async fnSave() {
       this.searchPrevCourse(this.emp_no);
     } 
     else if (this.emp_no.length == 0) {
-      this.fnClear();
+      this.clear_register_form();
     }
   }
 
   res_emp: any = [];
-  dept_emp: any = ''; div_emp: any = '';
+  dept_emp: any = ''; 
+  div_emp: any = '';
   async searchEmp(empno: any) {
+
     this.res_emp = await this.service.axios_get('Employees/' + empno); // console.log('searchEmp: ', this.res_emp);
     if (this.res_emp != null || this.res_emp != undefined) {
       this.emp_name = this.res_emp.title_name_en + " " + this.res_emp.firstname_en + " " + this.res_emp.lastname_en;
@@ -402,43 +466,15 @@ async fnSave() {
   }
 
   res_prev: any;
-  async searchPrevCourse(empno: any) {
-    this.res_prev = await this.service.axios_get('Registration/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+  async searchPrevCourse(empno: any) {    
+    this.txt_not_pass=null;
+    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
     }
   }
 
-  rerender(){
-    console.log("RREEEE")
-    this.dtTrigger.next();
-    /* if (this.isDtInitialized) {
-      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-        // dtInstance.clear().draw();
-        // dtInstance.destroy();
-        this.dtTrigger.next();
-      });
-    } 
-    else {
-      // this.isDtInitialized = true
-      this.dtTrigger.next();
-    }
-
-    if (this.isDtInitializedOther) {
-      this.dtElementOther.dtInstance.then((dtInstance: DataTables.Api) => {
-        // dtInstance.clear().draw();
-        // dtInstance.destroy();
-        this.dtTriggerOther.next();
-      });
-    } 
-    else {
-      // this.isDtInitializedOther = true
-      this.dtTriggerOther.next();
-    } */
-  
-
-  }
 
   /** File Upload, Download */
   dowloadFormat() {
@@ -468,8 +504,10 @@ async fnSave() {
   }
   result: any;
   async upload() {
+
+    let self = this
     
-    if(this.course_no == "" || this.course_no===undefined){
+    if(!this.course_no){
       console.log(this.course_no)
       this.errors =  {
         course_no: ["Please select course no."]
@@ -483,64 +521,69 @@ async fnSave() {
       formData.append('file_form', this.file)
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
-      formData.append('capacity', this.txtqty.nativeElement.value)
 
-      this.result = await this.service.axios_formdata_post('/Registration/UploadCourseRegistration/' + this.course_no, formData, environment.text.success);
-      // console.log('result: ', this.result.data);
-      if (this.result.data.length > 0) {
-        let element = this.result.data;
-        this.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
-      }
-
-      this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
-      this.nameFile = 'Choose file';
-      // await this.fnGet(this.course_no, this._org_abb);
-      await this.fnGet();
+      await axios.post(`${environment.API_URL}Register/UploadCourseRegister/ByCommitteeEmp/${this.course_no}`
+      , formData, this.headers)
+      .then(function(response:any){
+        if(response.length>0){
+          Swal.fire({
+            icon: 'warning',
+            text: 'There is something error, please see the ResultRegistration.xlsx file.'
+          })
+          let element = response;
+          self.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
+          self.customFile.nativeElement.value = ""; 
+          self.nameFile = 'Choose file';
+        }
+        else{
+          self.service.sweetalert_create();
+        }
+        self.get_registrant();
+      })
+      .catch(function(error){
+        self.service.sweetalert_error(error);
+        self.customFile.nativeElement.value = ""; 
+        self.nameFile = 'Choose file';
+      })
     }
 
   }
   /** End File Upload, Download */
 
-  async fnGet() {
-
-    if(this.course_no=="" || this.course_no==null){
-      this.data_grid = [];
-      this.data_grid_other = [];
-
-      console.log(this.dtElement);
-      console.log(this.dtElementOther);
-
-      // this.rerender()
+  async get_registrant() {
+    if(!this.course_no){
+      this.rerender()
     }
-
-    await this.service.gethttp(`Registration/GetGridView/${this.course_no}/${this._org_code}`)
-      .subscribe((response: any) => {
-        // console.log(response);
-        this.data_grid = response.your;
-        this.data_grid_other = response.other;
-
-        console.log(this.dtElement);
-        console.log(this.dtElementOther);
-
-        this.rerender()
-
-
-      }, (error: any) => {
+    else{
+      this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
+        .subscribe((response: any) => {
+          this.data_grid = response.your;
+          this.data_grid_other = response.other;
+          this.rerender()
+        }, 
+        (error: any) => {
         console.log(error);
-        this.data_grid = [];
-        this.data_grid_other = [];
-
-        console.log(this.dtElement);
-        console.log(this.dtElementOther);
-
-        // this.rerender()
       });
+    }
   }
 
-  ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
-    this.dtTriggerOther.unsubscribe();
+  rerender(){
+    console.log("DATA", this.data_grid)
+    console.log("DATA OTHER", this.data_grid_other)
+    this.dtElements.forEach((dtElement: DataTableDirective, index: number) => {
+      if(dtElement.dtInstance){
+        dtElement.dtInstance.then((dtInstance: any) => {
+          dtInstance.destroy();
+          // dtInstance.clear().draw();
+          console.log(`The DataTable ${index} instance ID is: ${dtInstance.table().node().id}`);
+        });
+      }
+    });
+    this.dtTrigger.forEach(element => {
+      element.next()
+    });
   }
+
 }
 export interface PeriodicElement {
   band: string;

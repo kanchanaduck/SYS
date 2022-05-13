@@ -82,10 +82,10 @@ namespace api_hrgis.Controllers
             return tr_course_master;
         }
 
-        // GET: api/CourseMasters/Org/{org_code}
-        // GET: api/CourseMasters/Org/55
-        // GET: api/CourseMasters/Org/5510
-        [HttpGet("Org/{org_code}")]
+        // GET: api/CourseMasters/Owner/{org_code}
+        // GET: api/CourseMasters/Owner/55
+        // GET: api/CourseMasters/Owner/5510
+        [HttpGet("Owner/{org_code}")]
         public async Task<ActionResult<IEnumerable<tr_course_master>>> search_from_org(string org_code)
         {
             var tr_course_master = await _context.tr_course_master
@@ -95,26 +95,6 @@ namespace api_hrgis.Controllers
                                         .OrderBy(e=>e.course_no)
                                         .AsNoTracking()
                                         .ToListAsync();
-
-            if (tr_course_master == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course_master;
-        }
-        [AllowAnonymous]
-        // GET: api/CourseMasters/SearchCourse/{course_no}/{org_code}
-        [HttpGet("SearchCourse/{course_no}/{org_code}")]
-        public async Task<ActionResult<tr_course_master>> SearchCourse(string course_no, string org_code)
-        {
-            var tr_course_master = await _context.tr_course_master
-                                    .Include(e => e.master_courses_bands)
-                                    .Include(e => e.organization)
-                                    .Where(e => e.course_no == course_no &&
-                                    e.org_code == org_code)
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync();
 
             if (tr_course_master == null)
             {

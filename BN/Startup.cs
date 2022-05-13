@@ -174,6 +174,8 @@ namespace api_hrgis
                                     var title_name_en = data["user"]["title_name_en"];
                                     var firstname_en = data["user"]["firstname_en"];
                                     var lastname_en = data["user"]["lastname_en"];
+                                    var fullname_en = data["user"]["fullname_en"];
+                                    var shortname_en = data["user"]["shortname_en"];
                                     var div_code = data["user"]["div_code"];
                                     var div_abb = data["user"]["div_abb"];
                                     var dept_code = data["user"]["dept_code"];
@@ -188,6 +190,8 @@ namespace api_hrgis
                                     identity.AddClaim(new Claim("title_name_en", title_name_en.ToString()));
                                     identity.AddClaim(new Claim("firstname_en", firstname_en.ToString()));
                                     identity.AddClaim(new Claim("lastname_en", lastname_en.ToString()));
+                                    identity.AddClaim(new Claim("fullname_en", fullname_en.ToString()));
+                                    identity.AddClaim(new Claim("shortname_en", shortname_en.ToString()));
                                     identity.AddClaim(new Claim("div_code", div_code.ToString()));
                                     identity.AddClaim(new Claim("div_abb", div_abb.ToString()));
                                     identity.AddClaim(new Claim("dept_code", dept_code.ToString()));

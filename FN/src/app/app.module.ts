@@ -24,7 +24,7 @@ import { BreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
     SidebarComponent,
     FooterComponent,
     DashboardComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
   imports: [
     ApiAuthorizationModule,

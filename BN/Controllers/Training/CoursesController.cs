@@ -539,7 +539,8 @@ namespace api_hrgis.Controllers
         // GET: api/Courses/Close
         [HttpGet("Close")]
         public async Task<ActionResult<tr_course>> course_close(){
-            var course_close = await _context.tr_course.Where(x => x.date_end.Value.AddDays(5) <= DateTime.Now).ToListAsync();
+            var course_close = await _context.tr_course
+                                .Where(x => x.date_end.Value.Date.AddDays(5) <= DateTime.Now.Date).ToListAsync();
 
             foreach (var item in course_close)
             {
@@ -550,8 +551,98 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync(); 
             return NoContent();
         }
+        [AllowAnonymous]
         // GET: api/Courses/ConfirmationSheet
         [HttpGet("ConfirmationSheet/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no="AOF-001-001"){
+            var course = await _context.tr_course
+                                .Include(t => t.organization)
+                                .Include(t => t.courses_trainers)
+                                .AsNoTracking()
+                                .Where(t => t.course_no==course_no)
+                                .FirstOrDefaultAsync();
+
+            if(course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            var c = new List<int>();
+            foreach (var item in course.courses_trainers)
+            {
+                c.Add(item.trainer_no);
+            }
+
+            var trainers = await (from trainer in _context.tr_trainer
+                            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+                            from emp in z.DefaultIfEmpty()
+                            select new { 
+                                    trainer_no = trainer.trainer_no,
+                                    emp_no = trainer.emp_no,
+                                    title_name_en = trainer.title_name_en?? emp.title_name_en,
+                                    firstname_en = trainer.firstname_en?? emp.firstname_en,
+                                    lastname_en = trainer.lastname_en?? emp.lastname_en,
+                                    div_abb = emp.div_abb,
+                                    dept_abb = emp.dept_abb,
+                                    trainer_type = trainer.trainer_type,
+                                    email = emp.email
+                            })
+                            .Where(trainer=> c.Contains(trainer.trainer_no))
+                            .ToListAsync();
+
+            var registrant = await (
+                from tb1 in _context.tr_course_registration
+                join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
+                join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
+                from table in tb.DefaultIfEmpty()
+                where tb1.course_no == course_no && (tb1.last_status == _config.GetValue<string>("Status:approved"))
+                select new
+                {
+                    tb1.course_no,
+                    tb3.course_name_en,
+                    tb1.emp_no,
+                    tb1.seq_no,
+                    tb1.last_status,
+                    tb1.remark,
+                    tb1.final_approved_checked,
+                    table.div_code,
+                    table.div_abb,
+                    table.dept_code,
+                    table.dept_abb,
+                    table.lastname_en,
+                    table.firstname_en,
+                    table.title_name_en,
+                    table.band,
+                    table.position_code,
+                    table.position_name_en,
+                    table.email
+                }).OrderBy(x => x.seq_no).ToListAsync();
+
+            if(registrant == null)
+            {
+                return NotFound("Registrant is not found");
+            }
+
+            var registrant_arr = new List<string>();
+            foreach (var item in registrant)
+            {
+                registrant_arr.Add(item.div_code);
+                registrant_arr.Add(item.dept_code);
+            }
+
+            var approver = await _context.tr_stakeholder.Where(e=>e.role=="Approver" && registrant_arr.Contains(e.org_code))
+                            .Include(e=>e.employee)
+                            .ToListAsync();
+
+            return Ok(new
+            {
+                registrant = registrant,
+                trainer = trainers,
+                approver = approver
+            });
+        }
+        // GET: api/Courses/ConfirmationSheet
+        /* [HttpGet("ConfirmationSheet/{course_no}")]
         public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no="AOF-001-001"){
             MailMessage mail = new MailMessage();
             SmtpClient SmtpServer = new SmtpClient("nonauth-smtp.global.canon.co.jp");
@@ -640,7 +731,7 @@ namespace api_hrgis.Controllers
 
             return Ok();
         }
-
+ */
         private bool tr_courseExists(string id)
         {
             return _context.tr_course.Any(e => e.course_no == id);
@@ -783,9 +874,7 @@ namespace api_hrgis.Controllers
                 {
                     fulls = (
                         tb2.trainer_type == _config.GetValue<string>("Text:internal") ?
-                        table.title_name_en == null ? "" :
-                        table.title_name_en == _config.GetValue<string>("Text:miss") ? table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0, 1) + ". (" + table.dept_abb + ")"
-                        : table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0, 1) + ". (" + table.dept_abb + ")"
+                        table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0, 1) + ". (" + table.dept_abb + ")"
                         : tb2.title_name_en + tb2.firstname_en + " " + tb2.lastname_en.Substring(0, 1) + "."
                     )
                 }).ToListAsync();

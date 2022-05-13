@@ -8,14 +8,14 @@
                 <ng-select 
                     name="course.master_course_no"
                     [(ngModel)]="course.master_course_no"
-                    [items]="courses"
+                    [items]="master_courses"
                     [ngModelOptions]="{standalone: true}"
                     [searchFn]="custom_search_course_fn"
                     bindValue="course_no"
                     bindLabel="course_no"
                     allow-clear="true"
                     (clear)="fnClear()"
-                    (ngModelChange)="fnGetCourse()"
+                    (ngModelChange)="get_master_course()"
                     [ngClass]="{ 'is-invalid': errors && errors.master_course_no }" >	
                     <ng-template ng-option-tmp ng-label-tmp let-item="item">
                         {{item.course_no}}: {{item.course_name_th}}
@@ -287,11 +287,11 @@
                 </div>
             </div>
             <div class="col text-right pt-4">
-                <button type="button" *ngIf="visableSave" class="btn btn-az-primary btn-sm" 
-                    (click)="fnSave()">Save</button>
-                <button type="button" *ngIf="visableUpdate" class="btn btn-az-primary btn-sm" 
+                <button type="button" *ngIf="visibleSave" class="btn btn-az-primary btn-sm" 
+                    (click)="create_course()">Save</button>
+                <button type="button" *ngIf="visibleUpdate" class="btn btn-az-primary btn-sm" 
                     (click)="fnUpdate()">Save</button>
-                <button type="button" *ngIf="visableClear" class="btn btn-dark btn-sm" 
+                <button type="button" *ngIf="visibleClear" class="btn btn-dark btn-sm" 
                     (click)="fnClear()">Clear</button>
             </div>
         </div>
@@ -370,20 +370,3 @@
         <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
     </div>
 </ng-template>
-
-<!-- <ng-template #contentCourse let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title text-capitalize" id="modal-basic-title">Find Course: {{v_course_no}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body text-capitalize">
-        <app-dialog-course [inputitem]="inputitem" (newItemEvent)="addItemCourse($event)"></app-dialog-course>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-az-primary btn-sm" (click)="modal.close('OK')">Ok</button>
-        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
-    </div>
-</ng-template>
- -->

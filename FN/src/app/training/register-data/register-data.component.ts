@@ -337,7 +337,7 @@ async clear_data() {
 
 
 
-    await this.service.gethttp(`Registration/GetGridView/${this.course_no}/${this.committee_org_code}`)
+    await this.service.gethttp(`Register/GetGridView/${this.course_no}/${this.committee_org_code}`)
       .subscribe((response: any) => {
         this.data_grid = response.your;
         this.data_grid_other = response.other;
@@ -375,7 +375,7 @@ async clear_data() {
         this.data_grid_other = [];
       });
 
-      await this.service.gethttp(`Registration/${this.course_no}`)
+      await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         this.response = response
         this.v_regis = this.response.filter(x => x.last_status != environment.text.wait).length;

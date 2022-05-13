@@ -49,9 +49,11 @@ export class HeaderComponent implements OnInit {
     event.preventDefault();
     if (window.matchMedia('(min-width: 992px)').matches) {
       document.querySelector('body').classList.toggle('az-sidebar-hide');
+      localStorage.setItem("hrgis_sidebar_show", "false");
     }
     else {
       document.querySelector('body').classList.toggle('az-sidebar-show');
+      localStorage.setItem("hrgis_sidebar_show", "true");
     }
     // document.querySelector('.az-sidebar').classList.toggle('d-flex');
 
