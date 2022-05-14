@@ -62,10 +62,6 @@ export class RegisterDataComponent implements OnInit {
   constructor(private route: ActivatedRoute, private service: AppServiceService) { }
 
   ngOnInit(): void {
-
-
-
-
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
     this.check_is_committee()

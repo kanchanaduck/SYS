@@ -12,7 +12,6 @@
                 bindValue="course_no"
                 bindLabel="course_no"
                 allow-clear="true"
-                (clear)="clear_data()"
                 (change)="get_course()"
                 [ngClass]="{ 'is-invalid': errors && errors.course_no }">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
@@ -159,7 +158,7 @@
 <table *ngIf="is_committee" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
     <thead>
         <tr>
-            <th class="text-center">no.</th>
+            <th class="text-center">SEQ</th>
             <th class="text-center">emp no</th>
             <th class="text-center">title</th>
             <th class="text-center">first name</th>
@@ -174,7 +173,7 @@
     </thead>
     <tbody>
         <tr *ngFor="let item of data_grid; let i = index">
-            <td>{{ i + 1 }}</td>
+            <td class="text-right">{{ i + 1 }}</td>
             <td>{{ item.emp_no }}</td>
             <td>{{ item.employees.title_name_en }}</td>
             <td>{{ item.employees.firstname_en }}</td>

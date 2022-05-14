@@ -155,17 +155,16 @@
                 <th class="text-center">manage</th>
             </tr>
         </thead>
-        <tbody><!-- 
-                        [disabled]="(selection.selected.length === course.capacity) && !selection.isSelected(item)"  -->
+        <tbody>
             <tr *ngFor="let item of data_grid; let i = index">
                 <th class="text-center">
                     <label class="ckbox pt-0">
                     <input type="checkbox" (click)="$event.stopPropagation()" 
                         (change)="$event ? toggleSelection(item) : null" 
-                        [checked]="(selection.isSelected(item) == true || (item.final_approved_checked && item.last_status=='Approved'))" 
+                        [checked]="selection.isSelected(item) == true" 
                         [disabled]="(_checkbox === course.capacity) && !selection.isSelected(item)"
                         [attr.aria-label]="checkboxLabel(item)">
-                        <span>{{ selection.isSelected(item) }}</span>
+                        <span></span>
                     </label>
                 </th>
                 <td class="text-right">{{ item.seq_no }}</td>

@@ -10,7 +10,6 @@
                 bindValue="course_no"
                 bindLabel="course_no"
                 allow-clear="true"
-                (clear)="clear_data()"
                 (change)="get_course()"
                 autocomplete="disabled">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
@@ -89,5 +88,14 @@
         <a href="javascript:;" (click)="copy_to_clipboard('content')" class="badge badge-secondary float-right">Copy</a>
     </div><!-- card-header -->
     <div class="card-body" [innerHTML]="email.content">
+    </div><!-- card-body -->
+</div><!-- card -->
+
+<div class="card mt-2" *ngIf="email && email.content">
+    <div class="card-header tx-medium">
+        Attachment
+    </div><!-- card-header -->
+    <div class="card-body">
+        <a href="{{ report_url }}" target="_blank"><i class="fas fa-external-link-alt"></i> Open in new windows</a>
     </div><!-- card-body -->
 </div><!-- card -->

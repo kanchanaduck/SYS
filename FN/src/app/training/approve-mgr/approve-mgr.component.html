@@ -181,7 +181,8 @@
                                 <input type="checkbox" (change)="$event ? masterToggle() : null" 
                                 [checked]="selection.hasValue() && isAllSelected()" 
                                 [indeterminate]="selection.hasValue() && !isAllSelected()" 
-                                [attr.aria-label]="checkboxLabel()" [disabled]="disabled_chkall">
+                                [attr.aria-label]="checkboxLabel()" 
+                                [disabled]="disabled_chkall">
                                 <span></span>
                             </label>
                         </th>

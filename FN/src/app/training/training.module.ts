@@ -33,6 +33,7 @@ import { TrainerHistoryComponent } from './trainer-history/trainer-history.compo
 import { AssessmentFileComponent } from './assessment-file/assessment-file.component';
 import { SurveyApproveComponent } from './survey-approve/survey-approve.component';
 import { RegisterDataComponent } from './register-data/register-data.component';
+import { CourseMasterDataComponent } from './course-master-data/course-master-data.component';
 
 const routes: Routes = [
   { path: '', component: TrainingComponent },
@@ -43,6 +44,8 @@ const routes: Routes = [
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score', active: true } },
   { path: 'course-confirmation-sheet', component: ConfirmationSheetComponent, data: { title: 'Confirmation sheet', active: true } },
   { path: 'course-master', component: CourseMasterComponent, data: { title: 'Master course', active: true } },
+  { path: 'course-master-data', component: CourseMasterDataComponent, data: { title: 'Master course data', active: true } },
+  { path: 'course-master-data/:course_no', component: CourseMasterDataComponent, data: { title: 'Master course data', active: true } },
   { path: 'course', component: CourseComponent, data: { title: 'Course', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true} },
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
@@ -75,6 +78,7 @@ const routes: Routes = [
     AssessmentFileComponent,
     SurveyApproveComponent,
     RegisterDataComponent,
+    CourseMasterDataComponent,
   ],
   imports: [
     CommonModule,

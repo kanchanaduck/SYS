@@ -63,6 +63,7 @@ export class RegisterContinuousComponent implements OnInit {
   courses_view: any=[];
   courses_register: any=[];
   errors:any={};
+  result: any;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
     , private service: AppServiceService, private exportexcel: ExportService) {
@@ -86,12 +87,7 @@ export class RegisterContinuousComponent implements OnInit {
 
     this.fnGetband();
     this.fnGetEmp();
-  }
-  get f(): { [key: string]: AbstractControl } {
-    return this.form.controls;
-  }
 
-  async datatable(){
     this.dtOptions = {
       dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
         "<'row'<'col-sm-12'tr>>" +
@@ -132,14 +128,6 @@ export class RegisterContinuousComponent implements OnInit {
                 extend: 'excel',
                 text: '<i class="far fa-file-excel"></i> Excel</button>',
               },
-              /* {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              }, */
             ]
           }
         ],
@@ -158,13 +146,18 @@ export class RegisterContinuousComponent implements OnInit {
       ],
     };
   }
+  get f(): { [key: string]: AbstractControl } {
+    return this.form.controls;
+  }
 
   async get_course() {
     let self = this
 
     if(this.course_no==null)
     {
-      return false;
+      this.course = {};
+      this.data_grid = [];
+      self.get_registrant()
     }
     else
     {
@@ -188,8 +181,7 @@ export class RegisterContinuousComponent implements OnInit {
           else{
             self.course.band_text = "-"
           }
-          self.fnGet(self.course_no)
-          self.datatable()
+          self.get_registrant()
         })
         .catch(function(error){
           Swal.fire({
@@ -203,18 +195,12 @@ export class RegisterContinuousComponent implements OnInit {
     }
   }
 
-async get_courses(){
+async get_courses_owner(){
   let self = this
-  // await axios.get(`${environment.API_URL}Courses`, this.headers)
-  // .then(function(response){
-  //   self.courses_view = response
-  // })
-  // .catch(function(error){
-
-  // });
   await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
   .then(function(response){
     self.courses = response
+    self.get_course()
   })
   .catch(function(error){
 
@@ -226,14 +212,18 @@ custom_search_course_fn(term: string, item: any) {
   return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
 }
 
-async clear_data() {
-  this.course = {};
-  this.data_grid = [];
-  this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-    dtInstance.clear().draw();
-    dtInstance.destroy();
+rerender(){
+  if (this.isDtInitialized) {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.clear().draw()
+      dtInstance.destroy();
+      this.dtTrigger.next();
+    });
+  } 
+  else {
+    this.isDtInitialized = true
     this.dtTrigger.next();
-  });
+  }
 }
 
 async check_is_committee() {
@@ -244,19 +234,17 @@ async check_is_committee() {
       self.is_committee = true;
       self._org_code = response.org_code
       self._org_abb = response.organization.org_abb
-      self.get_courses()
-      self.datatable()
+      self.get_courses_owner()
     }, (error: any) => {
       console.log(error);
       self.is_committee = false;
-      self.get_courses()
-      self.datatable()
+      self.get_courses_owner()
     }); 
 }
   
   async save_trainee(){
 
-      this.submitted=true;
+    this.submitted=true;
 
     if (this.form.invalid) {
       return;
@@ -289,22 +277,30 @@ async check_is_committee() {
       emp_no++;
     }
     console.log(form_data)
+
     if(form_data.length>0){
-      axios.post(`${environment.API_URL}Register/Continuous`,form_data,this.headers)
-      .then(function (response) {
-        self.fnGet(self.course_no);
-        self.datatable()
+      await axios.post(`${environment.API_URL}Register/Continuous`, form_data, this.headers)
+      .then(function(response:any){
+        if(response.length>0){
+          Swal.fire({
+            icon: 'warning',
+            text: 'There is something error, please see the ResultRegistration.xlsx file.'
+          })
+          let element = response;
+          self.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
+        }
+        else{
+          self.service.sweetalert_create();
+        }
+        self.get_registrant();
         self.errors = {}
         self.fnClear()
       })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })
+      .catch(function(error){
+        self.service.sweetalert_error(error);
       })
     }
+
   }
 
   fnDelete(item) {
@@ -318,7 +314,7 @@ async check_is_committee() {
     }).then(async (result) => {
       if (result.value) {
         await this.service.axios_delete('Register/' + item.course_no + '/' + item.emp_no, environment.text.delete);
-        this.fnGet(item.course_no);
+        this.get_registrant()
       }
     })
   }
@@ -357,28 +353,25 @@ async check_is_committee() {
   }
 
   res_conflict: any;
-  async fnGet(course_no) {
-    await this.service.gethttp(`Register/${course_no}`)
+
+  async get_registrant() {
+
+    if(this.course_no==null){
+      this.rerender();
+    }
+
+    await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         console.log(response);
 
         this.data_grid = response;
         this.res_conflict = response;
 
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
-        }
+        this.rerender()
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
+        this.rerender()
       });
   }
 
@@ -415,73 +408,10 @@ async check_is_committee() {
     this.isreadonly = false;
   }
 
-  // v_course_no: string = "";
-  // addItemCourse(newItem: string) {
-  //   this.v_course_no = newItem;
-  //   this.form.controls['frm_course'].setValue(newItem);
-  //   this.fnGetCourse(newItem);
-  // }
-
-  // async fnGetCourse(course_no: any) {
-  //   let self = this
-  //   await axios.get(`${environment.API_URL}Courses/${course_no}`, this.headers)
-  //   .then(function(){
-  //     self.fnGet(course_no);
-  //   })
-  //   .catch(function(){
-      
-  //   })
-    /* this.res_course = await this.service.axios_get('Courses/OpenALL/' + course_no);
-    console.log('fnGetCourse: ', this.res_course);
-    if (this.res_course != undefined) {
-      this.txtcourse_name_en.nativeElement.value = this.res_course.course_name_en;
-      this.txtgroup.nativeElement.value = this.res_course.organization.org_abb;
-      this.txtqty.nativeElement.value = this.res_course.capacity;
-      this.txtdate_from.nativeElement.value = formatDate(this.res_course.date_start).toString() + ' ' + this.res_course.time_in.substring(0, 5);
-      this.txtdate_to.nativeElement.value = formatDate(this.res_course.date_end).toString() + ' ' + this.res_course.time_out.substring(0, 5);
-      this.txtplace.nativeElement.value = this.res_course.place;
-
-      this.arr_band = this.res_course.courses_bands; // console.log(this.arr_band);
-
-      var nameArr = this.res_course.courses_bands; // console.log(nameArr);
-      for (const iterator of nameArr) {
-        this.array_chk.find(v => v.band === iterator.band).isChecked = true;
-      } // console.log(this.array_chk);
-      this.checkboxesDataList = this.array_chk;
-
-      this.fnGet(course_no);
-    } else {
-      this.txtcourse_name_en.nativeElement.value = "";
-      this.txtgroup.nativeElement.value = "";
-      this.txtqty.nativeElement.value = "";
-      this.txtdate_from.nativeElement.value = "";
-      this.txtdate_to.nativeElement.value = "";
-      this.txtplace.nativeElement.value = "";
-      this.checkboxesDataList.forEach((value, index) => {
-        value.isChecked = false;
-      });
-      await this.fnGet("No");
-    } */
-  // }
-  // End Open popup Course
-
+ 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
   }
-}
-
-function formatDate(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2)
-    month = '0' + month;
-  if (day.length < 2)
-    day = '0' + day;
-
-  return [year, month, day].join('-');
 }
 
 function fnEmpNoTotal(start, end) {

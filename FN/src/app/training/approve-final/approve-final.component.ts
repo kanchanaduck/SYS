@@ -566,6 +566,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
       this.selection.toggle(row);
     }
     this.array_grid = this.selection.selected;
+    this._checkbox = this.array_grid.length;
   }
 
   res_chart: any = [];
@@ -582,12 +583,31 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
     await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         this.data_grid = response;
+
+        let chk_true = response.filter(x => x.last_status=="Approved");
+        if (chk_true.length > 0) {
+          this.selection = new SelectionModel<DataTablesResponse>(true, chk_true)
+          console.log("1", this.selection.selected);
+        }
+        else
+        {
+          this.selection = new SelectionModel<DataTablesResponse>(true, []);
+          console.log("2", this.selection.selected);
+        }
+
         this.v_regis = this.data_grid.filter(x => x.last_status != environment.text.wait).length;
         this.v_wait = this.data_grid.filter(x => x.last_status == environment.text.wait).length;
         this.v_total = this.data_grid.length;
-        if(this.course.capacity<this.v_regis){
+
+        if(this.v_total>this.course.capacity){
           this.disabled_chkall = true
         }
+        else{
+          this.disabled_chkall = false
+        }
+
+        this._checkbox = this.data_grid.filter(x => x.final_approved_checked == true).length;
+
         this.rerender();
     }, (error: any) => {
         console.log(error);
@@ -621,7 +641,7 @@ function removeDuplicateObjectFromArray(array, key) {
   )
 }
 
-class DataTablesResponse {
+export interface DataTablesResponse {
   band: string;
   final_approved_checked: boolean;
   course_name_en: string;

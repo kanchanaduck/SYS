@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -43,8 +44,11 @@ export class CourseMasterComponent implements OnInit {
   _org_code: any;
   _org_abb: any;
 
+  course_modal: any = {};
+
 
   constructor(
+    private modalService: NgbModal,
     private service: AppServiceService, 
     private httpClient: HttpClient
   ) {}
@@ -66,6 +70,43 @@ export class CourseMasterComponent implements OnInit {
 
   
     
+  }
+
+  open_modal(content){
+    // get_course_modal()
+    console.log(content)
+    this.modalService.open(content, {
+      size: 'lg' //sm, mb, lg, xl
+    });
+  }
+
+  async get_course_modal(course_no) {
+    let self = this
+    if(course_no==null)
+    {
+      return false;
+    }
+    else
+    {
+      await axios.get(`${environment.API_URL}CourseMasters/${course_no}`,self.headers)
+        .then(function(response: any){
+          self.course_modal = response
+          self.course_modal.arr_band = self.course.master_courses_bands
+
+          let bands = self.course_modal.arr_band
+          if(bands.length>0){
+            self.course_modal.band_text = bands.map(c => c.band).join(', ');
+          }
+          else{
+            self.course_modal.band_text = "-"
+          }
+        })
+        .catch(function(error){
+          self.service.sweetalert_error(error)
+          self.course_modal = {};
+          return false;
+      });      
+    }
   }
 
 
@@ -343,17 +384,13 @@ export class CourseMasterComponent implements OnInit {
         },
         columnDefs: [ 
           {
-            targets: [ 0,8 ],
+            targets: [ 0,8,9 ],
             "orderable": false
           },
           {
             targets: [ 3 ],
             visible: false 
           },
-          {
-            targets: [ 8 ],
-            visible: self.is_committee? true:false
-          }
         ],
   
         container: "#example_wrapper .col-md-6:eq(0)",

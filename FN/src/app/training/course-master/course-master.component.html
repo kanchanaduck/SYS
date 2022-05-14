@@ -149,6 +149,7 @@
             <th class="text-center">Days</th>
             <th class="text-center">Category</th>
             <th class="text-center">Level</th>
+            <th class="text-center">View</th>
             <th class="text-center">Manage</th>
         </tr>
     </thead>
@@ -162,6 +163,9 @@
             <td class="text-right">{{ c.days }}</td>
             <td>{{ c.category }}</td>
             <td>{{ c.level }}</td>
+            <td class="text-center">
+                <a href="javascript:;" (click)="open_modal(content)"><i class="far fa-eye"></i></a>
+            </td>
             <td class="text-center">
                 <a href="javascript:;" *ngIf="_org_code==c.org_code" 
                     (click)="get_course(c.course_no)"
@@ -177,3 +181,49 @@
         </tr>
     </tbody>
 </table>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Master course detail</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div class="card card-body tx-13 mt-3 mb-3" *ngIf="(course_modal | json) != '{}'">
+            <dl class="row my-0">
+                <dt class="col-sm-2">COURSE NO.: </dt>
+                <dd class="col-sm-2">{{ course_modal.course_no }}</dd>
+            </dl>
+            <dl class="row my-0">
+                <dt class="col-sm-2">THAI NAME:</dt>
+                <dd class="col-sm-4">{{ course_modal.course_name_th || '-' }}</dd>
+                <dt class="col-sm-2">ENGLISH  NAME:</dt>
+                <dd class="col-sm-4">{{ course_modal.course_name_en || '-' }}</dd>
+            </dl>
+            <dl class="row my-0">
+                <dt class="col-sm-2">GROUP:</dt>
+                <dd class="col-sm-4">{{ course_modal.organization.org_abb+" ("+course_modal.org_code+")" }}</dd>
+                <dt class="col-sm-2">BAND:</dt>
+                <dd class="col-sm-4">{{ course_modal.band_text }}</dd> 
+            </dl>
+            <dl class="row my-0">
+                <dt class="col-sm-2">DAY: </dt>
+                <dd class="col-sm-4">{{ course_modal.days }}</dd>
+                <dt class="col-sm-2">CAPACITY:</dt>
+                <dd class="col-sm-4">{{ course_modal.capacity }}</dd>
+            </dl>
+            <dl class="row my-0">
+                <dt class="col-sm-2">CREATED:</dt>
+                <dd class="col-sm-4">{{ course_modal.created_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course_modal.created_by+")" }}</dd> 
+                <dt class="col-sm-2">UPDATED:</dt>
+                <dd class="col-sm-4">{{ course_modal.updated_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course_modal.updated_by+")" }}</dd> 
+            </dl>
+        </div>
+               
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

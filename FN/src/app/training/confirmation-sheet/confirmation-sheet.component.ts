@@ -28,6 +28,8 @@ export class ConfirmationSheetComponent implements OnInit {
   }
   response: any;
   email: any;
+  is_committee: boolean = false;
+  report_url: string;
 
   constructor(private service: AppServiceService) {
 
@@ -36,16 +38,32 @@ export class ConfirmationSheetComponent implements OnInit {
   ngOnInit(): void {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
-    this.get_courses();
+    this.check_is_committee()
+    this.report_url = `${environment.REPORT_URL}/Training/ConfirmationSheet`
   }
 
-  async get_courses(){
+  async check_is_committee() {
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+    await this.service.gethttp('Stakeholder/Committee/' + self._emp_no)
+      .subscribe((response: any) => {
+        console.log(response)
+        self.is_committee = true;
+        self._org_code = response.org_code
+        self._org_abb = response.organization.org_abb
+        self.get_courses_owner()
+      }, (error: any) => {
+        console.log(error);
+        self.is_committee = false;
+      }); 
+  }
+
+  async get_courses_owner(){
+    let self = this
+    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
     .then(function(response){
       self.courses = response
-      self.course_no = 'AOF-001-001'
-      self.get_course()
+      // self.course_no = 'AOF-001-001'
+      // self.get_course()
     })
     .catch(function(error){
 
@@ -56,13 +74,16 @@ export class ConfirmationSheetComponent implements OnInit {
     term = term.toLowerCase();
     return item.course_no.toLowerCase().indexOf(term) > -1 ||  item.course_name_th.toLowerCase().indexOf(term) > -1;
   }
-  
-  async clear_data() {
-    this.course = {};
-  }
 
   async get_course() {
     let self = this
+
+    if(this.course_no==null){  
+      this.course = {};
+      this.email = {};
+      return;
+    }
+
     axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
       .then(function(response){
         self.response = response
@@ -91,14 +112,20 @@ export class ConfirmationSheetComponent implements OnInit {
     this.email = await this.service.axios_get(`Courses/ConfirmationSheet/${this.course_no}`);    
     var text_to = "";
     this.email.registrant.forEach(element => {
-      text_to += element.email+"; "
+      if(element.email!=null){
+        text_to += element.email+"; "
+      }
     });
     var text_cc = "";
     this.email.approver.forEach(element => {
-      text_cc += element.employee.email+"; "
+      if(element.employee.email!=null){
+        text_cc += element.employee.email+"; "
+      }
     });
     this.email.trainer.forEach(element => {
-      text_cc += element.email+"; "
+      if(element.email!=null){
+        text_cc += element.email+"; "
+      }
     });
     this.email.to = text_to
     this.email.cc = text_cc

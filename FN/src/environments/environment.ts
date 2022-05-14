@@ -7,7 +7,7 @@ export const environment = {
   WEB_URL: 'http://cptsvs52t/HRGIS_TEST',
   API_URL: 'https://localhost:5001/api/',
   // API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
-  REPORT_URL: 'http://cptsvs52t/',
+  REPORT_URL: 'http://cptsvs52t/HRGIS_REPORT',
   img_garoon: 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/',
   status: {
     wait: "Wait",

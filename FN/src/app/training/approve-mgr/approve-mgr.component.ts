@@ -565,10 +565,8 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
   checkboxLabel(row?: PeriodicElement): string {
     if (!row) {
       this.array_grid = this.selection.selected;
-
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
-
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.emp_no + 1}`;
   }
 
