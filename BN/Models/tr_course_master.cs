@@ -31,8 +31,10 @@ namespace api_hrgis.Models
         [Display(Name = "CAPACITY")]
         public int? capacity { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
-        public int? days { get; set; }
+        [Display(Name = "DAYS")]
+        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Column(TypeName = "decimal(3,1)")]
+        public decimal? days { get; set; }
         public string category { get; set; }
         public string level { get; set; }
         [Column(TypeName = "datetime")]
@@ -43,6 +45,7 @@ namespace api_hrgis.Models
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
+        [Display(Name = "BAND")]
         public List<tr_course_master_band> master_courses_bands { get; set; }
         [NotMapped]
         public List<tr_course_master_previous> master_courses_previous_courses { get; set; }

@@ -251,7 +251,7 @@ export class CourseScoreComponent implements OnInit {
       pre_test_score: this.pre_test_score,
       pre_test_grade: this.pre_test_grade,
       post_test_score: this.post_test_score,
-      post_test_grade: this.pre_test_grade,
+      post_test_grade: this.post_test_grade,
     };
 
 

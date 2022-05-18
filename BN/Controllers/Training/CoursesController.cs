@@ -554,7 +554,7 @@ namespace api_hrgis.Controllers
         [AllowAnonymous]
         // GET: api/Courses/ConfirmationSheet
         [HttpGet("ConfirmationSheet/{course_no}")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no="AOF-001-001"){
+        public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no){
             var course = await _context.tr_course
                                 .Include(t => t.organization)
                                 .Include(t => t.courses_trainers)
@@ -630,7 +630,13 @@ namespace api_hrgis.Controllers
                 registrant_arr.Add(item.dept_code);
             }
 
-            var approver = await _context.tr_stakeholder.Where(e=>e.role=="Approver" && registrant_arr.Contains(e.org_code))
+            var approver = await _context.tr_stakeholder
+                            .Where( e=>e.role.ToUpper()=="APPROVER" && registrant_arr.Contains(e.org_code))
+                            .Include(e=>e.employee)
+                            .ToListAsync();
+
+            var course_committee = await _context.tr_stakeholder
+                            .Where( e=>e.role.ToUpper()=="COMMITTEE" && course.org_code == e.org_code)
                             .Include(e=>e.employee)
                             .ToListAsync();
 
@@ -638,7 +644,8 @@ namespace api_hrgis.Controllers
             {
                 registrant = registrant,
                 trainer = trainers,
-                approver = approver
+                approver = approver,
+                course_committee = course_committee
             });
         }
         // GET: api/Courses/ConfirmationSheet

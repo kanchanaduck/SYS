@@ -206,6 +206,9 @@ export class CourseComponent implements OnInit {
         courses_trainers.push(trainer)
       });
     }
+    else{
+      courses_trainers = null
+    }
 
     this.check_bands = this.checkboxesDataList.filter((value, index) => {
       return value.isChecked;
@@ -220,6 +223,10 @@ export class CourseComponent implements OnInit {
         courses_bands.push(band)
       });
     }
+    else{
+      courses_bands = null
+    }
+
 
     let form_data = {
       course_no: this.course.course_no,

@@ -15,6 +15,7 @@ export class CenterComponent implements OnInit {
 
   centers: any= [];
   center: any = {};
+  setting: any = {};
   errors: any;
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
@@ -102,6 +103,7 @@ export class CenterComponent implements OnInit {
 
 
   this.get_centers()
+  this.get_setting()
   }
 
   ngOnDestroy(): void {
@@ -186,7 +188,7 @@ export class CenterComponent implements OnInit {
     }
   }
    
-   async get_employee() {
+  async get_employee() {
     let self =this
     await axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`,this.headers)
     .then(function (response) {
@@ -202,6 +204,31 @@ export class CenterComponent implements OnInit {
         text: error.response.data
       })
     }) 
+  }
+  async get_setting() {  
+    let self = this
+    await axios.get(`${environment.API_URL}Setting`, this.headers)
+    .then(function (response:any) {
+      self.setting.filter(x => x.menu == "signature-sheet")
+    })
+    .catch(function (error) {
+      self.service.sweetalert_error(error)
+    });
+  }
+
+  async save_setting() {  
+    let self = this
+    let form_data = {
+      menu: "signature-sheet",
+      property: "name",
+      value: this.setting.name
+    };
+    await axios.post(`${environment.API_URL}Setting`,form_data,this.headers)
+    .then(function (response) {
+    })
+    .catch(function (error) {
+      self.service.sweetalert_error(error)
+    });
   }
 
 }

@@ -72,7 +72,7 @@
     </form>
 </div>
 
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover w-100" id="example">
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover mb-3 w-100" id="example">
     <thead>
         <tr>
             <th class="text-center">EMP NO.</th>
@@ -102,3 +102,40 @@
         </tr>
     </tbody>
 </table>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-4">
+        <form (ngSubmit)="save_setting()">
+            <div class="card mb-3" *ngIf="is_center">
+                <div class="card-header">
+                    <i class="fas fa-cog"></i> Setting signature sheet
+                </div>
+                <div class="card-body">
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                        <label class="form-label mg-b-0">Name</label>
+                        </div><!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" name="setting.name" [(ngModel)]="setting.name" class="form-control" placeholder="Enter name">
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-4">
+                            <label class="form-label mg-b-0">Position</label>
+                        </div><!-- col -->
+                        <div class="col-md-8 mg-t-5 mg-md-t-0">
+                        <input type="text" name="setting.position" [(ngModel)]="setting.position" class="form-control" placeholder="Enter position">
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+                    <button type="submit" class="btn btn-sm btn-az-primary pd-x-30 mg-r-5">Save</button>
+                    <button type="button" class="btn btn-sm btn-dark pd-x-30">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

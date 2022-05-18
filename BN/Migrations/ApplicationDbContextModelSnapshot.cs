@@ -543,8 +543,9 @@ namespace api_hrgis.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int>("days")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("days")
+                        .IsRequired()
+                        .HasColumnType("decimal(3,1)");
 
                     b.Property<string>("master_course_no")
                         .IsRequired()
@@ -622,9 +623,9 @@ namespace api_hrgis.Migrations
                     b.Property<string>("created_by")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("days")
+                    b.Property<decimal?>("days")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(3,1)");
 
                     b.Property<string>("level")
                         .HasColumnType("nvarchar(max)");
@@ -760,6 +761,45 @@ namespace api_hrgis.Migrations
                     b.HasIndex("trainer_no");
 
                     b.ToTable("tr_course_trainer");
+                });
+
+            modelBuilder.Entity("api_hrgis.Models.tr_setting", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("created_at")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("created_by")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("menu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("property")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("updated_at")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("updated_by")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tr_setting");
+
+                    b
+                        .HasComment("ตารางตั้งค่า");
                 });
 
             modelBuilder.Entity("api_hrgis.Models.tr_stakeholder", b =>

@@ -89,11 +89,18 @@ export class ConfirmationSheetComponent implements OnInit {
         self.response = response
         self.course = self.response.courses
         let trainers = self.response.trainers
+        let bands = self.response.courses.courses_bands
         if(trainers.length>0){
           self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
         }
         else{
           self.course.trainer_text = "-"
+        }
+        if(bands.length>0){
+          self.course.band_text = bands.map(c => c.band).join(', ');
+        }
+        else{
+          self.course.band_text = "-"
         }
         self.get_email()
       })
@@ -122,6 +129,11 @@ export class ConfirmationSheetComponent implements OnInit {
         text_cc += element.employee.email+"; "
       }
     });
+    this.email.course_committee.forEach(element => {
+      if(element.employee.email!=null){
+        text_cc += element.employee.email+"; "
+      }
+    });
     this.email.trainer.forEach(element => {
       if(element.email!=null){
         text_cc += element.email+"; "
@@ -129,14 +141,14 @@ export class ConfirmationSheetComponent implements OnInit {
     });
     this.email.to = text_to
     this.email.cc = text_cc
-    this.email.content = `Confirm Training : ${this.course.course_name_th}: ${formatDate(this.course.date_start,'MMMM dd,yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd,yyyy','en-US')}<br><br> 
+    this.email.content = `Confirm Training : ${this.course.course_name_th}: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br><br> 
     To Whom It May Concern,<br> <br> 
     
     I would like to confirm about the lists :<br> 
     ****************************************************************************************<br> <br> 
 
     Course: ${this.course.course_name_th} <br>
-    Date: ${formatDate(this.course.date_start,'MMMM dd,yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd,yyyy','en-US')}<br> 
+    Date: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br> 
     Time: ${formatDate(this.course.date_start,'HH:mm','en-US')} ~ ${formatDate(this.course.date_end,'HH:mm','en-US')} 
     (Please arrive 10 minutes early to allow us enough time to check your list.) <br>
     Place: ${this.course.place} <br>

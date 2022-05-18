@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -48,10 +48,14 @@ export class CourseMasterComponent implements OnInit {
 
 
   constructor(
+    config: NgbModalConfig,
     private modalService: NgbModal,
     private service: AppServiceService, 
     private httpClient: HttpClient
-  ) {}
+  ) {
+    config.backdrop = 'static';
+    config.keyboard = false;
+  }
 
   ngOnInit() {
 
@@ -72,11 +76,11 @@ export class CourseMasterComponent implements OnInit {
     
   }
 
-  open_modal(content){
-    // get_course_modal()
+  open_modal(content, course_no){
+    this.get_course_modal(course_no)
     console.log(content)
     this.modalService.open(content, {
-      size: 'lg' //sm, mb, lg, xl
+      size: 'xl' //sm, mb, lg, xl
     });
   }
 
@@ -91,9 +95,12 @@ export class CourseMasterComponent implements OnInit {
       await axios.get(`${environment.API_URL}CourseMasters/${course_no}`,self.headers)
         .then(function(response: any){
           self.course_modal = response
-          self.course_modal.arr_band = self.course.master_courses_bands
+          self.course_modal.arr_band = self.course_modal.master_courses_bands
 
           let bands = self.course_modal.arr_band
+
+          console.log(bands)
+
           if(bands.length>0){
             self.course_modal.band_text = bands.map(c => c.band).join(', ');
           }
@@ -416,6 +423,9 @@ export class CourseMasterComponent implements OnInit {
       self.course.master_courses_bands.forEach(element => {
         element.course_no = self.course.course_no
       });
+    }
+    else{
+      self.course.master_courses_bands=null;
     }
 
     console.log(self.course.master_courses_previous_courses)

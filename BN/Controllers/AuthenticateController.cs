@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using api_hrgis.Data;
 using api_hrgis.Models;
 using api_hrgis.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_hrgis.Controllers
 {
@@ -36,6 +37,7 @@ namespace api_hrgis.Controllers
             _repository = repository;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] request_login model)

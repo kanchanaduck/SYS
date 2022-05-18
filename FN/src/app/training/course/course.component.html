@@ -265,7 +265,6 @@
                 </div>
             </div>
             <div class="col-7">
-                <!-- //auto complete -->
                 <div class="form-group">
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">trainer
                     <a href="javascript:;"(click)="open(content)"> 
@@ -273,7 +272,7 @@
                     </a>
                 </label>
                     <ng-select 
-                        [ngClass]="{ 'is-invalid': errors && errors.trainer }"
+                        [ngClass]="{ 'is-invalid': errors && errors.courses_trainers }"
                         [(ngModel)]="selected_trainer_multiple"
                         [items]="value_trainer"
                         bindValue="trainer_no"
@@ -281,8 +280,8 @@
                         allow-clear="true"
                         [multiple]="true">	
                     </ng-select>
-                    <p class="invalid-feedback" *ngIf="errors && errors.trainer"> 
-                        <span *ngFor="let text of errors.trainer">{{ text }}</span>
+                    <p class="invalid-feedback-nc" *ngIf="errors && errors.courses_trainers"> 
+                        <span *ngFor="let text of errors.courses_trainers">{{ text }}</span>
                     </p>
                 </div>
             </div>
@@ -302,7 +301,7 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            The data can be revised or deleted after course end within 5 working days
+            The data can be revised or deleted after course end within 10 working days
         </div><!-- alert -->
         <!-- <div style="position: absolute; top: 2px;" *ngIf="chk_disable"><input type="checkbox" ngModel (ngModelChange)="onNgModelChange($event)" /> All</div> -->
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" 

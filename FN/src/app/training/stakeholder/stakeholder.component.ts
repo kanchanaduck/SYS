@@ -29,6 +29,7 @@ export class StakeholderComponent implements OnInit {
   employees_j4up: any = [];
   errors: any;
   formData: any = [];
+  more_approver: string;
 
   is_center: boolean = false;
 
@@ -150,6 +151,23 @@ export class StakeholderComponent implements OnInit {
     }
     return false;
   };
+
+  async add_more_approver(){
+    let self = this
+    await axios.get(`${environment.API_URL}Employees/${this.more_approver}`,this.headers)
+    .then(function (response) {
+      self.employees_j4up.push(
+        response
+      );
+    })
+    .catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: error.response.status,
+        text: error.response.data
+      })
+    });
+  }
 
   async get_stakeholders(){
     let self = this

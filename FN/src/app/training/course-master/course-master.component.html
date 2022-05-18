@@ -123,6 +123,9 @@
                     <span>{{band.band}} </span>
                 </label>
             </div>
+            <p class="invalid-feedback-nc" *ngIf="errors && errors.master_courses_bands"> 
+                <span *ngFor="let text of errors.master_courses_bands">{{ text }}</span>
+            </p>
         </div><!-- form-group -->
     </div>
 
@@ -164,7 +167,7 @@
             <td>{{ c.category }}</td>
             <td>{{ c.level }}</td>
             <td class="text-center">
-                <a href="javascript:;" (click)="open_modal(content)"><i class="far fa-eye"></i></a>
+                <a href="javascript:;" (click)="open_modal(content, c.course_no)"><i class="far fa-eye"></i></a>
             </td>
             <td class="text-center">
                 <a href="javascript:;" *ngIf="_org_code==c.org_code" 

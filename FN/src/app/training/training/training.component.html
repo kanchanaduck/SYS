@@ -13,7 +13,6 @@
         <p class="mg-b-20 tx-13">To register course and approve registration</p>
         <div class="list-group">
             <a routerLink="register" class="list-group-item list-group-item-action">Committee register</a>
-            
             <a routerLink="approve-mgr" class="list-group-item list-group-item-action">Approver approve</a>
             <a routerLink="approve-final" class="list-group-item list-group-item-action">Final approve</a><a routerLink="register-continuous" class="list-group-item list-group-item-action">Committee register continuous employee no.</a>
         </div>
@@ -25,7 +24,7 @@
         <div class="list-group">
             <a routerLink="course-confirmation-sheet" class="list-group-item list-group-item-action">Confirmation sheet</a>
             <a routerLink="assessment-file" class="list-group-item list-group-item-action">Assessment file</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/SignatureSheet" target="_blank" class="list-group-item list-group-item-action">Signature sheet</a>
+            <a href="{{ report_url }}SignatureSheet" target="_blank" class="list-group-item list-group-item-action">Signature sheet</a>
         </div>
     </div>
 
@@ -54,12 +53,12 @@
         <div class="az-content-label mg-b-5">Report and data</div>
         <p class="mg-b-20 tx-13">Report and data</p>
         <div class="list-group">
-	        <a href="http://cptsvs52t/HRGIS_REPORT/Training/CourseMap" target="_blank" class="list-group-item list-group-item-action">Course map</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/EmployeeTraining" target="_blank" class="list-group-item list-group-item-action">Employee training history</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/Training" target="_blank" class="list-group-item list-group-item-action">Course and trainee score</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/CourseAttendeeFromMasterCourse" target="_blank" class="list-group-item list-group-item-action">Course attendee</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/CourseTarget"  target="_blank"class="list-group-item list-group-item-action">Target group of course</a>
-            <a href="http://cptsvs52t/HRGIS_REPORT/Training/CourseCountTrainee" target="_blank" class="list-group-item list-group-item-action">Count trainee of course</a>
+	        <a href="{{ report_url }}CourseMap" target="_blank" class="list-group-item list-group-item-action">Course map</a>
+            <a href="{{ report_url }}EmployeeTraining" target="_blank" class="list-group-item list-group-item-action">Employee training history</a>
+            <a href="{{ report_url }}Training" target="_blank" class="list-group-item list-group-item-action">Course and trainee score</a>
+            <a href="{{ report_url }}CourseAttendeeFromMasterCourse" target="_blank" class="list-group-item list-group-item-action">Course attendee</a>
+            <a href="{{ report_url }}CourseTarget"  target="_blank"class="list-group-item list-group-item-action">Target group of course</a>
+            <a href="{{ report_url }}CourseCountTrainee" target="_blank" class="list-group-item list-group-item-action">Count trainee of course</a>
         </div>
     </div>
     <!-- <div class="col-4">

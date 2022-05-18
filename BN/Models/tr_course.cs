@@ -20,8 +20,10 @@ namespace api_hrgis.Models
         [Required]
         public string org_code { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
-        public int days { get; set; }
+        [Display(Name = "DAYS")]
+        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Column(TypeName = "decimal(3,1)")]
+        public decimal? days { get; set; }
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int capacity { get; set; }
@@ -37,14 +39,6 @@ namespace api_hrgis.Models
         [Display(Name = "TO")]
         [DataType(DataType.Date)] 
         public DateTime? date_end { get; set; } 
-        // [Required]
-        // [Column(TypeName = "time")]
-        // [Display(Name = "TIME IN")]
-        // public TimeSpan? time_in { get; set; } 
-        // [Required]
-        // [Column(TypeName = "time")]
-        // [Display(Name = "TIME OUT")]
-        // public TimeSpan? time_out { get; set; }
         [Required]
         [Display(Name = "PLACE")]
         public string place { get; set; }
@@ -61,8 +55,10 @@ namespace api_hrgis.Models
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
+        [Display(Name = "BAND")]
         public List<tr_course_band> courses_bands { get; set; }
         [Required]
+        [Display(Name = "TRAINER")]
         public List<tr_course_trainer> courses_trainers { get; set; }
         public List<tr_course_registration> courses_registrations { get; set; } 
         [ForeignKey("org_code")]
