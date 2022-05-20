@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Self, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-course-score',
@@ -62,15 +63,25 @@ export class CourseScoreComponent implements OnInit {
   emp_no: any;
   pre_test_score: number;
   pre_test_grade: string;
-  post_test_score: any;
+  post_test_score: number;
   post_test_grade: string;
+  pre_test_scores:any = [];
+  pre_test_grades:any = [];
+  post_test_scores:any = [];
+  post_test_grades:any = [];
   emp_name: string;
   emp_status: any;
   txt_not_pass: any;
   not_pass: boolean;
-  errors: {};
+  errors:any= {};
+  is_edit_score: boolean=false;
 
-  constructor(private modalService: NgbModal, config: NgbModalConfig,private formBuilder: FormBuilder, private service: AppServiceService, private exportexcel: ExportService) {
+  constructor(
+    private modalService: NgbModal, 
+    config: NgbModalConfig,
+    private formBuilder: FormBuilder, 
+    private service: AppServiceService, 
+    private exportexcel: ExportService) {
     config.backdrop = 'static'; // popup
     config.keyboard = false;
   }
@@ -106,6 +117,7 @@ export class CourseScoreComponent implements OnInit {
     await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
     .then(function(response){
       self.courses = response
+      self.rerender()
     })
     .catch(function(error){
   
@@ -114,6 +126,8 @@ export class CourseScoreComponent implements OnInit {
 
   async get_course() {
     let self = this
+    
+    this.errors = {}
 
     if(this.course_no==null)
     {
@@ -144,17 +158,7 @@ export class CourseScoreComponent implements OnInit {
             self.course.band_text = "-"
           }
 
-          // if(self.response.courses_bands.length>0){
-          //   self.arr_band = self.response.courses_bands; // console.log(self.arr_band);
-
-          //   var nameArr = self.response.courses_bands; // console.log(nameArr);
-          //   for (const iterator of nameArr) {
-          //     self.array_chk.find(v => v.band === iterator.band).isChecked = true;
-          //   } // console.log(self.array_chk);
-          //   self.checkboxesDataList = self.array_chk;
-          // }
-
-          self.fnGet()
+          self.get_registrant()
         })
         .catch(function(error){
           Swal.fire({
@@ -176,11 +180,7 @@ export class CourseScoreComponent implements OnInit {
   async clear_data() {
     this.course = {};
     this.data_grid = [];
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.clear().draw();
-      dtInstance.destroy();
-      this.dtTrigger.next();
-    });
+    this.rerender();
   }
   async datatable(){
     this.dtOptions = {
@@ -201,49 +201,55 @@ export class CourseScoreComponent implements OnInit {
           },
           "button": {
             tag: "button",
-            className: "btn btn-outline-indigo btn-sm"
+            className: "btn btn-indigo btn-sm"
           },
         },
         "buttons": [
           {
             extend: 'pageLength',
+            className: 'btn-outline-indigo',
           },
           {
             extend: 'copy',
             text: '<i class="fas fa-copy"></i> Copy</button>',
+            className: 'btn-outline-indigo',
           },
           {
             extend: 'print',
             text: '<i class="fas fa-print"></i> Print</button>',
+            className: 'btn-outline-indigo',
           },
           {
-            extend: 'collection',
-            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-            buttons: [
-              {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
-              {
-                extend: 'csv',
-                text: '<i class="far fa-file-excel"></i> Csv</button>',
-              },
-              {
-                extend: 'pdf',
-                text: '<i class="far fa-file-pdf"></i> Pdf</button>',
-              },
-            ]
-          }
+            text: '<i class="fas fa-edit"></i> Edit</button>',
+            action: () => {
+              this.is_edit_score = true;
+              // this.rerender()
+            }
+          },
+          {
+            text: '<i class="fas fa-save"></i> Save</button>',
+            className: this.is_edit_score ? "d-block":"d-none"
+            // action: () => {
+            //   this.is_edit_score;
+            // }
+          },
         ],
       },
-      container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
       pageLength: 10,
+      columnDefs: [
+        {
+          targets: [9],
+          orderable: false
+        }
+      ],
     };
   }
   
 
   async fnSave() {
+
+    let self = this
 
     var send_data = {
       course_no: this.course_no,
@@ -257,12 +263,20 @@ export class CourseScoreComponent implements OnInit {
 
     if( this.data_grid.some(x => x.emp_no == this.emp_no)){
       await this.service.axios_put(`Register/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
+      this.fnClear()
     }
     else{
-      await this.service.axios_post("Register/ByCommitteeCourse", send_data, environment.text.success);
+      axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, this.headers)
+      .then(function(){
+        self.service.sweetalert_create()
+      })
+      .catch(function(error){
+        self.errors = error.response.data.errors
+        self.service.sweetalert_error(error)
+      })
     }
 
-    this.fnGet();
+    this.get_registrant();
   }
 
   fnClear() {
@@ -295,7 +309,7 @@ export class CourseScoreComponent implements OnInit {
     }).then(async (result) => {
       if (result.value) {
         await this.service.axios_delete('Register/' + this.course_no + '/' + item.emp_no, environment.text.delete);
-        this.fnGet();
+        this.get_registrant();
       }
     })
   }
@@ -341,14 +355,22 @@ export class CourseScoreComponent implements OnInit {
       this.not_pass = true;
     }
   }
-  onKeyPreTestScore(event) {
+  onKeyPreTestScore(event, i) {
+    this.pre_test_grades[i] = fnGrade(event);
+  }
+  onKeyPostTestScore(event, i) {
+    this.post_test_grades[i] = fnGrade(event);
+  }
+
+  onKeyPreTestScoreRegister(event) {
     this.pre_test_grade = fnGrade(event.target.value);
   }
-  onKeyPostTestScore(event) {
+  onKeyPostTestScoreRegister(event) {
     this.post_test_grade = fnGrade(event.target.value);
   }
 
-  /** File Upload, Download */
+  /*
+  // File Upload, Download
   dowloadFormat() {
     const link = document.createElement('a');
     link.setAttribute('target', '_blank');
@@ -395,35 +417,110 @@ export class CourseScoreComponent implements OnInit {
 
       this.customFile.nativeElement.value = ""; // console.log(this.file); // console.log(this.fileName);
       this.nameFile = 'Choose file';
-      await this.fnGet();
+      await this.get_registrant();
     }
+  }
+  // End File Upload, Download 
+  */
+
+  /** File Upload, Download */
+  dowloadFormat() {
+    const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
+    link.setAttribute('href', 'assets/format/format input training.xlsx');
+    link.setAttribute('download', `format input training.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+  nameFile: string = 'Choose file';
+  file: any;
+  fileName: any;
+  @ViewChild('customFile') customFile: any;
+  chooseFile(e: any) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      this.file = e.target.files[0];
+      this.fileName = e.target.files[0].name;
+      console.log(this.file);
+      console.log(this.fileName);
+      this.nameFile = this.fileName;
+    }
+  }
+  result: any;
+  async upload() {
+
+    let self = this
+    
+    if(!this.course_no){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+
+    let formData = new FormData();
+    if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
+      formData.append('file_form', this.file)
+      formData.append('file_name', this.fileName)
+      formData.append('dept_abb', this._org_abb)
+
+      await axios.post(`${environment.API_URL}Register/UploadCourseRegister/ByCommitteeCourse/${this.course_no}`
+      , formData, this.headers)
+      .then(function(response:any){
+        if(response.length>0){
+          Swal.fire({
+            icon: 'warning',
+            text: 'There is something error, please see the ResultRegistration.xlsx file.'
+          })
+          let element = response;
+          self.exportexcel.exportJSONToExcel(element, 'ResultRegistration');
+          self.customFile.nativeElement.value = ""; 
+          self.nameFile = 'Choose file';
+        }
+        else{
+          self.service.sweetalert_create();
+        }
+        self.get_registrant();
+      })
+      .catch(function(error){
+        self.service.sweetalert_error(error);
+        self.customFile.nativeElement.value = ""; 
+        self.nameFile = 'Choose file';
+      })
+    }
+
   }
   /** End File Upload, Download */
 
-  async fnGet() {
+  async get_registrant() {
     await this.service.gethttp(`Register/${this.course_no}/Approved`)
       .subscribe((response: any) => {
         console.log(response);
-
         this.data_grid = response;
-
-
-
-        // Calling the DT trigger to manually render the table
-        if (this.isDtInitialized) {
-          this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-            dtInstance.clear().draw();
-            dtInstance.destroy();
-            this.dtTrigger.next();
-          });
-        } else {
-          this.isDtInitialized = true
-          this.dtTrigger.next();
-        }
+        this.rerender()
       }, (error: any) => {
         console.log(error);
         this.data_grid = [];
       });
+  }
+
+  rerender(){
+    if (this.isDtInitialized) {
+      this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+        dtInstance.clear().draw();
+        dtInstance.destroy();
+        this.dtTrigger.next();
+      });
+    } 
+    else {
+      this.isDtInitialized = true
+      this.dtTrigger.next();
+    }
   }
 
   ngOnDestroy(): void {

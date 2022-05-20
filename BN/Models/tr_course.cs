@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FoolProof.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_hrgis.Models
 {
@@ -38,6 +40,7 @@ namespace api_hrgis.Models
         [Column(TypeName = "datetime")]
         [Display(Name = "TO")]
         [DataType(DataType.Date)] 
+        [GreaterThanOrEqualTo("date_start", ErrorMessage = "The TO cannot be before the FROM")]
         public DateTime? date_end { get; set; } 
         [Required]
         [Display(Name = "PLACE")]
@@ -55,6 +58,7 @@ namespace api_hrgis.Models
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
+        [Required]
         [Display(Name = "BAND")]
         public List<tr_course_band> courses_bands { get; set; }
         [Required]

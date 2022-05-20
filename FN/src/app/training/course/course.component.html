@@ -125,6 +125,9 @@
                             <input type="checkbox" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}">
                             <span>{{item.band}} </span>
                         </label>
+                        <p class="invalid-feedback-nc" *ngIf="errors && errors.courses_bands"> 
+                            <span *ngFor="let text of errors.courses_bands">{{ text }}</span>
+                        </p>
                     </div>
                 </div>
             </div>

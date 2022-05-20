@@ -508,7 +508,12 @@ namespace api_hrgis.Controllers
 
             if (query != null)
             {
-                return Conflict(_config.GetValue<string>("Text:duplication"));
+                if(query.last_status==_config["Status:wait"]){
+                    return Conflict("Data is already exist and status is Wait");
+                }
+                else{
+                    return Conflict(_config.GetValue<string>("Text:duplication"));
+                }
             }
             else
             {
@@ -967,6 +972,168 @@ namespace api_hrgis.Controllers
         // POST: api/Register/UploadCourseRegister/ByApproverEmp/{course_no}
         [HttpPost("UploadCourseRegister/ByApproverEmp/{course_no}")]
         public async Task<ActionResult<IEnumerable<tr_course_registration>>> upload_register_by_approver_emp(
+            string course_no, [FromForm] req_fileform model)
+        {
+            string rootFolder = Directory.GetCurrentDirectory();
+            string pathString = @"\API site\files\file-hrgis\upload\";
+            string serverPath = rootFolder.Substring(0, rootFolder.LastIndexOf(@"\")) + pathString;
+            // Create Directory
+            if (!Directory.Exists(serverPath))
+            {
+                Directory.CreateDirectory(serverPath);
+            }
+
+            // string fullpath = serverPath + model.file_name;
+            string filePath = Path.Combine(serverPath + model.file_name);
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            {
+                model.file_form.CopyTo(stream);
+                stream.Dispose();
+                stream.Close();
+            }
+
+            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
+                                .Include(e=>e.courses_bands)
+                                .FirstOrDefaultAsync();
+
+            if(course==null){
+                return StatusCode(400,"Course is not found");
+            }
+
+            List<string> course_bands = new List<string>();
+
+            foreach (var item in course.courses_bands)
+            {
+                course_bands.Add(item.band);
+            }
+
+            var approver = await _context.tr_stakeholder
+                            .Where(e=>e.role=="APPROVER" && e.emp_no == User.FindFirst("emp_no").Value)
+                            .FirstOrDefaultAsync();
+
+            if(approver==null){
+                return StatusCode(403,"Permission denied, only committee can use this function");
+            }
+
+            List<response_course_registration> response = new List<response_course_registration>();
+            if (System.IO.File.Exists(filePath))
+            {
+                // Console.WriteLine("File exists.");
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+                    // Console.WriteLine("rowCount: " + rowCount);
+
+                    for (int row = 4; row <= rowCount; row++)
+                    {
+                        if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
+                        {
+                            string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
+                            int ws_seq_no = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            int _seq_no = 0;
+                            string _last_status = "";
+
+                            var emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
+
+                            var query_seq = await _context.tr_course_registration
+                                            .Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no)
+                                            .FirstOrDefaultAsync();
+
+                            if (query_seq == null)
+                            {
+                                _seq_no = 1;
+                            }
+                            else
+                            {
+                                _seq_no = query_seq.seq_no + 1;
+                            }
+
+                            _last_status = _seq_no > course.capacity ? _config.GetValue<string>("Status:wait") : null; // Check
+                            var query = await _context.tr_course_registration
+                                        .Where(x => x.course_no == course_no && x.emp_no == _emp_no)
+                                        .FirstOrDefaultAsync();
+
+                            if(emp==null){
+                                response.Add(new response_course_registration
+                                {
+                                    emp_no = _emp_no,
+                                    seq_no = ws_seq_no,
+                                    error_message = _config["Text:staff_not_exist"]
+                                });
+                            } 
+                            else{
+                                if(emp.employed_status=="RESIGNED"){
+                                    // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                    response.Add(new response_course_registration
+                                    {
+                                        emp_no = _emp_no,
+                                        seq_no = ws_seq_no,
+                                        error_message = _config["Text:staff_resigned"]
+                                    });
+                                }
+                                else{
+                                    if(approver.org_code==emp.div_code || approver.org_code==emp.dept_code ){
+                                        if(!course_bands.Contains(emp.band)){
+                                            response.Add(new response_course_registration
+                                            {
+                                                emp_no = _emp_no,
+                                                seq_no = ws_seq_no,
+                                                error_message = _config.GetValue<string>("Text:unequal_band")
+                                            });
+                                        }
+                                        else{
+                                            if (query == null){
+                                                _context.Add(new tr_course_registration
+                                                {
+                                                    course_no = course_no,
+                                                    emp_no = _emp_no,
+                                                    seq_no = _seq_no,
+                                                    last_status = _last_status,
+                                                    remark = await GetPrevCourseNo(course_no, _emp_no),
+                                                    register_at = DateTime.Now,
+                                                    register_by = User.FindFirst("emp_no").Value,
+                                                    final_approved_at = DateTime.Now,
+                                                    final_approved_by = User.FindFirst("emp_no").Value,
+                                                    final_approved_checked = true
+                                                });
+                                                await _context.SaveChangesAsync();
+                                            }
+                                            else{
+                                                // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
+                                                response.Add(new response_course_registration
+                                                {
+                                                    emp_no = _emp_no,
+                                                    seq_no = ws_seq_no,
+                                                    error_message = _config.GetValue<string>("Text:duplication")
+                                                });
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Invalid department. : dept ของพนักงานใน row ไม่ตรงกับที่ dept login
+                                        response.Add(new response_course_registration
+                                        {
+                                            emp_no = _emp_no,
+                                            seq_no = ws_seq_no,
+                                            error_message = _config.GetValue<string>("Text:invalid_department")
+                                        });
+                                    } 
+                                }
+                            }           
+                        }
+                    }
+                }
+            }
+            await Sorting(course_no);
+            System.IO.File.Delete(filePath);  //Delete file
+            return Ok(response);
+        } 
+         // POST: api/Register/UploadCourseRegister/ByCommitteeCourse/{course_no}
+        [HttpPost("UploadCourseRegister/ByCommitteeCourse/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> upload_register_by_committee_course(
             string course_no, [FromForm] req_fileform model)
         {
             string rootFolder = Directory.GetCurrentDirectory();

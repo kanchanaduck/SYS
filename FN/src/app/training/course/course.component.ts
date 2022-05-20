@@ -289,7 +289,7 @@ export class CourseComponent implements OnInit {
   CheckDate(date_end) {
     let result = true;
     let date: Date = new Date(date_end);
-    date.setDate(date.getDate() + 5); //console.log('add date: ', formatDate(date));
+    date.setDate(date.getDate() + 10); //console.log('add date: ', formatDate(date));
 
     var maxDate = new Date(date);
     var currentDate = new Date(); //console.log('วันปัจจุบัน: ', formatDate(currentDate));

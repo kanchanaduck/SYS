@@ -540,7 +540,7 @@ namespace api_hrgis.Controllers
         [HttpGet("Close")]
         public async Task<ActionResult<tr_course>> course_close(){
             var course_close = await _context.tr_course
-                                .Where(x => x.date_end.Value.Date.AddDays(5) <= DateTime.Now.Date).ToListAsync();
+                                .Where(x => x.date_end.Value.Date.AddDays(10) <= DateTime.Now.Date).ToListAsync();
 
             foreach (var item in course_close)
             {
@@ -640,12 +640,15 @@ namespace api_hrgis.Controllers
                             .Include(e=>e.employee)
                             .ToListAsync();
 
+            var mtp_member = await _context.tb_employee.Where(e=>e.dept_abb=="MTP" && e.employed_status=="EMPLOYED").ToListAsync();
+
             return Ok(new
             {
                 registrant = registrant,
                 trainer = trainers,
-                approver = approver,
-                course_committee = course_committee
+                // approver = approver,
+                course_committee = course_committee,
+                mtp_member = mtp_member,
             });
         }
         // GET: api/Courses/ConfirmationSheet

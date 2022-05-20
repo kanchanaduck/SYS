@@ -45,6 +45,7 @@ namespace api_hrgis.Models
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
         public bool? status_active { get; set; }
+        [Required]
         [Display(Name = "BAND")]
         public List<tr_course_master_band> master_courses_bands { get; set; }
         [NotMapped]

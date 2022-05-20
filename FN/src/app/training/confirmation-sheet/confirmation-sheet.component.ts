@@ -124,21 +124,41 @@ export class ConfirmationSheetComponent implements OnInit {
       }
     });
     var text_cc = "";
-    this.email.approver.forEach(element => {
-      if(element.employee.email!=null){
-        text_cc += element.employee.email+"; "
+    var arr_cc = [];
+    // this.email.approver.forEach(element => {
+    //   if(element.employee.email!=null){
+    //      text_cc += element.employee.email+"; "
+    //      arr_cc.push(element.email)
+    //   }
+    // });
+    this.email.mtp_member.forEach(element => {
+      if(element.email!=null){
+        // text_cc += element.email+"; "
+        arr_cc.push(element.email)
       }
     });
     this.email.course_committee.forEach(element => {
       if(element.employee.email!=null){
-        text_cc += element.employee.email+"; "
+        // text_cc += element.employee.email+"; "
+        arr_cc.push(element.employee.email)
       }
     });
     this.email.trainer.forEach(element => {
       if(element.email!=null){
-        text_cc += element.email+"; "
+        // text_cc += element.email+"; "
+        arr_cc.push(element.email)
       }
     });
+
+    //remove duplicate
+    arr_cc = arr_cc.filter(function(elem, index, self) {
+      return index === self.indexOf(elem);
+    })
+
+    arr_cc.forEach(element => {
+      text_cc += element+"; "
+    });
+
     this.email.to = text_to
     this.email.cc = text_cc
     this.email.content = `Confirm Training : ${this.course.course_name_th}: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br><br> 
