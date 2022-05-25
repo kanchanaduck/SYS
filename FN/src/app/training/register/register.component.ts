@@ -327,11 +327,10 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     {
       this.errors = {};
       axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-        .then(function(response){
-          self.response = response
-          self.course = self.response.courses
-          self.arr_band = self.response.courses.courses_bands;
-          let trainers = self.response.trainers
+        .then(function(response: any){
+          self.course = response.courses
+          self.arr_band = response.courses.courses_bands;
+          let trainers = response.trainers
           if(trainers.length>0){
             self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
           }
@@ -517,7 +516,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     }
 
     let formData = new FormData();
-    if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
+    // if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
       formData.append('file_form', this.file)
       formData.append('file_name', this.fileName)
       formData.append('dept_abb', this._org_abb)
@@ -541,11 +540,13 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
         self.get_registrant();
       })
       .catch(function(error){
+        self.errors = error.response.data.errors
+        // console.log(self.errors)
         self.service.sweetalert_error(error);
         self.customFile.nativeElement.value = ""; 
         self.nameFile = 'Choose file';
       })
-    }
+    // }
 
   }
   /** End File Upload, Download */

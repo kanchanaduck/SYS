@@ -1,9 +1,9 @@
-<form (ngSubmit)="fnSave()">
+<form (ngSubmit)="register()">
 <div class="row mb-3" *ngIf="is_committee">
     <div class="col-6 offset-3">
         <div class="form-group col mb-0">
             <label class="az-content-label tx-11 tx-medium tx-gray-600">COURSE NO.
-                <small class="text-muted">&lt;Display all courses of {{ _org_abb }}&gt;</small>
+                <small class="text-muted">&lt;Display all courses of {{ _org_abb }} and end course less than 10 working days&gt;</small>
             </label>     
             <ng-select 
                 [(ngModel)]="course_no"
@@ -13,7 +13,6 @@
                 bindValue="course_no"
                 bindLabel="course_no"
                 allow-clear="true"
-                (clear)="clear_data()"
                 (change)="get_course()">	
                 <ng-template ng-option-tmp ng-label-tmp let-item="item">
                     {{item.course_no}}: {{item.course_name_th}}
@@ -84,6 +83,7 @@
                     <p class="invalid-feedback-nc" *ngIf="errors && errors.emp_no"> 
                         <span *ngFor="let text of errors.emp_no">{{ text }}</span>
                     </p>
+                    <span class="text-warning" *ngIf="not_pass">{{txt_not_pass}}</span>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">pre_test_grade</label>
                             <input type="text" class="form-control" readonly="" #txtpre_test_grade
-                            name="pre_test_grade" [(ngModel)]="pre_test_grade">
+                            name="pre_test_grade" [(ngModel)]="pre_test_grade" tabindex="-1">
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">post_test_grade</label>
                             <input type="text" class="form-control" readonly="" #txtpost_test_grade
-                            name="post_test_grade" [(ngModel)]="post_test_grade">
+                            name="post_test_grade" [(ngModel)]="post_test_grade" tabindex="-1">
                         </div>
                     </div>
                 </div>
@@ -166,9 +166,13 @@
             <div class="col-4">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600">import</label>
                 <div class="custom-file">
-                    <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
+                    <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile
+                    [ngClass]="{ 'is-invalid': errors && errors.file_form }">
                     <label class="custom-file-label" for="customFile">{{nameFile}}</label>
                 </div>
+                <p class="invalid-feedback-nc" *ngIf="errors && errors.file_form"> 
+                    <span *ngFor="let text of errors.file_form">{{ text }}</span>
+                </p>
             </div>
             <div class="col-6">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">button</label>
@@ -181,7 +185,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-12">
+            <!-- <div class="col-12">
                 <div style="position: absolute; top:-25px; left: 65px; width: 32%;">
                     <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
                         <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer text-muted"></i>
@@ -191,20 +195,19 @@
                         <img src="assets/images/img-format-input-training.PNG" class="img-fluid">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div> 
 </form>
 
 
-<form>
-<div class="row">
+<div class="row" *ngIf="is_committee">
     <div class="col-12">
         <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm">
             <thead>
                 <tr>
-                    <th class="text-center">no.</th>
+                    <th class="text-center">seq</th>
                     <th class="text-center">emp no.</th>
                     <th class="text-center">title</th>
                     <th class="text-center">first name</th>
@@ -218,84 +221,87 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
-                    <td class="text-right">{{ i + 1 }}</td>
-                    <td>{{ item.emp_no }}</td>
+                    <td class="text-right">{{ item.seq_no }}</td>
+                    <td>
+                        <div>{{ item.emp_no }}</div>
+                        <input type="hidden" class="form-control" 
+                        name="emp_nos[i]"
+                        [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="emp_nos[i]">
+                    </td>
                     <td>{{ item.employees.title_name_en }}</td>
                     <td>{{ item.employees.firstname_en }}</td>
                     <td>{{ item.employees.lastname_en }}</td>
                     <td class="text-center">{{ item.employees.band }}</td>
                     <td>{{ item.employees.div_abb+"/"+item.employees.dept_abb }}</td>
-                  <!--   <td class="text-center">{{ item.employees.entrance_date | date:'yy/MM/dd'}}</td> -->
                     <td>
-                        <div *ngIf="is_edit_score; else is_show_text">
-                            <div class="row">
-                                <div class="col-6 pr-0">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control"
-                                        name="pre_test_scores[i]"
-                                        [ngModelOptions]="{standalone: true}"
-                                        [(ngModel)]="pre_test_scores[i]"
-                                        (ngModelChange)="onKeyPreTestScore($event,i)">
-                                    </div>
+                        <div class="row">
+                            <div class="col-6 pr-0">
+                                <div class="form-group">
+                                    <input type="text" class="form-control px-1"
+                                    name="pre_test_scores[i]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="pre_test_scores[i]"
+                                    (ngModelChange)="onKeyPreTestScore($event,i)"
+                                    >
                                 </div>
-                                <div class="col-6 pl-1">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" readonly
-                                        name="pre_test_grades[i]"
-                                        [ngModelOptions]="{standalone: true}"
-                                        [(ngModel)]="pre_test_grades[i]">
-                                    </div>
+                            </div>
+                            <div class="col-6 pl-1">
+                                <div class="form-group">
+                                    <input type="text" class="form-control px-1" readonly
+                                    name="pre_test_grades[i]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="pre_test_grades[i]"
+                                    tabindex="-1">
                                 </div>
                             </div>
                         </div>
-                        <ng-template #is_show_text>
-                            <div *ngIf="item.pre_test_grade != '' && item.pre_test_grade != null; else elseBlock">
-                                {{ item.pre_test_score }} : {{ item.pre_test_grade }}
-                            </div>
-                            <ng-template #elseBlock>
-                                <span></span>
-                            </ng-template>
-                        </ng-template>
+                        <div class="row">
+                            <p class="invalid-feedback-nc" *ngIf="errors && errors['['+i+'].pre_test_score']"> 
+                                <span *ngFor="let text of errors['['+i+'].pre_test_score']">{{ text }}</span>
+                            </p>
+                        </div> 
                     </td>
                     <td>
-                        <div *ngIf="is_edit_score; else is_show_text">
-                            <div class="row">
-                                <div class="col-6 pr-0">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control"
-                                        name="post_test_score[i]"
-                                        [ngModelOptions]="{standalone: true}"
-                                        [(ngModel)]="post_test_scores[i]"
-                                        (ngModelChange)="onKeyPostTestScore($event,i)"
-                                        >
-                                    </div>
+                        <div class="row">
+                            <div class="col-6 pr-0">
+                                <div class="form-group">
+                                    <input type="text" class="form-control px-1"
+                                    name="post_test_scores[i]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="post_test_scores[i]"
+                                    (ngModelChange)="onKeyPostTestScore($event,i)"
+                                    >
                                 </div>
-                                <div class="col-6 pl-1">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" readonly
-                                        name="post_test_grade[i]"
-                                        [ngModelOptions]="{standalone: true}"
-                                        [(ngModel)]="post_test_grades[i]">
-                                    </div>
+                            </div>
+                            <div class="col-6 pl-1">
+                                <div class="form-group">
+                                    <input type="text" class="form-control px-1" readonly
+                                    name="post_test_grades[i]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="post_test_grades[i]"
+                                    tabindex="-1">
                                 </div>
                             </div>
                         </div>
-                        <ng-template #is_show_text>
-                            <div *ngIf="item.post_test_grade != '' && item.post_test_grade != null; else elseBlock_post">
-                                {{ item.post_test_score }} : {{ item.post_test_grade }}
-                            </div>
-                            <ng-template #elseBlock_post>
-                                <span></span>
-                            </ng-template>
-                        </ng-template>
+                        <div class="row">
+                            <p class="invalid-feedback-nc" *ngIf="errors && errors['['+i+'].post_test_score']"> 
+                                <span *ngFor="let text of errors['['+i+'].post_test_score']">{{ text }}</span>
+                            </p>
+                        </div>
                     </td>
                     <td class="text-center">
-                        <!-- <a href="javascript:;" (click)="fnEdit(item)"><i class="far fa-edit"></i></a> -->
-                        <a href="javascript:;" (click)="fnDelete(item)"><i class="far fa-trash-alt"></i></a>
+                        <a href="javascript:;" (click)="fnDelete(item)"  tabindex="-1"><i class="far fa-trash-alt"></i></a>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
-</form>
+
+<div class="card card-body" *ngIf="!is_committee">
+    <p class="m-0">
+        This page for committee If you would like to see the status of registration, 
+        you can go to <a routerLink="./../course">Course</a> page.
+    </p>
+</div>

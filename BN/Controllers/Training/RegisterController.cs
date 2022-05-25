@@ -17,6 +17,7 @@ using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace api_hrgis.Controllers
 {
@@ -536,6 +537,10 @@ namespace api_hrgis.Controllers
                 tb.emp_no = registrant.emp_no;
                 tb.seq_no = seq;
                 tb.last_status = registrant.last_status;
+                tb.pre_test_score = registrant.pre_test_score==null? null:Convert.ToInt32(registrant.pre_test_score);
+                tb.pre_test_grade = registrant.pre_test_score==null? null:fnGrade(registrant.pre_test_score.ToString());
+                tb.post_test_score = registrant.post_test_score==null? null:Convert.ToInt32(registrant.post_test_score);
+                tb.post_test_grade = registrant.post_test_score==null? null:fnGrade(registrant.post_test_score.ToString());
                 tb.remark = registrant.remark;
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
@@ -563,10 +568,10 @@ namespace api_hrgis.Controllers
                 return BadRequest("Not found the trainee");
             }
 
-            registrant.pre_test_score = r.pre_test_score;
-            registrant.pre_test_grade = r.pre_test_grade;
-            registrant.post_test_score = r.post_test_score;
-            registrant.post_test_grade = r.post_test_grade;
+            registrant.pre_test_score = registrant.pre_test_score==null? null:Convert.ToInt32(registrant.pre_test_score);
+            registrant.pre_test_grade = registrant.pre_test_score==null? null:fnGrade(registrant.pre_test_score.ToString());
+            registrant.post_test_score = registrant.post_test_score==null? null:Convert.ToInt32(registrant.post_test_score);
+            registrant.post_test_grade = registrant.post_test_score==null? null:fnGrade(registrant.post_test_score.ToString());
             registrant.scored_at = DateTime.Now;
             registrant.scored_by = User.FindFirst("emp_no").Value;
 
@@ -1169,11 +1174,11 @@ namespace api_hrgis.Controllers
                 course_bands.Add(item.band);
             }
 
-            var approver = await _context.tr_stakeholder
-                            .Where(e=>e.role=="APPROVER" && e.emp_no == User.FindFirst("emp_no").Value)
+            var committee = await _context.tr_stakeholder
+                            .Where(e=>e.role.ToUpper()=="COMMITTEE" && e.emp_no == User.FindFirst("emp_no").Value)
                             .FirstOrDefaultAsync();
 
-            if(approver==null){
+            if(committee==null){
                 return StatusCode(403,"Permission denied, only committee can use this function");
             }
 
@@ -1236,7 +1241,7 @@ namespace api_hrgis.Controllers
                                     });
                                 }
                                 else{
-                                    if(approver.org_code==emp.div_code || approver.org_code==emp.dept_code ){
+                                    if(committee.org_code==emp.div_code || committee.org_code==emp.dept_code ){
                                         if(!course_bands.Contains(emp.band)){
                                             response.Add(new response_course_registration
                                             {
@@ -1292,11 +1297,237 @@ namespace api_hrgis.Controllers
             await Sorting(course_no);
             System.IO.File.Delete(filePath);  //Delete file
             return Ok(response);
-        } 
+        }
+        // PUT: api/Register/UpdateScore
+        [HttpPut("UpdateScore/{course_no}")]
+        public async Task<IActionResult> update_score(string course_no, List<tr_course_registration> registrant)
+        {
+            var course = await _context.tr_course
+                                    .Where(e => e.course_no==course_no)
+                                    .FirstOrDefaultAsync();
+            if(course==null){
+                return NotFound("Course no. is not found");
+            }
+
+            try
+            {
+                List<tr_course_registration> list = new List<tr_course_registration>();
+                int _seq_no = 0;
+                for (var i = 0; i<registrant.Count(); i++)
+                {
+                    var item = registrant[i];
+                    _seq_no = i + 1;
+
+                    var edits = await _context.tr_course_registration
+                                    .Where(x => x.course_no == course_no && x.emp_no == item.emp_no)
+                                    .FirstOrDefaultAsync();
+                    
+                    edits.pre_test_grade = item.pre_test_grade;
+                    edits.pre_test_score = item.pre_test_score;
+                    edits.post_test_grade = item.post_test_grade;
+                    edits.post_test_score = item.post_test_score;
+                    edits.scored_at = DateTime.Now;
+                    edits.scored_by = User.FindFirst("emp_no").Value;
+
+                    list.Add(edits);
+                }
+                _context.tr_course_registration.UpdateRange(list);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!tr_course_registrationExists(course_no))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        // POST: api/Register/UploadCourseScore/{course_no}
+        [HttpPost("UploadCourseScore/{course_no}")]
+        public async Task<ActionResult<IEnumerable<tr_course_registration>>> UploadCourseScore(string course_no, [FromForm] req_fileform model)
+        {
+            if(!is_course_of_committee(course_no)){
+                return StatusCode(400, "Please select the course in your organization");
+            }
+
+            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
+                    .Include(e=>e.courses_bands)
+                    .FirstOrDefaultAsync();
+
+            if(course==null){
+                return StatusCode(400,"Course is not found");
+            }
+
+            string rootFolder = Directory.GetCurrentDirectory();
+            string pathString = @"\API site\files\file-hrgis\upload\";
+            string serverPath = rootFolder.Substring(0, rootFolder.LastIndexOf(@"\")) + pathString;
+            // Create Directory
+            if (!Directory.Exists(serverPath))
+            {
+                Directory.CreateDirectory(serverPath);
+            }
+
+            // string fullpath = serverPath + model.file_name;
+            string filePath = Path.Combine(serverPath + model.file_name);
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            {
+                model.file_form.CopyTo(stream);
+                stream.Dispose();
+                stream.Close();
+            }
+
+            List<response_course_score> response = new List<response_course_score>();
+            if (System.IO.File.Exists(filePath))
+            {
+                // Console.WriteLine("File exists.");
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+                    // Console.WriteLine("rowCount: " + rowCount);
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        if (!String.IsNullOrEmpty(worksheet.Cells[row, 1].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
+                        {
+                            string _emp_no = worksheet.Cells[row, 1].Value == null ? null : worksheet.Cells[row, 1].Value.ToString().Trim();
+                            string pre_test_score = worksheet.Cells[row, 2].Value == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();;
+                            string post_test_score = worksheet.Cells[row, 3].Value == null ? null : worksheet.Cells[row, 3].Value.ToString().Trim();;
+                            // ต้องคำนวนเกรด
+
+                            int _seq_no = 0;
+
+                            var query_emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
+                            var query_course = await _context.tr_course_band.Where(x => x.course_no == course_no && x.band.Contains(query_emp.band)).FirstOrDefaultAsync();
+                            if (query_course != null)
+                            {
+                                var query_seq = await _context.tr_course_registration.Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no).FirstOrDefaultAsync();
+                                if (query_seq == null)
+                                {
+                                    _seq_no = 1;
+                                }
+                                else
+                                {
+                                    _seq_no = query_seq.seq_no + 1;
+                                }
+                                Console.WriteLine(_seq_no+ " " +course.capacity); 
+                                Console.WriteLine(_seq_no>course.capacity); 
+                                var query = await _context.tr_course_registration.Where(x => x.course_no == course_no && x.emp_no == _emp_no).FirstOrDefaultAsync();
+                                if (query == null)
+                                {
+                                    string _grade_pre = fnGrade(pre_test_score);
+                                    string _grade_post = fnGrade(post_test_score);
+                                    if (_grade_pre != "Fail" && _grade_post != "Fail")
+                                    {
+                                        _context.Add(new tr_course_registration
+                                        {
+                                            course_no = course_no,
+                                            emp_no = _emp_no,
+                                            seq_no = _seq_no,
+                                            pre_test_score = Convert.ToInt32(pre_test_score),
+                                            pre_test_grade = _grade_pre,
+                                            post_test_score = Convert.ToInt32(post_test_score),
+                                            post_test_grade = _grade_post,
+                                            last_status = (_seq_no>course.capacity)? _config["Status:wait"]:_config["Status:approved"],
+                                            remark = _config.GetValue<string>("Text:papers"),
+                                            register_at = DateTime.Now,
+                                            register_by = User.FindFirst("emp_no").Value,
+                                            scored_at = DateTime.Now,
+                                            scored_by = User.FindFirst("emp_no").Value,
+                                            final_approved_at = DateTime.Now,
+                                            final_approved_by = User.FindFirst("emp_no").Value,
+                                            final_approved_checked = true
+                                        });
+                                        await _context.SaveChangesAsync();
+                                        if(_seq_no>course.capacity){
+                                            response.Add(new response_course_score
+                                            {
+                                                emp_no = _emp_no,
+                                                seq_no = _seq_no,
+                                                pre_test_score = Convert.ToInt32(pre_test_score),
+                                                pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                                post_test_score = Convert.ToInt32(post_test_score),
+                                                post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                                error_message = "Data is already exist and status is Wait"
+                                            });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        response.Add(new response_course_score
+                                        {
+                                            emp_no = _emp_no,
+                                            seq_no = _seq_no,
+                                            pre_test_score = Convert.ToInt32(pre_test_score),
+                                            pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                            post_test_score = Convert.ToInt32(post_test_score),
+                                            post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                            error_message = _config.GetValue<string>("Text:score_incorrect")
+                                        });
+                                    } // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้
+                                }
+                                else
+                                {
+                                    query.emp_no = _emp_no;
+                                    query.pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score);
+                                    query.pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score);
+                                    query.post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score);
+                                    query.post_test_grade = post_test_score==null? null:fnGrade(post_test_score);
+                                    query.scored_at = DateTime.Now;
+                                    query.scored_by = User.FindFirst("emp_no").Value;
+                                    _context.Entry(query).State = EntityState.Modified;
+                                    await _context.SaveChangesAsync(); 
+                                } 
+                            }
+                            else
+                            {
+                                response.Add(new response_course_score
+                                {
+                                    emp_no = _emp_no,
+                                    seq_no = _seq_no,
+                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                    pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                    post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                    error_message = _config["Text:unequal_band"]
+                                });
+                            } 
+                        }
+                    }
+                }
+            }
+            System.IO.File.Delete(filePath);  //Delete file
+
+            return Ok(response);
+        }
+        protected string fnGrade(string score)
+        {
+            string grade = "Fail";
+            int _score = Convert.ToInt32(score);
+
+            if (score == "") { grade = ""; }
+            else if (_score >= 80 && _score <= 100) { grade = "A"; }
+            else if (_score >= 70 && _score <= 79) { grade = "B"; }
+            else if (_score >= 60 && _score <= 69) { grade = "C"; }
+            else if (_score >= 50 && _score <= 59) { grade = "D"; }
+            else if (_score >= 1 && _score <= 49) { grade = "E"; }
+            else if (_score == 0) { grade = "F"; }
+
+            return grade;
+        }
     }
 }
 public class req_fileform
 {
+    [Required]
+    [Display(Name = "IMPORT")]
     public IFormFile file_form { get; set; }
     public string file_name { get; set; }
 }
@@ -1307,3 +1538,14 @@ public class response_course_registration
     public int seq_no { get; set; }
     public string error_message { get; set; }
 }
+public class response_course_score
+{
+    public string emp_no { get; set; }
+    public int seq_no { get; set; }
+    public int? pre_test_score { get; set; }
+    public string pre_test_grade { get; set; }
+    public int? post_test_score { get; set; }
+    public string post_test_grade { get; set; }
+    public string error_message { get; set; }
+}
+

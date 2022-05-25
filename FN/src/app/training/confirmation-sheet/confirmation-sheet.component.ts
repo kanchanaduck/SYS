@@ -85,11 +85,10 @@ export class ConfirmationSheetComponent implements OnInit {
     }
 
     axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-      .then(function(response){
-        self.response = response
-        self.course = self.response.courses
-        let trainers = self.response.trainers
-        let bands = self.response.courses.courses_bands
+      .then(function(response: any){
+        self.course = response.courses
+        let trainers = response.trainers
+        let bands = response.courses.courses_bands
         if(trainers.length>0){
           self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
         }
@@ -125,18 +124,6 @@ export class ConfirmationSheetComponent implements OnInit {
     });
     var text_cc = "";
     var arr_cc = [];
-    // this.email.approver.forEach(element => {
-    //   if(element.employee.email!=null){
-    //      text_cc += element.employee.email+"; "
-    //      arr_cc.push(element.email)
-    //   }
-    // });
-    this.email.mtp_member.forEach(element => {
-      if(element.email!=null){
-        // text_cc += element.email+"; "
-        arr_cc.push(element.email)
-      }
-    });
     this.email.course_committee.forEach(element => {
       if(element.employee.email!=null){
         // text_cc += element.employee.email+"; "

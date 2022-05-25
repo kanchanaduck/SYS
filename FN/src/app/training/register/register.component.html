@@ -126,11 +126,11 @@
                     <label class="az-content-label tx-11 tx-medium tx-gray-600">import</label>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile
-                            [ngClass]="{ 'is-invalid': errors && errors.file }" >
+                            [ngClass]="{ 'is-invalid': errors && errors.file_form }" >
                         <label class="custom-file-label" for="customFile">{{nameFile}}</label>
                     </div>
-                    <p class="invalid-feedback-nc" *ngIf="errors && errors.file"> 
-                        <span *ngFor="let text of errors.file">{{ text }}</span>
+                    <p class="invalid-feedback-nc" *ngIf="errors && errors.file_form"> 
+                        <span *ngFor="let text of errors.file_form">{{ text }}</span>
                     </p>
                 </div>
                 <div class="col-6">

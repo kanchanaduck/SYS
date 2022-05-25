@@ -28,6 +28,7 @@ export class ExportService {
     XLSX.writeFile(workbook, `${fileName}${EXCEL_EXTENSION}`);
   }
 
+
   /**
    * Saves the file on client's machine via FileSaver library.
    *

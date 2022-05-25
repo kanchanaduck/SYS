@@ -46,11 +46,10 @@ export class AssessmentFileComponent implements OnInit {
     let self = this
     if(this.course_no!=null){
       axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
-        .then(function(response){
-          self.response = response
-          self.course = self.response.courses
-          self.arr_band = self.response.courses.courses_bands
-          let trainers = self.response.trainers
+        .then(function(response: any){
+          self.course = response.courses
+          self.arr_band = response.courses.courses_bands
+          let trainers = response.trainers
           if(trainers.length>0){
             self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
           }

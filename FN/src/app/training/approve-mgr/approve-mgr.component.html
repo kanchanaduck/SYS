@@ -124,9 +124,13 @@
             <div class="col-4">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600">import</label>
                 <div class="custom-file">
-                    <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile>
+                    <input type="file" class="custom-file-input pointer" (change)="chooseFile($event)" #customFile
+                    [ngClass]="{ 'is-invalid': errors && errors.file_form }">
                     <label class="custom-file-label" for="customFile">{{nameFile}}</label>
                 </div>
+                <p class="invalid-feedback-nc" *ngIf="errors && errors.file_form"> 
+                    <span *ngFor="let text of errors.file_form">{{ text }}</span>
+                </p>
             </div>
             <div class="col-6">
                 <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">button</label>
@@ -139,7 +143,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-12">
+            <!-- <div class="col-12">
                 <div style="position: absolute; top:-25px; left: 65px; width: 32%;">
                     <a href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
                         <i class="typcn typcn-info-large tx-24 lh--9 op-6 pointer text-muted"></i>
@@ -149,7 +153,7 @@
                         <img src="assets/images/img-format-input-training.PNG" class="img-fluid">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

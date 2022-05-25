@@ -306,35 +306,22 @@ namespace api_hrgis.Controllers
             // return tr_course;
         }
 
-        // GET: api/Course/GetCourseStatus
-        [HttpGet("GetCourseStatus")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseStatus()
+        // GET: api/Courses/Owner/{org_code}/NotOver10WorkingDays
+        [HttpGet("Owner/{org_code}/NotOver10WorkingDays")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> get_course_not_over_10_working_days(string org_code)
         {
-            /* if(!user_is_commitee())
-            {
-                return StatusCode(403,"Permission denied, only committee can manage data");
-            } */
-            /* var tr_course = await (from tb1 in _context.tr_course
-                                   join tb2 in _context.tb_organization on tb1.org_code equals tb2.org_code
-                                   join tb3 in _context.tr_course_registration on tb1.course_no equals tb3.course_no
-                                   where tb1.status_active == true && tb3.last_status == _config.GetValue<string>("Status:approved")
-                                   select new
-                                   {
-                                       tb1.course_no,
-                                       tb1.course_name_en,
-                                       tb1.course_name_th,
-                                       tb1.org_code,
-                                       tb2.org_abb
-                                   }
-                                   ).Distinct().ToListAsync(); */
+            var tr_course = await _context.tr_course
+                                .Where(e => e.org_code==org_code && e.date_end.Value.Date.AddDays(10) <= DateTime.Now.Date)
+                                .Include(e=>e.organization)
+                                .AsNoTracking()
+                                .ToListAsync();
 
-            var tr_course = await _context.tr_course.Include(e=>e.organization).ToListAsync();
             if (tr_course == null)
             {
                 return NotFound();
             }
 
-            return Ok(tr_course);
+            return tr_course;
         }
 
         // PUT: api/Course/5
@@ -420,101 +407,6 @@ namespace api_hrgis.Controllers
             {
                 return Conflict("Cannot add duplicate course no.");
             }
-            /* try
-            {
-                List<tr_course_band> list1 = new List<tr_course_band>();
-                List<tr_course_trainer> list2 = new List<tr_course_trainer>();
-                var result = await _context.tr_course.Where(x => x.course_no == tr_course.course_no
-                && x.org_code == User.FindFirst("org_code").Value).FirstOrDefaultAsync();
-                if (result == null)
-                {
-                    tr_course tb = new tr_course();
-                    tb.course_no = tr_course.course_no;
-                    tb.course_name_th = tr_course.course_name_th;
-                    tb.course_name_en = tr_course.course_name_en;
-                    tb.org_code = tr_course.org_code;
-                    tb.days = tr_course.days;
-                    tb.capacity = tr_course.capacity;
-                    tb.open_register = tr_course.open_register;
-                    tb.date_start = Convert.ToDateTime(tr_course.date_start);
-                    tb.date_end = Convert.ToDateTime(tr_course.date_end);
-                    // tb.time_in = TimeSpan.Parse(tr_course.time_in);
-                    // tb.time_out = TimeSpan.Parse(tr_course.time_out);
-                    tb.time_in = tr_course.time_in;
-                    tb.time_out = tr_course.time_out;
-                    tb.place = tr_course.place;
-                    tb.created_at = DateTime.Now;
-                    tb.created_by = User.FindFirst("emp_no").Value;
-                    tb.updated_at = DateTime.Now;
-                    tb.updated_by = User.FindFirst("emp_no").Value;
-                    tb.status_active = true;
-                    _context.tr_course.Add(tb);
-
-                    // for (int i = 0; i < tr_course.band.Length; i++)
-                    // {
-                    //     string item = tr_course.band[i];
-                    //     tr_course_band tb1 = new tr_course_band();
-                    //     tb1.course_no = tr_course.course_no;
-                    //     tb1.band = item;
-                    //     list1.Add(tb1);
-                    // }
-
-                    // for (int j = 0; j < tr_course.trainer.Length; j++)
-                    // {
-                    //     int items = tr_course.trainer[j];
-                    //     tr_course_trainer tb2 = new tr_course_trainer();
-                    //     tb2.course_no = tr_course.course_no;
-                    //     tb2.trainer_no = items;
-                    //     list2.Add(tb2);
-                    // } 
-                }
-                else
-                {
-                    var old = _context.tr_course.FirstOrDefault(x => x.course_no == tr_course.course_no
-                    && x.org_code == User.FindFirst("org_code").Value && x.status_active == false);
-                    if (old == null)
-                    {
-                        return Conflict(_config.GetValue<string>("Text:duplication"));
-                    }
-                    else
-                    {
-                        old.course_name_th = tr_course.course_name_th;
-                        old.course_name_en = tr_course.course_name_en;
-                        old.org_code = tr_course.org_code;
-                        old.days = tr_course.days;
-                        old.capacity = tr_course.capacity;
-                        old.open_register = tr_course.open_register;
-                        old.date_start = Convert.ToDateTime(tr_course.date_start);
-                        old.date_end = Convert.ToDateTime(tr_course.date_end);
-                        old.time_in = tr_course.time_in;
-                        old.time_out = tr_course.time_out;
-                        old.place = tr_course.place;
-                        old.status_active = true;
-                        old.updated_at = DateTime.Now;
-                        old.updated_by = User.FindFirst("emp_no").Value;
-                        await _context.SaveChangesAsync();
-
-                        // await UpdateTBChild(tr_course.course_no, tr_course);
-                    }
-                }
-
-                await _context.tr_course_band.AddRangeAsync(list1);
-                await _context.tr_course_trainer.AddRangeAsync(list2);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (tr_courseExists(tr_course.course_no))
-                {
-                    return Conflict(_config.GetValue<string>("Text:duplication"));
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("Gettr_course", new { id = tr_course.course_no }, tr_course); */
         }
 
         // DELETE: api/Courses/5
@@ -640,15 +532,11 @@ namespace api_hrgis.Controllers
                             .Include(e=>e.employee)
                             .ToListAsync();
 
-            var mtp_member = await _context.tb_employee.Where(e=>e.dept_abb=="MTP" && e.employed_status=="EMPLOYED").ToListAsync();
-
             return Ok(new
             {
                 registrant = registrant,
                 trainer = trainers,
-                // approver = approver,
                 course_committee = course_committee,
-                mtp_member = mtp_member,
             });
         }
         // GET: api/Courses/ConfirmationSheet
