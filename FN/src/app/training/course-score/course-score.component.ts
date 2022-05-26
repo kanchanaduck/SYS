@@ -135,7 +135,10 @@ export class CourseScoreComponent implements OnInit {
 
     if(this.course_no==null)
     {
-      return false;
+      this.course = {};
+      this.data_grid = [];
+      this.get_registrant();
+      this.errors = {};
     }
     else
     {
@@ -261,7 +264,6 @@ export class CourseScoreComponent implements OnInit {
       .then(function(){
         self.service.sweetalert_create()
         self.get_registrant()
-        self.clear_data()
       })
       .catch(function(error){
         self.errors = error.response.data.errors
@@ -283,6 +285,8 @@ export class CourseScoreComponent implements OnInit {
       return;
     }
 
+    console.log(this.data_grid)
+    console.log(this.emp_nos)
 
     for(let i=0; i<this.emp_nos.length; i++){
       send_data.push({
@@ -319,6 +323,10 @@ export class CourseScoreComponent implements OnInit {
     this.txtposition.nativeElement.value = "";
     this.txtband.nativeElement.value = "";
     this.txt_not_pass = "";
+    this.pre_test_grade = "";
+    this.pre_test_score = null;
+    this.post_test_grade = "";
+    this.post_test_score = null;
   }
 
   fnEdit(item) {
@@ -411,29 +419,18 @@ export class CourseScoreComponent implements OnInit {
     link.setAttribute('target', '_blank');
     link.setAttribute('href', 'assets/format/format input score.xlsx');
 
-    const element = this.get_some_header()
+    const keys_to_keep = ['emp_no','pre_test_score','post_test_score'];
+    var element  =  this.data_grid.map(o => keys_to_keep.reduce((acc, curr) => {
+      acc[curr] = o[curr];
+      return acc;
+    }, {}));
     console.log(element)
     let fileName = `format input score_${this.course_no}.xlsx`
-    let finalHeaders = ['emp_no','pre_test_score','post_test_score','กรอกข้อมูลเฉพาะคอลัมน์ B และ C'];
+    let finalHeaders = ['emp_no','pre_test_score','post_test_score','เริ่มอ่านตั้งแต่แถวที่ 2 ลงทะเบียนใหม่ให้เพิ่มแถวใหม่ได้เลย ใส่รหัสพนักงานที่คอลัมน์ A ใส่ข้อมูลคะแนนที่คอลัมน์ B และ C '];
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(element, {header: finalHeaders});
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();    
     XLSX.utils.book_append_sheet(workbook, ws, 'Sheet1');
     XLSX.writeFile(workbook, `${fileName}${EXCEL_EXTENSION}`);
-
-    // const link = document.createElement('a');
-    // link.setAttribute('target', '_blank');
-    // link.setAttribute('href', 'assets/format/format input training.xlsx');
-    // link.setAttribute('download', `format input training.xlsx`);
-    // document.body.appendChild(link);
-    // link.click();
-    // link.remove();
-
-    // const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(element);
-    // // generate workbook and add the worksheet
-    // const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-    // XLSX.utils.book_append_sheet(workbook, ws, 'Sheet1');
-    // // save to file
-    // XLSX.writeFile(workbook, `${fileName}${EXCEL_EXTENSION}`);
 
     link.setAttribute('download', `format input score_${this.course_no}.xlsx`);
     document.body.appendChild(link);
@@ -441,15 +438,6 @@ export class CourseScoreComponent implements OnInit {
     link.remove();
   }   
 
-  get_some_header(){
-    const keys_to_keep = ['emp_no','pre_test_score','post_test_score'];
-    var test =  this.data_grid.map(o => keys_to_keep.reduce((acc, curr) => {
-      acc[curr] = o[curr];
-      return acc;
-    }, {}));
-    return test
-  }
-   
 
     
 
@@ -529,6 +517,11 @@ export class CourseScoreComponent implements OnInit {
         console.log(response);
         this.data_grid = response;
         let i=0;
+        this.emp_nos = []
+        this.pre_test_scores = []
+        this.pre_test_grades = []
+        this.post_test_scores = []
+        this.post_test_grades = []
         this.data_grid.forEach(element => {
           this.emp_nos[i] = element.emp_no
           this.pre_test_scores[i] = element.pre_test_score
@@ -537,6 +530,8 @@ export class CourseScoreComponent implements OnInit {
           this.post_test_grades[i] = element.post_test_grade
           i++;
         });
+        console.log(this.data_grid)
+        console.log(this.emp_nos)
         this.rerender()
       }, (error: any) => {
         console.log(error);

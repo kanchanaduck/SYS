@@ -311,7 +311,8 @@ namespace api_hrgis.Controllers
         public async Task<ActionResult<IEnumerable<tr_course>>> get_course_not_over_10_working_days(string org_code)
         {
             var tr_course = await _context.tr_course
-                                .Where(e => e.org_code==org_code && e.date_end.Value.Date.AddDays(10) <= DateTime.Now.Date)
+                                .Where(e => e.org_code==org_code && 
+                                    e.date_end.Value.Date.AddDays(10) <= DateTime.Now.Date)
                                 .Include(e=>e.organization)
                                 .AsNoTracking()
                                 .ToListAsync();
@@ -431,6 +432,8 @@ namespace api_hrgis.Controllers
         // GET: api/Courses/Close
         [HttpGet("Close")]
         public async Task<ActionResult<tr_course>> course_close(){
+            // double days = 10+count_holidays(new DateTime(2022, 05, 06), DateTime.Now);
+            // Console.WriteLine(days);
             var course_close = await _context.tr_course
                                 .Where(x => x.date_end.Value.Date.AddDays(10) <= DateTime.Now.Date).ToListAsync();
 
@@ -442,7 +445,15 @@ namespace api_hrgis.Controllers
 
             await _context.SaveChangesAsync(); 
             return NoContent();
+            // return Ok(count_holidays(new DateTime(2022, 05, 06), DateTime.Now));
+            // return Ok(course_close);
         }
+        private double count_holidays(DateTime date_start, DateTime date_end){
+            Console.WriteLine("START: "+date_start);
+            Console.WriteLine("END: "+date_end);
+            return _context.tb_holiday.Where(n=> n.holiday >= date_start && n.holiday <= date_end 
+            && n.mark!=null).Count();
+        } 
         [AllowAnonymous]
         // GET: api/Courses/ConfirmationSheet
         [HttpGet("ConfirmationSheet/{course_no}")]
