@@ -116,7 +116,7 @@
             </p>
         </div><!-- form-group -->
         <div class="form-group col-5 mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">Band</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">Band<span class="tx-danger">*</span></label>
             <div class="form-row">
                 <label class="ckbox" *ngFor="let band of bands">
                     <input type="checkbox" [(ngModel)]="band.isChecked" [ngModelOptions]="{standalone: true}">

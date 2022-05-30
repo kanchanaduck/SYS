@@ -119,7 +119,9 @@
             </div>
             <div class="col-6">
                 <div class="form-group">
-                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band</label>
+                    <label class="az-content-label tx-11 tx-medium tx-gray-600">band
+                        <span class="tx-danger">*</span>
+                    </label>
                     <div class="form-row">
                         <label class="ckbox" *ngFor="let item of checkboxesDataList">
                             <input type="checkbox" [(ngModel)]="item.isChecked" [ngModelOptions]="{standalone: true}">

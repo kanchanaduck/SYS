@@ -62,12 +62,13 @@
                     {{ item.emp_no+': '+item.shortname_en  }}
                 </ng-template>
             </ng-select>
-            <div class="input-group" *ngIf="stakeholder.org_code">
+            <div class="input-group">
                 <input type="text" name="more_approver"  [(ngModel)]="more_approver"  class="form-control" placeholder="Add more APPROVER...">
-                <span class="input-group-btn">
+                <!-- <span class="input-group-btn">
                   <button class="btn btn-primary btn-sm" type="button" (click)="add_more_approver()"><i class="fa fa-plus"></i></button>
-                </span>
-              </div><!-- input-group -->
+                </span> -->
+            </div><!-- input-group -->
+            {{ employees_j4up | json }}
         </div><!-- form-group -->
         <div class="form-group col pt-1">
             <label class="az-content-label tx-11 tx-medium tx-gray-600 invisible">222</label>

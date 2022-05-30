@@ -667,6 +667,7 @@ namespace api_hrgis.Controllers
                         }
                         else{
                             if (query == null){
+                                    Console.WriteLine(_config["Text:continuous"]);
                                 _context.Add(new tr_course_registration
                                 {
                                     course_no = item.course_no,
@@ -675,7 +676,7 @@ namespace api_hrgis.Controllers
                                     pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString()),
                                     post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score),
                                     post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString()),
-                                    remark = _config.GetValue<string>("Text:continuous")+( await GetPrevCourseNo(item.course_no, item.emp_no)==""? "":await GetPrevCourseNo(item.course_no, item.emp_no)),
+                                    remark = (_config["Text:continuous"])+( await GetPrevCourseNo(item.course_no, item.emp_no)==""? "":await GetPrevCourseNo(item.course_no, item.emp_no)),
                                     last_status = _config.GetValue<string>("Status:approved"),
                                     register_at = DateTime.Now,
                                     register_by = User.FindFirst("emp_no").Value,

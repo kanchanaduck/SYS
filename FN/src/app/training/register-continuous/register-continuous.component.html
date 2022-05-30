@@ -200,3 +200,9 @@
         you can go to <a routerLink="./../course">Course</a> page.
     </p>
 </div>
+
+<div class="card card-body" *ngIf="is_committee && (course | json) != '{}' && !can_use">
+    <p class="m-0">
+        Registrants in this course are registered by Approve way.
+    </p>
+</div>

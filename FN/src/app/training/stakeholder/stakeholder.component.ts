@@ -152,22 +152,22 @@ export class StakeholderComponent implements OnInit {
     return false;
   };
 
-  async add_more_approver(){
-    let self = this
-    await axios.get(`${environment.API_URL}Employees/${this.more_approver}`,this.headers)
-    .then(function (response) {
-      self.employees_j4up.push(
-        response
-      );
-    })
-    .catch(function (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error.response.status,
-        text: error.response.data
-      })
-    });
-  }
+  // async add_more_approver(){
+  //   let self = this
+  //   await axios.get(`${environment.API_URL}Employees/${this.more_approver}`,this.headers)
+  //   .then(function (response) {
+  //     self.employees_j4up.push(
+  //       response
+  //     );
+  //   })
+  //   .catch(function (error) {
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: error.response.status,
+  //       text: error.response.data
+  //     })
+  //   });
+  // }
 
   async get_stakeholders(){
     let self = this
@@ -213,8 +213,19 @@ export class StakeholderComponent implements OnInit {
     let self = this
     let org_code = self.stakeholder.org_code
     await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/j4up/employed`,this.headers)
-    .then(function (response) {
-      self.employees_j4up = response
+    .then(function (response:any) {
+      let diff = response.filter(a => !self.employees_j4up.map(b=>b.emp_no).includes(a.emp_no))
+      diff.forEach(element => {
+        self.employees_j4up.push({
+          emp_no: element.emp_no,
+          shortname_en: element.shortname_en
+        })
+      });
+      // let diff_arr = self.stakeholder.approvers.filter(function(el){
+      //   return el.role === "APPROVER"
+      // })
+      // console.log(diff_arr)
+      // self.employees_j4up.push(diff_arr)
     })
     .catch(function (error) {
       Swal.fire({
@@ -224,6 +235,7 @@ export class StakeholderComponent implements OnInit {
       })
     });
   }
+
 
   async get_departments() {
     let self = this
@@ -293,7 +305,13 @@ export class StakeholderComponent implements OnInit {
         //console.log(approvers);
         self.stakeholder.approvers = [];
         approvers.forEach(element => {
+          console.log(element)
           self.stakeholder.approvers.push(element.emp_no)
+          self.employees_j4up.push({
+            emp_no: element.emp_no,
+            shortname_en: element.employee.shortname_en
+          })
+          console.log(self.employees_j4up)
         });
       }
       else{
@@ -359,6 +377,13 @@ export class StakeholderComponent implements OnInit {
       });
     }
 
+    if(this.more_approver!=null){
+      self.formData.push({
+        emp_no: this.more_approver,
+        org_code: self.stakeholder.org_code,
+        role: 'APPROVER'
+      })
+    }
     //console.log(self.formData)
 
     if(self.formData.length>0)
@@ -378,11 +403,7 @@ export class StakeholderComponent implements OnInit {
         self.get_stakeholders()
       })
       .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })
+        self.service.sweetalert_error(error)
       });      
     }
     else
@@ -402,11 +423,7 @@ export class StakeholderComponent implements OnInit {
         self.get_stakeholders()
       })
       .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: error.response.data
-        })
+        self.service.sweetalert_error(error)
       });   
     }
     

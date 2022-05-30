@@ -64,6 +64,7 @@ export class RegisterContinuousComponent implements OnInit {
   courses_register: any=[];
   errors:any={};
   result: any;
+  can_use: boolean = false;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
     , private service: AppServiceService, private exportexcel: ExportService) {
@@ -362,6 +363,13 @@ async check_is_committee() {
     await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         console.log(response);
+
+
+        this.can_use = response.some(function(el){
+          return el.remark === "Continuous";
+        }); 
+
+        console.log(this.can_use)
 
         this.data_grid = response;
         this.res_conflict = response;
