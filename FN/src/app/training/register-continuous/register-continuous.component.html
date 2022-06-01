@@ -68,7 +68,7 @@
     </dl>
 </div>
 
-<div class="card mt-3 mb-3" *ngIf="is_committee" [formGroup]="form">
+<div class="card mt-3 mb-3" *ngIf="is_committee && has_continuous" [formGroup]="form">
     <div class="card-header">
         Register
     </div>
@@ -155,7 +155,14 @@
     </div>
 </div>
 
-<table *ngIf="is_committee" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-bordered table-hover table-sm mt-3">
+<div class="card card-body mb-3" *ngIf="is_committee && (course | json) != '{}' && !has_continuous">
+    <p class="m-0">
+        Registrants in this course are registered by Approve way.
+    </p>
+</div>
+
+<table *ngIf="is_committee" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" 
+    class="table table-bordered table-hover table-sm mt-3">
     <thead>
         <tr>
             <th class="text-center">SEQ</th>
@@ -201,8 +208,3 @@
     </p>
 </div>
 
-<div class="card card-body" *ngIf="is_committee && (course | json) != '{}' && !can_use">
-    <p class="m-0">
-        Registrants in this course are registered by Approve way.
-    </p>
-</div>

@@ -168,9 +168,11 @@ export class CourseComponent implements OnInit {
             text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
             buttons: [
               {
-                extend: 'excel',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-              },
+                text: '<i class="far fa-file-alt"></i> Report</button>',
+                action: function ( e, dt, node, config ) {
+                  window.open("http://cptsvs52t/HRGIS_REPORT/Training/Course","_blank")
+                }
+              }
             ]
           }
         ],
@@ -181,11 +183,11 @@ export class CourseComponent implements OnInit {
       autoWidth: false,
       columnDefs: [
         {
-          targets: [9, 10],
+          targets: [10, 11],
           orderable: false,
         },
         {
-          targets: [10],
+          targets: [11],
           visible: this.is_committee
         }
       ],

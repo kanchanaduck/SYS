@@ -65,6 +65,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
   emp_name: string;
   emp_status: string;
   _checkbox: any = 0;
+  has_continuous: boolean = false;
 
   constructor(private modalService: NgbModal, private service: AppServiceService, private exportexcel: ExportService) {
 
@@ -363,6 +364,24 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
 
   
   approve() {  
+
+    if(!this.course_no){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+
+    if(this.has_continuous){
+      Swal.fire({
+        icon: 'error',
+        text: "Registrants in this course are registered by Continuous way."
+      })
+      return; 
+    }
+
     if(this._org_code != this.course.org_code){ 
       Swal.fire({
         icon: 'error',
@@ -581,6 +600,20 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
 
     await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
+
+        if(response.length > 0){
+          this.has_continuous = response.some(function(el){
+            return el.remark?.includes("Continuous");
+          });
+          this.has_continuous = !this.has_continuous
+        }
+        else{
+          this.has_continuous = false;
+        }
+
+        console.log(this.has_continuous)
+
+
         this.data_grid = response;
 
         let chk_true = response.filter(x => x.last_status=="Approved");

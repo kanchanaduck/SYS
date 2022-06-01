@@ -64,6 +64,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
   courses: any=[];
   response: any;
   emp_status: any;
+  has_continuous:  boolean = false;
 
   constructor(private service: AppServiceService, private exportexcel: ExportService) {
   }
@@ -552,12 +553,30 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
   /** End File Upload, Download */
 
   async get_registrant() {
+
+    
+
     if(!this.course_no){
       this.rerender()
     }
     else{
       this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
         .subscribe((response: any) => {
+
+          if(response.your.length + response.other.length > 0){
+            this.has_continuous = response.your.some(function(el){
+              return el.remark?.includes("Continuous");
+            }) ||
+            response.other.some(function(el){
+              return el.remark?.includes("Continuous");
+            });
+          }
+          else{
+            this.has_continuous = false;
+          }
+  
+          console.log(this.has_continuous)
+
           this.data_grid = response.your;
           this.data_grid_other = response.other;
           this.rerender()

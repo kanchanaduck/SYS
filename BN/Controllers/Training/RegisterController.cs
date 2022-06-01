@@ -176,9 +176,11 @@ namespace api_hrgis.Controllers
                 Console.WriteLine("Count: "+course.master_courses_previous_courses.Count());
                 if (course.master_courses_previous_courses.Count() > 0)
                 {
+                    int index = 0;
                     foreach (var i in course.master_courses_previous_courses)
                     {
-                        if (course.master_courses_previous_courses.Count() == 1)
+                        if (course.master_courses_previous_courses.Count() == 1 || 
+                                index==course.master_courses_previous_courses.Count()-1)
                         {
                             prev_c = prev_c + i.prev_course_no;
                         }
@@ -186,6 +188,7 @@ namespace api_hrgis.Controllers
                         {
                             prev_c = prev_c + i.prev_course_no + ", ";
                         }
+                        index++;
                     }
                     Console.WriteLine("Previous: "+prev_c);
 
@@ -667,16 +670,16 @@ namespace api_hrgis.Controllers
                         }
                         else{
                             if (query == null){
-                                    Console.WriteLine(_config["Text:continuous"]);
                                 _context.Add(new tr_course_registration
                                 {
+                                    seq_no = _seq_no,
                                     course_no = item.course_no,
                                     emp_no = item.emp_no,
                                     pre_test_score = item.pre_test_score==null? null:Convert.ToInt32(item.pre_test_score),
                                     pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString()),
                                     post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score),
                                     post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString()),
-                                    remark = (_config["Text:continuous"])+( await GetPrevCourseNo(item.course_no, item.emp_no)==""? "":await GetPrevCourseNo(item.course_no, item.emp_no)),
+                                    remark = (_config["Text:continuous"])+( await GetPrevCourseNo(item.course_no, item.emp_no)==""? null:"; "+await GetPrevCourseNo(item.course_no, item.emp_no)),
                                     last_status = _config.GetValue<string>("Status:approved"),
                                     register_at = DateTime.Now,
                                     register_by = User.FindFirst("emp_no").Value,

@@ -122,6 +122,6 @@ namespace api_hrgis.Data
         public DbSet<tr_course_band> tr_course_band { get; set; }
         public DbSet<tb_user> tb_user { get; set; }
         public DbSet<tb_holiday> tb_holiday { get; set; }
-        public DbSet<api_hrgis.Models.tr_setting> tr_setting { get; set; }
+        public DbSet<tr_signature> tr_signature { get; set; }
     }
 }

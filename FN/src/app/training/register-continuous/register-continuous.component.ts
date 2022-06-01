@@ -8,7 +8,6 @@ import { ExportService } from '../../export.service';
 import { environment } from 'src/environments/environment';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-register-continuous',
@@ -64,7 +63,7 @@ export class RegisterContinuousComponent implements OnInit {
   courses_register: any=[];
   errors:any={};
   result: any;
-  can_use: boolean = false;
+  has_continuous: boolean = false;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, private formBuilder: FormBuilder
     , private service: AppServiceService, private exportexcel: ExportService) {
@@ -250,6 +249,14 @@ async check_is_committee() {
       return;
     }
 
+    if(!this.has_continuous){
+      Swal.fire({
+        icon: 'error',
+        text: "Registrants in this course are registered by Approve way."
+      })
+      return; 
+    }
+
     if(this.course_no===undefined){
       console.log(this.course_no)
       this.errors =  {
@@ -364,12 +371,16 @@ async check_is_committee() {
       .subscribe((response: any) => {
         console.log(response);
 
+        if(response.length > 0){
+          this.has_continuous = response.some(function(el){
+            return el.remark?.includes("Continuous");
+          });
+        }
+        else{
+          this.has_continuous = true;
+        }
 
-        this.can_use = response.some(function(el){
-          return el.remark === "Continuous";
-        }); 
-
-        console.log(this.can_use)
+        console.log(this.has_continuous)
 
         this.data_grid = response;
         this.res_conflict = response;

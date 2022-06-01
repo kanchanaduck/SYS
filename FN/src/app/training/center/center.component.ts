@@ -207,9 +207,12 @@ export class CenterComponent implements OnInit {
   }
   async get_setting() {  
     let self = this
-    await axios.get(`${environment.API_URL}Setting`, this.headers)
+    await axios.get(`${environment.API_URL}Center/Signature`, this.headers)
     .then(function (response:any) {
-      self.setting.filter(x => x.menu == "signature-sheet")
+      self.setting.name = response.name
+      self.setting.position = response.position
+      self.setting.updated_at = response.updated_at
+      self.setting.updated_by = response.updated_by
     })
     .catch(function (error) {
       self.service.sweetalert_error(error)
@@ -218,13 +221,9 @@ export class CenterComponent implements OnInit {
 
   async save_setting() {  
     let self = this
-    let form_data = {
-      menu: "signature-sheet",
-      property: "name",
-      value: this.setting.name
-    };
-    await axios.post(`${environment.API_URL}Setting`,form_data,this.headers)
+    await axios.put(`${environment.API_URL}Center/Signature/1`,this.setting,this.headers)
     .then(function (response) {
+      self.service.sweetalert_edit()
     })
     .catch(function (error) {
       self.service.sweetalert_error(error)

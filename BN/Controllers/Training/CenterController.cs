@@ -89,6 +89,46 @@ namespace api_hrgis.Controllers
 
             return CreatedAtAction("Gettr_center", new { emp_no = center.emp_no }, center);
         }
+        // GET: api/Center/Signature
+        [HttpGet("Signature")]
+        public async Task<ActionResult<tr_signature>> get_signature()
+        {
+            var signature = await _context.tr_signature.FindAsync(1);
+
+
+            if (signature== null)
+            {
+                return NotFound("Data is not found");
+            }
+
+            return signature;
+        }
+        // PUT: api/Center/Signature/1
+        [HttpPut("Signature/{id}")]
+        public async Task<IActionResult> update_signature(string id, tr_signature tr_signature)
+        {
+            if(!user_is_center())
+            {
+                return StatusCode(403,"Permission denied, only center can manage data");
+            }
+
+            var signature = await _context.tr_signature
+                            .FirstOrDefaultAsync();
+            
+            if(signature == null)
+            {
+                return NotFound("Data is not found");
+            }
+
+            signature.name = tr_signature.name;
+            signature.position = tr_signature.position;
+            signature.updated_at = DateTime.Now;
+            signature.updated_by = User.FindFirst("emp_no").Value;
+            _context.Entry(signature).State = EntityState.Modified;
+            await _context.SaveChangesAsync(); 
+
+            return NoContent();
+        }
 
         // DELETE: api/Center/5
         [HttpDelete("{emp_no}")]

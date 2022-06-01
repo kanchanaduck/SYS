@@ -65,6 +65,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
   courses: any=[];
   response: any;
   emp_status: any;
+  has_continuous: boolean = false;
 
   constructor(private service: AppServiceService, private exportexcel: ExportService) {
   }
@@ -357,6 +358,24 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     })
   }
   async fnApproved() {
+
+    if(!this.course_no){
+      console.log(this.course_no)
+      this.errors =  {
+        course_no: ["Please select course no."]
+      };
+      console.log(this.errors.course_no)
+      return;
+    }
+
+    if(this.has_continuous){
+      Swal.fire({
+        icon: 'error',
+        text: "Registrants in this course are registered by Continuous way."
+      })
+      return; 
+    }
+
     let text = "";
     if (this.array_grid.length > 0) 
     {
@@ -591,6 +610,22 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     await this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
       .subscribe((response: any) => {
         // console.log(response);
+
+        if(response.your.length + response.other.length > 0){
+          this.has_continuous = response.your.some(function(el){
+            return el.remark?.includes("Continuous");
+          }) ||
+          response.other.some(function(el){
+            return el.remark?.includes("Continuous");
+          });
+        }
+        else{
+          this.has_continuous = false;
+        }
+
+        console.log(this.has_continuous)
+
+
         this.data_grid = response.your;
         this.data_grid_other = response.other;
 

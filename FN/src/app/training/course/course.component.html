@@ -315,6 +315,7 @@
                 <tr class="text-uppercase">
                     <th class="text-center">no.</th>
                     <th class="text-center">course no.</th>
+                    <th class="text-center">thai name</th>
                     <th class="text-center">start date</th>
                     <th class="text-center">end date</th>
                     <th class="text-center">time in</th>
@@ -329,7 +330,8 @@
             <tbody>
                 <tr *ngFor="let item of data_grid; let i = index">
                     <td class="text-center">{{ i + 1 }}</td>
-                    <td class="text-center">{{ item.course_no }}</td>
+                    <td>{{ item.course_no }}</td>
+                    <td>{{ item.course_name_th }}</td>
                     <td class="text-center">{{ item.date_start | date: 'yy/MM/dd' }}</td>
                     <td class="text-center">{{ item.date_end | date: 'yy/MM/dd'}}</td>
                     <td class="text-center">{{ item.date_start | date: 'HH:mm'}}</td>

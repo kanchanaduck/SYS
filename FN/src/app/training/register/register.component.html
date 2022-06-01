@@ -69,7 +69,7 @@
         </dl>
     </div>
 
-    <div class="card mb-3" *ngIf="is_committee">
+    <div class="card mb-3" *ngIf="is_committee && !has_continuous">
         <div class="card-header">
             Register
         </div>
@@ -149,6 +149,11 @@
     </div>
 </form>
 
+<div class="card card-body mb-3" *ngIf="is_committee && (course | json) != '{}' && has_continuous">
+    <p class="m-0">
+        Registrants in this course are registered by Continuous way.
+    </p>
+</div>
 
 <div class="card bd-0" *ngIf="is_committee">
     <ul class="nav nav-tabs card-header bg-gray-400" id="myTab" role="tablist">

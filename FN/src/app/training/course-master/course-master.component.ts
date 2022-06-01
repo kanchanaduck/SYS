@@ -377,10 +377,12 @@ export class CourseMasterComponent implements OnInit {
               extend: 'collection',
               text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
               buttons: [
-                  {
-                      extend: 'excel',
-                      text: '<i class="far fa-file-excel"></i> Excel</button>',
-                  },
+                {
+                  text: '<i class="far fa-file-alt"></i> Report</button>',
+                  action: function ( e, dt, node, config ) {
+                    window.open("http://cptsvs52t/HRGIS_REPORT/Training/CourseMaster","_blank")
+                  }
+                }
               ]
             },
           ],

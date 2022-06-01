@@ -68,7 +68,7 @@
         <dd class="col-sm-4">{{ course.updated_at | date:'yy/MM/dd HH:mm:ss' }}{{" ("+course.updated_by+")" }}</dd> 
     </dl>
 </div>
-<div class="card mb-3" *ngIf="is_approver">
+<div class="card mb-3" *ngIf="is_approver && !has_continuous">
     <div class="card-header">
         Register
     </div>
@@ -159,6 +159,11 @@
 </div>
 </form>
 
+<div class="card card-body mb-3" *ngIf="is_approver && (course | json) != '{}' && has_continuous">
+    <p class="m-0">
+        Registrants in this course are registered by Continuous way.
+    </p>
+</div>
 
 <div class="card bd-0" *ngIf="is_approver">
     <ul class="nav nav-tabs card-header bg-gray-400" id="myTab" role="tablist">
