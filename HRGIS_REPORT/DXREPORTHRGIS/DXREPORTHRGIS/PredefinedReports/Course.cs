@@ -3,9 +3,9 @@ using DevExpress.XtraReports.UI;
 
 namespace DXREPORTHRGIS.PredefinedReports
 {
-    public partial class ReportTraining
+    public partial class Course
     {
-        public ReportTraining()
+        public Course()
         {
             InitializeComponent();
         }

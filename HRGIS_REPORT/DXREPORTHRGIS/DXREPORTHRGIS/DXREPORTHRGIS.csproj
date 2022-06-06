@@ -13,14 +13,17 @@
   <ItemGroup>
     <None Remove="Data\nwind.db" />
     <None Remove="Data\reportsData.db" />
+    <None Remove="PredefinedReports\Course.vsrepx" />
     <None Remove="PredefinedReports\CourseAttendeeFromMasterCourse.vsrepx" />
     <None Remove="PredefinedReports\CourseCountTrainee.vsrepx" />
     <None Remove="PredefinedReports\CourseMap.vsrepx" />
+    <None Remove="PredefinedReports\CourseMaster.vsrepx" />
     <None Remove="PredefinedReports\CourseTarget.vsrepx" />
     <None Remove="PredefinedReports\EmployeeTraining.vsrepx" />
-    <None Remove="PredefinedReports\stakeholder.vsrepx" />
+    <None Remove="PredefinedReports\Stakeholder.vsrepx" />
     <None Remove="PredefinedReports\TestReport.vsrepx" />
     <None Remove="PredefinedReports\TrainerHistory.vsrepx" />
+    <None Remove="Report1.vsrepx" />
     <None Remove="Views\Training\CourseMap.vsrepx" />
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +49,21 @@
     <EmbeddedResource Include="PredefinedReports\*.vsrepx" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Report1.vsrepx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="PredefinedReports\Stakeholder.cs">
+      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\Stakeholder.Designer.cs">
+      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\Course.cs">
+      <DependentUpon>Course.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\Course.Designer.cs">
+      <DependentUpon>Course.vsrepx</DependentUpon>
+    </Compile>
     <Compile Update="PredefinedReports\CourseAttendeeFromMasterCourse.cs">
       <DependentUpon>CourseAttendeeFromMasterCourse.vsrepx</DependentUpon>
     </Compile>
@@ -63,6 +81,12 @@
     </Compile>
     <Compile Update="PredefinedReports\CourseMap.Designer.cs">
       <DependentUpon>CourseMap.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseMaster.cs">
+      <DependentUpon>CourseMaster.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\CourseMaster.Designer.cs">
+      <DependentUpon>CourseMaster.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\CourseTarget.cs">
       <DependentUpon>CourseTarget.vsrepx</DependentUpon>
@@ -94,12 +118,6 @@
     <Compile Update="PredefinedReports\ReportTraining.Designer.cs">
       <DependentUpon>ReportTraining.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\stakeholder.cs">
-      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\stakeholder.Designer.cs">
-      <DependentUpon>Stakeholder.vsrepx</DependentUpon>
-    </Compile>
     <Compile Update="PredefinedReports\TestReport.cs">
       <DependentUpon>TestReport.vsrepx</DependentUpon>
     </Compile>
@@ -111,6 +129,12 @@
     </Compile>
     <Compile Update="PredefinedReports\TrainerHistory.Designer.cs">
       <DependentUpon>TrainerHistory.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="Report1.cs">
+      <DependentUpon>Report1.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="Report1.Designer.cs">
+      <DependentUpon>Report1.vsrepx</DependentUpon>
     </Compile>
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="LibraryManagerRestore" Condition="!Exists('node_modules') ">
@@ -125,11 +149,17 @@
   <ItemGroup>
     
     
+    <PackageReference Include="DevExpress.AspNetCore.Reporting" Version="21.2.6" />
+    
+    
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.16" />
+    
+    
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.2.0" />
     
     
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.22" /><PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.16" /><PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.22" /><PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     
     
-    <PackageReference Include="System.Data.SQLite" Version="1.0.114.4" /><PackageReference Include="DevExpress.AspNetCore.Reporting" Version="21.1.6" /><PackageReference Include="BuildBundlerMinifier" Version="3.2.449" /><PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" /></ItemGroup>
+    <PackageReference Include="System.Data.SQLite" Version="1.0.114.4" /><PackageReference Include="BuildBundlerMinifier" Version="3.2.449" /><PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" /></ItemGroup>
 </Project>

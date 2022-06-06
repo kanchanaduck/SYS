@@ -40,6 +40,8 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.tableCell30 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell30");
             this.tableCell31 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell31");
             this.tableCell32 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell32");
+            this.label17 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label17");
+            this.label16 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label16");
             this.line6 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLine>("line6");
             this.line5 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLine>("line5");
             this.line4 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLine>("line4");
@@ -65,7 +67,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.label1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label1");
             this.pictureBox2 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRPictureBox>("pictureBox2");
             this.tableRow5 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableRow>("tableRow5");
-            this.tableRow6 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableRow>("tableRow6");
             this.tableCell43 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell43");
             this.tableCell44 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell44");
             this.tableCell45 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell45");
@@ -77,21 +78,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.tableCell55 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell55");
             this.tableCell56 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell56");
             this.tableCell57 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell57");
-            this.tableCell58 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell58");
-            this.tableCell59 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell59");
-            this.tableCell60 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell60");
-            this.tableCell61 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell61");
-            this.tableCell62 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell62");
-            this.tableCell63 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell63");
-            this.tableCell64 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell64");
-            this.tableCell65 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell65");
-            this.tableCell66 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell66");
-            this.tableCell67 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell67");
-            this.tableCell68 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell68");
-            this.tableCell69 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell69");
-            this.tableCell70 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell70");
-            this.tableCell71 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell71");
-            this.tableCell72 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell72");
             this.table4 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTable>("table4");
             this.label9 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label9");
             this.line1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLine>("line1");
@@ -113,16 +99,50 @@ namespace DXREPORTHRGIS.PredefinedReports {
             this.tableCell33 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell33");
             this.tableCell17 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell17");
             this.tableCell34 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell34");
-            this.label16 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label16");
-            this.label17 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRLabel>("label17");
+            this.tableCell1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell1");
+            this.tableCell2 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell2");
+            this.tableCell3 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell3");
+            this.tableRow1 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableRow>("tableRow1");
+            this.tableCell4 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell4");
+            this.tableCell5 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell5");
+            this.tableCell6 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell6");
+            this.tableCell37 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell37");
+            this.tableCell38 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell38");
+            this.tableCell39 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell39");
+            this.tableCell40 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell40");
+            this.tableCell41 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell41");
+            this.tableCell42 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell42");
+            this.tableCell48 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell48");
+            this.tableCell50 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell50");
+            this.tableCell52 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell52");
+            this.tableCell54 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell54");
+            this.tableCell58 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell58");
+            this.tableRow4 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableRow>("tableRow4");
+            this.tableCell59 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell59");
+            this.tableCell60 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell60");
+            this.tableCell61 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell61");
+            this.tableCell62 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell62");
+            this.tableCell63 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell63");
+            this.tableCell64 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell64");
+            this.tableCell65 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell65");
+            this.tableCell66 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell66");
+            this.tableCell67 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell67");
+            this.tableCell68 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell68");
+            this.tableCell69 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell69");
+            this.tableCell70 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell70");
+            this.tableCell71 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell71");
+            this.tableCell72 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell72");
+            this.tableCell73 = reportInitializer.GetControl<DevExpress.XtraReports.UI.XRTableCell>("tableCell73");
 
             // Parameters
             this.course_no = reportInitializer.GetParameter("course_no");
-            this.Mgr_org = reportInitializer.GetParameter("Mgr_org");
 
             // Data Sources
             this.sqlDataSource1 = reportInitializer.GetDataSource<DevExpress.DataAccess.Sql.SqlDataSource>("sqlDataSource1");
             this.sqlDataSource2 = reportInitializer.GetDataSource<DevExpress.DataAccess.Sql.SqlDataSource>("sqlDataSource2");
+
+            // Styles
+            this.Style1 = reportInitializer.GetStyle("Style1");
         }
         private DevExpress.XtraReports.UI.TopMarginBand TopMargin;
         private DevExpress.XtraReports.UI.BottomMarginBand BottomMargin;
@@ -149,6 +169,8 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.XRTableCell tableCell30;
         private DevExpress.XtraReports.UI.XRTableCell tableCell31;
         private DevExpress.XtraReports.UI.XRTableCell tableCell32;
+        private DevExpress.XtraReports.UI.XRLabel label17;
+        private DevExpress.XtraReports.UI.XRLabel label16;
         private DevExpress.XtraReports.UI.XRLine line6;
         private DevExpress.XtraReports.UI.XRLine line5;
         private DevExpress.XtraReports.UI.XRLine line4;
@@ -174,7 +196,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.XRLabel label1;
         private DevExpress.XtraReports.UI.XRPictureBox pictureBox2;
         private DevExpress.XtraReports.UI.XRTableRow tableRow5;
-        private DevExpress.XtraReports.UI.XRTableRow tableRow6;
         private DevExpress.XtraReports.UI.XRTableCell tableCell43;
         private DevExpress.XtraReports.UI.XRTableCell tableCell44;
         private DevExpress.XtraReports.UI.XRTableCell tableCell45;
@@ -186,21 +207,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.XRTableCell tableCell55;
         private DevExpress.XtraReports.UI.XRTableCell tableCell56;
         private DevExpress.XtraReports.UI.XRTableCell tableCell57;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell58;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell59;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell60;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell61;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell62;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell63;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell64;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell65;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell66;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell67;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell68;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell69;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell70;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell71;
-        private DevExpress.XtraReports.UI.XRTableCell tableCell72;
         private DevExpress.XtraReports.UI.XRTable table4;
         private DevExpress.XtraReports.UI.XRLabel label9;
         private DevExpress.XtraReports.UI.XRLine line1;
@@ -225,8 +231,40 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.DataAccess.Sql.SqlDataSource sqlDataSource1;
         private DevExpress.XtraReports.Parameters.Parameter course_no;
         private DevExpress.DataAccess.Sql.SqlDataSource sqlDataSource2;
-        private DevExpress.XtraReports.Parameters.Parameter Mgr_org;
-        private DevExpress.XtraReports.UI.XRLabel label16;
-        private DevExpress.XtraReports.UI.XRLabel label17;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell1;
+        private DevExpress.XtraReports.UI.XRControlStyle Style1;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell2;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell3;
+        private DevExpress.XtraReports.UI.XRTableRow tableRow1;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell4;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell5;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell6;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell37;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell38;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell39;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell40;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell41;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell42;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell48;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell50;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell52;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell54;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell58;
+        private DevExpress.XtraReports.UI.XRTableRow tableRow4;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell59;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell60;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell61;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell62;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell63;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell64;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell65;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell66;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell67;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell68;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell69;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell70;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell71;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell72;
+        private DevExpress.XtraReports.UI.XRTableCell tableCell73;
     }
 }

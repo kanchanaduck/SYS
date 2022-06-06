@@ -1,11 +1,11 @@
 using System;
 using DevExpress.XtraReports.UI;
 
-namespace DXREPORTHRGIS.PredefinedReports
+namespace DXREPORTHRGIS
 {
-    public partial class ReportTraining
+    public partial class Report1
     {
-        public ReportTraining()
+        public Report1()
         {
             InitializeComponent();
         }

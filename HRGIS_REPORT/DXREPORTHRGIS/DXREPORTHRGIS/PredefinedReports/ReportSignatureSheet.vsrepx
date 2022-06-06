@@ -1,319 +1,394 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="ReportSignatureSheet" Landscape="true" Margins="22, 16, 51, 79" PageWidth="1100" PageHeight="850" Version="21.2" EventsInfo="|tableCell11,BeforePrint,tableCell11_BeforePrint" FilterString="[course_no] = ?course_no" DataMember="V_GETREGISTRATION" DataSource="#Ref-0" Font="Arial, 9.75pt">
+<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="1" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="ReportSignatureSheet" Landscape="true" Margins="22, 16, 51, 82" PageWidth="1100" PageHeight="850" Version="21.2" EventsInfo="|tableCell11,BeforePrint,tableCell11_BeforePrint" FilterString="[course_no] = ?course_no" DataMember="V_GETREGISTRATION" DataSource="#Ref-0" Font="Arial, 9.75pt">
   <Extensions>
     <Item1 Ref="2" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
   <Parameters>
     <Item1 Ref="5" Description="COURSE NO." ValueSourceSettings="#Ref-3" Name="course_no" />
-    <Item2 Ref="6" Description="Mgr" ValueInfo="นาย ซาโต ฟูมิฮิโกะ" Name="Mgr_org" />
   </Parameters>
   <Bands>
-    <Item1 Ref="7" ControlType="TopMarginBand" Name="TopMargin" HeightF="51" />
-    <Item2 Ref="8" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="79" Font="Arial, 8pt">
-      <StylePriority Ref="9" UseFont="false" />
+    <Item1 Ref="6" ControlType="TopMarginBand" Name="TopMargin" HeightF="51" />
+    <Item2 Ref="7" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="82" Font="Arial, 8pt">
+      <StylePriority Ref="8" UseFont="false" />
     </Item2>
-    <Item3 Ref="10" ControlType="DetailBand" Name="Detail" HeightF="20">
+    <Item3 Ref="9" ControlType="DetailBand" Name="Detail" Expanded="false" HeightF="20">
       <Controls>
-        <Item1 Ref="11" ControlType="XRTable" Name="table3" TextAlignment="MiddleLeft" SizeF="1062,20" LocationFloat="0,0" Font="Arial, 8pt" Padding="2,2,5,0,100">
+        <Item1 Ref="10" ControlType="XRTable" Name="table3" TextAlignment="MiddleLeft" SizeF="1062,20" LocationFloat="0,0" Font="Arial, 8pt" Padding="2,2,5,0,100">
           <Rows>
-            <Item1 Ref="12" ControlType="XRTableRow" Name="tableRow3" Weight="0.37727585090334209">
+            <Item1 Ref="11" ControlType="XRTableRow" Name="tableRow3" Weight="0.37727585090334209">
               <Cells>
-                <Item1 Ref="13" ControlType="XRTableCell" Name="tableCell18" Weight="0.19308521575251589" Multiline="true" TextAlignment="MiddleCenter" Padding="2,2,5,0,100" Borders="Left, Bottom">
+                <Item1 Ref="12" ControlType="XRTableCell" Name="tableCell18" Weight="0.19308521575251589" Multiline="true" TextAlignment="TopCenter" Font="Courier New, 8pt, charSet=0" Padding="2,2,5,0,100" Borders="Left, Bottom">
                   <ExpressionBindings>
-                    <Item1 Ref="14" EventName="BeforePrint" PropertyName="Text" Expression="[DataSource.CurrentRowIndex] + 1" />
+                    <Item1 Ref="13" EventName="BeforePrint" PropertyName="Text" Expression="[DataSource.CurrentRowIndex] + 1" />
                   </ExpressionBindings>
-                  <StylePriority Ref="15" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                  <StylePriority Ref="14" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="16" ControlType="XRTableCell" Name="tableCell19" Weight="0.55167201464844628" Multiline="true" Text="[id_card_no]" Borders="Left, Bottom">
-                  <StylePriority Ref="17" UseBorders="false" />
+                <Item2 Ref="15" ControlType="XRTableCell" Name="tableCell19" Weight="0.55167201464844628" Multiline="true" Text="[id_card_no]" TextAlignment="TopCenter" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="16" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item2>
-                <Item3 Ref="18" ControlType="XRTableCell" Name="tableCell20" Weight="0.41375403546200817" Text="[firstname_th]" Font="Tahoma, 8pt" Borders="Left, Bottom">
-                  <StylePriority Ref="19" UseFont="false" UseBorders="false" />
+                <Item3 Ref="17" ControlType="XRTableCell" Name="tableCell20" Weight="0.35858683148699039" Text="[firstname_th]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="18" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item3>
-                <Item4 Ref="20" ControlType="XRTableCell" Name="tableCell12" Weight="0.57925581574400731" Multiline="true" Text="[lastname_th]" Font="Tahoma, 8pt" Borders="Bottom">
-                  <StylePriority Ref="21" UseFont="false" UseBorders="false" />
+                <Item4 Ref="19" ControlType="XRTableCell" Name="tableCell12" Weight="0.52408844341204375" Multiline="true" Text="[lastname_th]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Bottom">
+                  <StylePriority Ref="20" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item4>
-                <Item5 Ref="22" ControlType="XRTableCell" Name="tableCell21" Weight="0.14309009515284912" Text="[band]" Borders="Left, Bottom">
-                  <StylePriority Ref="23" UseBorders="false" />
+                <Item5 Ref="21" ControlType="XRTableCell" Name="tableCell21" Weight="0.17653539144195854" Text="[band]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="22" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item5>
-                <Item6 Ref="24" ControlType="XRTableCell" Name="tableCell36" Weight="0.01103331452729428" Multiline="true" Borders="Left" BorderDashStyle="Dot">
-                  <StylePriority Ref="25" UseBorders="false" UseBorderDashStyle="false" />
+                <Item6 Ref="23" ControlType="XRTableCell" Name="tableCell36" Weight="0.010688508980141308" Multiline="true" Borders="Left" BorderDashStyle="Dot">
+                  <StylePriority Ref="24" UseBorders="false" UseBorderDashStyle="false" />
                 </Item6>
-                <Item7 Ref="26" ControlType="XRTableCell" Name="tableCell11" Weight="0.78371856085636249" Multiline="true" Text="[position_name_en]" Borders="Bottom" BorderDashStyle="Solid">
-                  <StylePriority Ref="27" UseBorders="false" UseBorderDashStyle="false" />
+                <Item7 Ref="25" ControlType="XRTableCell" Name="tableCell11" Weight="0.66177661492640261" CanGrow="false" Text="[position_name_en]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Bottom" BorderDashStyle="Solid">
+                  <StylePriority Ref="26" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
                 </Item7>
-                <Item8 Ref="28" ControlType="XRTableCell" Name="tableCell22" Weight="0.26779092536343352" Text="[title_name_th_male]" TextAlignment="MiddleCenter" Font="Tahoma, 8pt" Borders="Left, Bottom">
-                  <StylePriority Ref="29" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                <Item8 Ref="27" ControlType="XRTableCell" Name="tableCell22" Weight="0.22066882639680863" Text="[title_name_th_male]" TextAlignment="TopCenter" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="28" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item8>
-                <Item9 Ref="30" ControlType="XRTableCell" Name="tableCell23" Weight="0.27008932029142357" Text="[title_name_th_female]" TextAlignment="MiddleCenter" Font="Tahoma, 8pt" Borders="Left, Bottom">
-                  <StylePriority Ref="31" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                <Item9 Ref="29" ControlType="XRTableCell" Name="tableCell23" Weight="0.22066881230176724" Text="[title_name_th_female]" TextAlignment="TopCenter" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="30" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item9>
-                <Item10 Ref="32" ControlType="XRTableCell" Name="tableCell24" Weight="0.28733008239661495" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="33" UseBorders="false" UseTextAlignment="false" />
+                <Item10 Ref="31" ControlType="XRTableCell" Name="tableCell24" Weight="0.33100322097312695" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="32" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item10>
-                <Item11 Ref="34" ControlType="XRTableCell" Name="tableCell25" Weight="0.25055049542758034" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="35" UseBorders="false" UseTextAlignment="false" />
+                <Item11 Ref="33" ControlType="XRTableCell" Name="tableCell25" Weight="0.33100322908096708" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="34" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item11>
-                <Item12 Ref="36" ControlType="XRTableCell" Name="tableCell26" Weight="0.28962781714384978" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="37" UseBorders="false" UseTextAlignment="false" />
+                <Item12 Ref="35" ControlType="XRTableCell" Name="tableCell26" Weight="0.33100322012511318" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="36" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item12>
-                <Item13 Ref="38" ControlType="XRTableCell" Name="tableCell27" Weight="0.28962849057163292" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="39" UseBorders="false" UseTextAlignment="false" />
+                <Item13 Ref="37" ControlType="XRTableCell" Name="tableCell27" Weight="0.33100322012511346" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="38" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item13>
-                <Item14 Ref="40" ControlType="XRTableCell" Name="tableCell28" Weight="0.24825174239463571" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="41" UseBorders="false" UseTextAlignment="false" />
+                <Item14 Ref="39" ControlType="XRTableCell" Name="tableCell28" Weight="0.33100322178494535" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="40" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item14>
-                <Item15 Ref="42" ControlType="XRTableCell" Name="tableCell29" Weight="0.30112121077440496" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="43" UseBorders="false" UseTextAlignment="false" />
+                <Item15 Ref="41" ControlType="XRTableCell" Name="tableCell29" Weight="0.33100322178494523" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="42" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item15>
-                <Item16 Ref="44" ControlType="XRTableCell" Name="tableCell30" Weight="0.30571769330390763" Multiline="true" Text="[emp_no]" Borders="Left, Bottom">
-                  <StylePriority Ref="45" UseBorders="false" />
+                <Item16 Ref="43" ControlType="XRTableCell" Name="tableCell30" Weight="0.28192683658968121" Multiline="true" Text="[emp_no]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="44" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item16>
-                <Item17 Ref="46" ControlType="XRTableCell" Name="tableCell31" Weight="0.27583635843036569" Multiline="true" Text="[dept_abb]" Borders="Left, Bottom">
-                  <StylePriority Ref="47" UseBorders="false" />
+                <Item17 Ref="45" ControlType="XRTableCell" Name="tableCell31" Weight="0.27583635843036569" Multiline="true" Text="[dept_abb]" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="46" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item17>
-                <Item18 Ref="48" ControlType="XRTableCell" Name="tableCell32" Weight="0.39720387390555939" Multiline="true" Borders="Left, Right, Bottom">
-                  <StylePriority Ref="49" UseBorders="false" />
+                <Item18 Ref="47" ControlType="XRTableCell" Name="tableCell32" Weight="0.39720387390555939" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8pt, charSet=0" Borders="Left, Right, Bottom">
+                  <StylePriority Ref="48" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item18>
               </Cells>
             </Item1>
           </Rows>
-          <StylePriority Ref="50" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+          <StylePriority Ref="49" UseFont="false" UsePadding="false" UseTextAlignment="false" />
         </Item1>
       </Controls>
     </Item3>
-    <Item4 Ref="51" ControlType="PageHeaderBand" Name="PageHeader" HeightF="182">
+    <Item4 Ref="50" ControlType="PageHeaderBand" Name="PageHeader" HeightF="183.22229">
       <Controls>
-        <Item1 Ref="52" ControlType="XRLabel" Name="label17" Multiline="true" Text="[date_end!dd-MMM-yy]" TextAlignment="BottomLeft" SizeF="95,25" LocationFloat="830,85.00001" Font="Arial, 9pt" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
-          <StylePriority Ref="53" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+        <Item1 Ref="51" ControlType="XRLabel" Name="label17" Multiline="true" Text="[date_end!dd-MMM-yy]" TextAlignment="BottomLeft" SizeF="95,25" LocationFloat="830,85.00001" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
+          <StylePriority Ref="52" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
         </Item1>
-        <Item2 Ref="54" ControlType="XRLabel" Name="label16" Multiline="true" Text="[date_start!dd-MMM-yy]" TextAlignment="BottomLeft" SizeF="100,25" LocationFloat="685,85.00001" Font="Arial, 9pt" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
-          <StylePriority Ref="55" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+        <Item2 Ref="53" ControlType="XRLabel" Name="label16" Multiline="true" Text="[date_start!dd-MMM-yy]" TextAlignment="BottomLeft" SizeF="100,25" LocationFloat="685,85.00001" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
+          <StylePriority Ref="54" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
         </Item2>
-        <Item3 Ref="56" ControlType="XRLine" Name="line6" LineDirection="Vertical" SizeF="2,43" LocationFloat="1060,77.0000153" />
-        <Item4 Ref="57" ControlType="XRLine" Name="line5" LineDirection="Vertical" SizeF="2,43" LocationFloat="0,77" />
-        <Item5 Ref="58" ControlType="XRLine" Name="line4" SizeF="1062,2" LocationFloat="0,75" />
-        <Item6 Ref="59" ControlType="XRLine" Name="line3" SizeF="1062,2" LocationFloat="0,120" />
-        <Item7 Ref="60" ControlType="XRLine" Name="line2" LineStyle="Dot" SizeF="47.916626,8" LocationFloat="555,101.999985" />
-        <Item8 Ref="61" ControlType="XRLabel" Name="label24" Multiline="true" Text="เวลา" TextAlignment="BottomLeft" SizeF="30,20" LocationFloat="925,89.99999" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="62" UseFont="false" UseTextAlignment="false" />
+        <Item3 Ref="55" ControlType="XRLine" Name="line6" LineDirection="Vertical" SizeF="2,43" LocationFloat="1060,77.0000153" />
+        <Item4 Ref="56" ControlType="XRLine" Name="line5" LineDirection="Vertical" SizeF="2,43" LocationFloat="0,77" />
+        <Item5 Ref="57" ControlType="XRLine" Name="line4" SizeF="1062,2" LocationFloat="0,75" />
+        <Item6 Ref="58" ControlType="XRLine" Name="line3" SizeF="1062,2" LocationFloat="0,120" />
+        <Item7 Ref="59" ControlType="XRLine" Name="line2" LineStyle="Dot" SizeF="47.916626,8" LocationFloat="555,101.999985" />
+        <Item8 Ref="60" ControlType="XRLabel" Name="label24" Multiline="true" Text="เวลา" TextAlignment="BottomLeft" SizeF="30,20" LocationFloat="925,89.99999" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="61" UseFont="false" UseTextAlignment="false" />
         </Item8>
-        <Item9 Ref="63" ControlType="XRLabel" Name="label23" Multiline="true" Text="ถึงวันที่" TextAlignment="BottomLeft" SizeF="45,20" LocationFloat="785,89.99999" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="64" UseFont="false" UseTextAlignment="false" />
+        <Item9 Ref="62" ControlType="XRLabel" Name="label23" Multiline="true" Text="ถึงวันที่" TextAlignment="BottomLeft" SizeF="45,20" LocationFloat="785,89.99999" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="63" UseFont="false" UseTextAlignment="false" />
         </Item9>
-        <Item10 Ref="65" ControlType="XRLabel" Name="label22" Multiline="true" Text="ระหว่าง วันที่" TextAlignment="BottomLeft" SizeF="74.875,20" LocationFloat="605.125,89.99999" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="66" UseFont="false" UseTextAlignment="false" />
+        <Item10 Ref="64" ControlType="XRLabel" Name="label22" Multiline="true" Text="ระหว่าง วันที่" TextAlignment="BottomLeft" SizeF="74.875,20" LocationFloat="605.125,89.99999" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="65" UseFont="false" UseTextAlignment="false" />
         </Item10>
-        <Item11 Ref="67" ControlType="XRLabel" Name="label21" Multiline="true" Text="รุ่นที่" TextAlignment="BottomLeft" SizeF="30,20" LocationFloat="524,89.99999" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="68" UseFont="false" UseTextAlignment="false" />
+        <Item11 Ref="66" ControlType="XRLabel" Name="label21" Multiline="true" Text="รุ่นที่" TextAlignment="BottomLeft" SizeF="30,20" LocationFloat="524,89.99999" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="67" UseFont="false" UseTextAlignment="false" />
         </Item11>
-        <Item12 Ref="69" ControlType="XRLabel" Name="label15" Multiline="true" Text="หลักสูตร" TextAlignment="BottomLeft" SizeF="53.0000076,20" LocationFloat="9.999998,90" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="70" UseFont="false" UseTextAlignment="false" />
+        <Item12 Ref="68" ControlType="XRLabel" Name="label15" Multiline="true" Text="หลักสูตร" TextAlignment="BottomLeft" SizeF="53.0000076,20" LocationFloat="9.999998,90" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="69" UseFont="false" UseTextAlignment="false" />
         </Item12>
-        <Item13 Ref="71" ControlType="XRLabel" Name="label20" Multiline="true" Text="[course_name_en]" TextAlignment="BottomLeft" SizeF="215,30" LocationFloat="300,80" Font="Arial, 8pt" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
-          <StylePriority Ref="72" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+        <Item13 Ref="70" ControlType="XRLabel" Name="label20" Multiline="true" Text="[course_name_en]" TextAlignment="BottomLeft" SizeF="215,30" LocationFloat="300,80" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
+          <StylePriority Ref="71" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
         </Item13>
-        <Item14 Ref="73" ControlType="XRLabel" Name="label19" Multiline="true" Text="[course_name_th]" TextAlignment="BottomLeft" SizeF="215.5,30" LocationFloat="63,80" Font="Arial, 8pt" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
-          <StylePriority Ref="74" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+        <Item14 Ref="72" ControlType="XRLabel" Name="label19" Multiline="true" Text="[course_name_th]" TextAlignment="BottomLeft" SizeF="215.5,30" LocationFloat="63,80" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
+          <StylePriority Ref="73" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
         </Item14>
-        <Item15 Ref="75" ControlType="XRLabel" Name="label18" Multiline="true" Text="[date_start!HH:mm]-[date_end!HH:mm]" TextAlignment="BottomLeft" SizeF="100,25" LocationFloat="955,85" Font="Arial, 9pt" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
-          <StylePriority Ref="76" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+        <Item15 Ref="74" ControlType="XRLabel" Name="label18" Multiline="true" Text="[date_start!HH:mm]-[date_end!HH:mm]" TextAlignment="BottomLeft" SizeF="100,25" LocationFloat="955,85" Font="Courier New, 8.25pt, charSet=0" Padding="2,2,0,0,100" Borders="Bottom" BorderDashStyle="Dot">
+          <StylePriority Ref="75" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
         </Item15>
-        <Item16 Ref="77" ControlType="XRTable" Name="table2" TextAlignment="MiddleLeft" SizeF="1062,60" LocationFloat="0,122" Font="Tahoma, 9pt" Padding="2,2,5,0,100">
+        <Item16 Ref="76" ControlType="XRTable" Name="table2" TextAlignment="MiddleLeft" SizeF="1062,60.8332825" LocationFloat="0,122.000008" Font="Tahoma, 9pt" Padding="2,2,5,0,100">
           <Rows>
-            <Item1 Ref="78" ControlType="XRTableRow" Name="tableRow5" Weight="0.37727585090334209">
+            <Item1 Ref="77" ControlType="XRTableRow" Name="tableRow5" Weight="0.47788255258514578">
               <Cells>
-                <Item1 Ref="79" ControlType="XRTableCell" Name="tableCell43" Weight="0.19308521575251592" RowSpan="2" Text="เลขที่" TextAlignment="MiddleCenter" Padding="2,2,5,0,100" Borders="Left, Bottom">
-                  <StylePriority Ref="80" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                <Item1 Ref="78" ControlType="XRTableCell" Name="tableCell43" Weight="0.19308521575251592" RowSpan="3" Text="เลขที่" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Padding="2,2,5,0,100" Borders="Left, Bottom">
+                  <StylePriority Ref="79" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="81" ControlType="XRTableCell" Name="tableCell44" Weight="0.55167201464844651" RowSpan="2" Multiline="true" Text="เลขประจำตัวประชาชน&#xD;" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="82" UseBorders="false" UseTextAlignment="false" />
+                <Item2 Ref="80" ControlType="XRTableCell" Name="tableCell44" Weight="0.55167201464844651" RowSpan="3" Multiline="true" Text="เลขประจำตัว&#xD;&#xA;ประชาชน&#xD;" TextAlignment="MiddleCenter" Font="Courier New, 8pt" Borders="Left, Bottom">
+                  <StylePriority Ref="81" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item2>
-                <Item3 Ref="83" ControlType="XRTableCell" Name="tableCell45" Weight="0.993009809116779" RowSpan="2" Multiline="true" Text="ชื่อ - สกุล" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="84" UseBorders="false" UseTextAlignment="false" />
+                <Item3 Ref="82" ControlType="XRTableCell" Name="tableCell45" Weight="0.88267523280979765" RowSpan="3" Multiline="true" Text="ชื่อ - สกุล" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="83" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item3>
-                <Item4 Ref="85" ControlType="XRTableCell" Name="tableCell46" Weight="0.93784209680421526" RowSpan="2" Multiline="true" Text="ตำแหน่ง" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="86" UseBorders="false" UseTextAlignment="false" />
+                <Item4 Ref="84" ControlType="XRTableCell" Name="tableCell46" Weight="0.84934509992716423" RowSpan="3" Multiline="true" Text="ตำแหน่ง" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="85" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item4>
-                <Item5 Ref="87" ControlType="XRTableCell" Name="tableCell47" Weight="0.53788041401180309" Multiline="true" Text="เพศ" TextAlignment="MiddleCenter" Borders="Left">
-                  <StylePriority Ref="88" UseBorders="false" UseTextAlignment="false" />
+                <Item5 Ref="86" ControlType="XRTableCell" Name="tableCell47" Weight="0.44133763869857617" RowSpan="2" Multiline="true" Text="เพศ" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left">
+                  <StylePriority Ref="87" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item5>
-                <Item6 Ref="89" ControlType="XRTableCell" Name="tableCell49" Weight="0.53788024047886041" Multiline="true" Text="วันที่ [date_1!dd-MMM-yy]" TextAlignment="MiddleLeft" Borders="Left">
-                  <StylePriority Ref="90" UseBorders="false" UseTextAlignment="false" />
+                <Item6 Ref="88" ControlType="XRTableCell" Name="tableCell49" Weight="0.1930852147737806" RowSpan="2" Multiline="true" Text="วันที่" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Padding="2,2,10,0,100" Borders="Left">
+                  <StylePriority Ref="89" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item6>
-                <Item7 Ref="91" ControlType="XRTableCell" Name="tableCell51" Weight="0.57925564352277759" Multiline="true" Text="วันที่ [date_2!dd-MMM-yy]" TextAlignment="MiddleLeft" Borders="Left">
-                  <StylePriority Ref="92" UseBorders="false" UseTextAlignment="false" />
+                <Item7 Ref="90" ControlType="XRTableCell" Name="tableCell2" Weight="0.46892123464886981" Multiline="true" Text="[date_1!dd-MMM-yy]" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Borders="Bottom" BorderDashStyle="Dot">
+                  <StylePriority Ref="91" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
                 </Item7>
-                <Item8 Ref="93" ControlType="XRTableCell" Name="tableCell53" Weight="0.549373629306331" Multiline="true" Text="วันที่ [date_3!dd-MMM-yy]" TextAlignment="MiddleLeft" Borders="Left">
-                  <StylePriority Ref="94" UseBorders="false" UseTextAlignment="false" />
+                <Item8 Ref="92" ControlType="XRTableCell" Name="tableCell51" Weight="0.19308521480510765" RowSpan="2" Multiline="true" Text="วันที่" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Padding="2,2,10,0,100" Borders="Left">
+                  <StylePriority Ref="93" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item8>
-                <Item9 Ref="95" ControlType="XRTableCell" Name="tableCell55" Weight="0.30571769546013805" RowSpan="2" Multiline="true" Text="หมายเลข&#xD;&#xA;พนักงาน" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="96" UseBorders="false" UseTextAlignment="false" />
+                <Item9 Ref="94" ControlType="XRTableCell" Name="tableCell3" Weight="0.46892123468019675" Multiline="true" Text="[date_2!dd-MMM-yy]" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Borders="Bottom" BorderDashStyle="Dot">
+                  <StylePriority Ref="95" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
                 </Item9>
-                <Item10 Ref="97" ControlType="XRTableCell" Name="tableCell56" Weight="0.27583644476506897" RowSpan="2" Multiline="true" Text="แผนก" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="98" UseBorders="false" UseTextAlignment="false" />
+                <Item10 Ref="96" ControlType="XRTableCell" Name="tableCell53" Weight="0.19329936323711616" RowSpan="2" Multiline="true" Text="วันที่" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Padding="2,2,10,0,100" Borders="Left">
+                  <StylePriority Ref="97" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item10>
-                <Item11 Ref="99" ControlType="XRTableCell" Name="tableCell57" Weight="0.39720385827995669" RowSpan="2" Multiline="true" Text="หมายเหตุ" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
-                  <StylePriority Ref="100" UseBorders="false" UseTextAlignment="false" />
+                <Item11 Ref="98" ControlType="XRTableCell" Name="tableCell1" Weight="0.46870725139922775" Multiline="true" Text="[date_3!dd-MMM-yy]" TextAlignment="BottomLeft" Font="Courier New, 8.25pt" Borders="Bottom" BorderDashStyle="Dot">
+                  <StylePriority Ref="99" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
                 </Item11>
+                <Item12 Ref="100" ControlType="XRTableCell" Name="tableCell55" Weight="0.28158204372106777" RowSpan="3" Multiline="true" Text="หมายเลข&#xD;&#xA;พนักงาน" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="101" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item12>
+                <Item13 Ref="102" ControlType="XRTableCell" Name="tableCell56" Weight="0.27583644476506897" RowSpan="3" Multiline="true" Text="แผนก" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="103" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item13>
+                <Item14 Ref="104" ControlType="XRTableCell" Name="tableCell57" Weight="0.39720385827995669" RowSpan="3" Multiline="true" Text="หมายเหตุ" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Right, Bottom">
+                  <StylePriority Ref="105" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item14>
               </Cells>
             </Item1>
-            <Item2 Ref="101" ControlType="XRTableRow" Name="tableRow6" Weight="0.37727585090334209">
+            <Item2 Ref="106" ControlType="XRTableRow" Name="tableRow1" Weight="0.025151627447345698">
               <Cells>
-                <Item1 Ref="102" ControlType="XRTableCell" Name="tableCell58" Weight="0.19308521575251589" Multiline="true" Text="&#xD;&#xA;" TextAlignment="MiddleCenter" Padding="2,2,5,0,100">
-                  <StylePriority Ref="103" UsePadding="false" UseTextAlignment="false" />
+                <Item1 Ref="107" ControlType="XRTableCell" Name="tableCell4" Weight="0.19308521575251592" Multiline="true" Text="tableCell4" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Padding="2,2,5,0,100" Borders="Left, Bottom">
+                  <StylePriority Ref="108" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="104" ControlType="XRTableCell" Name="tableCell59" Weight="0.55167201464844628" Multiline="true" Text="&#xD;&#xA;" />
-                <Item3 Ref="105" ControlType="XRTableCell" Name="tableCell60" Weight="0.993009809116779" />
-                <Item4 Ref="106" ControlType="XRTableCell" Name="tableCell61" Weight="0.93784209680421526" />
-                <Item5 Ref="107" ControlType="XRTableCell" Name="tableCell62" Weight="0.26779109372037924" Text="ชาย" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="108" UseBorders="false" UseTextAlignment="false" />
-                </Item5>
-                <Item6 Ref="109" ControlType="XRTableCell" Name="tableCell63" Weight="0.27008932029142357" Text="หญิง" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="110" UseBorders="false" UseTextAlignment="false" />
-                </Item6>
-                <Item7 Ref="111" ControlType="XRTableCell" Name="tableCell64" Weight="0.28732940896883208" Text="เช้า" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="112" UseBorders="false" UseTextAlignment="false" />
-                </Item7>
-                <Item8 Ref="113" ControlType="XRTableCell" Name="tableCell65" Weight="0.25055083214147178" Text="บ่าย" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="114" UseBorders="false" UseTextAlignment="false" />
-                </Item8>
-                <Item9 Ref="115" ControlType="XRTableCell" Name="tableCell66" Weight="0.28962781714384978" Text="เช้า" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
+                <Item2 Ref="109" ControlType="XRTableCell" Name="tableCell5" Weight="0.55167201464844651" Multiline="true" Text="tableCell5" TextAlignment="MiddleCenter" Font="Courier New, 8pt" Borders="Left, Bottom">
+                  <StylePriority Ref="110" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item2>
+                <Item3 Ref="111" ControlType="XRTableCell" Name="tableCell6" Weight="0.88267523280979765" Multiline="true" Text="tableCell6" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="112" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item3>
+                <Item4 Ref="113" ControlType="XRTableCell" Name="tableCell37" Weight="0.84934509992716423" Multiline="true" Text="tableCell37" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="114" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item4>
+                <Item5 Ref="115" ControlType="XRTableCell" Name="tableCell38" Weight="0.44133763869857617" Multiline="true" Text="tableCell38" TextAlignment="MiddleCenter" Borders="Left, Bottom">
                   <StylePriority Ref="116" UseBorders="false" UseTextAlignment="false" />
-                </Item9>
-                <Item10 Ref="117" ControlType="XRTableCell" Name="tableCell67" Weight="0.28962815385774143" Multiline="true" Text="บ่าย" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="118" UseBorders="false" UseTextAlignment="false" />
-                </Item10>
-                <Item11 Ref="119" ControlType="XRTableCell" Name="tableCell68" Weight="0.24825207910852717" Multiline="true" Text="เช้า" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
-                  <StylePriority Ref="120" UseBorders="false" UseTextAlignment="false" />
-                </Item11>
-                <Item12 Ref="121" ControlType="XRTableCell" Name="tableCell69" Weight="0.30112121077440496" Multiline="true" Text="บ่าย" TextAlignment="MiddleCenter" Borders="Left, Top, Bottom">
+                </Item5>
+                <Item6 Ref="117" ControlType="XRTableCell" Name="tableCell39" Weight="0.1930852147737806" Multiline="true" Text="tableCell39" TextAlignment="TopLeft" Font="Tahoma, 9pt" Borders="Left, Bottom">
+                  <StylePriority Ref="118" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item6>
+                <Item7 Ref="119" ControlType="XRTableCell" Name="tableCell40" Weight="0.46892123464886981" Multiline="true" TextAlignment="MiddleLeft" Font="Courier New, 8.25pt" Borders="None" BorderDashStyle="Solid">
+                  <StylePriority Ref="120" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item7>
+                <Item8 Ref="121" ControlType="XRTableCell" Name="tableCell41" Weight="0.19308521480510765" Multiline="true" Text="tableCell41" TextAlignment="MiddleLeft" Borders="Left, Bottom">
                   <StylePriority Ref="122" UseBorders="false" UseTextAlignment="false" />
+                </Item8>
+                <Item9 Ref="123" ControlType="XRTableCell" Name="tableCell42" Weight="0.46892123468019675" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8.25pt" Borders="None" BorderDashStyle="Dot">
+                  <StylePriority Ref="124" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item9>
+                <Item10 Ref="125" ControlType="XRTableCell" Name="tableCell48" Weight="0.19329936323711616" Multiline="true" Text="tableCell48" TextAlignment="MiddleLeft" Borders="Left, Bottom">
+                  <StylePriority Ref="126" UseBorders="false" UseTextAlignment="false" />
+                </Item10>
+                <Item11 Ref="127" ControlType="XRTableCell" Name="tableCell50" Weight="0.46870725139922775" Multiline="true" TextAlignment="TopLeft" Font="Courier New, 8.25pt" Borders="None" BorderDashStyle="Dot">
+                  <StylePriority Ref="128" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item11>
+                <Item12 Ref="129" ControlType="XRTableCell" Name="tableCell52" Weight="0.28158204372106777" Multiline="true" Text="tableCell52" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="130" UseFont="false" UseBorders="false" UseTextAlignment="false" />
                 </Item12>
-                <Item13 Ref="123" ControlType="XRTableCell" Name="tableCell70" Weight="0.30571769330390763" Multiline="true" />
-                <Item14 Ref="124" ControlType="XRTableCell" Name="tableCell71" Weight="0.27583644260883855" Multiline="true" />
-                <Item15 Ref="125" ControlType="XRTableCell" Name="tableCell72" Weight="0.39720387390555939" Multiline="true" />
+                <Item13 Ref="131" ControlType="XRTableCell" Name="tableCell54" Weight="0.27583644476506897" Multiline="true" Text="tableCell54" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="132" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item13>
+                <Item14 Ref="133" ControlType="XRTableCell" Name="tableCell58" Weight="0.39720385827995669" Multiline="true" Text="tableCell58" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
+                  <StylePriority Ref="134" UseBorders="false" UseTextAlignment="false" />
+                </Item14>
               </Cells>
             </Item2>
+            <Item3 Ref="135" ControlType="XRTableRow" Name="tableRow4" Weight="0.37727585090334209">
+              <Cells>
+                <Item1 Ref="136" ControlType="XRTableCell" Name="tableCell59" Weight="0.19308521575251592" Multiline="true" Text="tableCell59" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Padding="2,2,5,0,100" Borders="Left, Bottom">
+                  <StylePriority Ref="137" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                </Item1>
+                <Item2 Ref="138" ControlType="XRTableCell" Name="tableCell60" Weight="0.55167201464844651" Multiline="true" Text="tableCell60" TextAlignment="MiddleCenter" Font="Courier New, 8pt" Borders="Left, Bottom">
+                  <StylePriority Ref="139" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item2>
+                <Item3 Ref="140" ControlType="XRTableCell" Name="tableCell61" Weight="0.88267523280979765" Multiline="true" Text="tableCell61" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="141" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item3>
+                <Item4 Ref="142" ControlType="XRTableCell" Name="tableCell62" Weight="0.84934509992716423" Multiline="true" Text="tableCell62" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Bottom">
+                  <StylePriority Ref="143" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item4>
+                <Item5 Ref="144" ControlType="XRTableCell" Name="tableCell63" Weight="0.22066881934928809" Multiline="true" Text="ชาย" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom">
+                  <StylePriority Ref="145" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item5>
+                <Item6 Ref="146" ControlType="XRTableCell" Name="tableCell73" Weight="0.22066881934928809" Multiline="true" Text="หญิง" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom">
+                  <StylePriority Ref="147" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item6>
+                <Item7 Ref="148" ControlType="XRTableCell" Name="tableCell64" Weight="0.33100322471132521" Multiline="true" Text="เช้า" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom">
+                  <StylePriority Ref="149" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item7>
+                <Item8 Ref="150" ControlType="XRTableCell" Name="tableCell65" Weight="0.33100322471132521" Multiline="true" Text="บ่าย" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom" BorderDashStyle="Solid">
+                  <StylePriority Ref="151" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item8>
+                <Item9 Ref="152" ControlType="XRTableCell" Name="tableCell66" Weight="0.33100288802876077" Multiline="true" Text="เช้า" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom">
+                  <StylePriority Ref="153" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item9>
+                <Item10 Ref="154" ControlType="XRTableCell" Name="tableCell67" Weight="0.33100356145654364" Multiline="true" Text="บ่าย" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom" BorderDashStyle="Solid">
+                  <StylePriority Ref="155" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item10>
+                <Item11 Ref="156" ControlType="XRTableCell" Name="tableCell68" Weight="0.3310032231396991" Multiline="true" Text="เช้า" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom">
+                  <StylePriority Ref="157" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item11>
+                <Item12 Ref="158" ControlType="XRTableCell" Name="tableCell69" Weight="0.33100339149664482" Multiline="true" Text="บ่าย" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt" Borders="Left, Top, Bottom" BorderDashStyle="Solid">
+                  <StylePriority Ref="159" UseFont="false" UseBorders="false" UseBorderDashStyle="false" UseTextAlignment="false" />
+                </Item12>
+                <Item13 Ref="160" ControlType="XRTableCell" Name="tableCell70" Weight="0.28158204372106777" Multiline="true" Text="tableCell70" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="161" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item13>
+                <Item14 Ref="162" ControlType="XRTableCell" Name="tableCell71" Weight="0.27583644476506897" Multiline="true" Text="tableCell71" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" Borders="Left, Bottom">
+                  <StylePriority Ref="163" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                </Item14>
+                <Item15 Ref="164" ControlType="XRTableCell" Name="tableCell72" Weight="0.39720385827995669" Multiline="true" Text="tableCell72" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
+                  <StylePriority Ref="165" UseBorders="false" UseTextAlignment="false" />
+                </Item15>
+              </Cells>
+            </Item3>
           </Rows>
-          <StylePriority Ref="126" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+          <StylePriority Ref="166" UseFont="false" UsePadding="false" UseTextAlignment="false" />
         </Item16>
-        <Item17 Ref="127" ControlType="XRPageInfo" Name="pageInfo1" TextFormatString="Page: {0} of {1}" TextAlignment="MiddleRight" SizeF="100,23" LocationFloat="952.000061,49.58334" Font="Arial, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="128" UseFont="false" UseTextAlignment="false" />
+        <Item17 Ref="167" ControlType="XRPageInfo" Name="pageInfo1" TextFormatString="Page: {0} of {1}" TextAlignment="MiddleRight" SizeF="100,23" LocationFloat="952.000061,49.58334" Font="Arial, 9pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="168" UseFont="false" UseTextAlignment="false" />
         </Item17>
-        <Item18 Ref="129" ControlType="XRLabel" Name="label8" Multiline="true" Text="แบบ ฝย / ฝป 3" TextAlignment="MiddleRight" SizeF="131.291565,19.9999962" LocationFloat="920.7085,29.5833435" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="130" UseFont="false" UseTextAlignment="false" />
+        <Item18 Ref="169" ControlType="XRLabel" Name="label8" Multiline="true" Text="แบบ ฝย / ฝป 3" TextAlignment="MiddleRight" SizeF="131.291565,19.9999962" LocationFloat="920.7085,29.5833435" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="170" UseFont="false" UseTextAlignment="false" />
         </Item18>
-        <Item19 Ref="131" ControlType="XRLabel" Name="label7" Multiline="true" Text="[course_no]" TextAlignment="TopLeft" SizeF="135,9.999996" LocationFloat="74.99999,59.5833473" Font="Arial, 7pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="132" UseFont="false" UseTextAlignment="false" />
+        <Item19 Ref="171" ControlType="XRLabel" Name="label7" Multiline="true" Text="[course_no]" TextAlignment="TopLeft" SizeF="135,9.999996" LocationFloat="74.99999,59.5833473" Font="Arial, 7pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="172" UseFont="false" UseTextAlignment="false" />
         </Item19>
-        <Item20 Ref="133" ControlType="XRLabel" Name="label6" Multiline="true" Text="Course No: " TextAlignment="TopLeft" SizeF="65,9.999996" LocationFloat="9.999998,59.5833473" Font="Arial, 7pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="134" UseFont="false" UseTextAlignment="false" />
+        <Item20 Ref="173" ControlType="XRLabel" Name="label6" Multiline="true" Text="Course No: " TextAlignment="TopLeft" SizeF="65,9.999996" LocationFloat="9.999998,59.5833473" Font="Arial, 7pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="174" UseFont="false" UseTextAlignment="false" />
         </Item20>
-        <Item21 Ref="135" ControlType="XRLabel" Name="label5" TextFormatString="{0:dd-MMM-yyyy}" Multiline="true" Text="PTP005" TextAlignment="TopLeft" SizeF="135,10" LocationFloat="74.99999,49.58334" Font="Arial, 7pt" Padding="2,2,0,0,100">
+        <Item21 Ref="175" ControlType="XRLabel" Name="label5" TextFormatString="{0:dd-MMM-yyyy}" Multiline="true" Text="PTP005" TextAlignment="TopLeft" SizeF="135,10" LocationFloat="74.99999,49.58334" Font="Arial, 7pt" Padding="2,2,0,0,100">
           <ExpressionBindings>
-            <Item1 Ref="136" EventName="BeforePrint" PropertyName="Text" Expression="Today()" />
+            <Item1 Ref="176" EventName="BeforePrint" PropertyName="Text" Expression="Today()" />
           </ExpressionBindings>
-          <StylePriority Ref="137" UseFont="false" UseTextAlignment="false" />
+          <StylePriority Ref="177" UseFont="false" UseTextAlignment="false" />
         </Item21>
-        <Item22 Ref="138" ControlType="XRLabel" Name="label4" Multiline="true" Text="PTP005" TextAlignment="TopLeft" SizeF="65,10" LocationFloat="9.999998,49.58334" Font="Arial, 7pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="139" UseFont="false" UseTextAlignment="false" />
+        <Item22 Ref="178" ControlType="XRLabel" Name="label4" Multiline="true" Text="PTP005" TextAlignment="TopLeft" SizeF="65,10" LocationFloat="9.999998,49.58334" Font="Arial, 7pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="179" UseFont="false" UseTextAlignment="false" />
         </Item22>
-        <Item23 Ref="140" ControlType="XRLabel" Name="label3" Multiline="true" Text="CANON PRACHINBURI (THAILAND) LTD." TextAlignment="TopLeft" SizeF="200,10" LocationFloat="9.999998,39.5833321" Font="Arial, 7pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="141" UseFont="false" UseTextAlignment="false" />
+        <Item23 Ref="180" ControlType="XRLabel" Name="label3" Multiline="true" Text="CANON PRACHINBURI (THAILAND) LTD." TextAlignment="TopLeft" SizeF="200,10" LocationFloat="9.999998,39.5833321" Font="Arial, 7pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="181" UseFont="false" UseTextAlignment="false" />
         </Item23>
-        <Item24 Ref="142" ControlType="XRLabel" Name="label2" Multiline="true" Text="(ผู้รับการฝึกต้องเข้ารับการฝึกอบรมไม่น้อยกว่าร้อยละแปดสิบของระยะเวลาการฝึกอบรมทั้งหลักสูตร)" TextAlignment="MiddleCenter" SizeF="583.333252,20" LocationFloat="263.416626,49.58334" Font="Tahoma, 9.75pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="143" UseFont="false" UseTextAlignment="false" />
+        <Item24 Ref="182" ControlType="XRLabel" Name="label2" Multiline="true" Text="(ผู้รับการฝึกต้องเข้ารับการฝึกอบรมไม่น้อยกว่าร้อยละแปดสิบของระยะเวลาการฝึกอบรมทั้งหลักสูตร)" TextAlignment="MiddleCenter" SizeF="583.333252,20" LocationFloat="263.416626,49.58334" Font="Courier New, 9.75pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="183" UseFont="false" UseTextAlignment="false" />
         </Item24>
-        <Item25 Ref="144" ControlType="XRLabel" Name="label1" Multiline="true" Text="ใบลงทะเบียนผู้รับการฝึกอบรม ( ใบเซ็นชื่อ )" TextAlignment="MiddleCenter" SizeF="314.5833,20" LocationFloat="394.666748,29.5833435" Font="Tahoma, 11.25pt, charSet=0" Padding="2,2,0,0,100">
-          <StylePriority Ref="145" UseFont="false" UseTextAlignment="false" />
+        <Item25 Ref="184" ControlType="XRLabel" Name="label1" Multiline="true" Text="ใบลงทะเบียนผู้รับการฝึกอบรม (ใบเซ็นชื่อ)" TextAlignment="MiddleCenter" SizeF="314.5833,25" LocationFloat="395.7084,24.58334" Font="Courier New, 12pt, charSet=0" Padding="2,2,0,0,100">
+          <StylePriority Ref="185" UseFont="false" UseTextAlignment="false" />
         </Item25>
-        <Item26 Ref="146" ControlType="XRPictureBox" Name="pictureBox2" ImageSource="img,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" Sizing="ZoomImage" SizeF="101.041664,39.5833321" LocationFloat="0,0" />
+        <Item26 Ref="186" ControlType="XRPictureBox" Name="pictureBox2" ImageSource="img,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" Sizing="ZoomImage" SizeF="101.041664,39.5833321" LocationFloat="0,0" />
       </Controls>
     </Item4>
-    <Item5 Ref="147" ControlType="ReportFooterBand" Name="ReportFooter" HeightF="105.000069">
+    <Item5 Ref="187" ControlType="ReportFooterBand" Name="ReportFooter" HeightF="122.833382">
       <Controls>
-        <Item1 Ref="148" ControlType="XRTable" Name="table4" SizeF="747,17" LocationFloat="314.999969,0" Font="Arial, 9pt" Padding="2,2,0,0,96">
+        <Item1 Ref="188" ControlType="XRTable" Name="table4" SizeF="767,20" LocationFloat="294.999969,0" Font="Arial, 9pt" Padding="2,2,0,0,96">
           <Rows>
-            <Item1 Ref="149" ControlType="XRTableRow" Name="tableRow2" Weight="0.8" TextAlignment="BottomLeft">
+            <Item1 Ref="189" ControlType="XRTableRow" Name="tableRow2" Weight="0.8" TextAlignment="BottomLeft">
               <Cells>
-                <Item1 Ref="150" ControlType="XRTableCell" Name="tableCell7" Weight="0.69199460198449447" Multiline="true" Text="รวม" TextAlignment="MiddleRight" Font="Tahoma, 9pt" Padding="2,10,0,0,100" Borders="Left, Bottom">
-                  <StylePriority Ref="151" UseFont="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
+                <Item1 Ref="190" ControlType="XRTableCell" Name="tableCell7" Weight="0.62669625748550117" Multiline="true" Text="รวม" TextAlignment="MiddleRight" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Padding="2,2,0,0,100" Borders="Left, Bottom">
+                  <StylePriority Ref="191" UseFont="false" UseBackColor="false" UsePadding="false" UseBorders="false" UseTextAlignment="false" />
                 </Item1>
-                <Item2 Ref="152" ControlType="XRTableCell" Name="tableCell35" Weight="0.19759204793669491" Multiline="true" TextAlignment="MiddleCenter" Font="Tahoma, 9pt" Borders="Left, Bottom">
-                  <Summary Ref="153" Running="Report" IgnoreNullValues="true" />
+                <Item2 Ref="192" ControlType="XRTableCell" Name="tableCell35" Weight="0.16282225588751648" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <Summary Ref="193" Running="Report" IgnoreNullValues="true" />
                   <ExpressionBindings>
-                    <Item1 Ref="154" EventName="BeforePrint" PropertyName="Text" Expression="sumCount([title_name_th_male])" />
+                    <Item1 Ref="194" EventName="BeforePrint" PropertyName="Text" Expression="sumCount([title_name_th_male])" />
                   </ExpressionBindings>
-                  <StylePriority Ref="155" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                  <StylePriority Ref="195" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item2>
-                <Item3 Ref="156" ControlType="XRTableCell" Name="tableCell10" Weight="0.19928733156185305" Multiline="true" TextAlignment="MiddleCenter" Font="Tahoma, 9pt" Borders="Left, Bottom">
-                  <Summary Ref="157" Running="Report" IgnoreNullValues="true" />
+                <Item3 Ref="196" ControlType="XRTableCell" Name="tableCell10" Weight="0.16282226106347678" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <Summary Ref="197" Running="Report" IgnoreNullValues="true" />
                   <ExpressionBindings>
-                    <Item1 Ref="158" EventName="BeforePrint" PropertyName="Text" Expression="sumCount([title_name_th_female])" />
+                    <Item1 Ref="198" EventName="BeforePrint" PropertyName="Text" Expression="sumCount([title_name_th_female])" />
                   </ExpressionBindings>
-                  <StylePriority Ref="159" UseFont="false" UseBorders="false" UseTextAlignment="false" />
+                  <StylePriority Ref="199" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item3>
-                <Item4 Ref="160" ControlType="XRTableCell" Name="tableCell13" Weight="0.21200831744240828" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="161" UseBorders="false" UseTextAlignment="false" />
+                <Item4 Ref="200" ControlType="XRTableCell" Name="tableCell13" Weight="0.24423339057667365" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="201" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item4>
-                <Item5 Ref="162" ControlType="XRTableCell" Name="tableCell8" Weight="0.18487119145565456" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="163" UseBorders="false" UseTextAlignment="false" />
+                <Item5 Ref="202" ControlType="XRTableCell" Name="tableCell8" Weight="0.24423339057666227" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="203" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item5>
-                <Item6 Ref="164" ControlType="XRTableCell" Name="tableCell15" Weight="0.2137039530342299" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="165" UseBorders="false" UseTextAlignment="false" />
+                <Item6 Ref="204" ControlType="XRTableCell" Name="tableCell15" Weight="0.24423337504872161" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="205" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item6>
-                <Item7 Ref="166" ControlType="XRTableCell" Name="tableCell14" Weight="0.21370471390331192" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="167" UseBorders="false" UseTextAlignment="false" />
+                <Item7 Ref="206" ControlType="XRTableCell" Name="tableCell14" Weight="0.24423339057665205" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="207" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item7>
-                <Item8 Ref="168" ControlType="XRTableCell" Name="tableCell16" Weight="0.18317454654767881" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="169" UseBorders="false" UseTextAlignment="false" />
+                <Item8 Ref="208" ControlType="XRTableCell" Name="tableCell16" Weight="0.24423339057666221" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="209" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item8>
-                <Item9 Ref="170" ControlType="XRTableCell" Name="tableCell9" Weight="0.22218470863154397" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="171" UseBorders="false" UseTextAlignment="false" />
+                <Item9 Ref="210" ControlType="XRTableCell" Name="tableCell9" Weight="0.24423339057666227" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="211" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item9>
-                <Item10 Ref="172" ControlType="XRTableCell" Name="tableCell33" Weight="0.22557649140577965" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="173" UseBorders="false" UseTextAlignment="false" />
+                <Item10 Ref="212" ControlType="XRTableCell" Name="tableCell33" Weight="0.20776793104829755" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="213" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item10>
-                <Item11 Ref="174" ControlType="XRTableCell" Name="tableCell17" Weight="0.20352756350804893" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Bottom">
-                  <StylePriority Ref="175" UseBorders="false" UseTextAlignment="false" />
+                <Item11 Ref="214" ControlType="XRTableCell" Name="tableCell17" Weight="0.20352756350804893" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Bottom">
+                  <StylePriority Ref="215" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item11>
-                <Item12 Ref="176" ControlType="XRTableCell" Name="tableCell34" Weight="0.29308021990544436" Multiline="true" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
-                  <StylePriority Ref="177" UseBorders="false" UseTextAlignment="false" />
+                <Item12 Ref="216" ControlType="XRTableCell" Name="tableCell34" Weight="0.29308021990544436" Multiline="true" TextAlignment="MiddleCenter" Font="Courier New, 8.25pt, charSet=0" BackColor="Gainsboro" Borders="Left, Right, Bottom">
+                  <StylePriority Ref="217" UseFont="false" UseBackColor="false" UseBorders="false" UseTextAlignment="false" />
                 </Item12>
               </Cells>
-              <StylePriority Ref="178" UseTextAlignment="false" />
+              <StylePriority Ref="218" UseTextAlignment="false" />
             </Item1>
           </Rows>
-          <StylePriority Ref="179" UseFont="false" />
+          <StylePriority Ref="219" UseFont="false" />
         </Item1>
-        <Item2 Ref="180" ControlType="XRLabel" Name="label9" Multiline="true" Text="ใช้เฉพาะกรณีเป็นผู้ดำเนินการฝึกเอง" TextAlignment="BottomLeft" SizeF="200,20" LocationFloat="0,0" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="181" UseFont="false" UseTextAlignment="false" />
+        <Item2 Ref="220" ControlType="XRLabel" Name="label9" Multiline="true" Text="ใช้เฉพาะกรณีเป็นผู้ดำเนินการฝึกเอง" TextAlignment="BottomLeft" SizeF="200,20" LocationFloat="0,0" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="221" UseFont="false" UseTextAlignment="false" />
         </Item2>
-        <Item3 Ref="182" ControlType="XRLine" Name="line1" LineStyle="Dot" SizeF="181.249939,7.999996" LocationFloat="628.7889,57.0000954" />
-        <Item4 Ref="183" ControlType="XRLabel" Name="label10" Multiline="true" Text="ขอรับรองว่าเป็นความจริง" TextAlignment="MiddleCenter" SizeF="150,20" LocationFloat="628.7889,20.0000763" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="184" UseFont="false" UseTextAlignment="false" />
+        <Item3 Ref="222" ControlType="XRLine" Name="line1" LineStyle="Dot" SizeF="181.249939,7.999996" LocationFloat="622.7472,62.20843" />
+        <Item4 Ref="223" ControlType="XRLabel" Name="label10" Multiline="true" Text="ขอรับรองว่าเป็นความจริง" TextAlignment="MiddleCenter" SizeF="150,20" LocationFloat="622.7472,25.20841" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="224" UseFont="false" UseTextAlignment="false" />
         </Item4>
-        <Item5 Ref="185" ControlType="XRLabel" Name="label11" Multiline="true" Text="ลงชื่อ" TextAlignment="MiddleLeft" SizeF="33.78882,20" LocationFloat="590,45.0000763" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="186" UseFont="false" UseTextAlignment="false" />
+        <Item5 Ref="225" ControlType="XRLabel" Name="label11" Multiline="true" Text="ลงชื่อ" TextAlignment="MiddleLeft" SizeF="33.78882,20" LocationFloat="583.9583,50.20841" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
+          <StylePriority Ref="226" UseFont="false" UseTextAlignment="false" />
         </Item5>
-        <Item6 Ref="187" ControlType="XRLabel" Name="label12" Multiline="true" Text="ผู้ยื่นคำขอ(ผู้มีอำนาจลงนาม/ผู้รับมอบอำนาจ)&#xD;" TextAlignment="MiddleLeft" SizeF="251.961121,23" LocationFloat="810.0389,45.0000763" Font="Tahoma, 9pt" Padding="5,2,0,0,100">
-          <StylePriority Ref="188" UseFont="false" UsePadding="false" UseTextAlignment="false" />
+        <Item6 Ref="227" ControlType="XRLabel" Name="label12" Multiline="true" Text="ผู้ยื่นคำขอ(ผู้มีอำนาจลงนาม/ผู้รับมอบอำนาจ)&#xD;" TextAlignment="MiddleLeft" SizeF="251.961121,23" LocationFloat="803.9972,50.20841" Font="Tahoma, 9pt" Padding="5,2,0,0,100">
+          <StylePriority Ref="228" UseFont="false" UsePadding="false" UseTextAlignment="false" />
         </Item6>
-        <Item7 Ref="189" ControlType="XRLabel" Name="label13" Multiline="true" Text="([?Mgr_org])" TextAlignment="MiddleCenter" SizeF="215.038757,20" LocationFloat="595.000061,65.00002" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="190" UseFont="false" UseTextAlignment="false" />
+        <Item7 Ref="229" ControlType="XRLabel" Name="label13" Multiline="true" TextAlignment="MiddleCenter" SizeF="215.038757,20" LocationFloat="588.9584,70.20836" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
+          <ExpressionBindings>
+            <Item1 Ref="230" EventName="BeforePrint" PropertyName="Text" Expression="[Signature].[name]" />
+          </ExpressionBindings>
+          <StylePriority Ref="231" UseFont="false" UseTextAlignment="false" />
         </Item7>
-        <Item8 Ref="191" ControlType="XRLabel" Name="label14" Multiline="true" Text="ตำแหน่งผู้จัดการแผนก" TextAlignment="MiddleCenter" SizeF="215.038818,20" LocationFloat="595,85.00007" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
-          <StylePriority Ref="192" UseFont="false" UseTextAlignment="false" />
+        <Item8 Ref="232" ControlType="XRLabel" Name="label14" Multiline="true" Text="ตำแหน่งผู้จัดการแผนก" TextAlignment="MiddleCenter" SizeF="215.038818,20" LocationFloat="588.9583,90.2084351" Font="Tahoma, 9pt" Padding="2,2,0,0,100">
+          <ExpressionBindings>
+            <Item1 Ref="233" EventName="BeforePrint" PropertyName="Text" Expression="[Signature].[position]" />
+          </ExpressionBindings>
+          <StylePriority Ref="234" UseFont="false" UseTextAlignment="false" />
         </Item8>
       </Controls>
     </Item5>
   </Bands>
+  <StyleSheet>
+    <Item1 Ref="235" Name="Style1" BorderStyle="Inset" Padding="0,0,0,0,100" StringFormat="Near;Near;0;None;Character;Default" />
+  </StyleSheet>
   <ComponentStorage>
-    <Item1 Ref="193" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource2" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJDdXN0b21TcWxRdWVyeSIgTmFtZT0iUXVlcnkiPjxTcWw+U0VMRUNUIGRpc3RpbmN0IGNvdXJzZV9ubyBGUk9NIHRyX2NvdXJzZV9yZWdpc3RyYXRpb24NCndoZXJlIChsYXN0X3N0YXR1cyA9ICdBcHByb3ZlZCcgb3IgKGxhc3Rfc3RhdHVzID0gJ0NvbnRpbnVvdXMnKSk8L1NxbD48L1F1ZXJ5PjxSZXN1bHRTY2hlbWE+PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxWaWV3IE5hbWU9IlF1ZXJ5Ij48RmllbGQgTmFtZT0iY291cnNlX25vIiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD48L1Jlc3VsdFNjaGVtYT48Q29ubmVjdGlvbk9wdGlvbnMgQ2xvc2VDb25uZWN0aW9uPSJ0cnVlIiAvPjwvU3FsRGF0YVNvdXJjZT4=" />
-    <Item2 Ref="0" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9HRVRSRUdJU1RSQVRJT04iPjxUYWJsZXM+PFRhYmxlIE5hbWU9IlZfR0VUUkVHSVNUUkFUSU9OIiBYPSIzMCIgWT0iMzAiIFdpZHRoPSIxMjUiIEhlaWdodD0iNzQzIiAvPjwvVGFibGVzPjxDb2x1bW5zPjxBbGxDb2x1bW5zIFRhYmxlPSJWX0dFVFJFR0lTVFJBVElPTiIgLz48L0NvbHVtbnM+PC9RdWVyeT48UmVzdWx0U2NoZW1hPjxEYXRhU2V0IE5hbWU9InNxbERhdGFTb3VyY2UxIj48VmlldyBOYW1lPSJWX0dFVFJFR0lTVFJBVElPTiI+PEZpZWxkIE5hbWU9ImNvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkYXRlX3N0YXJ0IiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV9lbmQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJ0aW1lX2luIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpbWVfb3V0IiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBsYWNlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im9yZ19jb2RlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im9yZ19hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iaWRfY2FyZF9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmaXJzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibGFzdG5hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0idGl0bGVfbmFtZV90aF9tYWxlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGhfZmVtYWxlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImJhbmQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zaXRpb25fbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkZXB0X2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkaXZfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3Rfc3RhdHVzIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InByZV90ZXN0X3Njb3JlIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icHJlX3Rlc3RfZ3JhZGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zdF90ZXN0X3Njb3JlIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icG9zdF90ZXN0X2dyYWRlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImZ1bGxfdHJhaW5lciIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzEiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzIiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlXzMiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJEYXRlRGlmZnMiIFR5cGU9IkludDMyIiAvPjwvVmlldz48L0RhdGFTZXQ+PC9SZXN1bHRTY2hlbWE+PENvbm5lY3Rpb25PcHRpb25zIENsb3NlQ29ubmVjdGlvbj0idHJ1ZSIgLz48L1NxbERhdGFTb3VyY2U+" />
+    <Item1 Ref="236" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource2" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJDdXN0b21TcWxRdWVyeSIgTmFtZT0iUXVlcnkiPjxTcWw+U0VMRUNUIGRpc3RpbmN0IGNvdXJzZV9ubyBGUk9NIHRyX2NvdXJzZV9yZWdpc3RyYXRpb24NCndoZXJlIChsYXN0X3N0YXR1cyA9ICdBcHByb3ZlZCcgb3IgKGxhc3Rfc3RhdHVzID0gJ0NvbnRpbnVvdXMnKSk8L1NxbD48L1F1ZXJ5PjxSZXN1bHRTY2hlbWE+PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxWaWV3IE5hbWU9IlF1ZXJ5Ij48RmllbGQgTmFtZT0iY291cnNlX25vIiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD48L1Jlc3VsdFNjaGVtYT48Q29ubmVjdGlvbk9wdGlvbnMgQ2xvc2VDb25uZWN0aW9uPSJ0cnVlIiAvPjwvU3FsRGF0YVNvdXJjZT4=" />
+    <Item2 Ref="0" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource1" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTEiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9HRVRSRUdJU1RSQVRJT04iPjxUYWJsZXM+PFRhYmxlIE5hbWU9IlZfR0VUUkVHSVNUUkFUSU9OIiBYPSIzMCIgWT0iMzAiIFdpZHRoPSIxMjUiIEhlaWdodD0iNzQzIiAvPjwvVGFibGVzPjxDb2x1bW5zPjxBbGxDb2x1bW5zIFRhYmxlPSJWX0dFVFJFR0lTVFJBVElPTiIgLz48L0NvbHVtbnM+PC9RdWVyeT48UXVlcnkgVHlwZT0iU2VsZWN0UXVlcnkiIE5hbWU9IlNpZ25hdHVyZSI+PFRhYmxlcz48VGFibGUgTmFtZT0idHJfc2lnbmF0dXJlIiBYPSIzMCIgWT0iMzAiIFdpZHRoPSIxMjUiIEhlaWdodD0iMTYzIiAvPjwvVGFibGVzPjxDb2x1bW5zPjxBbGxDb2x1bW5zIFRhYmxlPSJ0cl9zaWduYXR1cmUiIC8+PC9Db2x1bW5zPjwvUXVlcnk+PFJlc3VsdFNjaGVtYT48RGF0YVNldCBOYW1lPSJzcWxEYXRhU291cmNlMSI+PFZpZXcgTmFtZT0iVl9HRVRSRUdJU1RSQVRJT04iPjxGaWVsZCBOYW1lPSJjb3Vyc2Vfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGF0ZV9zdGFydCIgVHlwZT0iRGF0ZVRpbWUiIC8+PEZpZWxkIE5hbWU9ImRhdGVfZW5kIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0idGltZV9pbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ0aW1lX291dCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJwbGFjZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJvcmdfY29kZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJvcmdfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImlkX2NhcmRfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZW1wX25vIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGhfbWFsZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ0aXRsZV9uYW1lX3RoX2ZlbWFsZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJiYW5kIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBvc2l0aW9uX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGVwdF9hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGl2X2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJsYXN0X3N0YXR1cyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJwcmVfdGVzdF9zY29yZSIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InByZV90ZXN0X2dyYWRlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBvc3RfdGVzdF9zY29yZSIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9InBvc3RfdGVzdF9ncmFkZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJmdWxsX3RyYWluZXIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGF0ZV8xIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV8yIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV8zIiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iRGF0ZURpZmZzIiBUeXBlPSJJbnQzMiIgLz48L1ZpZXc+PFZpZXcgTmFtZT0iU2lnbmF0dXJlIj48RmllbGQgTmFtZT0iaWQiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJuYW1lIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InBvc2l0aW9uIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InVwZGF0ZWRfYXQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJ1cGRhdGVkX2J5IiBUeXBlPSJTdHJpbmciIC8+PC9WaWV3PjwvRGF0YVNldD48L1Jlc3VsdFNjaGVtYT48Q29ubmVjdGlvbk9wdGlvbnMgQ2xvc2VDb25uZWN0aW9uPSJ0cnVlIiAvPjwvU3FsRGF0YVNvdXJjZT4=" />
   </ComponentStorage>
   <ObjectStorage>
-    <Item1 Ref="3" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-193" DataMember="Query" ValueMember="course_no" DisplayMember="course_no" SortOrder="Ascending" />
+    <Item1 Ref="3" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-236" DataMember="Query" ValueMember="course_no" DisplayMember="course_no" SortOrder="Ascending" />
   </ObjectStorage>
 </XtraReportsLayoutSerializer>

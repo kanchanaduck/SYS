@@ -8,7 +8,7 @@
     <Item2 Ref="6" Visible="false" Description="MTP MANAGER" ValueInfo="นาย ซาโต ฟูมิฮิโกะ" Name="mrg_org" />
   </Parameters>
   <Bands>
-    <Item1 Ref="7" ControlType="TopMarginBand" Name="TopMargin" HeightF="47" />
+    <Item1 Ref="7" ControlType="TopMarginBand" Name="TopMargin" HeightF="46.9999962" />
     <Item2 Ref="8" ControlType="BottomMarginBand" Name="BottomMargin" HeightF="49" />
     <Item3 Ref="9" ControlType="DetailBand" Name="Detail" HeightF="23">
       <MultiColumn Ref="10" Mode="UseColumnCount" />
@@ -27,34 +27,34 @@
                 <Item2 Ref="17" ControlType="XRTableCell" Name="tableCell7" Weight="0.14110982230126104" Multiline="true" Text="[emp_no]" Borders="Left, Bottom">
                   <StylePriority Ref="18" UseBorders="false" />
                 </Item2>
-                <Item3 Ref="19" ControlType="XRTableCell" Name="tableCell4" Weight="0.54092113831586874" Multiline="true" Text=" English name" Borders="Left, Bottom">
+                <Item3 Ref="19" ControlType="XRTableCell" Name="tableCell4" Weight="0.52916180783984124" Multiline="true" Text=" English name" Borders="Left, Bottom">
                   <ExpressionBindings>
                     <Item1 Ref="20" EventName="BeforePrint" PropertyName="Text" Expression="Concat([title_name_en], [firstname_en], ' ', [lastname_en])" />
                   </ExpressionBindings>
                   <StylePriority Ref="21" UseBorders="false" />
                 </Item3>
-                <Item4 Ref="22" ControlType="XRTableCell" Name="tableCell8" Weight="0.54092093332385371" Multiline="true" Text="[title_name_th] [firstname_th]" Font="Tahoma, 9pt" Borders="Left, Bottom">
+                <Item4 Ref="22" ControlType="XRTableCell" Name="tableCell8" Weight="0.52916178227823152" Multiline="true" Text="[title_name_th] [firstname_th]" Font="Tahoma, 9pt" Borders="Left, Bottom">
                   <ExpressionBindings>
                     <Item1 Ref="23" EventName="BeforePrint" PropertyName="Text" Expression="Concat([title_name_th],[firstname_th],' ',[lastname_th] )" />
                   </ExpressionBindings>
                   <StylePriority Ref="24" UseFont="false" UseBorders="false" />
                 </Item4>
-                <Item5 Ref="25" ControlType="XRTableCell" Name="tableCell2" Weight="0.42234930912427082" Multiline="true" Text="[position_name_en]" Borders="Left, Bottom">
+                <Item5 Ref="25" ControlType="XRTableCell" Name="tableCell2" Weight="0.42332942977050503" Multiline="true" Text="[position_name_en]" Borders="Left, Bottom">
                   <StylePriority Ref="26" UseBorders="false" />
                 </Item5>
-                <Item6 Ref="27" ControlType="XRTableCell" Name="tableCell5" Weight="0.15727893288171788" Multiline="true" Text="[div_abb]" TextAlignment="MiddleCenter" Borders="Left, Bottom">
+                <Item6 Ref="27" ControlType="XRTableCell" Name="tableCell5" Weight="0.17638726624220535" Multiline="true" Text="[div_abb]" TextAlignment="MiddleCenter" Borders="Left, Bottom">
                   <StylePriority Ref="28" UseBorders="false" UseTextAlignment="false" />
                 </Item6>
-                <Item7 Ref="29" ControlType="XRTableCell" Name="tableCell3" Weight="0.19647572011043948" Multiline="true" Text="[dept_abb]" TextAlignment="MiddleCenter" Borders="Left, Bottom">
+                <Item7 Ref="29" ControlType="XRTableCell" Name="tableCell3" Weight="0.1763872661037178" Multiline="true" Text="[dept_abb]" TextAlignment="MiddleCenter" Borders="Left, Bottom">
                   <StylePriority Ref="30" UseBorders="false" UseTextAlignment="false" />
                 </Item7>
-                <Item8 Ref="31" ControlType="XRTableCell" Name="tableCell9" Weight="0.12935066279272631" Multiline="true" Text="tableCell9" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
+                <Item8 Ref="31" ControlType="XRTableCell" Name="tableCell9" Weight="0.15286896488397067" Multiline="true" Text="tableCell9" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
                   <ExpressionBindings>
                     <Item1 Ref="32" EventName="BeforePrint" PropertyName="Text" Expression="Concat([pre_test_score],'(',[pre_test_grade],')')" />
                   </ExpressionBindings>
                   <StylePriority Ref="33" UseBorders="false" UseTextAlignment="false" />
                 </Item8>
-                <Item9 Ref="34" ControlType="XRTableCell" Name="tableCell6" Weight="0.15286879442508555" Multiline="true" Text="[pre_test_grade]" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
+                <Item9 Ref="34" ControlType="XRTableCell" Name="tableCell6" Weight="0.15286897385549092" Multiline="true" Text="[pre_test_grade]" TextAlignment="MiddleCenter" Borders="Left, Right, Bottom">
                   <ExpressionBindings>
                     <Item1 Ref="35" EventName="BeforePrint" PropertyName="Text" Expression="Concat([post_test_score],' (',[post_test_grade],')' )" />
                   </ExpressionBindings>

@@ -78,5 +78,13 @@ namespace DXREPORTHRGIS.Controllers
         {
             return View();
         }
+        public IActionResult CourseMaster()
+        {
+            return View();
+        }
+        public IActionResult Course()
+        {
+            return View();
+        }
     }
 }

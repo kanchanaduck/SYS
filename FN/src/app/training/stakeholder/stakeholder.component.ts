@@ -380,103 +380,101 @@ export class StakeholderComponent implements OnInit {
   async save_stakeholders(){
     let self = this
     self.formData = [];
-    //console.log("Committee: ", self.stakeholder.committees)
-    //console.log("Approver: ", self.stakeholder.approvers)
 
+    if(self.stakeholder.committees!==undefined){
+      self.stakeholder.committees.forEach(element => {
+        let c = {
+          emp_no: element,
+          org_code: self.stakeholder.org_code,
+          role: 'COMMITTEE'
+        }
+        self.formData.push(c)
+      });      
+    }
 
-    axios.get(`${environment.API_URL}Employees/${this.more_approver}`,this.headers)
-    .then(function (response) {
-      if(self.stakeholder.committees!==undefined){
-        self.stakeholder.committees.forEach(element => {
-          let c = {
-            emp_no: element,
-            org_code: self.stakeholder.org_code,
-            role: 'COMMITTEE'
-          }
-          self.formData.push(c)
-        });      
-      }
-  
-      if(self.stakeholder.approvers!==undefined){
-        self.stakeholder.approvers.forEach(element => {
-          let a = {
-            emp_no: element,
-            org_code: self.stakeholder.org_code,
-            role: 'APPROVER'
-          }
-          self.formData.push(a)
-        });
-      }
-  
-      if(self.more_approver!=null){
-        self.formData.push({
-          emp_no: self.more_approver,
+    if(self.stakeholder.approvers!==undefined){
+      self.stakeholder.approvers.forEach(element => {
+        let a = {
+          emp_no: element,
           org_code: self.stakeholder.org_code,
           role: 'APPROVER'
-        })
-      }
-      //console.log(self.formData)
+        }
+        self.formData.push(a)
+      });
+    }
   
-      if(self.formData.length>0)
-      {
-        console.log("POST")
-        axios.post(`${environment.API_URL}Stakeholder`,self.formData, self.headers)
+    if(self.more_approver!=null){
+      axios.get(`${environment.API_URL}Employees/${self.more_approver}`,self.headers)
         .then(function (response) {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: "Success",
-            showConfirmButton: false,
-            timer: 2000
+          self.formData.push({
+            emp_no: self.more_approver,
+            org_code: self.stakeholder.org_code,
+            role: 'APPROVER'
           })
-          self.reset_form_stakeholder()
-          self.get_stakeholders()
+          self.save_stakeholders2()
         })
         .catch(function (error) {
-          self.service.sweetalert_error(error)
-        });      
-      }
-      else
-      {
-        console.log("RESET")
-        axios.post(`${environment.API_URL}Stakeholder/Reset/${self.stakeholder.org_code}`, [], self.headers)
-        .then(function (response) {
+          console.log(error)
           Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: "Success",
-            showConfirmButton: false,
-            timer: 2000
+            icon: 'error',
+            title: "404",
+            text: "Staff is not exist."
           })
-          self.reset_form_stakeholder()
-          self.get_stakeholders()
+        });
+    }
+    else{
+      self.save_stakeholders2()
+    }
+    
+    console.log(self.formData)
+  }
+  
+  async save_stakeholders2(){
+    let self = this
+    if(self.formData.length>0)
+    {
+      console.log("POST")
+      axios.post(`${environment.API_URL}Stakeholder`,self.formData, self.headers)
+      .then(function (response) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: "Success",
+          showConfirmButton: false,
+          timer: 2000
         })
-        .catch(function (error) {
-          self.service.sweetalert_error(error)
-        });   
-      }
-      
-      self.reset_form_stakeholder()
-    })
-    .catch(function (error) {
-      console.log(error)
-      Swal.fire({
-        icon: 'error',
-        title: "404",
-        text: "Staff is not exist."
+        self.reset_form_stakeholder()
+        self.get_stakeholders()
       })
-    });
-
-
- 
+      .catch(function (error) {
+        self.service.sweetalert_error(error)
+      });      
+    }
+    else
+    {
+      console.log("RESET")
+      axios.post(`${environment.API_URL}Stakeholder/Reset/${self.stakeholder.org_code}`, [], self.headers)
+      .then(function (response) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: "Success",
+          showConfirmButton: false,
+          timer: 2000
+        })
+        self.reset_form_stakeholder()
+        self.get_stakeholders()
+      })
+      .catch(function (error) {
+        self.service.sweetalert_error(error)
+      });   
+    }
+      
+    self.reset_form_stakeholder()
 
   }
-
-
-
-
 
 }
 

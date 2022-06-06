@@ -332,7 +332,7 @@ async clear_data() {
 
 
 
-    await this.service.gethttp(`Register/GetGridView/${this.course_no}/${this.committee_org_code}`)
+    await this.service.gethttp(`Register/YourOther/${this.course_no}/${this.committee_org_code}`)
       .subscribe((response: any) => {
         this.data_grid = response.your;
         this.data_grid_other = response.other;

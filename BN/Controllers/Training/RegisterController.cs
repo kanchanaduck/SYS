@@ -561,7 +561,10 @@ namespace api_hrgis.Controllers
                 await _context.SaveChangesAsync();
             }
             string course_no = registrant.course_no;
-            await Sorting(course_no);
+
+            if(registrant.pre_test_score==null && registrant.post_test_score==null){
+                await Sorting(course_no);
+            }
 
             return CreatedAtAction("Gettr_course_registration", new { course_no = registrant.course_no }, registrant);
         }

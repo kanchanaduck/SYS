@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<XtraReportsLayoutSerializer SerializerVersion="21.2.6.0" Ref="0" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="CourseMap" VerticalContentSplitting="Smart" HorizontalContentSplitting="Smart" Landscape="true" Margins="25, 25, 75, 75" PaperKind="A4" PageWidth="1169" PageHeight="827" Version="21.2" Font="Arial, 9.75pt">
+<XtraReportsLayoutSerializer SerializerVersion="21.1.4.0" Ref="0" ControlType="DevExpress.XtraReports.UI.XtraReport, DevExpress.XtraReports.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Name="CourseMap" VerticalContentSplitting="Smart" HorizontalContentSplitting="Smart" Landscape="true" Margins="25, 25, 75, 75" PaperKind="A4" PageWidth="1169" PageHeight="827" Version="21.2" Font="Arial, 9.75pt">
   <Extensions>
     <Item1 Ref="1" Key="VSReportExtInfo" Value=".vsrepx" />
   </Extensions>
   <Parameters>
-    <Item1 Ref="4" Description="DIVISION" ValueSourceSettings="#Ref-2" Name="DIV" />
+    <Item1 Ref="4" Description="DIVISION" ValueSourceSettings="#Ref-2" MultiValue="true" SelectAllValues="true" Name="DIV" />
     <Item2 Ref="6" Description="DEPARTMENT" ValueSourceSettings="#Ref-5" MultiValue="true" SelectAllValues="true" Name="DEPT" />
     <Item3 Ref="8" Description="STATUS" ValueSourceSettings="#Ref-7" MultiValue="true" SelectAllValues="true" Name="STATUS" />
   </Parameters>
@@ -19,7 +19,7 @@
     </Item1>
     <Item2 Ref="13" ControlType="DetailBand" Name="Detail" HeightF="425">
       <Controls>
-        <Item1 Ref="14" ControlType="XRCrossTab" Name="crossTab1" GeneralStyleName="crossTabGeneralStyle" DataAreaStyleName="crossTabDataStyle" HeaderAreaStyleName="crossTabHeaderStyle" TotalAreaStyleName="crossTabTotalStyle" DataSource="#Ref-9" DataMember="V_COURSE_MAP" FilterString="[employed_status] In (?STATUS) And ([div_abb] In (?DIV) Or [dept_abb] In (?DEPT))" SizeF="975.75,400" LocationFloat="0,0">
+        <Item1 Ref="14" ControlType="XRCrossTab" Name="crossTab1" GeneralStyleName="crossTabGeneralStyle" DataAreaStyleName="crossTabDataStyle" HeaderAreaStyleName="crossTabHeaderStyle" TotalAreaStyleName="crossTabTotalStyle" DataSource="#Ref-9" DataMember="V_COURSE_MAP" FilterString="[employed_status] In (?STATUS) And [div_code] In (?DIV) And [dept_code] In (?DEPT)" SizeF="975.75,400" LocationFloat="0,0">
           <Parameters>
             <Item1 Ref="16" Name="STATUS" Parameter="#Ref-8" />
             <Item2 Ref="17" Name="DIV" Parameter="#Ref-4" />
@@ -57,16 +57,16 @@
           </ColumnDefinitions>
           <RowDefinitions>
             <Item1 Ref="41" Height="150" AutoHeightMode="ShrinkAndGrow" />
-            <Item2 Ref="42" />
-            <Item3 Ref="43" Visible="false" />
-            <Item4 Ref="44" Visible="false" />
-            <Item5 Ref="45" Visible="false" />
-            <Item6 Ref="46" Visible="false" />
-            <Item7 Ref="47" Visible="false" />
-            <Item8 Ref="48" Visible="false" />
-            <Item9 Ref="49" Visible="false" />
-            <Item10 Ref="50" Visible="false" />
-            <Item11 Ref="51" />
+            <Item2 Ref="42" Height="25" />
+            <Item3 Ref="43" Height="25" Visible="false" />
+            <Item4 Ref="44" Height="25" Visible="false" />
+            <Item5 Ref="45" Height="25" Visible="false" />
+            <Item6 Ref="46" Height="25" Visible="false" />
+            <Item7 Ref="47" Height="25" Visible="false" />
+            <Item8 Ref="48" Height="25" Visible="false" />
+            <Item9 Ref="49" Height="25" Visible="false" />
+            <Item10 Ref="50" Height="25" Visible="false" />
+            <Item11 Ref="51" Height="25" />
           </RowDefinitions>
           <Cells>
             <Item1 Ref="52" ControlType="XRCrossTabCell" Name="crossTabCell1" ColumnIndex="0" RowIndex="0" Text="EMP NO." TextAlignment="BottomCenter" Font="Arial, 8.25pt, style=Bold" Padding="6,6,0,6,100" />
@@ -146,11 +146,11 @@
     <Item5 Ref="112" Name="crossTabTotalStyle" BorderStyle="Inset" Font="Arial, 9.75pt, style=Bold" BackColor="White" StringFormat="Far;Center;0;None;Character;Default" TextAlignment="MiddleRight" />
   </StyleSheet>
   <ComponentStorage>
-    <Item1 Ref="9" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.2" Name="sqlDataSource2" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJTZWxlY3RRdWVyeSIgTmFtZT0iVl9DT1VSU0VfTUFQIj48VGFibGVzPjxUYWJsZSBOYW1lPSJWX0NPVVJTRV9NQVAiIFg9IjMwIiBZPSIzMCIgV2lkdGg9IjEyNSIgSGVpZ2h0PSI1NDMiIC8+PC9UYWJsZXM+PENvbHVtbnM+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJtYXN0ZXJfY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX3RoIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iY291cnNlX25hbWVfdGgiIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImNhcGFjaXR5IiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF0ZV9zdGFydCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRhdGVfZW5kIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGF5cyIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBsYWNlIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZW1wX25vIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV9lbiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX2VuIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0idGl0bGVfbmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImZpcnN0bmFtZV90aCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9Imxhc3RuYW1lX3RoIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGl2X2FiYiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRlcHRfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0id2NfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iYmFuZCIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9InBvc2l0aW9uX25hbWVfZW4iIC8+PENvbHVtbiBUYWJsZT0iVl9DT1VSU0VfTUFQIiBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIC8+PC9Db2x1bW5zPjxTb3J0aW5nPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZGl2X2FiYiIgLz48Q29sdW1uIFRhYmxlPSJWX0NPVVJTRV9NQVAiIE5hbWU9ImRlcHRfYWJiIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZW1wbG95ZWRfc3RhdHVzIiAvPjxDb2x1bW4gVGFibGU9IlZfQ09VUlNFX01BUCIgTmFtZT0iZW1wX25vIiAvPjwvU29ydGluZz48L1F1ZXJ5PjxSZXN1bHRTY2hlbWE+PERhdGFTZXQgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxWaWV3IE5hbWU9IlZfQ09VUlNFX01BUCI+PEZpZWxkIE5hbWU9Im1hc3Rlcl9jb3Vyc2Vfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Im1hc3Rlcl9jb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2Vfbm8iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY291cnNlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iY2FwYWNpdHkiIFR5cGU9IkludDMyIiAvPjxGaWVsZCBOYW1lPSJkYXRlX3N0YXJ0IiBUeXBlPSJEYXRlVGltZSIgLz48RmllbGQgTmFtZT0iZGF0ZV9lbmQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXlzIiBUeXBlPSJJbnQzMiIgLz48RmllbGQgTmFtZT0icGxhY2UiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZW1wX25vIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfZW4iIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9InRpdGxlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZmlyc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9Imxhc3RuYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImRpdl9hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iZGVwdF9hYmIiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0id2NfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImJhbmQiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0icG9zaXRpb25fbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJlbXBsb3llZF9zdGF0dXMiIFR5cGU9IlN0cmluZyIgLz48L1ZpZXc+PC9EYXRhU2V0PjwvUmVzdWx0U2NoZW1hPjxDb25uZWN0aW9uT3B0aW9ucyBDbG9zZUNvbm5lY3Rpb249InRydWUiIC8+PC9TcWxEYXRhU291cmNlPg==" />
+    <Item1 Ref="9" ObjectType="DevExpress.DataAccess.Sql.SqlDataSource,DevExpress.DataAccess.v21.1" Name="sqlDataSource2" Base64="PFNxbERhdGFTb3VyY2UgTmFtZT0ic3FsRGF0YVNvdXJjZTIiPjxDb25uZWN0aW9uIE5hbWU9IkRlZmF1bHRDb25uZWN0aW9uIiBGcm9tQXBwQ29uZmlnPSJ0cnVlIiAvPjxRdWVyeSBUeXBlPSJDdXN0b21TcWxRdWVyeSIgTmFtZT0iVl9DT1VSU0VfTUFQIj48U3FsPnNlbGVjdCAqDQogIGZyb20gImRibyIuIlZfQ09VUlNFX01BUCIgIlZfQ09VUlNFX01BUCINCm9yZGVyIGJ5ICJWX0NPVVJTRV9NQVAiLiJkaXZfYWJiIiBhc2MsDQogICAgICAgIlZfQ09VUlNFX01BUCIuImRlcHRfYWJiIiBhc2MsDQogICAgICAgIlZfQ09VUlNFX01BUCIuImVtcGxveWVkX3N0YXR1cyIgYXNjLA0KICAgICAgICJWX0NPVVJTRV9NQVAiLiJlbXBfbm8iIGFzYzwvU3FsPjwvUXVlcnk+PFF1ZXJ5IFR5cGU9IkN1c3RvbVNxbFF1ZXJ5IiBOYW1lPSJERVBBUlRNRU5UIj48U3FsPnNlbGVjdCAidGJfb3JnYW5pemF0aW9uIi4ib3JnX2NvZGUiLA0KICAgICAgICJ0Yl9vcmdhbml6YXRpb24iLiJvcmdfYWJiIiwNCiAgICAgICAidGJfb3JnYW5pemF0aW9uIi4icGFyZW50X29yZ19jb2RlIg0KICBmcm9tICJkYm8iLiJ0Yl9vcmdhbml6YXRpb24iICJ0Yl9vcmdhbml6YXRpb24iDQp3aGVyZSBsZXZlbF9uYW1lPSdERVBBUlRNRU5UJzwvU3FsPjwvUXVlcnk+PFJlc3VsdFNjaGVtYT48RGF0YVNldCBOYW1lPSJzcWxEYXRhU291cmNlMiI+PFZpZXcgTmFtZT0iVl9DT1VSU0VfTUFQIj48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJtYXN0ZXJfY291cnNlX25hbWVfdGgiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ibWFzdGVyX2NvdXJzZV9uYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImNvdXJzZV9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjb3Vyc2VfbmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJjYXBhY2l0eSIgVHlwZT0iSW50MzIiIC8+PEZpZWxkIE5hbWU9ImRhdGVfc3RhcnQiIFR5cGU9IkRhdGVUaW1lIiAvPjxGaWVsZCBOYW1lPSJkYXRlX2VuZCIgVHlwZT0iRGF0ZVRpbWUiIC8+PEZpZWxkIE5hbWU9ImRheXMiIFR5cGU9IkRlY2ltYWwiIC8+PEZpZWxkIE5hbWU9InBsYWNlIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImVtcF9ubyIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ0aXRsZV9uYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImZpcnN0bmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJsYXN0bmFtZV9lbiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJ0aXRsZV9uYW1lX3RoIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImZpcnN0bmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJsYXN0bmFtZV90aCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkaXZfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImRlcHRfYWJiIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9IndjX2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkaXZfY29kZSIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJkZXB0X2NvZGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0iYmFuZCIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJwb3NpdGlvbl9uYW1lX2VuIiBUeXBlPSJTdHJpbmciIC8+PEZpZWxkIE5hbWU9ImVtcGxveWVkX3N0YXR1cyIgVHlwZT0iU3RyaW5nIiAvPjwvVmlldz48VmlldyBOYW1lPSJERVBBUlRNRU5UIj48RmllbGQgTmFtZT0ib3JnX2NvZGUiIFR5cGU9IlN0cmluZyIgLz48RmllbGQgTmFtZT0ib3JnX2FiYiIgVHlwZT0iU3RyaW5nIiAvPjxGaWVsZCBOYW1lPSJwYXJlbnRfb3JnX2NvZGUiIFR5cGU9IlN0cmluZyIgLz48L1ZpZXc+PC9EYXRhU2V0PjwvUmVzdWx0U2NoZW1hPjxDb25uZWN0aW9uT3B0aW9ucyBDbG9zZUNvbm5lY3Rpb249InRydWUiIC8+PC9TcWxEYXRhU291cmNlPg==" />
   </ComponentStorage>
   <ObjectStorage>
-    <Item1 Ref="2" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-9" DataMember="V_COURSE_MAP" ValueMember="div_abb" DisplayMember="div_abb" SortMember="div_abb" SortOrder="Ascending" />
-    <Item2 Ref="5" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-9" DataMember="V_COURSE_MAP" ValueMember="dept_abb" DisplayMember="dept_abb" SortMember="dept_abb" SortOrder="Ascending" />
-    <Item3 Ref="7" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.2.Core" DataSource="#Ref-9" DataMember="V_COURSE_MAP" ValueMember="employed_status" DisplayMember="employed_status" />
+    <Item1 Ref="2" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.1.Core" DataSource="#Ref-9" DataMember="V_COURSE_MAP" ValueMember="div_code" DisplayMember="div_abb" SortMember="div_abb" SortOrder="Ascending" />
+    <Item2 Ref="5" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.1.Core" DataSource="#Ref-9" DataMember="DEPARTMENT" ValueMember="org_code" DisplayMember="org_abb" SortMember="dept_abb" SortOrder="Ascending" FilterString="[parent_org_code] In (?DIV)" />
+    <Item3 Ref="7" ObjectType="DevExpress.XtraReports.Parameters.DynamicListLookUpSettings, DevExpress.Printing.v21.1.Core" DataSource="#Ref-9" DataMember="V_COURSE_MAP" ValueMember="employed_status" DisplayMember="employed_status" />
   </ObjectStorage>
 </XtraReportsLayoutSerializer>

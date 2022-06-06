@@ -251,17 +251,14 @@ export class CourseComponent implements OnInit {
       self.errors = {};
       await axios.post(`${environment.API_URL}Courses`, form_data , this.headers)
       .then(function (response) {
+        self.service.sweetalert_create();
         self.fnClear()
         self.get_courses();
       })
       .catch(function (error) {
         self.errors = error.response.data.errors
         console.log(error.response)
-        Swal.fire({
-          icon: 'error',
-          title: error.response.status,
-          text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
-        })
+        self.service.sweetalert_error(error)
       });
   }
 
