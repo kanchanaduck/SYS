@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit {
   }
 
   async check_is_j4(){
-    await axios.get(`${environment.API_URL}Employee/CheckIsj4Up/${this._emp_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Employees/CheckIsj4Up/${this._emp_no}`, this.headers)
     .then((response) => {
       this.is_j4 = true
     })
