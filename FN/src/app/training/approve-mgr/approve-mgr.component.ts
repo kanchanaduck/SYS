@@ -305,7 +305,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
 
   async get_courses_open(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, this.headers)
     .then(function(response){
       self.courses = response
       self.get_course()

@@ -196,7 +196,7 @@ export class RegisterContinuousComponent implements OnInit {
 
 async get_courses_owner(){
   let self = this
-  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
+  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, this.headers)
   .then(function(response){
     self.courses = response
     self.get_course()

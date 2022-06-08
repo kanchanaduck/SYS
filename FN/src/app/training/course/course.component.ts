@@ -285,6 +285,7 @@ export class CourseComponent implements OnInit {
     this.course.time_out_hh = "16"
     this.course.time_out_mm = "30"
   }
+
   CheckDate(date_end) {
     let result = true;
     let date: Date = new Date(date_end);
@@ -303,6 +304,7 @@ export class CourseComponent implements OnInit {
 
     return result;
   }
+  
   async fnEdit(course_no) {
     this.visibleSave = false;
     this.visibleUpdate = true;

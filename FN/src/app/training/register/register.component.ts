@@ -357,7 +357,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
 
   async get_courses_open(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Open`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, this.headers)
     .then(function(response){
       self.courses = response
       self.get_course()

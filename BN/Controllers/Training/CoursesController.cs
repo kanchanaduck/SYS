@@ -29,18 +29,33 @@ namespace api_hrgis.Controllers
             _config = config;
         }
 
-        // GET: api/Courses
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tr_course>>> get_courses(string open_register)
+        public IActionResult get_courses()
         {
-            return await _context.tr_course
-                        .Include(e => e.courses_bands)
-                        .Include(e => e.courses_trainers)
-                        .Include(e => e.organization)
-                        .AsNoTracking()
-                        .OrderBy(e=>e.date_start)
-                        .ToListAsync();
+            var courses = _context.tr_course
+                                .Include(e => e.courses_bands)
+                                .Include(e => e.courses_trainers)
+                                .Include(e => e.organization)
+                                .AsNoTracking()
+                                .OrderByDescending(e => e.date_start)
+                                .ToList();
+
+            if (courses == null)
+            {
+                return NotFound("Course is not found");
+            }
+            
+            
+            foreach (var item in courses)
+            {
+                item.status_active = ((DateTime.Now.Date - (item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date) ).Days 
+                                -
+                                (count_holidays((item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date), (DateTime.Now.Date)))
+                                < 10
+                                )? true:false;
+            }
+
+            return Ok(courses);
         }
 
         // GET: api/Courses/5
@@ -79,11 +94,39 @@ namespace api_hrgis.Controllers
 
             if (tr_course == null)
             {
-                return NotFound("Have no data");
+                return NotFound("Course is not found");
             }
 
             return tr_course;
         }
+        
+        // GET: api/Courses/Open/StartNotOver5Days
+        [HttpGet("Open/StartNotOver5Days")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> course_open_owner_5days()
+        {
+            string query = $@"SELECT [t].*
+                            FROM [tr_course] AS [t]
+                            WHERE DATEADD(day, CAST((-5-[dbo].count_holidays( CONVERT(date, GETDATE()),date_start)) AS int), 
+                            CONVERT(date, [t].[date_start])) >= CONVERT(date, GETDATE())";
+
+            var tr_course = await _context.tr_course
+                                        .FromSqlRaw(query)
+                        .Include(e => e.courses_bands)
+                        .Include(e => e.courses_trainers)
+                        .Include(e => e.courses_registrations)
+                        .Include(e => e.organization)
+                        .Where(e => e.open_register == true)
+                        .AsNoTracking()
+                        .ToListAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            return tr_course;
+        }
+
 
         // GET: api/Courses/Owner/1210
         [HttpGet("Owner/{org_code}")]
@@ -126,6 +169,31 @@ namespace api_hrgis.Controllers
 
             return tr_course;
         }
+
+        // GET: api/Courses/Owner/{org_code}/NotOver10WorkingDays
+        [HttpGet("Owner/{org_code}/NotOver10WorkingDays")]
+        public async Task<ActionResult<IEnumerable<tr_course>>> get_course_end_not_over_10_working_days(string org_code)
+        {
+            var tr_course = await _context.tr_course
+                            .FromSqlRaw(
+                                $@"SELECT [t].*
+                                FROM [tr_course] AS [t]
+                                INNER JOIN [tb_organization] AS [t0] ON [t].[org_code] = [t0].[org_code]
+                                WHERE ([t].[org_code] = '{org_code}') 
+                                AND DATEADD(day, CAST((10+[dbo].count_holidays(date_end, CONVERT(date, GETDATE()))) AS int), CONVERT(date, [t].[date_end])) >= CONVERT(date, GETDATE())")
+                            .Where(e => e.open_register == true && e.org_code==org_code)
+                            .Include(e=>e.organization)
+                            .AsNoTracking()
+                            .ToListAsync();
+
+            if (tr_course == null)
+            {
+                return NotFound();
+            }
+
+            return tr_course;
+        }
+
         // GET: api/Courses/SuggestionCourseNumber/CPT-001
         [HttpGet("SuggestionCourseNumber/{master_course_no}")]
         public async Task<ActionResult<IEnumerable<tr_course>>> Suggestion_Course_Number(string master_course_no)
@@ -210,123 +278,6 @@ namespace api_hrgis.Controllers
             .ToListAsync();
 
             return Ok(new { courses=tr_course, trainers=trainers});
-        }
-
-        // GET: api/Courses/Wait-Approve/1210
-        [HttpGet("Wait-Approve/{org_code}")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseWaitingForApprove(string org_code)
-        {
-
-            var registrator = await _context.tr_course_registration
-                            .Where(c=>c.last_status!="Approved")
-                            .Select(c => c.course_no)
-                            .Distinct()
-                            .ToListAsync();
-
-            var courses_arr = new List<string>();
-            if(registrator.Count() > 0){
-                foreach (var item in registrator)
-                {
-                   courses_arr.Add(item); 
-                }
-            }
-
-            var tr_course = await _context.tr_course
-                            .Include(e => e.courses_bands)
-                            .Include(e => e.courses_trainers)
-                            .Include(e => e.organization)
-                            .Where(e=>courses_arr.Contains(e.course_no)
-                            && e.org_code==org_code)
-                            .ToListAsync();
-
-            if (tr_course == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course;
-        }
-
-
-
-        // GET: api/Courses/GetCourseRegister
-        [HttpGet("GetCourseRegister")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseRegister()
-        {
-            var tr_course = await _context.tr_course
-                        .Include(e => e.courses_bands)
-                        .Include(e => e.courses_trainers)
-                        .Include(e => e.courses_registrations)
-                        .Include(e => e.organization)
-                        .Where(e => e.status_active == true).ToListAsync();
-
-            if (tr_course == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course;
-        }
-
-        // GET: api/Courses/GetCourseALL
-        [HttpGet("GetCourseALL")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> GetCourseALL()
-        {
-            var tr_course = await (from tb1 in _context.tr_course
-                                   join tb2 in _context.tb_organization on tb1.org_code equals tb2.org_code
-                                   where tb1.status_active == true
-                                   select new
-                                   {
-                                       tb1.course_no,
-                                       tb1.course_name_en,
-                                       tb1.course_name_th,
-                                       tb1.org_code,
-                                       tb2.org_abb
-                                   }
-                                        ).Distinct().ToListAsync();
-            if (tr_course == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(tr_course);
-
-            // var tr_course = await _context.tr_course
-            //             .Include(e => e.courses_bands)
-            //             .Include(e => e.courses_trainers)
-            //             .Include(e => e.courses_registrations)
-            //             .Include(e => e.organization)
-            //             .Where(e => e.status_active == true).ToListAsync();
-
-            // if (tr_course == null)
-            // {
-            //     return NotFound();
-            // }
-
-            // return tr_course;
-        }
-        [AllowAnonymous]
-        // GET: api/Courses/Owner/{org_code}/NotOver10WorkingDays
-        [HttpGet("Owner/{org_code}/NotOver10WorkingDays")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> get_course_not_over_10_working_days(string org_code)
-        {
-            var tr_course = await _context.tr_course
-                            .FromSqlRaw(
-                                $@"SELECT [t].*
-                                FROM [tr_course] AS [t]
-                                INNER JOIN [tb_organization] AS [t0] ON [t].[org_code] = [t0].[org_code]
-                                WHERE ([t].[org_code] = '{org_code}') 
-                                AND DATEADD(day, CAST((10+[dbo].count_holidays(date_end, CONVERT(date, GETDATE()))) AS int), CONVERT(date, [t].[date_end])) >= CONVERT(date, GETDATE())")
-                            .Include(e=>e.organization)
-                            .AsNoTracking()
-                            .ToListAsync();
-
-            if (tr_course == null)
-            {
-                return NotFound();
-            }
-
-            return tr_course;
         }
 
         // PUT: api/Course/5
@@ -453,7 +404,7 @@ namespace api_hrgis.Controllers
             await _context.SaveChangesAsync(); 
             return NoContent();
         }
-        private double count_holidays(DateTime date_start, DateTime date_end){
+        private double count_holidays(DateTime? date_start, DateTime? date_end){
             Console.WriteLine("START: "+date_start);
             Console.WriteLine("END: "+date_end);
             // return _context.tb_holiday.Where(n=> n.holiday >= date_start && n.holiday <= date_end 
