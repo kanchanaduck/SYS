@@ -43,24 +43,24 @@ namespace api_hrgis.Controllers
         public async Task<ActionResult<IEnumerable<tb_employee>>> Employee_Dump()
         {
             Console.WriteLine("Start dump employee..");
-            // DataTable dt1 = new DataTable();
+            DataTable dt1 = new DataTable();
 
-            // dt = get_oracle_datatable(@"select * from cpt_employees");
-            // Console.WriteLine("Count row"+dt.Rows.Count);
+            dt1 = get_oracle_datatable(@"select * from cpt_employees");
+            Console.WriteLine("Count row"+dt1.Rows.Count);
 
-            // var employee_temp = _context.tb_employee_temp.ToList();
-            // _context.tb_employee_temp.RemoveRange(employee_temp);
-            // _context.SaveChanges();
+            var employee_temp = _context.tb_employee_temp.ToList();
+            _context.tb_employee_temp.RemoveRange(employee_temp);
+            _context.SaveChanges();
 
-            // DumpDataTableToDB("tb_employee_temp",dt,dt.Rows.Count);
+            DumpDataTableToDB("tb_employee_temp",dt1,dt1.Rows.Count);
             
             Console.WriteLine("...End dump employee"); 
 
             // ----------------------------------------------------
 
             Console.WriteLine("Start update employee..");
-            // DataTable dt2 = new DataTable();
-            // dt2 = get_mssql_datatable(@"EXECUTE update_employee");
+            DataTable dt2 = new DataTable();
+            dt2 = get_mssql_datatable(@"EXECUTE update_employee");
             Console.WriteLine("...End update employee"); 
             
             // ----------------------------------------------------
@@ -68,7 +68,8 @@ namespace api_hrgis.Controllers
             Console.WriteLine("Start register..");
             var tb_employees = await _context.tb_employee
                             .FromSqlRaw(@"SELECT A.* FROM tb_employee A 
-                            LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL")
+                            LEFT JOIN tb_user B ON A.emp_no=B.username WHERE B.username IS NULL
+                            and employed_status <> 'RESIGNED'")
                             .ToListAsync();
 
             Console.WriteLine(tb_employees.Count());
@@ -101,8 +102,8 @@ namespace api_hrgis.Controllers
             // ----------------------------------------------------
 
             Console.WriteLine("Start delete user..");
-            DataTable dt2 = new DataTable();
-            dt2 = get_mssql_datatable(@"DELETE u
+            DataTable dt3 = new DataTable();
+            dt3 = get_mssql_datatable(@"DELETE u
                                     FROM tb_user u
                                     INNER JOIN tb_employee e
                                     ON e.emp_no=u.username
@@ -142,7 +143,7 @@ namespace api_hrgis.Controllers
         [HttpGet("HistoryDump")]
         public async Task<ActionResult<IEnumerable<tb_hrms>>> HistoryDump()
         {
-            return await _context.tb_hrms.Take(5).ToListAsync();
+            return await _context.tb_hrms.Take(5).OrderByDescending(o => o.updated_at).ToListAsync();
         }      
         private DataTable get_oracle_datatable(string query)
         {

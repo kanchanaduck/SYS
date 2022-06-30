@@ -40,7 +40,12 @@ export class SidebarComponent implements OnInit {
 
     if (localStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); 
-      this._fullname = this._data.user.firstname_en + ' ' + this._data.user.lastname_en.substring(0, 1);
+      if(this._data.user.band=="JP"){
+        this._fullname = this._data.user.lastname_en + ' ' + this._data.user.firstname_en.substring(0, 1);
+      }
+      else{
+        this._fullname = this._data.user.firstname_en + ' ' + this._data.user.lastname_en.substring(0, 1);
+      }
       this._emp_no = this._data.user.emp_no;
       this._positions = this._data.user.position_name_en;
       this.images = this.img_garoon + this._data.user.emp_no + ".jpg";

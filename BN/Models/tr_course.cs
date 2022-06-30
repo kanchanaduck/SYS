@@ -17,17 +17,18 @@ namespace api_hrgis.Models
         [Required]
         [Display(Name = "THAI NAME")]
         public string course_name_th { get; set; }
+        [Required]
         [Display(Name = "ENGLISH NAME")]
         public string course_name_en { get; set; }
         [Required]
         public string org_code { get; set; }
         [Required]
         [Display(Name = "DAYS")]
-        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Range(0.5, double.MaxValue, ErrorMessage = "Only positive number allowed")]
         [Column(TypeName = "decimal(3,1)")]
         public decimal? days { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Range(1, 100, ErrorMessage = "Only positive number allowed")]
         public int capacity { get; set; }
         public bool open_register { get; set; } = false;
         public string trainer_text { get; set; }

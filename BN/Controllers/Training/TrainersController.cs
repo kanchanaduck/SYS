@@ -431,9 +431,10 @@ namespace api_hrgis.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Deletetr_trainer(int id)
         {
-            if(!user_is_center()){
-                return StatusCode(403,"Permission denied, only center can manage data");
+            if(user_is_commitee_return_org_code()==null){
+                return StatusCode(403,"Permission denied, only committee can manage data");
             }
+
             var tr_trainer = await _context.tr_trainer.FindAsync(id);
             if (tr_trainer == null)
             {
@@ -473,71 +474,6 @@ namespace api_hrgis.Controllers
             else{
                 return committee.org_code;
             }
-        }
-
-        // GET: api/Trainers/FullTrainers
-        /* [HttpGet("FullTrainers")]
-        public async Task<ActionResult> FullTrainers()
-        {
-            var query = await (
-                from tb1 in _context.tr_trainer
-                join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
-                from table in tb.DefaultIfEmpty()
-                where 
-                tb1.org_code == user_is_commitee_return_org_code()
-                select new { 
-                    tb1.trainer_no, 
-                    tb1.emp_no,
-                    company = ( tb1.company != null ? tb1.company : table.dept_abb),
-                    lastname_en = ( tb1.lastname_en != null ? tb1.lastname_en : table.lastname_en),
-                    firstname_en = ( tb1.firstname_en != null ? tb1.firstname_en : table.firstname_en),
-                    title_name_en = ( tb1.title_name_en != null ? tb1.title_name_en : table.title_name_en),
-                    tb1.trainer_type,
-                    fulls = (
-                        tb1.trainer_type == "Internal" ? 
-                        table.title_name_en == null ? "" :
-                        table.title_name_en== "MS." ? table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0,1) + ". (" + table.dept_abb + ")" 
-                        : table.title_name_en + table.firstname_en + " " + table.lastname_en.Substring(0,1) + ". (" + table.dept_abb + ")" 
-                        : tb1.title_name_en + tb1.firstname_en + " " + tb1.lastname_en.Substring(0,1) + "."
-                    )
-                }).OrderBy(x => x.firstname_en).ToListAsync();
-                
-            return Ok(query);
-        } */
-        [AllowAnonymous]
-        [HttpGet("Mock")]
-        public async Task<ActionResult<IEnumerable<tr_trainer>>> Trainer()
-        {
-            string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");
-
-            if(System.IO.File.Exists(filePath)){
-                Console.WriteLine("File exists.");
-                using(var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets["tr_trainer"];
-                    int rowCount = worksheet.Dimension.Rows;
-                    int colCount = worksheet.Dimension.Columns;
-                    for (int row = 2; row <= rowCount; row++){
-                        _context.Add(new tr_trainer
-                        {
-                            emp_no = worksheet.Cells[row, 2].Value==null ? null:worksheet.Cells[row, 2].Value.ToString().Trim(),
-                            title_name_en = worksheet.Cells[row, 3].Value==null ? null:worksheet.Cells[row, 3].Value.ToString().Trim(),
-                            firstname_en = worksheet.Cells[row, 4].Value==null ? null:worksheet.Cells[row, 4].Value.ToString().Trim(),
-                            lastname_en = worksheet.Cells[row, 5].Value==null ? null:worksheet.Cells[row, 5].Value.ToString().Trim(),
-                            title_name_th = worksheet.Cells[row, 6].Value==null ? null:worksheet.Cells[row, 6].Value.ToString().Trim(),
-                            firstname_th = worksheet.Cells[row, 7].Value==null ? null:worksheet.Cells[row, 7].Value.ToString().Trim(),
-                            lastname_th = worksheet.Cells[row, 8].Value==null ? null:worksheet.Cells[row, 8].Value.ToString().Trim(),
-                            trainer_type = worksheet.Cells[row, 9].Value.ToString().Trim(),
-                            company = worksheet.Cells[row, 10].Value==null ? null:worksheet.Cells[row, 10].Value.ToString().Trim(),
-                            created_at = DateTime.Now,
-                            created_by = "014496",
-                            status_active = true
-                        });
-                        await _context.SaveChangesAsync();
-                    }
-               }
-            }
-            return Ok("success");
         }
     }
 }

@@ -37,7 +37,7 @@ namespace api_hrgis.Controllers
                                 .Include(e => e.courses_trainers)
                                 .Include(e => e.organization)
                                 .AsNoTracking()
-                                .OrderByDescending(e => e.date_start)
+                                .OrderBy(e => e.date_start)
                                 .ToList();
 
             if (courses == null)
@@ -52,7 +52,7 @@ namespace api_hrgis.Controllers
                                 -
                                 (count_holidays((item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date), (DateTime.Now.Date)))
                                 < 10
-                                )? true:false;
+                                )? true:false; 
             }
 
             return Ok(courses);
@@ -181,7 +181,7 @@ namespace api_hrgis.Controllers
                                 INNER JOIN [tb_organization] AS [t0] ON [t].[org_code] = [t0].[org_code]
                                 WHERE ([t].[org_code] = '{org_code}') 
                                 AND DATEADD(day, CAST((10+[dbo].count_holidays(date_end, CONVERT(date, GETDATE()))) AS int), CONVERT(date, [t].[date_end])) >= CONVERT(date, GETDATE())")
-                            .Where(e => e.open_register == true && e.org_code==org_code)
+                            .Where(e => e.org_code==org_code)
                             .Include(e=>e.organization)
                             .AsNoTracking()
                             .ToListAsync();

@@ -154,7 +154,7 @@ export class ConfirmationSheetComponent implements OnInit {
     I would like to confirm about the lists :<br> 
     ****************************************************************************************<br> <br> 
 
-    Course: ${this.course.course_name_th} <br>
+    Course: ${this.course.course_name_en} <br>
     Date: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br> 
     Time: ${formatDate(this.course.date_start,'HH:mm','en-US')} ~ ${formatDate(this.course.date_end,'HH:mm','en-US')} 
     (Please arrive 10 minutes early to allow us enough time to check your list.) <br>

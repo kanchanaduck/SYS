@@ -489,7 +489,6 @@ export class CourseComponent implements OnInit {
         self._org_code = response.org_code
         self._org_abb = response.organization.org_abb
         self.get_master_courses()
-        self.get_courses()
         self.get_trainer();
       }, (error: any) => {
         console.log(error);

@@ -258,6 +258,7 @@ export class CourseScoreComponent implements OnInit {
     if( this.data_grid.some(x => x.emp_no == this.emp_no)){
       await this.service.axios_put(`Register/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
       this.fnClear()
+      self.get_registrant()
     }
     else{
       axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, this.headers)
@@ -414,32 +415,25 @@ export class CourseScoreComponent implements OnInit {
   }
 
   /** File Upload, Download */
-  dowloadFormat() {
-    const link = document.createElement('a');
+ dowloadFormat() {
+    let link = document.createElement('a');
     link.setAttribute('target', '_blank');
     link.setAttribute('href', 'assets/format/format input score.xlsx');
 
     const keys_to_keep = ['emp_no','pre_test_score','post_test_score'];
-    var element  =  this.data_grid.map(o => keys_to_keep.reduce((acc, curr) => {
+    let element  =  this.data_grid.map(o => keys_to_keep.reduce((acc, curr) => {
       acc[curr] = o[curr];
       return acc;
     }, {}));
-    console.log(element)
+    console.log("1")
     let fileName = `format input score_${this.course_no}.xlsx`
-    let finalHeaders = ['emp_no','pre_test_score','post_test_score','เริ่มอ่านตั้งแต่แถวที่ 2 ลงทะเบียนใหม่ให้เพิ่มแถวใหม่ได้เลย ใส่รหัสพนักงานที่คอลัมน์ A ใส่ข้อมูลคะแนนที่คอลัมน์ B และ C '];
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(element, {header: finalHeaders});
+   let finalHeaders = ['emp_no','pre_test_score','post_test_score','เริ่มอ่านตั้งแต่แถวที่ 2 ลงทะเบียนใหม่ให้เพิ่มแถวใหม่ได้เลย ใส่รหัสพนักงานที่คอลัมน์ A ใส่ข้อมูลคะแนนที่คอลัมน์ B และ C '];
+   const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(element, {header: finalHeaders});
     const workbook: XLSX.WorkBook = XLSX.utils.book_new();    
-    XLSX.utils.book_append_sheet(workbook, ws, 'Sheet1');
-    XLSX.writeFile(workbook, `${fileName}${EXCEL_EXTENSION}`);
-
-    link.setAttribute('download', `format input score_${this.course_no}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  }   
-
-
+   XLSX.utils.book_append_sheet(workbook, ws, 'Sheet1');
+   XLSX.writeFile(workbook, `${fileName}${EXCEL_EXTENSION}`);
     
+  }    
 
   nameFile: string = 'Choose file';
   file: any;
@@ -464,7 +458,7 @@ export class CourseScoreComponent implements OnInit {
     let self = this
     
     if(!this.course_no){
-      alert("upload")
+      // alert("upload")
       console.log(this.course_no)
       this.errors =  {
         course_no: ["Please select course no."]

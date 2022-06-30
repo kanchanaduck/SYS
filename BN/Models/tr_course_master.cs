@@ -21,18 +21,19 @@ namespace api_hrgis.Models
         [Required]
         [Display(Name = "THAI NAME")]
         public string course_name_th { get; set; }
+        [Required]
         [Display(Name = "ENGLISH NAME")]
         public string course_name_en { get; set; }
         [Required]
         [Display(Name = "GROUP")]
         public string org_code { get; set; }
         [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Range(1, 100, ErrorMessage = "Only positive number allowed")]
         [Display(Name = "CAPACITY")]
         public int? capacity { get; set; }
         [Required]
         [Display(Name = "DAYS")]
-        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
+        [Range(0.5, double.MaxValue, ErrorMessage = "Only positive number allowed")]
         [Column(TypeName = "decimal(3,1)")]
         public decimal? days { get; set; }
         public string category { get; set; }

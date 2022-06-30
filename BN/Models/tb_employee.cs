@@ -33,7 +33,12 @@ namespace api_hrgis.Models
         public string shortname_en{
             get
             {
-                return firstname_en + " " + lastname_en.Substring(0,1)+ ".";
+                if(band=="JP"){
+                    return lastname_en + " " + firstname_en.Substring(0,1)+ ".";
+                }
+                else{
+                    return firstname_en + " " + lastname_en.Substring(0,1)+ ".";
+                }
             }
         }
         public string center_code { get; set;}

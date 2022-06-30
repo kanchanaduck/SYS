@@ -27,8 +27,14 @@ export class HeaderComponent implements OnInit {
     }, 1);
 
     if (localStorage.getItem('token_hrgis') != null) {
-      this._data = await this.service.service_jwt(); //console.log('data jwt: ', this._data);
-      this._fullname = this._data.user.firstname_en + ' ' + this._data.user.lastname_en.substring(0, 1);
+      this._data = await this.service.service_jwt(); 
+      //console.log('data jwt: ', this._data);
+      if(this._data.user.band=="JP"){
+        this._fullname = this._data.user.lastname_en + ' ' + this._data.user.firstname_en.substring(0, 1);
+      }
+      else{
+        this._fullname = this._data.user.firstname_en + ' ' + this._data.user.lastname_en.substring(0, 1);
+      }
       this._positions = this._data.user.position_name_en;
       this.images = this.img_garoon + this._data.user.emp_no + ".jpg";
     }
@@ -49,11 +55,11 @@ export class HeaderComponent implements OnInit {
     event.preventDefault();
     if (window.matchMedia('(min-width: 992px)').matches) {
       document.querySelector('body').classList.toggle('az-sidebar-hide');
-      localStorage.setItem("hrgis_sidebar_show", "false");
+      // localStorage.setItem("hrgis_sidebar_show", "false");
     }
     else {
       document.querySelector('body').classList.toggle('az-sidebar-show');
-      localStorage.setItem("hrgis_sidebar_show", "true");
+      // localStorage.setItem("hrgis_sidebar_show", "true");
     }
     // document.querySelector('.az-sidebar').classList.toggle('d-flex');
 

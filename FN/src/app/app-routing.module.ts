@@ -15,6 +15,7 @@ const routes: Routes = [
   { path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule) },
   { path: 'welfare', loadChildren: () => import('./welfare/welfare.module').then(m => m.WelfareModule) },
   { path: 'users', loadChildren: () => import('./users/users.module').then(m => m.UsersModule), data: { title: 'User', active: true } },
+  { path: 'manual', loadChildren: () => import('./manual/manual.module').then(m => m.ManualModule), data: { title: 'Manual', active: true } },
   { path: 'menus', loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule), data: { title: 'Menu', active: true } },
   { path: 'employee', loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule), data: { title: 'Employee', active: true } },
   { path: 'training', loadChildren: () => import('./training/training.module').then(m => m.TrainingModule), data: { title: 'Training', active: true } },

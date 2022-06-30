@@ -78,7 +78,8 @@
         </div>
         <div class="col-6">
             <div class="form-group">
-                <label class="az-content-label tx-11 tx-medium tx-gray-600">ENGLISH NAME</label>
+                <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                    ENGLISH NAME <span class="tx-danger">*</span></label>
                 <input type="text" class="form-control" #course_name_en
                     [ngClass]="{ 'is-invalid': errors && errors.course_name_en }" 
                     name="course.course_name_en"
@@ -348,8 +349,7 @@
                     </td>
                     <td class="text-center">
                         <div *ngIf="item.org_code != _org_code; else elseBlock"><span></span></div>
-                        <ng-template #elseBlock>
-                            <!-- <div *ngIf="CheckDate(item.date_end) != true; else elseDate"><span></span></div> -->
+                        <ng-template #elseBlock> 
                             <div *ngIf="item.status_active==0; else elseDate"><span></span></div>
                             <ng-template #elseDate>
                                 <a href="javascript:;" (click)="fnEdit(item.course_no)"><i class="far fa-edit"></i></a>

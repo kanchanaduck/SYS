@@ -234,7 +234,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
 
       var email_subject = "[HRGIS] Request for approval to participate in the training."
 
-      var email_body = `Dear : ${email_dear} <br><br>
+      var email_body = `Dear ${email_dear} <br><br>
 
 I would like to notify that your members request to participate in the training. 
 Please click the link to approve. <a href="${environment.WEB_URL}">${environment.WEB_URL}</a>`
@@ -257,7 +257,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
         if (result.value) {
           let body = {
             "from": "kanchana@mail.canon;",
-            "to": "kanchana@mail.canon;",
+            "to": email_to,
             "subject": email_subject,
             "text": email_body.replace(/<[^>]*>/g, ''),
           }

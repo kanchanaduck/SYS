@@ -146,12 +146,12 @@ namespace api_hrgis.Controllers
         [AllowAnonymous]
         // GET: api/Register/GetPrevCourse/{course_no}/{emp_no}
         [HttpGet("GetPrevCourse/{course_no}/{emp_no}")]
-        public async Task<ActionResult> GetPrevCourse(string course_no, string emp_no)
+        public IActionResult GetPrevCourse(string course_no, string emp_no)
         {
-            return Ok(await GetPrevCourseNo(course_no, emp_no));
+            return Ok(GetPrevCourseNoText(course_no, emp_no));
         }
 
-        protected async Task<string> GetPrevCourseNo(string course_no, string emp_no)
+        protected string GetPrevCourseNoText(string course_no, string emp_no)
         {
             string prev_c = ""; string result = "";
 
@@ -159,21 +159,21 @@ namespace api_hrgis.Controllers
                 return result;
             }
 
-            var course_master = await _context.tr_course
+            var course_master = _context.tr_course
                     .Where(x => x.course_no == course_no)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
 
-            Console.WriteLine("Master: "+course_master.master_course_no);
+            // Console.WriteLine("Master: "+course_master.master_course_no);
 
-            var course = await _context.tr_course_master
+            var course = _context.tr_course_master
                     .Where(x => x.course_no == course_master.master_course_no)
                     .Include(x => x.master_courses_previous_courses)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
 
             if (course != null)
             {
                 
-                Console.WriteLine("Count: "+course.master_courses_previous_courses.Count());
+                // Console.WriteLine("Count: "+course.master_courses_previous_courses.Count());
                 if (course.master_courses_previous_courses.Count() > 0)
                 {
                     int index = 0;
@@ -190,17 +190,17 @@ namespace api_hrgis.Controllers
                         }
                         index++;
                     }
-                    Console.WriteLine("Previous: "+prev_c);
+                    // Console.WriteLine("Previous: "+prev_c);
 
-                    var query2 = await _context.tr_course_registration.Where(x => x.course_no == course_no 
+                    var query2 = _context.tr_course_registration.Where(x => x.course_no == course_no 
                     && x.emp_no == emp_no 
-                    && x.last_status == _config.GetValue<string>("Status:approved")).FirstOrDefaultAsync();
+                    && x.last_status == _config.GetValue<string>("Status:approved")).FirstOrDefault();
                     if (query2 == null)
                     {
                         result = _config.GetValue<string>("Text:not_passed") + " " + prev_c;
                     }
                     
-                    Console.WriteLine("Result: "+result);
+                    // Console.WriteLine("Result: "+result);
                 }
             }
 
@@ -381,6 +381,8 @@ namespace api_hrgis.Controllers
         [HttpPost("ByCommitteeEmp")]
         public async Task<ActionResult<tr_course_registration>> registration_by_committee_emp(tr_course_registration registrant)
         {
+            var course = await _context.tr_course.Where(e=>e.course_no==registrant.course_no).FirstOrDefaultAsync();
+
             if(!is_employee_exist(registrant.emp_no)){
                 return StatusCode(400, "Please select exist staff");
             }
@@ -395,6 +397,10 @@ namespace api_hrgis.Controllers
 
             if(is_employee_resigned(registrant.emp_no)){
                 return StatusCode(400, "Please select staff who not resigned");
+            }
+
+            if(studied(course.master_course_no, registrant.emp_no)){
+                return StatusCode(400, "Please select staff who has not studied this course yet");
             }
 
             int seq = 0;
@@ -427,7 +433,7 @@ namespace api_hrgis.Controllers
                 tb.emp_no = registrant.emp_no;
                 tb.seq_no = seq;
                 tb.last_status = registrant.last_status;
-                tb.remark = await GetPrevCourseNo(registrant.course_no, registrant.emp_no);
+                tb.remark = GetPrevCourseNoText(registrant.course_no, registrant.emp_no);
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
 
@@ -441,6 +447,9 @@ namespace api_hrgis.Controllers
         [HttpPost("ByApproverEmp")]
         public async Task<ActionResult<tr_course_registration>> registration_by_approver_emp(tr_course_registration registrant)
         {
+
+            var course = await _context.tr_course.Where(e=>e.course_no==registrant.course_no).FirstOrDefaultAsync();
+
             if(!is_staff_of_approver(registrant.emp_no)){
                 return StatusCode(400, "Please select staff in your own organization");
             }
@@ -451,6 +460,10 @@ namespace api_hrgis.Controllers
 
             if(is_employee_resigned(registrant.emp_no)){
                 return StatusCode(400, "Please select staff who not resigned");
+            }
+
+             if(studied(course.master_course_no, registrant.emp_no)){
+                return StatusCode(400, "Please select staff who has not studied this course yet");
             }
 
 
@@ -469,7 +482,7 @@ namespace api_hrgis.Controllers
                 tb.emp_no = registrant.emp_no;
                 tb.seq_no = 0;
                 tb.last_status = "Approved";
-                tb.remark = await GetPrevCourseNo(registrant.course_no, registrant.emp_no);
+                tb.remark = GetPrevCourseNoText(registrant.course_no, registrant.emp_no);
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
                 tb.final_approved_at = DateTime.Now;
@@ -524,7 +537,7 @@ namespace api_hrgis.Controllers
             else
             {
                 var last = await _context.tr_course_registration
-                            .Where(x => x.course_no == registrant.course_no)
+                            .Where(x => x.course_no == registrant.course_no && x.last_status=="Approved")
                             .OrderByDescending(x => x.seq_no)
                             .FirstOrDefaultAsync();
 
@@ -538,24 +551,47 @@ namespace api_hrgis.Controllers
                 }
                 
                 if(seq>course.capacity){
-                   return StatusCode(400, _config["Text:over_capacity"]);
+                   return StatusCode(400, _config["Text:course_full"]);
+                }
+
+                string _remark = "";
+                string _emp_no = registrant.emp_no;
+                if(studied(course.master_course_no, _emp_no)){
+                    _remark =  _remark + _config["Text:repeat"];
+                }
+                if(_remark!=""){
+                    _remark  = _remark + "; " + _config["Text:papers"];
+                }
+                else{
+                    _remark  = _remark + _config["Text:papers"];
+                }
+                if(_remark!=""){
+                    _remark  = _remark + "; " + GetPrevCourseNoText(registrant.course_no, _emp_no);
+                }
+                else{
+                    _remark  = _remark + GetPrevCourseNoText(registrant.course_no, _emp_no);
                 }
 
                 tr_course_registration tb = new tr_course_registration();
                 tb.course_no = registrant.course_no;
-                tb.emp_no = registrant.emp_no;
+                tb.emp_no = _emp_no;
                 tb.seq_no = seq;
-                tb.last_status = registrant.last_status;
+                tb.last_status = _config["Status:approved"];
                 tb.pre_test_score = registrant.pre_test_score==null? null:Convert.ToInt32(registrant.pre_test_score);
                 tb.pre_test_grade = registrant.pre_test_score==null? null:fnGrade(registrant.pre_test_score.ToString());
                 tb.post_test_score = registrant.post_test_score==null? null:Convert.ToInt32(registrant.post_test_score);
                 tb.post_test_grade = registrant.post_test_score==null? null:fnGrade(registrant.post_test_score.ToString());
-                tb.remark = await GetPrevCourseNo(registrant.course_no, registrant.emp_no);
+                tb.remark = _remark;
                 tb.register_at = DateTime.Now;
                 tb.register_by = User.FindFirst("emp_no").Value;
                 tb.final_approved_at = DateTime.Now;
                 tb.final_approved_by = User.FindFirst("emp_no").Value;
                 tb.final_approved_checked = true;
+
+                if( registrant.pre_test_score!=null || registrant.post_test_score!=null){
+                    tb.scored_at = DateTime.Now;
+                    tb.scored_by = User.FindFirst("emp_no").Value;
+                }
 
                 _context.tr_course_registration.Add(tb);
                 await _context.SaveChangesAsync();
@@ -580,10 +616,10 @@ namespace api_hrgis.Controllers
                 return NotFound("Not found the trainee");
             }
 
-            registrant.pre_test_score = registrant.pre_test_score==null? null:Convert.ToInt32(registrant.pre_test_score);
-            registrant.pre_test_grade = registrant.pre_test_score==null? null:fnGrade(registrant.pre_test_score.ToString());
-            registrant.post_test_score = registrant.post_test_score==null? null:Convert.ToInt32(registrant.post_test_score);
-            registrant.post_test_grade = registrant.post_test_score==null? null:fnGrade(registrant.post_test_score.ToString());
+            registrant.pre_test_score = r.pre_test_score==null? null:Convert.ToInt32(r.pre_test_score);
+            registrant.pre_test_grade = r.pre_test_score==null? null:fnGrade(r.pre_test_score.ToString());
+            registrant.post_test_score = r.post_test_score==null? null:Convert.ToInt32(r.post_test_score);
+            registrant.post_test_grade = r.post_test_score==null? null:fnGrade(r.post_test_score.ToString());
             registrant.scored_at = DateTime.Now;
             registrant.scored_by = User.FindFirst("emp_no").Value;
 
@@ -603,6 +639,10 @@ namespace api_hrgis.Controllers
 
             if(course==null){
                 return StatusCode(400,"Course is not found");
+            }
+
+            if(registration.Count() > course.capacity){
+                return StatusCode(400, _config["Text:over_capacity"]);
             }
 
             List<string> course_bands = new List<string>();
@@ -682,7 +722,7 @@ namespace api_hrgis.Controllers
                                     pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString()),
                                     post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score),
                                     post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString()),
-                                    remark = (_config["Text:continuous"])+( await GetPrevCourseNo(item.course_no, item.emp_no)==""? null:"; "+await GetPrevCourseNo(item.course_no, item.emp_no)),
+                                    remark = (_config["Text:continuous"])+( GetPrevCourseNoText(item.course_no, item.emp_no)==""? null:"; "+GetPrevCourseNoText(item.course_no, item.emp_no)),
                                     last_status = _config.GetValue<string>("Status:approved"),
                                     register_at = DateTime.Now,
                                     register_by = User.FindFirst("emp_no").Value,
@@ -890,7 +930,7 @@ namespace api_hrgis.Controllers
                         if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
                         {
                             string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
-                            int ws_seq_no = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            int ws_seq_no = worksheet.Cells[row, 1].Value==null? 0:Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
                             int _seq_no = 0;
                             string _last_status = "";
 
@@ -944,17 +984,27 @@ namespace api_hrgis.Controllers
                                         }
                                         else{
                                             if (query == null){
-                                                _context.Add(new tr_course_registration
-                                                {
-                                                    course_no = course_no,
-                                                    emp_no = _emp_no,
-                                                    seq_no = _seq_no,
-                                                    last_status = _last_status,
-                                                    remark = await GetPrevCourseNo(course_no, _emp_no),
-                                                    register_at = DateTime.Now,
-                                                    register_by = User.FindFirst("emp_no").Value
-                                                });
-                                                await _context.SaveChangesAsync();
+                                                if(studied(course.master_course_no, _emp_no)){     
+                                                    response.Add(new response_course_registration
+                                                    {
+                                                        emp_no = _emp_no,
+                                                        seq_no = ws_seq_no,
+                                                        error_message = "Please select staff who has not studied this course yet"
+                                                    });
+                                                }
+                                                else{
+                                                    _context.Add(new tr_course_registration
+                                                    {
+                                                        course_no = course_no,
+                                                        emp_no = _emp_no,
+                                                        seq_no = _seq_no,
+                                                        last_status = _last_status,
+                                                        remark = GetPrevCourseNoText(course_no, _emp_no),
+                                                        register_at = DateTime.Now,
+                                                        register_by = User.FindFirst("emp_no").Value
+                                                    });
+                                                    await _context.SaveChangesAsync();
+                                                }
                                             }
                                             else{
                                                 // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
@@ -1049,7 +1099,7 @@ namespace api_hrgis.Controllers
                         if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
                         {
                             string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
-                            int ws_seq_no = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            int ws_seq_no =  worksheet.Cells[row, 1].Value==null? 0:Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
                             int _seq_no = 0;
                             string _last_status = "";
 
@@ -1103,20 +1153,30 @@ namespace api_hrgis.Controllers
                                         }
                                         else{
                                             if (query == null){
-                                                _context.Add(new tr_course_registration
-                                                {
-                                                    course_no = course_no,
-                                                    emp_no = _emp_no,
-                                                    seq_no = _seq_no,
-                                                    last_status = _last_status,
-                                                    remark = await GetPrevCourseNo(course_no, _emp_no),
-                                                    register_at = DateTime.Now,
-                                                    register_by = User.FindFirst("emp_no").Value,
-                                                    final_approved_at = DateTime.Now,
-                                                    final_approved_by = User.FindFirst("emp_no").Value,
-                                                    final_approved_checked = true
-                                                });
-                                                await _context.SaveChangesAsync();
+                                                if(studied(course.master_course_no, _emp_no)){     
+                                                    response.Add(new response_course_registration
+                                                    {
+                                                        emp_no = _emp_no,
+                                                        seq_no = ws_seq_no,
+                                                        error_message = "Please select staff who has not studied this course yet"
+                                                    });
+                                                }
+                                                else{
+                                                    _context.Add(new tr_course_registration
+                                                    {
+                                                        course_no = course_no,
+                                                        emp_no = _emp_no,
+                                                        seq_no = _seq_no,
+                                                        last_status = _last_status,
+                                                        remark = GetPrevCourseNoText(course_no, _emp_no),
+                                                        register_at = DateTime.Now,
+                                                        register_by = User.FindFirst("emp_no").Value,
+                                                        final_approved_at = DateTime.Now,
+                                                        final_approved_by = User.FindFirst("emp_no").Value,
+                                                        final_approved_checked = true
+                                                    });
+                                                    await _context.SaveChangesAsync();
+                                                }
                                             }
                                             else{
                                                 // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
@@ -1211,13 +1271,14 @@ namespace api_hrgis.Controllers
                         if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
                         {
                             string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
-                            int ws_seq_no = Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
+                            int ws_seq_no = worksheet.Cells[row, 1].Value==null? 0:Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
                             int _seq_no = 0;
 
                             var emp = await _context.tb_employee.Where(x => x.emp_no == _emp_no).FirstOrDefaultAsync();
 
                             var query_seq = await _context.tr_course_registration
-                                            .Where(x => x.course_no == course_no).OrderByDescending(x => x.seq_no)
+                                            .Where(x => x.course_no == course_no  && x.last_status=="Approved"
+                                            ).OrderByDescending(x => x.seq_no)
                                             .FirstOrDefaultAsync();
 
                             if (query_seq == null)
@@ -1268,17 +1329,27 @@ namespace api_hrgis.Controllers
                                                     {
                                                         emp_no = _emp_no,
                                                         seq_no = ws_seq_no,
-                                                        error_message = _config.GetValue<string>("Text:over_capacity")
+                                                        error_message = _config.GetValue<string>("Text:course_full")
                                                     });
                                                 }
                                                 else{
+
+                                                    string remark = "";
+
+                                                    if(GetPrevCourseNoText(course_no, _emp_no)==""){
+                                                        remark = "; Paper";
+                                                    }
+                                                    else{
+                                                        remark = GetPrevCourseNoText(course_no, _emp_no)+"; Paper";
+                                                    }
+
                                                     _context.Add(new tr_course_registration
                                                     {
                                                         course_no = course_no,
                                                         emp_no = _emp_no,
                                                         seq_no = _seq_no,
                                                         last_status = _config["Status:approved"],
-                                                        remark = await GetPrevCourseNo(course_no, _emp_no),
+                                                        remark = remark,
                                                         register_at = DateTime.Now,
                                                         register_by = User.FindFirst("emp_no").Value,
                                                         final_approved_at = DateTime.Now,
@@ -1339,7 +1410,6 @@ namespace api_hrgis.Controllers
                                     .Where(x => x.course_no == course_no && x.emp_no == item.emp_no)
                                     .FirstOrDefaultAsync();
 
-                    Console.WriteLine("PRE: "+edits.pre_test_score);
                     edits.pre_test_score = item.pre_test_score==null? null:Convert.ToInt32(item.pre_test_score);
                     edits.pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString());
                     edits.post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score);
@@ -1387,7 +1457,7 @@ namespace api_hrgis.Controllers
             foreach (var item in course.courses_bands)
             {
                 course_bands.Add(item.band);
-                Console.WriteLine("band "+item.band);
+                // Console.WriteLine("band "+item.band);
             }
 
             string rootFolder = Directory.GetCurrentDirectory();
@@ -1459,76 +1529,22 @@ namespace api_hrgis.Controllers
                             }
                             else{
                                 if(!course_bands.Contains(emp.band)){
-                                response.Add(new response_course_score
+                                    response.Add(new response_course_score
+                                    {
+                                        emp_no = _emp_no,
+                                        seq_no = _seq_no,
+                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                        pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                        post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                        error_message = _config["Text:unequal_band"]
+                                    });
+                                }
+                                else
                                 {
-                                    emp_no = _emp_no,
-                                    seq_no = _seq_no,
-                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
-                                    pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
-                                    post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
-                                    error_message = _config["Text:unequal_band"]
-                                });
-                            }
-                            else
-                            {
-                                if (query == null)
-                                {
-                                    if(emp.employed_status=="RESIGNED"){
-                                        response.Add(new response_course_score
-                                        {
-                                            emp_no = _emp_no,
-                                            seq_no = _seq_no,
-                                            pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
-                                            pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                            post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
-                                            post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
-                                            error_message = _config.GetValue<string>("Text:staff_resigned")
-                                        });
-                                        // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้
-                                    }
-                                    else{
-                                        string _grade_pre = pre_test_score==null? null:fnGrade(pre_test_score);
-                                        string _grade_post = post_test_score==null? null:fnGrade(post_test_score);
-                                        if (_grade_pre != "Fail" && _grade_post != "Fail")
-                                        {
-                                            if(_seq_no>course.capacity){
-                                                response.Add(new response_course_score
-                                                {
-                                                    emp_no = _emp_no,
-                                                    seq_no = _seq_no,
-                                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
-                                                    pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
-                                                    post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
-                                                    error_message = _config.GetValue<string>("Text:over_capacity")
-                                                });
-                                            }
-                                            else{
-                                                _context.Add(new tr_course_registration
-                                                {
-                                                    course_no = course_no,
-                                                    emp_no = _emp_no,
-                                                    seq_no = _seq_no,
-                                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
-                                                    pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
-                                                    post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
-                                                    last_status = (_seq_no>course.capacity)? _config["Status:wait"]:_config["Status:approved"],
-                                                    remark = _config.GetValue<string>("Text:papers")+(await GetPrevCourseNo(course_no, _emp_no)==""? "":await GetPrevCourseNo(course_no, _emp_no)),
-                                                    register_at = DateTime.Now,
-                                                    register_by = User.FindFirst("emp_no").Value,
-                                                    scored_at = DateTime.Now,
-                                                    scored_by = User.FindFirst("emp_no").Value,
-                                                    final_approved_at = DateTime.Now,
-                                                    final_approved_by = User.FindFirst("emp_no").Value,
-                                                    final_approved_checked = true
-                                                });
-                                                await _context.SaveChangesAsync();
-                                            }
-                                        }
-                                        else
-                                        {
+                                    if (query == null)
+                                    {
+                                        if(emp.employed_status=="RESIGNED"){
                                             response.Add(new response_course_score
                                             {
                                                 emp_no = _emp_no,
@@ -1537,25 +1553,94 @@ namespace api_hrgis.Controllers
                                                 pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
                                                 post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
                                                 post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
-                                                error_message = _config.GetValue<string>("Text:score_incorrect")
+                                                error_message = _config.GetValue<string>("Text:staff_resigned")
                                             });
-                                        } // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้  
+                                            // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้
+                                        }   
+                                        else{
+                                            string _grade_pre = pre_test_score==null? null:fnGrade(pre_test_score);
+                                            string _grade_post = post_test_score==null? null:fnGrade(post_test_score);
+                                            if (_grade_pre != "Fail" && _grade_post != "Fail")
+                                            {
+                                                if(_seq_no>course.capacity){
+                                                    response.Add(new response_course_score
+                                                    {
+                                                        emp_no = _emp_no,
+                                                        seq_no = _seq_no,
+                                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                        pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                        post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                                        error_message = _config.GetValue<string>("Text:course_full")
+                                                    });
+                                                }
+                                                else{
+                                                    string _remark = "";
+                                                    if(studied(course.master_course_no, _emp_no)){
+                                                        _remark =  _remark + _config["Text:repeat"];
+                                                    }
+                                                    if(_remark!=""){
+                                                        _remark  = _remark + "; " + _config["Text:papers"];
+                                                    }
+                                                    else{
+                                                        _remark  = _remark + _config["Text:papers"];
+                                                    }
+                                                    if(_remark!=""){
+                                                        _remark  = _remark + "; " + GetPrevCourseNoText(course_no, _emp_no);
+                                                    }
+                                                    else{
+                                                        _remark  = _remark + GetPrevCourseNoText(course_no, _emp_no);
+                                                    }
+                                                    _context.Add(new tr_course_registration
+                                                    {
+                                                        course_no = course_no,
+                                                        emp_no = _emp_no,
+                                                        seq_no = _seq_no,
+                                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                        pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                        post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                                        last_status = (_seq_no>course.capacity)? _config["Status:wait"]:_config["Status:approved"],
+                                                        remark = _remark,
+                                                        register_at = DateTime.Now,
+                                                        register_by = User.FindFirst("emp_no").Value,
+                                                        scored_at = DateTime.Now,
+                                                        scored_by = User.FindFirst("emp_no").Value,
+                                                        final_approved_at = DateTime.Now,
+                                                        final_approved_by = User.FindFirst("emp_no").Value,
+                                                        final_approved_checked = true
+                                                    });
+                                                    await _context.SaveChangesAsync();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                response.Add(new response_course_score
+                                                {
+                                                    emp_no = _emp_no,
+                                                    seq_no = _seq_no,
+                                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                    pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
+                                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                    post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
+                                                    error_message = _config.GetValue<string>("Text:score_incorrect")
+                                                });
+                                            } // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้  
+                                        }
                                     }
+                                    else
+                                    {
+                                        query.emp_no = _emp_no;
+                                        query.pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score);
+                                        query.pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score);
+                                        query.post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score);
+                                        query.post_test_grade = post_test_score==null? null:fnGrade(post_test_score);
+                                        query.scored_at = DateTime.Now;
+                                        query.scored_by = User.FindFirst("emp_no").Value;
+                                        _context.Entry(query).State = EntityState.Modified;
+                                        await _context.SaveChangesAsync(); 
+                                    } 
                                 }
-                                else
-                                {
-                                    query.emp_no = _emp_no;
-                                    query.pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score);
-                                    query.pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score);
-                                    query.post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score);
-                                    query.post_test_grade = post_test_score==null? null:fnGrade(post_test_score);
-                                    query.scored_at = DateTime.Now;
-                                    query.scored_by = User.FindFirst("emp_no").Value;
-                                    _context.Entry(query).State = EntityState.Modified;
-                                    await _context.SaveChangesAsync(); 
-                                } 
-                            }
-                           
                             }
                         }
                     }
@@ -1579,6 +1664,20 @@ namespace api_hrgis.Controllers
             else if (_score == 0) { grade = "F"; }
 
             return grade;
+        }
+        protected bool studied(string master_course_no, string emp_no){
+            var course_master  = _context.tr_course.Where(e=>e.master_course_no==master_course_no).ToList();
+
+            List<string> courses = new List<string>();
+
+            foreach (var item in course_master)
+            {
+                courses.Add(item.course_no);
+            }
+
+            bool studied = _context.tr_course_registration.Any(e=> courses.Contains(e.course_no) 
+            && e.emp_no==emp_no && e.last_status=="Approved");
+            return studied;
         }
     }
 }

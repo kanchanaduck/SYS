@@ -605,7 +605,6 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
           this.has_continuous = response.some(function(el){
             return el.remark?.includes("Continuous");
           });
-          this.has_continuous = !this.has_continuous
         }
         else{
           this.has_continuous = false;

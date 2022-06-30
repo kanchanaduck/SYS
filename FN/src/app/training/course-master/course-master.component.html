@@ -30,7 +30,8 @@
             </p>
         </div><!-- form-group -->
         <div class="form-group col mb-0">
-            <label class="az-content-label tx-11 tx-medium tx-gray-600">English Name</label>
+            <label class="az-content-label tx-11 tx-medium tx-gray-600">
+                English Name <span class="tx-danger">*</span></label>
             <input type="text" name="course.course_name_en" class="form-control" required 
                 [(ngModel)]="course.course_name_en"
                 [ngClass]="{ 'is-invalid': errors && errors.course_name_en }" >
