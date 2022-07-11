@@ -1890,7 +1890,7 @@
           "System.Threading.Tasks": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {}
+          "ref/netstandard1.3/System.Collections.Concurrent.dll": {}
         },
         "runtime": {
           "lib/netstandard1.3/System.Collections.Concurrent.dll": {}
@@ -2493,6 +2493,25 @@
         },
         "runtime": {
           "lib/netstandard1.6/System.Linq.Expressions.dll": {}
+        }
+      },
+      "System.Linq.Queryable/4.3.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Diagnostics.Debug": "4.3.0",
+          "System.Linq": "4.3.0",
+          "System.Linq.Expressions": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Extensions": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0"
+        },
+        "compile": {
+          "ref/netstandard1.0/System.Linq.Queryable.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/System.Linq.Queryable.dll": {}
         }
       },
       "System.Memory/4.5.4": {
@@ -3469,7 +3488,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XmlDocument.dll": {}
         }
       },
-      "Z.EntityFramework.Extensions.EFCore/5.13.9": {
+      "Z.EntityFramework.Extensions.EFCore/5.14.2": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
@@ -3484,6 +3503,45 @@
         },
         "runtime": {
           "lib/netstandard2.1/Z.EntityFramework.Extensions.EFCore.dll": {}
+        }
+      },
+      "Z.EntityFramework.Plus.EFCore/5.14.2": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.EntityFrameworkCore.Relational": "[5.0.0, 6.0.0)",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.TypeExtensions": "4.7.0",
+          "Z.EntityFramework.Extensions.EFCore": "[5.14.2]",
+          "Z.Expressions.Eval": "[4.0.85]"
+        },
+        "compile": {
+          "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.dll": {}
+        }
+      },
+      "Z.Expressions.Eval/4.0.85": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CSharp": "4.5.0",
+          "Microsoft.Extensions.Caching.Memory": "2.0.0",
+          "Newtonsoft.Json": "11.0.2",
+          "System.Collections.Concurrent": "4.3.0",
+          "System.Collections.NonGeneric": "4.3.0",
+          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Data.Common": "4.3.0",
+          "System.Linq.Queryable": "4.3.0",
+          "System.Reflection.Emit": "4.3.0",
+          "System.Reflection.TypeExtensions": "4.5.0",
+          "System.Xml.XPath": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard2.1/Z.Expressions.Eval.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/Z.Expressions.Eval.dll": {}
         }
       }
     }
@@ -8162,6 +8220,65 @@
         "system.linq.expressions.nuspec"
       ]
     },
+    "System.Linq.Queryable/4.3.0": {
+      "sha512": "In1Bmmvl/j52yPu3xgakQSI0YIckPUr870w4K5+Lak3JCCa8hl+my65lABOuKfYs4ugmZy25ScFerC4nz8+b6g==",
+      "type": "package",
+      "path": "system.linq.queryable/4.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/monoandroid10/_._",
+        "lib/monotouch10/_._",
+        "lib/net45/_._",
+        "lib/netcore50/System.Linq.Queryable.dll",
+        "lib/netstandard1.3/System.Linq.Queryable.dll",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/monoandroid10/_._",
+        "ref/monotouch10/_._",
+        "ref/net45/_._",
+        "ref/netcore50/System.Linq.Queryable.dll",
+        "ref/netcore50/System.Linq.Queryable.xml",
+        "ref/netcore50/de/System.Linq.Queryable.xml",
+        "ref/netcore50/es/System.Linq.Queryable.xml",
+        "ref/netcore50/fr/System.Linq.Queryable.xml",
+        "ref/netcore50/it/System.Linq.Queryable.xml",
+        "ref/netcore50/ja/System.Linq.Queryable.xml",
+        "ref/netcore50/ko/System.Linq.Queryable.xml",
+        "ref/netcore50/ru/System.Linq.Queryable.xml",
+        "ref/netcore50/zh-hans/System.Linq.Queryable.xml",
+        "ref/netcore50/zh-hant/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/System.Linq.Queryable.dll",
+        "ref/netstandard1.0/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/de/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/es/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/fr/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/it/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/ja/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/ko/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/ru/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/zh-hans/System.Linq.Queryable.xml",
+        "ref/netstandard1.0/zh-hant/System.Linq.Queryable.xml",
+        "ref/portable-net45+win8+wp8+wpa81/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.linq.queryable.4.3.0.nupkg.sha512",
+        "system.linq.queryable.nuspec"
+      ]
+    },
     "System.Memory/4.5.4": {
       "sha512": "1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
       "type": "package",
@@ -10927,17 +11044,51 @@
         "system.xml.xpath.xmldocument.nuspec"
       ]
     },
-    "Z.EntityFramework.Extensions.EFCore/5.13.9": {
-      "sha512": "XEtTqYCq8z7fPTrQnB6hvlrXUpmOwABll/f4DxoJEWkuBm5FS2L8ryh/pOcrAjT4cmmyg+P4KwROl1ezDQc2sw==",
+    "Z.EntityFramework.Extensions.EFCore/5.14.2": {
+      "sha512": "HNzC9iRi1WPKOZ9q9e4KIa/3/B+k/g+GwGSy0LtiMD93oORw/JtDbv4aQoXSaNHgUKKVF56qVkK0qANiWMs0FA==",
       "type": "package",
-      "path": "z.entityframework.extensions.efcore/5.13.9",
+      "path": "z.entityframework.extensions.efcore/5.14.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/netstandard2.1/Z.EntityFramework.Extensions.EFCore.dll",
         "lib/netstandard2.1/Z.EntityFramework.Extensions.EFCore.xml",
-        "z.entityframework.extensions.efcore.5.13.9.nupkg.sha512",
+        "z.entityframework.extensions.efcore.5.14.2.nupkg.sha512",
         "z.entityframework.extensions.efcore.nuspec"
+      ]
+    },
+    "Z.EntityFramework.Plus.EFCore/5.14.2": {
+      "sha512": "llRC1aQDKlLz0Jr+oCGjbe9ftRKsRrJx1kfz0aBMxUBO8ZJCZNQGlZfcL9uFW42m/7NedX6MbvFQPX39VoEPEg==",
+      "type": "package",
+      "path": "z.entityframework.plus.efcore/5.14.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.dll",
+        "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.xml",
+        "z.entityframework.plus.efcore.5.14.2.nupkg.sha512",
+        "z.entityframework.plus.efcore.nuspec"
+      ]
+    },
+    "Z.Expressions.Eval/4.0.85": {
+      "sha512": "6XbyQRtd+V+eTuu8nHOlZ4ciryIr/mmUlHZIXIdOWfaXcwfZAsNCmhAHr+7FS0f0C4F/smvNJ+6pamhJbZ9yow==",
+      "type": "package",
+      "path": "z.expressions.eval/4.0.85",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net40/Z.Expressions.Eval.dll",
+        "lib/net40/Z.Expressions.Eval.xml",
+        "lib/net45/Z.Expressions.Eval.dll",
+        "lib/net45/Z.Expressions.Eval.xml",
+        "lib/net6.0/Z.Expressions.Eval.dll",
+        "lib/net6.0/Z.Expressions.Eval.xml",
+        "lib/netstandard2.0/Z.Expressions.Eval.dll",
+        "lib/netstandard2.0/Z.Expressions.Eval.xml",
+        "lib/netstandard2.1/Z.Expressions.Eval.dll",
+        "lib/netstandard2.1/Z.Expressions.Eval.xml",
+        "z.expressions.eval.4.0.85.nupkg.sha512",
+        "z.expressions.eval.nuspec"
       ]
     }
   },
@@ -10959,7 +11110,8 @@
       "Swashbuckle.AspNetCore >= 5.6.3",
       "System.Data.DataSetExtensions >= 4.5.0",
       "System.Data.SqlClient >= 4.8.3",
-      "Z.EntityFramework.Extensions.EFCore >= 5.13.9"
+      "Z.EntityFramework.Extensions.EFCore >= 5.14.2",
+      "Z.EntityFramework.Plus.EFCore >= 5.14.2"
     ]
   },
   "packageFolders": {
@@ -11077,7 +11229,11 @@
           },
           "Z.EntityFramework.Extensions.EFCore": {
             "target": "Package",
-            "version": "[5.13.9, )"
+            "version": "[5.14.2, )"
+          },
+          "Z.EntityFramework.Plus.EFCore": {
+            "target": "Package",
+            "version": "[5.14.2, )"
           }
         },
         "imports": [

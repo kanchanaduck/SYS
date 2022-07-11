@@ -145,36 +145,5 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_menus.Any(e => e.menu_code == id);
         }
-        [AllowAnonymous]
-        [HttpGet("Mock")]
-        public async Task<ActionResult<IEnumerable<tb_menus>>> Menu()
-        {
-            string filePath = Path.Combine("./wwwroot/", $"Mockdata.xlsx");
-
-            if(System.IO.File.Exists(filePath)){
-                Console.WriteLine("File exists.");
-                using(var package = new ExcelPackage(new FileInfo(filePath)))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets["tb_menus"];
-                    int rowCount = worksheet.Dimension.Rows;
-                    int colCount = worksheet.Dimension.Columns;
-                    for (int row = 2; row <= rowCount; row++){
-                        _context.Add(new tb_menus
-                        {
-                            menu_name = worksheet.Cells[row, 2].Value.ToString().Trim()==null ? null:worksheet.Cells[row, 2].Value.ToString().Trim(),
-                            parent_menu_code = worksheet.Cells[row, 3].Value==null?null:int.Parse(worksheet.Cells[row, 3].Value.ToString().Trim()),
-                            description = worksheet.Cells[row, 4].Value==null?null:worksheet.Cells[row, 4].Value.ToString().Trim(),
-                            url = worksheet.Cells[row, 5].Value==null?null:worksheet.Cells[row, 5].Value.ToString().Trim(),
-                            updated_at = DateTime.Now,
-                            updated_by= worksheet.Cells[row, 11].Value==null?null:worksheet.Cells[row, 11].Value.ToString().Trim(),
-                        });
-                        await _context.SaveChangesAsync();
-                    }
-               }
-            }
-            return await _context.tb_menus
-                            .Include(e => e.children)
-                            .ToListAsync();  
-        }
     }
 }

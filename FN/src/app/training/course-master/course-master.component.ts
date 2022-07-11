@@ -161,12 +161,7 @@ export class CourseMasterComponent implements OnInit {
     await this.httpClient.get(`${environment.API_URL}CourseMasters`, this.headers)
     .subscribe((response: any) => {
       self.courses = response;
-      if(self.is_center){
-        self.all_course = self.courses
-      }
-      else{
-        self.get_all_courses()
-      }
+      self.all_course = self.courses
       if (this.isDtInitialized) {
         this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
           dtInstance.clear().draw();
@@ -184,7 +179,7 @@ export class CourseMasterComponent implements OnInit {
     });
   }
 
-  async get_all_courses(){
+/*   async get_all_courses(){
     let self = this
     if(!self.is_center){
       await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
@@ -202,7 +197,7 @@ export class CourseMasterComponent implements OnInit {
     else{
       self.all_course = self.courses
     }
-  }
+  } */
 
 
   async get_course(course_no: number) {
@@ -344,67 +339,72 @@ export class CourseMasterComponent implements OnInit {
   datatable(){
     let self = this
     self.get_courses()
-      self.dtOptions = {
-        dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
-        "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
-        language: {
-          paginate: {
-            next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
-            previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
-          }
-        },
-        "processing": true,
-        "search": {
-          "search": self.is_committee? self._org_abb:""
-        },
-        buttons: {
-          "dom":{
-            "container": {
-              tag: "div",
-              className: "dt-buttons btn-group flex-wrap float-right"
-            },
-            "button": {
-              tag: "button",
-              className: "btn btn-outline-indigo btn-sm"
-            },
+    self.dtOptions = {
+      dom: "<'row'<'col-sm-12 col-md-4'f><'col-sm-12 col-md-8'B>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-12 col-md-4'i><'col-sm-12 col-md-8'p>>",
+      language: {
+        paginate: {
+          next: '<i class="icon ion-ios-arrow-forward"></i>', // or '→'
+          previous: '<i class="icon ion-ios-arrow-back"></i>' // or '←' 
+        }
+      },
+      processing: true,
+      // serverSide: true,
+      "search": {
+        "search": self.is_committee? self._org_abb:""
+      },
+      /* ajax: {
+        url: `${environment.API_URL}CourseMasters/Search`,
+        headers: this.headers
+      }, */
+      buttons: {
+        "dom":{
+          "container": {
+            tag: "div",
+            className: "dt-buttons btn-group flex-wrap float-right"
           },
-          "buttons": [
-            {
-              extend:'pageLength',
-            },
-            {
-              extend: 'collection',
-              text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
-              buttons: [
-                {
-                  text: '<i class="far fa-file-alt"></i> Report</button>',
-                  action: function ( e, dt, node, config ) {
-                    window.open("http://cptsvs52t/HRGIS_REPORT/Training/CourseMaster","_blank")
-                  }
+          "button": {
+            tag: "button",
+            className: "btn btn-outline-indigo btn-sm"
+          },
+        },
+        "buttons": [
+          {
+            extend:'pageLength',
+          },
+          {
+            extend: 'collection',
+            text: '<i class="fas fa-cloud-download-alt"></i> Download</button>',
+            buttons: [
+              {
+                text: '<i class="far fa-file-alt"></i> Report</button>',
+                action: function ( e, dt, node, config ) {
+                  window.open("http://cptsvs531/HRGIS_REPORT/Training/CourseMaster","_blank")
                 }
-              ]
-            },
-          ],
-        },
-        order: [ [3, 'asc'], [0, 'asc']],
-        rowGroup: {
-          dataSrc: [3]
-        },
-        columnDefs: [ 
-          {
-            targets: [ 0,8,9 ],
-            "orderable": false
-          },
-          {
-            targets: [ 3 ],
-            visible: false 
+              }
+            ]
           },
         ],
-  
-        container: "#example_wrapper .col-md-6:eq(0)",
-        lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
-      };
+      },
+      order: [ [3, 'asc'], [0, 'asc']],
+      rowGroup: {
+        dataSrc: [3]
+      },
+      columnDefs: [ 
+        {
+          targets: [ 0,8,9 ],
+          "orderable": false
+        },
+        {
+          targets: [ 3 ],
+          visible: false 
+        },
+      ],
+
+      container: "#example_wrapper .col-md-6:eq(0)",
+      lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
+    };
 
   }
 

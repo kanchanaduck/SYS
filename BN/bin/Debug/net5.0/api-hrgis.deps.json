@@ -49,7 +49,8 @@
           "Swashbuckle.AspNetCore": "5.6.3",
           "System.Data.DataSetExtensions": "4.5.0",
           "System.Data.SqlClient": "4.8.3",
-          "Z.EntityFramework.Extensions.EFCore": "5.13.9",
+          "Z.EntityFramework.Extensions.EFCore": "5.14.2",
+          "Z.EntityFramework.Plus.EFCore": "5.14.2",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions.Reference": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Cookies.Reference": "5.0.0.0",
@@ -228,7 +229,7 @@
           "System.Linq.Reference": "5.0.0.0",
           "System.Linq.Expressions.Reference": "5.0.0.0",
           "System.Linq.Parallel": "5.0.0.0",
-          "System.Linq.Queryable": "5.0.0.0",
+          "System.Linq.Queryable.Reference": "5.0.0.0",
           "System.Memory.Reference": "5.0.0.0",
           "System.Net": "4.0.0.0",
           "System.Net.Http": "5.0.0.0",
@@ -2156,6 +2157,18 @@
           "System.Threading": "4.3.0"
         }
       },
+      "System.Linq.Queryable/4.3.0": {
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Diagnostics.Debug": "4.3.0",
+          "System.Linq": "4.3.0",
+          "System.Linq.Expressions": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Reflection.Extensions": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
       "System.Memory/4.5.4": {},
       "System.Net.NameResolution/4.3.0": {
         "dependencies": {
@@ -2742,7 +2755,7 @@
           "ref/netstandard1.3/System.Xml.XPath.XmlDocument.dll": {}
         }
       },
-      "Z.EntityFramework.Extensions.EFCore/5.13.9": {
+      "Z.EntityFramework.Extensions.EFCore/5.14.2": {
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.EntityFrameworkCore.Relational": "5.0.13",
@@ -2753,12 +2766,55 @@
         },
         "runtime": {
           "lib/netstandard2.1/Z.EntityFramework.Extensions.EFCore.dll": {
-            "assemblyVersion": "5.13.9.0",
-            "fileVersion": "5.13.9.0"
+            "assemblyVersion": "5.14.2.0",
+            "fileVersion": "5.14.2.0"
           }
         },
         "compile": {
           "lib/netstandard2.1/Z.EntityFramework.Extensions.EFCore.dll": {}
+        }
+      },
+      "Z.EntityFramework.Plus.EFCore/5.14.2": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.EntityFrameworkCore.Relational": "5.0.13",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.TypeExtensions": "4.7.0",
+          "Z.EntityFramework.Extensions.EFCore": "5.14.2",
+          "Z.Expressions.Eval": "4.0.85"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.dll": {
+            "assemblyVersion": "5.14.2.0",
+            "fileVersion": "5.14.2.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/Z.EntityFramework.Plus.EFCore.dll": {}
+        }
+      },
+      "Z.Expressions.Eval/4.0.85": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.Extensions.Caching.Memory": "5.0.0",
+          "Newtonsoft.Json": "13.0.1",
+          "System.Collections.Concurrent": "4.3.0",
+          "System.Collections.NonGeneric": "4.3.0",
+          "System.Configuration.ConfigurationManager": "6.0.0",
+          "System.Data.Common": "4.3.0",
+          "System.Linq.Queryable": "4.3.0",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.TypeExtensions": "4.7.0",
+          "System.Xml.XPath": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Z.Expressions.Eval.dll": {
+            "assemblyVersion": "4.0.85.0",
+            "fileVersion": "4.0.85.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/Z.Expressions.Eval.dll": {}
         }
       },
       "Microsoft.AspNetCore.Antiforgery/5.0.0.0": {
@@ -3829,7 +3885,7 @@
         },
         "compileOnly": true
       },
-      "System.Linq.Queryable/5.0.0.0": {
+      "System.Linq.Queryable.Reference/5.0.0.0": {
         "compile": {
           "System.Linq.Queryable.dll": {}
         },
@@ -5519,6 +5575,13 @@
       "path": "system.linq.expressions/4.3.0",
       "hashPath": "system.linq.expressions.4.3.0.nupkg.sha512"
     },
+    "System.Linq.Queryable/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-In1Bmmvl/j52yPu3xgakQSI0YIckPUr870w4K5+Lak3JCCa8hl+my65lABOuKfYs4ugmZy25ScFerC4nz8+b6g==",
+      "path": "system.linq.queryable/4.3.0",
+      "hashPath": "system.linq.queryable.4.3.0.nupkg.sha512"
+    },
     "System.Memory/4.5.4": {
       "type": "package",
       "serviceable": true,
@@ -5911,12 +5974,26 @@
       "path": "system.xml.xpath.xmldocument/4.3.0",
       "hashPath": "system.xml.xpath.xmldocument.4.3.0.nupkg.sha512"
     },
-    "Z.EntityFramework.Extensions.EFCore/5.13.9": {
+    "Z.EntityFramework.Extensions.EFCore/5.14.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-XEtTqYCq8z7fPTrQnB6hvlrXUpmOwABll/f4DxoJEWkuBm5FS2L8ryh/pOcrAjT4cmmyg+P4KwROl1ezDQc2sw==",
-      "path": "z.entityframework.extensions.efcore/5.13.9",
-      "hashPath": "z.entityframework.extensions.efcore.5.13.9.nupkg.sha512"
+      "sha512": "sha512-HNzC9iRi1WPKOZ9q9e4KIa/3/B+k/g+GwGSy0LtiMD93oORw/JtDbv4aQoXSaNHgUKKVF56qVkK0qANiWMs0FA==",
+      "path": "z.entityframework.extensions.efcore/5.14.2",
+      "hashPath": "z.entityframework.extensions.efcore.5.14.2.nupkg.sha512"
+    },
+    "Z.EntityFramework.Plus.EFCore/5.14.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-llRC1aQDKlLz0Jr+oCGjbe9ftRKsRrJx1kfz0aBMxUBO8ZJCZNQGlZfcL9uFW42m/7NedX6MbvFQPX39VoEPEg==",
+      "path": "z.entityframework.plus.efcore/5.14.2",
+      "hashPath": "z.entityframework.plus.efcore.5.14.2.nupkg.sha512"
+    },
+    "Z.Expressions.Eval/4.0.85": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6XbyQRtd+V+eTuu8nHOlZ4ciryIr/mmUlHZIXIdOWfaXcwfZAsNCmhAHr+7FS0f0C4F/smvNJ+6pamhJbZ9yow==",
+      "path": "z.expressions.eval/4.0.85",
+      "hashPath": "z.expressions.eval.4.0.85.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Antiforgery/5.0.0.0": {
       "type": "referenceassembly",
@@ -6808,7 +6885,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "System.Linq.Queryable/5.0.0.0": {
+    "System.Linq.Queryable.Reference/5.0.0.0": {
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""

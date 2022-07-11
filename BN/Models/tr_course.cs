@@ -58,6 +58,8 @@ namespace api_hrgis.Models
         public DateTime updated_at { get { return _date; } set { _date = value; } }
         [Required]
         public string updated_by { get { return _username; } set { _username = value; } }
+        [NotMapped]
+        public bool? editable { get; set; }
         public bool? status_active { get; set; }
         [Required]
         [Display(Name = "BAND")]

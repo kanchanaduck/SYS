@@ -84,16 +84,21 @@ export class ConfirmationSheetComponent implements OnInit {
       return;
     }
 
-    axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+    axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
       .then(function(response: any){
         self.course = response.courses
         let trainers = response.trainers
         let bands = response.courses.courses_bands
-        if(trainers.length>0){
-          self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+        if(self.course.trainer_text!=""){
+          self.course.trainer_text = self.course.trainer_text
         }
         else{
-          self.course.trainer_text = "-"
+          if(trainers.length>0){
+            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          }
+          else{
+            self.course.trainer_text = "-"
+          }
         }
         if(bands.length>0){
           self.course.band_text = bands.map(c => c.band).join(', ');
@@ -148,7 +153,7 @@ export class ConfirmationSheetComponent implements OnInit {
 
     this.email.to = text_to
     this.email.cc = text_cc
-    this.email.content = `Confirm Training : ${this.course.course_name_th}: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br><br> 
+    this.email.content = `Confirm Training : ${this.course.course_name_en}: ${formatDate(this.course.date_start,'MMMM dd, yyyy','en-US')}  ~  ${formatDate(this.course.date_end,'MMMM dd, yyyy','en-US')}<br><br> 
     To Whom It May Concern,<br> <br> 
     
     I would like to confirm about the lists :<br> 
@@ -162,7 +167,7 @@ export class ConfirmationSheetComponent implements OnInit {
     Trainer: ${this.course.trainer_text} <br>
     Please try to be punctual, so we can start the training on time. <br>
     Prepare : Eraser, Pencil <br>
-    Please click the link. <a href="http://cptsvs52t/HRGIS_TEST">http://cptsvs52t/HRGIS_TEST</a> to see more detail`
+    Please click the link. <a href="http://cptsvs531/HRGIS_TEST">http://cptsvs531/HRGIS_TEST</a> to see more detail`
     console.log(this.email);
   }
 

@@ -29,11 +29,13 @@ namespace api_hrgis.Models
         public bool? final_approved_checked { get; set; }
         [Range(0, 100)]
         [Display(Name = "PRE-TEST")]
-        public int? pre_test_score { get; set; }
+        [Column(TypeName = "decimal(4,1)")]
+        public decimal? pre_test_score { get; set; }
         public string pre_test_grade { get; set; }
         [Range(0, 100)]
         [Display(Name = "POST-TEST")]
-        public int? post_test_score { get; set; }
+        [Column(TypeName = "decimal(4,1)")]
+        public decimal? post_test_score { get; set; }
         public string post_test_grade { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? scored_at { get; set; }

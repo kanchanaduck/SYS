@@ -101,6 +101,11 @@ namespace api_hrgis.Data
                 .HasOne(mb => mb.courses)
                 .WithMany(b => b.courses_registrations)
                 .HasForeignKey(mb => mb.course_no);
+            
+            //Set computed columns
+            // modelBuilder.Entity<tr_course>()
+            //     .Property(c => c.status_active)
+            //     .HasComputedColumnSql("true");
         }
         public DbSet<tb_hrms> tb_hrms { get; set; }
         public DbSet<tb_band> tb_band { get; set; }

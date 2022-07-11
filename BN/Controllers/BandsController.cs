@@ -122,21 +122,5 @@ namespace api_hrgis.Controllers
         {
             return _context.tb_band.Any(e => e.band == id);
         }
-        // GET: api/Bands/Mock
-        [AllowAnonymous]
-        [HttpGet("Mock")]
-        public async Task<IActionResult> Mock()
-        {
-            _context.tb_band.Add(new tb_band { band = "E", band_seq=1 });
-            _context.tb_band.Add(new tb_band { band = "J1", band_seq=2  });
-            _context.tb_band.Add(new tb_band { band = "J2", band_seq=3  });
-            _context.tb_band.Add(new tb_band { band = "J3", band_seq=4  });
-            _context.tb_band.Add(new tb_band { band = "J4", band_seq=5  });
-            _context.tb_band.Add(new tb_band { band = "M1", band_seq=6  });
-            _context.tb_band.Add(new tb_band { band = "M2", band_seq=7  });
-            _context.tb_band.Add(new tb_band { band = "JP", band_seq=8  });
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
     }
 }

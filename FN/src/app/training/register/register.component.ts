@@ -327,16 +327,21 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     else
     {
       this.errors = {};
-      axios.get(`${environment.API_URL}Courses/Trainers/${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
           let trainers = response.trainers
-          if(trainers.length>0){
-            self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+          if(self.course.trainer_text!=""){
+            self.course.trainer_text = self.course.trainer_text
           }
           else{
-            self.course.trainer_text = "-"
+            if(trainers.length>0){
+              self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
+            }
+            else{
+              self.course.trainer_text = "-"
+            }
           }
           let bands = self.arr_band
           if(bands.length>0){

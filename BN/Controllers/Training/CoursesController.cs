@@ -37,6 +37,9 @@ namespace api_hrgis.Controllers
                                 .Include(e => e.courses_trainers)
                                 .Include(e => e.organization)
                                 .AsNoTracking()
+                                .Where(e=> 
+                                    e.org_code==User.FindFirst("div_code").Value || 
+                                    e.org_code==User.FindFirst("dept_code").Value)
                                 .OrderBy(e => e.date_start)
                                 .ToList();
 
@@ -48,7 +51,7 @@ namespace api_hrgis.Controllers
             
             foreach (var item in courses)
             {
-                item.status_active = ((DateTime.Now.Date - (item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date) ).Days 
+                item.editable = ((DateTime.Now.Date - (item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date) ).Days 
                                 -
                                 (count_holidays((item.date_end.HasValue ? item.date_end.Value: DateTime.Now.Date), (DateTime.Now.Date)))
                                 < 10
@@ -230,7 +233,7 @@ namespace api_hrgis.Controllers
         }
 
         // GET: api/Courses/Trainers/5
-        [HttpGet("Trainers/{course_no}")]
+        [HttpGet("Trainers")]
         public async Task<ActionResult<tr_course>> course_with_trainer(string course_no)
         {
             var tr_course = await _context.tr_course

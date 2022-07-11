@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  WEB_URL: 'http://cptsvs52t/HRGIS_TEST',
-  // API_URL: 'https://localhost:5001/api/',
-  API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
-  REPORT_URL: 'http://cptsvs52t/HRGIS_REPORT',
+  WEB_URL: 'http://cptsvs531/HRGIS_TEST',
+  API_URL: 'https://localhost:5001/api/',
+  // API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
+  REPORT_URL: 'http://cptsvs531/HRGIS_REPORT',
   img_garoon: 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/',
   status: {
     wait: "Wait",
@@ -49,6 +49,7 @@ export const environment = {
  */
 // import 'zone.js/dist/zone-error';  // Included with Angular CLI.
 
+// ng build --baseHref=/HRGIS/
 // ng build --baseHref=/HRGIS_TEST/
 // ng build --prod --base-href=/HRGIS_TEST/
 // npm uninstall

@@ -372,3 +372,5 @@ D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.dll
 D:\HRGIS\BN\obj\Debug\net5.0\ref\api-hrgis.dll
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.pdb
 D:\HRGIS\BN\obj\Debug\net5.0\api-hrgis.genruntimeconfig.cache
+D:\HRGIS\BN\bin\Debug\net5.0\Z.EntityFramework.Plus.EFCore.dll
+D:\HRGIS\BN\bin\Debug\net5.0\Z.Expressions.Eval.dll

@@ -310,7 +310,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
               {
                 text: '<i class="far fa-file-alt"></i> Whole history</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs52t/HRGIS_REPORT/Training/TrainerHistory","_blank")
+                  window.open("http://cptsvs531/HRGIS_REPORT/Training/TrainerHistory","_blank")
                 }
               }
             ]

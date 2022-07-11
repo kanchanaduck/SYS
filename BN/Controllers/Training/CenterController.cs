@@ -155,16 +155,6 @@ namespace api_hrgis.Controllers
 
             return NoContent();
         }
-        // GET: api/Center/Mock
-        [AllowAnonymous]
-        [HttpGet("Mock")]
-        public async Task<IActionResult> Mock()
-        {
-            _context.tr_center.Add(new tr_center { emp_no = "005645"});
-            _context.tr_center.Add(new tr_center { emp_no = "013704" });
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
         private bool center_exists(string emp_no)
         {
             return _context.tr_center.Any(e => e.emp_no == emp_no);

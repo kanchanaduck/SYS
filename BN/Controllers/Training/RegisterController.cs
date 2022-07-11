@@ -60,8 +60,8 @@ namespace api_hrgis.Controllers
             return Ok(course_score);
         }
 
-        // GET: api/Register/{course_no}/Approved
-        [HttpGet("{course_no}/Approved")]
+        // GET: api/Register/Approved/?course_no={course_no}
+        [HttpGet("Approved")]
         public async Task<ActionResult<tr_course_registration>> Gettr_course_registration(string course_no)
         {
             var course_score = await _context.tr_course_registration
@@ -713,6 +713,24 @@ namespace api_hrgis.Controllers
                         }
                         else{
                             if (query == null){
+
+                                string _remark = "";
+                                if(studied(course.master_course_no, _emp_no)){
+                                    _remark =  _remark + _config["Text:repeat"];
+                                }
+                                if(_remark!=""){
+                                    _remark  = _remark + "; " + _config["Text:continuous"];
+                                }
+                                else{
+                                    _remark  = _remark + _config["Text:continuous"];
+                                }
+                                if(_remark!=""){
+                                    _remark  = _remark + "; " + GetPrevCourseNoText(course_no, _emp_no);
+                                }
+                                else{
+                                    _remark  = _remark + GetPrevCourseNoText(course_no, _emp_no);
+                                }
+
                                 _context.Add(new tr_course_registration
                                 {
                                     seq_no = _seq_no,
@@ -722,7 +740,7 @@ namespace api_hrgis.Controllers
                                     pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString()),
                                     post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score),
                                     post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString()),
-                                    remark = (_config["Text:continuous"])+( GetPrevCourseNoText(item.course_no, item.emp_no)==""? null:"; "+GetPrevCourseNoText(item.course_no, item.emp_no)),
+                                    remark = _remark,
                                     last_status = _config.GetValue<string>("Status:approved"),
                                     register_at = DateTime.Now,
                                     register_by = User.FindFirst("emp_no").Value,
