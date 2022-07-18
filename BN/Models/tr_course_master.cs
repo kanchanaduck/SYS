@@ -28,7 +28,7 @@ namespace api_hrgis.Models
         [Display(Name = "GROUP")]
         public string org_code { get; set; }
         [Required]
-        [Range(1, 100, ErrorMessage = "Only positive number allowed")]
+        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
         [Display(Name = "CAPACITY")]
         public int? capacity { get; set; }
         [Required]

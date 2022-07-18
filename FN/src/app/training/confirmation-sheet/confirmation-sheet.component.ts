@@ -89,7 +89,7 @@ export class ConfirmationSheetComponent implements OnInit {
         self.course = response.courses
         let trainers = response.trainers
         let bands = response.courses.courses_bands
-        if(self.course.trainer_text!=""){
+        if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
           self.course.trainer_text = self.course.trainer_text
         }
         else{

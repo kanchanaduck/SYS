@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  WEB_URL: 'http://cptsvs531/HRGIS_TEST',
+  WEB_URL: 'http://cptsvs531/HRGIS',
   API_URL: 'https://localhost:5001/api/',
   // API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
   REPORT_URL: 'http://cptsvs531/HRGIS_REPORT',

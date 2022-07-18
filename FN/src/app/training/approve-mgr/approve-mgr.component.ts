@@ -280,7 +280,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
           let trainers = response.trainers
-          if(self.course.trainer_text!=""){
+          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
             self.course.trainer_text = self.course.trainer_text
           }
           else{
@@ -482,8 +482,8 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
   res_prev: any;
-  async searchPrevCourse(empno: any) {
-    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+  async searchPrevCourse(emp_no: any) {
+    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + emp_no); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
@@ -612,7 +612,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
       this.rerender();
     }
 
-    await this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
+    await this.service.gethttp(`Register/YourOther/${this._org_code}?course_no=${this.course_no}`)
       .subscribe((response: any) => {
         // console.log(response);
 

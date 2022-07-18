@@ -28,7 +28,7 @@ namespace api_hrgis.Models
         [Column(TypeName = "decimal(3,1)")]
         public decimal? days { get; set; }
         [Required]
-        [Range(1, 100, ErrorMessage = "Only positive number allowed")]
+        [Range(1, double.MaxValue, ErrorMessage = "Only positive number allowed")]
         public int capacity { get; set; }
         public bool open_register { get; set; } = false;
         public string trainer_text { get; set; }

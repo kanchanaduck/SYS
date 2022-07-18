@@ -119,10 +119,10 @@ export class RegisterDataComponent implements OnInit {
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
           let trainers = response.trainers
-          if(self.course.trainer_text!=""){
+          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
             self.course.trainer_text = self.course.trainer_text
           }
-            else{
+          else{
             if(trainers.length>0){
               self.course.trainer_text = trainers.map(c => c.display_name).join(', ');
             }

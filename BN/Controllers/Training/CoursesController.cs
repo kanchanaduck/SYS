@@ -498,6 +498,11 @@ namespace api_hrgis.Controllers
                             .Where( e=>e.role.ToUpper()=="APPROVER" && registrant_arr.Contains(e.org_code))
                             .Include(e=>e.employee)
                             .ToListAsync();
+            
+            var student_committee = await _context.tr_stakeholder
+                            .Where( e=>e.role.ToUpper()=="COMMITTEE" && registrant_arr.Contains(e.org_code))
+                            .Include(e=>e.employee)
+                            .ToListAsync();
 
             var course_committee = await _context.tr_stakeholder
                             .Where( e=>e.role.ToUpper()=="COMMITTEE" && course.org_code == e.org_code)
@@ -509,99 +514,9 @@ namespace api_hrgis.Controllers
                 registrant = registrant,
                 trainer = trainers,
                 course_committee = course_committee,
+                student_committee = student_committee,
             });
         }
-        // GET: api/Courses/ConfirmationSheet
-        /* [HttpGet("ConfirmationSheet/{course_no}")]
-        public async Task<ActionResult<IEnumerable<tr_course>>> ConfirmationSheet(string course_no="AOF-001-001"){
-            MailMessage mail = new MailMessage();
-            SmtpClient SmtpServer = new SmtpClient("nonauth-smtp.global.canon.co.jp");
-            mail.From = new MailAddress("<kanchana@mail.canon>");
-            mail.Subject = "Hello ";
-
-            string msg = "This E-mail have both Thai and English version \n";
-
-            mail.Body = msg;
-            SmtpServer.Port = 25;
-
-            var course = await _context.tr_course.Where(e=>e.course_no==course_no)
-                            .Include(e=>e.organization)
-                            .FirstOrDefaultAsync();
-
-            if(course==null){
-                return NotFound("Course no. is not full");
-            }
-
-            var student = await _context.tr_course_registration
-                            .Include(e=>e.employees)
-                            .Where(e=>e.course_no==course_no && e.last_status=="Approved")
-                            .ToListAsync();
-
-            if(student==null){
-                return NotFound("Student is not full");
-            }
-
-            var from = await _context.tr_stakeholder
-                            .Where(e=>e.role=="COMMITTEE" && 
-                                e.org_code==course.org_code && 
-                                e.emp_no==User.FindFirst("emp_no").Value)
-                            .FirstOrDefaultAsync();
-            
-            if(from==null){
-                return StatusCode(403,"Permission denied, only committee can send confirmation email");
-            }
-
-            
-            var fileName = $"Confirmation_Sheet_{course.course_no}.xlsx";
-            var filepath = $"wwwroot/excel/Confirmation_Sheet/{fileName}";
-            var originalFileName = $"Confirmation_Sheet.xlsx";
-            var originalFilePath = $"wwwroot/excel/Confirmation_Sheet/{originalFileName}";
-
-            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
-            {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets["CONFIRMATION_SHEET"];
-
-                worksheet.Cells["B3"].Value = course.course_no;
-                worksheet.Cells["E3"].Value = course.course_name_th+" ("+course.course_name_en+")";
-                worksheet.Cells["B4"].Value = course.date_start+"-"+course.date_end;
-                worksheet.Cells["B3"].Value = course.date_start+"-"+course.date_end;
-                worksheet.Cells["G4"].Value = course.place;
-                worksheet.Cells["B5"].Value = course.trainer_text;
-                worksheet.Cells["G5"].Value = course.organization.org_abb+" ("+course.org_code+")";
-
-                int recordIndex = 9; 
-                foreach (var i in student) 
-                { 
-                    worksheet.Cells[recordIndex, 1].Value = i.seq_no; 
-                    worksheet.Cells[recordIndex, 2].Value = i.emp_no;
-                    worksheet.Cells[recordIndex, 3].Value = i.employees.fullname_en;
-                    worksheet.Cells[recordIndex, 4].Value = i.employees.fullname_th;
-                    worksheet.Cells[recordIndex, 6].Value = i.employees.position_name_en; 
-                    worksheet.Cells[recordIndex, 7].Value = i.employees.div_abb; 
-                    worksheet.Cells[recordIndex, 8].Value = i.employees.dept_abb; 
-                    recordIndex++; 
-                }
-
-                package.SaveAs(new FileInfo(filepath));
-                package.Dispose();
-            }  
-
-
-
-            try	
-            {	
-                SmtpServer.Send(mail);	
-                mail.Dispose();	
-            }	
-            catch (Exception ex)	
-            {	
-                string strError = ex.ToString();	
-
-            }	
-
-            return Ok();
-        }
- */
         private bool tr_courseExists(string id)
         {
             return _context.tr_course.Any(e => e.course_no == id);
@@ -619,60 +534,6 @@ namespace api_hrgis.Controllers
                         e.role.ToUpper()=="COMMITTEE");
         }
 
-        /* private async Task UpdateTBChild(string id, tr_course tr_course)
-        {
-            List<tr_course_band> list1 = new List<tr_course_band>();
-            var chk_cb = await _context.tr_course_band.Where(x => x.course_no == id).ToListAsync();
-            if (tr_course.courses_bands.Count() > 0)
-            {
-                for (int i = 0; i < tr_course.courses_bands.Count() ; i++)
-                {
-                    string item = tr_course.band[i];
-                    if (chk_cb.Where(x => x.course_no == id && x.band == item).FirstOrDefault() == null)
-                    {
-                        if (list1.Where(x => x.course_no == id && x.band == item).FirstOrDefault() == null)
-                        {
-                            tr_course_band tb_cb = new tr_course_band();
-                            tb_cb.course_no = id;
-                            tb_cb.band = item;
-                            list1.Add(tb_cb);
-                        }
-                    }
-                }
-                var strtb = String.Join(",", tr_course.band);
-                // Console.WriteLine("========= " + strtb);
-                var ds = (from c in _context.tr_course_band where c.course_no == id && !tr_course.band.Contains(c.band) select c).ToList();
-                _context.tr_course_band.RemoveRange(ds);
-            }
-            List<tr_course_trainer> list2 = new List<tr_course_trainer>();
-            var chk_ct = await _context.tr_course_trainer.Where(x => x.course_no == id).ToListAsync();
-            if (tr_course.trainer.Length > 0)
-            {
-                for (int j = 0; j < tr_course.trainer.Length; j++)
-                {
-                    int item = tr_course.trainer[j];
-                    if (chk_ct.Where(x => x.course_no == id && x.trainer_no == item).FirstOrDefault() == null)
-                    {
-                        if (list2.Where(x => x.course_no == id && x.trainer_no == item).FirstOrDefault() == null)
-                        {
-                            tr_course_trainer tb_tn = new tr_course_trainer();
-                            tb_tn.course_no = id;
-                            tb_tn.trainer_no = item;
-                            list2.Add(tb_tn);
-                        }
-                    }
-                }
-                var strtn = String.Join(",", tr_course.trainer);
-                // Console.WriteLine("========= " + strtn);
-                var tn = (from c in _context.tr_course_trainer where c.course_no == id && !tr_course.trainer.Contains(c.trainer_no) select c).ToList();
-                _context.tr_course_trainer.RemoveRange(tn);
-            }
-
-            await _context.tr_course_band.AddRangeAsync(list1);
-            await _context.tr_course_trainer.AddRangeAsync(list2);
-            await _context.SaveChangesAsync();
-        }
- */
         // GET: api/Course/GetGridView/{org_code}
         [HttpGet("GetGridView/{org_code}")]
         public async Task<ActionResult> GetGridView(string org_code)
@@ -688,34 +549,6 @@ namespace api_hrgis.Controllers
             {
                 list = await _context.tr_course.Where(x => x.status_active == true).ToListAsync();
             }
-            // Console.WriteLine(list.Count());
-
-           /*  List<datagrid> datagrid = new List<datagrid>();
-            for (int i = 0; i < list.Count(); i++)
-            {
-                var query_ogr = _context.tb_organization.Where(x => x.org_code == list[i].org_code).FirstOrDefault();
-                datagrid tb = new datagrid();
-                tb.course_no = list[i].course_no;
-                tb.course_name_th = list[i].course_name_th;
-                tb.course_name_en = list[i].course_name_en;
-                tb.org_code = query_ogr.org_code;
-                tb.org_abb = query_ogr.org_abb;
-                tb.days = list[i].days;
-                tb.capacity = list[i].capacity;
-                tb.open_register = list[i].open_register;
-                tb.time_in = Convert.ToString(list[i].time_in);
-                tb.time_out = Convert.ToString(list[i].time_out);
-                tb.place = list[i].place;
-                tb.date_start = list[i].date_start;
-                tb.date_end = list[i].date_end;
-                tb.band = await GetBand(list[i].course_no);
-                tb.trainer = await GetTrainer(list[i].course_no);
-
-                datagrid.Add(tb);
-            } */
-
-            // Console.WriteLine("=========: " + dept);
-            // Console.WriteLine("=========: " + User.FindFirst("emp_no").Value);
             return Ok();
         }
 
@@ -755,40 +588,3 @@ namespace api_hrgis.Controllers
         }
     }
 }
-
-/* public class req_tr_course
-{
-    public string course_no { get; set; }
-    public string course_name_th { get; set; }
-    public string course_name_en { get; set; }
-    public string org_code { get; set; }
-    public int days { get; set; }
-    public int capacity { get; set; }
-    public bool open_register { get; set; }
-    public string date_start { get; set; }
-    public string date_end { get; set; }
-    public string time_in { get; set; }
-    public string time_out { get; set; }
-    public string place { get; set; }
-    public string[] band { get; set; }
-    public int[] trainer { get; set; }
-}
-
-public class datagrid
-{
-    public string course_no { get; set; }
-    public string course_name_th { get; set; }
-    public string course_name_en { get; set; }
-    public string org_code { get; set; }
-    public string org_abb { get; set; }
-    public int days { get; set; }
-    public int capacity { get; set; }
-    public bool? open_register { get; set; }
-    public string time_in { get; set; }
-    public string time_out { get; set; }
-    public string place { get; set; }
-    public DateTime date_start { get; set; }
-    public DateTime date_end { get; set; }
-    public string[] band { get; set; }
-    public string[] trainer { get; set; }
-} */

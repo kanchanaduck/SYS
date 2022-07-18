@@ -57,7 +57,7 @@ const routes: Routes = [
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
   { path: 'assessment-file', component: AssessmentFileComponent, data: { title: 'Assessment file', active: true } },
   { path: 'register-data', component: RegisterDataComponent, data: { title: 'Register data', active: true } },
-  { path: 'register-data/?course_no:course_no', component: RegisterDataComponent, data: { title: 'Register data', active: true } },
+  { path: 'register-data/:course_no', component: RegisterDataComponent, data: { title: 'Register data', active: true } },
 ]
 @NgModule({
   declarations: [

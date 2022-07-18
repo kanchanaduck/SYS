@@ -345,7 +345,7 @@
                         <ng-template #close><span class="badge badge-dark">Close</span></ng-template>
                     </td>
                     <td class="text-center">
-                        <a [routerLink]="['register-data',item.course_no]"><i class="far fa-eye"></i></a>
+                        <a [routerLink]="['../register-data',item.course_no]"><i class="far fa-eye"></i></a>
                     </td>
                     <td class="text-center">
                         <div *ngIf="item.org_code != _org_code; else elseBlock"><span></span></div>

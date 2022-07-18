@@ -148,7 +148,7 @@ export class CourseScoreComponent implements OnInit {
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
           let trainers = response.trainers
-          if(self.course.trainer_text!=""){
+          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
             self.course.trainer_text = self.course.trainer_text
           }
           else{
@@ -398,8 +398,8 @@ export class CourseScoreComponent implements OnInit {
     }
   }
   res_prev: any;
-  async searchPrevCourse(empno: any) {
-    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + empno); // console.log('searchPrevCourse: ', this.res_prev);
+  async searchPrevCourse(emp_no: any) {
+    this.res_prev = await this.service.axios_get('Register/GetPrevCourse/' + this.course_no + '/' + emp_no); // console.log('searchPrevCourse: ', this.res_prev);
     if (this.res_prev != "" || this.res_prev != null) {
       this.txt_not_pass = this.res_prev;
       this.not_pass = true;
