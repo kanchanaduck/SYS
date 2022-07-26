@@ -97,7 +97,8 @@ export class AdministratorsComponent implements OnInit {
   dump_hrms(){
     axios.get(`${environment.API_URL}OracleHRMS/Employee/Dump`, this.headers)
     .then((response) => {
-      
+      alert("success")
+      location.reload()
     })
     .catch((error) => {
       console.error(error);

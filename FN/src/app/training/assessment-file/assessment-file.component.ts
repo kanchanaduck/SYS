@@ -45,12 +45,12 @@ export class AssessmentFileComponent implements OnInit {
   async get_course(){
     let self = this
     if(this.course_no!=null){
-      axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
           let trainers = response.trainers
-          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
+          if(self.course.trainer_text){
             self.course.trainer_text = self.course.trainer_text
           }
           else{
@@ -89,7 +89,7 @@ export class AssessmentFileComponent implements OnInit {
     this.download_button_disabled = true;
   }
   async download(){
-    location.href = `${environment.API_URL}CourseMasters/Course_Assessment_File/${this.course_no}`
+    location.href = `${environment.API_URL}Courses/Course_Assessment_File?course_no=${this.course_no}`
   }  
 
 

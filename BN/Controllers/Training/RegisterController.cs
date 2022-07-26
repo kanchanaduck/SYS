@@ -60,7 +60,7 @@ namespace api_hrgis.Controllers
             return Ok(course_score);
         }
 
-        // GET: api/Register/Approved/?course_no={course_no}
+        // GET: api/Register/Approved?course_no={course_no}
         [HttpGet("Approved")]
         public async Task<ActionResult<tr_course_registration>> Gettr_course_registration(string course_no)
         {

@@ -275,12 +275,12 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
           let trainers = response.trainers
-          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
+          if(self.course.trainer_text){
             self.course.trainer_text = self.course.trainer_text
           }
           else{
@@ -612,7 +612,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
       this.rerender();
     }
 
-    await this.service.gethttp(`Register/YourOther/${this._org_code}?course_no=${this.course_no}`)
+    await this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
       .subscribe((response: any) => {
         // console.log(response);
 

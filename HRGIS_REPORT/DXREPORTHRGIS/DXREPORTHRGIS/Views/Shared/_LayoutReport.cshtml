@@ -7,17 +7,26 @@
     <link rel="shortcut icon" type="image/png" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/css/thirdparty.bundle.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+
+    <link rel="stylesheet" href="~/css/dx-reporting-skeleton-screen.css" />
+    <link rel="stylesheet" href="~/css/viewer.part.bundle.css" />
     <style>
         body {
             margin-bottom: 0;
         }
     </style>
 </head>
-<body>    
-    @RenderBody()   
+<body>
+    @RenderBody()
 
     <script src="~/js/site.thirdparty.bundle.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", false)    
+
+
+    <script src="~/js/reporting.thirdparty.bundle.js"></script>
+    <script src="~/js/viewer.part.bundle.js"></script>
+
+    @RenderSection("Scripts", false)
 </body>
 </html>

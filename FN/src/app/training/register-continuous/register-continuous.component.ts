@@ -162,12 +162,12 @@ export class RegisterContinuousComponent implements OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
           let trainers = response.trainers
-          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
+          if(self.course.trainer_text){
             self.course.trainer_text = self.course.trainer_text
           }
           else{

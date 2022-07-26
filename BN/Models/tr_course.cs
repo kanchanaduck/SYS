@@ -13,6 +13,7 @@ namespace api_hrgis.Models
         [MinLength(8)]
         [Required]
         [Display(Name = "COURSE NO.")]
+        [RegularExpression("^[^/]*$", ErrorMessage = "Slash (/) are not allowed in {0}")]
         public string course_no { get; set; }
         [Required]
         [Display(Name = "THAI NAME")]

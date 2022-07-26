@@ -18,12 +18,13 @@
     <None Remove="PredefinedReports\CourseCountTrainee.vsrepx" />
     <None Remove="PredefinedReports\CourseMap.vsrepx" />
     <None Remove="PredefinedReports\CourseMaster.vsrepx" />
-    <None Remove="PredefinedReports\CourseTarget.vsrepx" />
     <None Remove="PredefinedReports\EmployeeTraining.vsrepx" />
+    <None Remove="PredefinedReports\ReportSignatureSheet.vsrepx" />
     <None Remove="PredefinedReports\Stakeholder.vsrepx" />
+    <None Remove="PredefinedReports\TargetGroupOfMasterCourse.vsrepx" />
     <None Remove="PredefinedReports\TestReport.vsrepx" />
     <None Remove="PredefinedReports\TrainerHistory.vsrepx" />
-    <None Remove="Report1.vsrepx" />
+    <None Remove="PredefinedReports\TrainingData.vsrepx" />
     <None Remove="Views\Training\CourseMap.vsrepx" />
   </ItemGroup>
   <ItemGroup>
@@ -49,9 +50,12 @@
     <EmbeddedResource Include="PredefinedReports\*.vsrepx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Report1.vsrepx" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Update="PredefinedReports\ReportSignatureSheet.cs">
+      <DependentUpon>ReportSignatureSheet.vsrepx</DependentUpon>
+    </Compile>
+    <Compile Update="PredefinedReports\ReportSignatureSheet.Designer.cs">
+      <DependentUpon>ReportSignatureSheet.vsrepx</DependentUpon>
+    </Compile>
     <Compile Update="PredefinedReports\Stakeholder.cs">
       <DependentUpon>Stakeholder.vsrepx</DependentUpon>
     </Compile>
@@ -88,11 +92,11 @@
     <Compile Update="PredefinedReports\CourseMaster.Designer.cs">
       <DependentUpon>CourseMaster.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\CourseTarget.cs">
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\TargetGroupOfMasterCourse.cs">
+      <DependentUpon>TargetGroupOfMasterCourse.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\CourseTarget.Designer.cs">
-      <DependentUpon>CourseTarget.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\TargetGroupOfMasterCourse.Designer.cs">
+      <DependentUpon>TargetGroupOfMasterCourse.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\EmployeeTraining.cs">
       <DependentUpon>EmployeeTraining.vsrepx</DependentUpon>
@@ -106,35 +110,23 @@
     <Compile Update="PredefinedReports\ConfirmationSheet.Designer.cs">
       <DependentUpon>ConfirmationSheet.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\ReportSignatureSheet.cs">
-      <DependentUpon>ReportSignatureSheet.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="PredefinedReports\ReportSignatureSheet.Designer.cs">
-      <DependentUpon>ReportSignatureSheet.vsrepx</DependentUpon>
-    </Compile>
     <Compile Update="PredefinedReports\ReportTraining.cs">
       <DependentUpon>ReportTraining.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\ReportTraining.Designer.cs">
       <DependentUpon>ReportTraining.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\TestReport.cs">
-      <DependentUpon>TestReport.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\TrainingData.cs">
+      <DependentUpon>TrainingData.vsrepx</DependentUpon>
     </Compile>
-    <Compile Update="PredefinedReports\TestReport.Designer.cs">
-      <DependentUpon>TestReport.vsrepx</DependentUpon>
+    <Compile Update="PredefinedReports\TrainingData.Designer.cs">
+      <DependentUpon>TrainingData.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\TrainerHistory.cs">
       <DependentUpon>TrainerHistory.vsrepx</DependentUpon>
     </Compile>
     <Compile Update="PredefinedReports\TrainerHistory.Designer.cs">
       <DependentUpon>TrainerHistory.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="Report1.cs">
-      <DependentUpon>Report1.vsrepx</DependentUpon>
-    </Compile>
-    <Compile Update="Report1.Designer.cs">
-      <DependentUpon>Report1.vsrepx</DependentUpon>
     </Compile>
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="LibraryManagerRestore" Condition="!Exists('node_modules') ">

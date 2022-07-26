@@ -50,6 +50,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
   _emp_no: any;
   _org_abb: string = "";
   _org_code: string = "";
+  _email: string = "";
 
   submitted = false;
   committee: any;
@@ -73,6 +74,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
 
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
+    this._email = this._getjwt.user.email; // set email
 
     this.check_is_committee()
 
@@ -220,6 +222,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
     }
     await axios.get(`${environment.API_URL}Register/GetEmailInformApprover/${this.course_no}/${this._org_code}`, this.headers)
     .then(function(response:any){
+      var email_from = self._email;
       var email_to = "";
       var email_dear = "";
       response.forEach(element => {
@@ -256,7 +259,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
       }).then(async (result) => {
         if (result.value) {
           let body = {
-            "from": "kanchana@mail.canon;",
+            "from": email_from,
             "to": email_to,
             "subject": email_subject,
             "text": email_body.replace(/<[^>]*>/g, ''),
@@ -327,12 +330,12 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     else
     {
       this.errors = {};
-      axios.get(`${environment.API_URL}Courses/Trainers/?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
           let trainers = response.trainers
-          if(self.course.trainer_text!="" || self.course.trainer_text!=null ){
+          if(self.course.trainer_text){
             self.course.trainer_text = self.course.trainer_text
           }
           else{
@@ -565,7 +568,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
       this.rerender()
     }
     else{
-      this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
+      await this.service.gethttp(`Register/YourOther/${this.course_no}/${this._org_code}`)
         .subscribe((response: any) => {
 
           if(response.your.length + response.other.length > 0){

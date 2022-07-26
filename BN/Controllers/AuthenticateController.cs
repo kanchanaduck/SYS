@@ -74,7 +74,8 @@ namespace api_hrgis.Controllers
                                        tb.dept_abb,
                                        stk.org_code,
                                        tb.band,
-                                       tb.position_name_en
+                                       tb.position_name_en,
+                                       tb.email
                                    }
                                     ).FirstOrDefaultAsync();
 

@@ -214,6 +214,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
       })
     self.reset_form_trainer()
     self.errors = {};
+    self.get_trainers()
     })
     .catch(function (error) {
         self.errors = error.response.data.errors
@@ -223,7 +224,6 @@ export class TrainerComponent implements OnInit, OnDestroy {
           text: typeof error.response.data === 'object'? error.response.data.title:error.response.data
         })
     });
-    self.get_trainers()
   }
 
   async delete_trainer(trainer_no: number) {

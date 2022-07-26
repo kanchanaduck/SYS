@@ -57,6 +57,8 @@ namespace DXREPORTHRGIS.PredefinedReports {
 
             // Parameters
             this.OWNER = reportInitializer.GetParameter("OWNER");
+            this.date_start = reportInitializer.GetParameter("date_start");
+            this.date_end = reportInitializer.GetParameter("date_end");
 
             // Data Sources
             this.sqlDataSource1 = reportInitializer.GetDataSource<DevExpress.DataAccess.Sql.SqlDataSource>("sqlDataSource1");
@@ -122,5 +124,7 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.XtraReports.UI.XRControlStyle PageInfo;
         private DevExpress.XtraReports.UI.XRControlStyle Style1;
         private DevExpress.XtraReports.Parameters.Parameter OWNER;
+        private DevExpress.XtraReports.Parameters.Parameter date_start;
+        private DevExpress.XtraReports.Parameters.Parameter date_end;
     }
 }

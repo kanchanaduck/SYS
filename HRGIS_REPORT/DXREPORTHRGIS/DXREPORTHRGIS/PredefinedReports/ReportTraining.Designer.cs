@@ -67,7 +67,6 @@ namespace DXREPORTHRGIS.PredefinedReports {
 
             // Parameters
             this.course_no = reportInitializer.GetParameter("course_no");
-            this.mrg_org = reportInitializer.GetParameter("mrg_org");
 
             // Data Sources
             this.sqlDataSource2 = reportInitializer.GetDataSource<DevExpress.DataAccess.Sql.SqlDataSource>("sqlDataSource2");
@@ -125,6 +124,5 @@ namespace DXREPORTHRGIS.PredefinedReports {
         private DevExpress.DataAccess.Sql.SqlDataSource sqlDataSource2;
         private DevExpress.XtraReports.Parameters.Parameter course_no;
         private DevExpress.DataAccess.Sql.SqlDataSource sqlDataSource1;
-        private DevExpress.XtraReports.Parameters.Parameter mrg_org;
     }
 }

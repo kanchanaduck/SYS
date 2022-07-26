@@ -183,6 +183,7 @@ namespace api_hrgis
                                     var org_code = data["user"]["org_code"];
                                     var band = data["user"]["band"];
                                     var position_name_en = data["user"]["position_name_en"];
+                                    var email = data["user"]["email"];
 
                                     identity.AddClaim(new Claim("access_token", accessToken.RawData));
                                     // Console.WriteLine(empno);
@@ -199,6 +200,7 @@ namespace api_hrgis
                                     identity.AddClaim(new Claim("org_code", org_code.ToString()));
                                     identity.AddClaim(new Claim("band", band.ToString()));
                                     identity.AddClaim(new Claim("position_name_en", position_name_en.ToString()));
+                                    identity.AddClaim(new Claim("email", email.ToString()));
                                 }
                             }
                         }

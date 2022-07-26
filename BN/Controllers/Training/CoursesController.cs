@@ -333,6 +333,7 @@ namespace api_hrgis.Controllers
 
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<tr_course>> create_course(tr_course tr_course)
         {
@@ -516,6 +517,225 @@ namespace api_hrgis.Controllers
                 course_committee = course_committee,
                 student_committee = student_committee,
             });
+        }
+        [AllowAnonymous]
+        [HttpGet("Course_Assessment_File")]
+        public async Task<ActionResult<IEnumerable<tr_trainer>>> trainer_history_excel(string course_no)
+        {
+            var course = await _context.tr_course
+                                .Include(t => t.organization)
+                                .Include(t => t.courses_trainers)
+                                .AsNoTracking()
+                                .Where(t => t.course_no==course_no)
+                                .FirstOrDefaultAsync();
+
+            if(course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            var c = new List<int>();
+            foreach (var item in course.courses_trainers)
+            {
+                c.Add(item.trainer_no);
+            }
+            var trainers = await (from trainer in _context.tr_trainer
+                            join data in  _context.tb_employee on trainer.emp_no equals data.emp_no into z
+                            from emp in z.DefaultIfEmpty()
+                            select new { 
+                                    trainer_no = trainer.trainer_no,
+                                    emp_no = trainer.emp_no,
+                                    title_name_en = trainer.title_name_en?? emp.title_name_en,
+                                    firstname_en = trainer.firstname_en?? emp.firstname_en,
+                                    lastname_en = trainer.lastname_en?? emp.lastname_en,
+                                    div_abb = emp.div_abb,
+                                    dept_abb = emp.dept_abb,
+                                    trainer_type = trainer.trainer_type,
+                            })
+                            .Where(trainer=> c.Contains(trainer.trainer_no))
+                            .ToListAsync();
+
+            var trainer_arr = new List<string>();
+            foreach (var item in trainers)
+            {
+                string dept =  "";
+                if(item.dept_abb!=null) {
+                   dept = "("+item.dept_abb+")";
+                }
+                Console.WriteLine(dept);
+                trainer_arr.Add(item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."+dept );
+            }
+
+            var registrant = await (
+                from tb1 in _context.tr_course_registration
+                join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
+                join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
+                from table in tb.DefaultIfEmpty()
+                where tb1.course_no == course_no && (tb1.last_status == _config.GetValue<string>("Status:approved"))
+                select new
+                {
+                    tb1.course_no,
+                    tb3.course_name_en,
+                    tb1.emp_no,
+                    tb1.seq_no,
+                    tb1.last_status,
+                    tb1.remark,
+                    tb1.final_approved_checked,
+                    table.div_code,
+                    table.div_abb,
+                    table.dept_code,
+                    table.dept_abb,
+                    table.lastname_en,
+                    table.firstname_en,
+                    table.title_name_en,
+                    table.band,
+                    table.position_code,
+                    table.position_name_en
+                }).OrderBy(x => x.seq_no).ToListAsync();
+
+            if(registrant == null)
+            {
+                return NotFound("Registrant is not found");
+            }
+
+            var time = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var fileName = $"Course_Assessment_{time}_{course_no}.xlsx";
+            var filepath = $"wwwroot/excel/Course_Assessment/{fileName}";
+            var originalFileName = $"Course_Assessment.xlsx";
+            var originalFilePath = $"wwwroot/excel/Course_Assessment/{originalFileName}";
+
+            Console.WriteLine(originalFilePath);
+            Console.WriteLine(filepath);
+
+            using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
+            {
+                string trainer_joined = "";
+                if(course.trainer_text!="" || course.trainer_text!=null){
+                    trainer_joined = course.trainer_text;
+                }
+                else{
+                    trainer_joined = string.Join(",", trainer_arr);
+                }
+
+                ExcelWorksheet worksheet = package.Workbook.Worksheets["ประเมินหลักสูตร"];
+                worksheet.Cells["D6"].Value = course.course_no;
+                worksheet.Cells["G6"].Value = course.course_name_th;
+                worksheet.Cells["G7"].Value = course.course_name_en;
+                worksheet.Cells["D8"].Value = ( course.date_start==null && course.date_end==null)? null:(course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy")); 
+                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["K8"].Value = course.place; 
+                worksheet.Cells["D9"].Value = trainer_joined; 
+                worksheet.Cells["K9"].Value = course.organization.org_abb;
+
+
+                //
+                    //ประเมิน Trainee รายคน
+                //
+
+                worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน"];
+
+                Console.WriteLine(registrant.Count());
+                int page_size = 10; 
+                int pages = (int) Math.Ceiling((decimal)(registrant.Count()/page_size));
+                int data = 1;
+                int page;
+
+
+                for (page=0; page<=pages; page++)
+                {
+                    string worksheet_name_new = "_Page"+(page+1);
+                    package.Workbook.Worksheets.Copy("ประเมิน Trainee รายคน", "ประเมิน Trainee รายคน"+worksheet_name_new);
+                }
+
+                page=1;
+                int start_col=5;
+                worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน"];
+                foreach (var item in registrant)
+                {
+                    if ((data-1) % page_size == 0)
+                    {    
+                        // Console.WriteLine("ขึ้นหน้าใหม่");  
+                        worksheet.Cells["W1"].Value = "Page: "+(page-1);  
+                        start_col = 5;    
+                        worksheet = package.Workbook.Worksheets["ประเมิน Trainee รายคน_Page"+(page)];
+                        page++;  
+
+                    }
+
+                    // Console.WriteLine(worksheet.Name+" "+data+" "+item.emp_no+" "+item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."+" "+item.dept_abb+" "+start_col);
+                    worksheet.Cells[14, start_col].Value = item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."; 
+                    worksheet.Cells[15, start_col].Value = item.emp_no;
+                    worksheet.Cells[16, start_col].Value = item.dept_abb;
+                    start_col = start_col+2;
+                    data++;
+                } 
+                package.Workbook.Worksheets.Delete("ประเมิน Trainee รายคน");
+
+
+
+                worksheet = package.Workbook.Worksheets["แบบประเมินผู้สอน"];
+                worksheet.Cells["D6"].Value = course.course_no;
+                worksheet.Cells["G6"].Value = course.course_name_th;
+                worksheet.Cells["G7"].Value = course.course_name_en;
+                worksheet.Cells["D8"].Value = course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy");  
+                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["J8"].Value = course.place; 
+                worksheet.Cells["D9"].Value = trainer_joined; 
+                worksheet.Cells["J9"].Value = course.organization.org_abb;
+
+                worksheet = package.Workbook.Worksheets["Score of trainee"];
+                string eng_course = "";
+                if(course.course_name_en!=null){
+                    eng_course = "("+course.course_name_en+")";
+                }
+                worksheet.Cells["D8"].Value = course.course_no;
+                worksheet.Cells["G8"].Value = course.course_name_th+eng_course;
+                worksheet.Cells["D9"].Value = course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy"); 
+                worksheet.Cells["G9"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["L9"].Value = course.place; 
+                worksheet.Cells["D10"].Value = trainer_joined; 
+                worksheet.Cells["L10"].Value = course.organization.org_abb;
+
+                data = 1;
+
+                for (page=0; page<=pages; page++)
+                {
+                    string worksheet_name_new = "_Page"+(page+1);
+                    package.Workbook.Worksheets.Copy("Score of trainee", "Score of trainee"+worksheet_name_new);
+                }
+
+                page=1;
+                int start_row=16;
+                worksheet = package.Workbook.Worksheets["Score of trainee"];
+                foreach (var item in registrant)
+                {
+                    if ((data-1) % page_size == 0)
+                    {    
+                        // Console.WriteLine("ขึ้นหน้าใหม่");
+                        worksheet.Cells["N1"].Value = "Page: "+(page-1);  
+                        start_row = 16;    
+                        worksheet = package.Workbook.Worksheets["Score of trainee_Page"+(page)];
+                        page++;  
+
+                    }
+                    worksheet.Cells[start_row, 3].Value = item.emp_no; 
+                    worksheet.Cells[start_row, 4].Value = item.firstname_en+" "+item.lastname_en;
+                    worksheet.Cells[start_row, 6].Value = item.position_name_en;
+                    worksheet.Cells[start_row, 7].Value = item.div_abb;
+                    worksheet.Cells[start_row, 8].Value = item.dept_abb;
+                    start_row++;  
+                    data++;
+                } 
+                package.Workbook.Worksheets.Delete("Score of trainee");
+
+                worksheet = package.Workbook.Worksheets["ประเมินหลักสูตร"];
+
+                package.SaveAs(new FileInfo(filepath));
+                package.Dispose();
+            }  
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filepath);
+            return File(fileBytes, "application/x-msdownload", fileName); 
         }
         private bool tr_courseExists(string id)
         {

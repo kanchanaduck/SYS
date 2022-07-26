@@ -38,10 +38,10 @@ namespace api_hrgis.Controllers
         [HttpGet("GetChartFinal")]
         public IActionResult GetChartFinal(string course_no)
         {
-            var query = string.Format(@"SELECT dept_abb FROM [HRGIS].[dbo].[V_CHART_CENTER] where course_no = '{0}' group by dept_abb order by dept_abb"
+            var query = string.Format(@"SELECT dept_abb FROM V_CHART_CENTER where course_no = '{0}' group by dept_abb order by dept_abb"
                         , course_no);
 
-            var query1 = string.Format(@"SELECT total FROM [HRGIS].[dbo].[V_CHART_CENTER] where course_no = '{0}' group by total, dept_abb order by dept_abb"
+            var query1 = string.Format(@"SELECT total FROM V_CHART_CENTER where course_no = '{0}' group by total, dept_abb order by dept_abb"
                         , course_no);
 
             var course = _context.tr_course_master.Where(e=>e.course_no==course_no).FirstOrDefault();

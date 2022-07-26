@@ -3,6 +3,7 @@ using System.IO;
 using DevExpress.AspNetCore;
 using DevExpress.AspNetCore.Reporting;
 using DevExpress.Security.Resources;
+using DevExpress.XtraReports.Web;
 using DevExpress.XtraReports.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,11 +39,16 @@ namespace DXREPORTHRGIS {
                     viewerConfigurator.UseCachedReportSourceBuilder();
                 });
             });
+
+            services.AddControllers();
+
+
             services.AddDbContext<ReportDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("ReportsDataConnectionString")));
             
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("Production")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +57,7 @@ namespace DXREPORTHRGIS {
             var contentDirectoryAllowRule = DirectoryAccessRule.Allow(new DirectoryInfo(Path.Combine(env.ContentRootPath, "..", "Content")).FullName);
             AccessSettings.ReportingSpecificResources.TrySetRules(contentDirectoryAllowRule, UrlAccessRule.Allow());
             DevExpress.XtraReports.Configuration.Settings.Default.UserDesignerOptions.DataBindingMode = DevExpress.XtraReports.UI.DataBindingMode.Expressions;
+
             app.UseDevExpressControls();
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
             if(env.IsDevelopment()) {
@@ -77,7 +84,7 @@ namespace DXREPORTHRGIS {
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Training}/{action=Index}");
+                pattern: "{controller=Training}/{action=Index}/{id?}");
             });
         }
     }

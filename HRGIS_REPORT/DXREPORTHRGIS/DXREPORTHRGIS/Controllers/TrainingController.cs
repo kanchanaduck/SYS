@@ -14,21 +14,24 @@ namespace DXREPORTHRGIS.Controllers
 {
     public class CustomWebDocumentViewerController : WebDocumentViewerController
     {
-        public CustomWebDocumentViewerController(IWebDocumentViewerMvcControllerService controllerService) : base(controllerService)
+        public CustomWebDocumentViewerController(IWebDocumentViewerMvcControllerService controllerService) 
+            : base(controllerService)
         {
         }
     }
 
     public class CustomReportDesignerController : ReportDesignerController
     {
-        public CustomReportDesignerController(IReportDesignerMvcControllerService controllerService) : base(controllerService)
+        public CustomReportDesignerController(IReportDesignerMvcControllerService controllerService) 
+            : base(controllerService)
         {
         }
     }
 
     public class CustomQueryBuilderController : QueryBuilderController
     {
-        public CustomQueryBuilderController(IQueryBuilderMvcControllerService controllerService) : base(controllerService)
+        public CustomQueryBuilderController(IQueryBuilderMvcControllerService controllerService) 
+            : base(controllerService)
         {
         }
     }
@@ -66,7 +69,7 @@ namespace DXREPORTHRGIS.Controllers
         {
             return View();
         }
-        public IActionResult CourseTarget()
+        public IActionResult TargetGroupOfMasterCourse()
         {
             return View();
         }
@@ -83,6 +86,10 @@ namespace DXREPORTHRGIS.Controllers
             return View();
         }
         public IActionResult Course()
+        {
+            return View();
+        }
+        public IActionResult TrainingData()
         {
             return View();
         }

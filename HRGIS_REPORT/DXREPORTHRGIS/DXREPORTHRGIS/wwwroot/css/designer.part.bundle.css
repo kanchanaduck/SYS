@@ -1,7 +1,7 @@
 /**
 * DevExpress Analytics (dist\css\dx-querybuilder.css)
-* Version:  21.1.6
-* Build date: Sep 27, 2021
+* Version:  21.1.4
+* Build date: Jun 22, 2021
 * Copyright (c) 2012 - 2021 Developer Express Inc. ALL RIGHTS RESERVED
 * License: https://www.devexpress.com/Support/EULAs/universal.xml
 */
@@ -1813,8 +1813,8 @@
 
 /**
 * DevExpress HTML/JS Reporting (dist\css\dx-reportdesigner.css)
-* Version:  21.1.6
-* Build date: Sep 27, 2021
+* Version:  21.1.4
+* Build date: Jun 22, 2021
 * Copyright (c) 2012 - 2021 Developer Express Inc. ALL RIGHTS RESERVED
 * License: https://www.devexpress.com/Support/EULAs/universal.xml
 */
@@ -1870,25 +1870,6 @@
 }
 .dx-rtl.dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel {
   right: 1px;
-}
-.dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel .dxcd-indicators-list {
-  letter-spacing: normal;
-  height: 300px;
-}
-.dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel .dxcd-indicators-list .dx-list-search {
-  border-top: none;
-  border-right: none;
-  border-left: none;
-  height: 36px;
-  font-size: 14px;
-  border-radius: 0;
-  margin-bottom: 0;
-}
-.dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel .dxcd-indicators-list .dx-list-search .dx-texteditor-input {
-  font-size: 14px;
-}
-.dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel .dxcd-indicators-list .dx-list-search .dx-placeholder {
-  font-size: 14px;
 }
 .dxrd-designer-wrapper.dxcd-designer .dx-chart-left-panel .dxrd-right-panel {
   left: 0;
@@ -4496,14 +4477,10 @@
   width: 60px;
   right: 20px;
   position: absolute;
+  border: 1px solid #a7a7ab;
   overflow: hidden;
   box-sizing: border-box;
   z-index: 1;
-}
-.dxrd-designer-wrapper .dxrd-surface-wrapper .dxrd-surface .dxrd-bands-panel-wrapper .dxrd-bands-panel .dxrd-band-headers .dxrd-band-marker-wrapper .dxrd-band-marker .dxrd-band-marker-content {
-  border: 1px solid #a7a7ab;
-  width: 100%;
-  height: 100%;
 }
 .dxrd-designer-wrapper .dxrd-surface-wrapper .dxrd-surface .dxrd-bands-panel-wrapper .dxrd-bands-panel .dxrd-band-headers .dxrd-band-marker-wrapper .dxrd-band-marker .dxrd-band-marker-rotation {
   height: 100%;
