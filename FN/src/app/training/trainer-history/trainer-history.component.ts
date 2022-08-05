@@ -5,6 +5,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AppServiceService } from 'src/app/app-service.service';
+import { Settings } from 'src/app/settings';
 import axios from 'axios';
 
 @Component({
@@ -22,12 +23,6 @@ export class TrainerHistoryComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false;
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
 
   constructor(
     private route: ActivatedRoute, 
@@ -92,7 +87,7 @@ export class TrainerHistoryComponent implements OnInit {
 
   async get_trainer_history(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Trainers/History/${this.trainer_no}`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Trainers/History/${this.trainer_no}`, Settings.headers)
     .subscribe((response: any) => {
       self.trainer_history = response;
       if (this.isDtInitialized) {
@@ -114,7 +109,7 @@ export class TrainerHistoryComponent implements OnInit {
 
   async get_trainer() {
     let self =this
-    await axios.get(`${environment.API_URL}Trainers/${this.trainer_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Trainers/${this.trainer_no}`,Settings.headers)
     .then(function (response) {
       console.log(response)
       self.trainer = response

@@ -4,6 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
+import { Settings } from 'src/app/settings';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -26,12 +27,6 @@ const CSV_TYPE = 'text/plain;charset=utf-8';
   styleUrls: ['./course-score.component.scss']
 })
 export class CourseScoreComponent implements OnInit {
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   data_grid: any = [];
   // datatable
   dtOptions: any = {};
@@ -118,7 +113,7 @@ export class CourseScoreComponent implements OnInit {
 
   async get_courses_owner(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, Settings.headers)
     .then(function(response){
       self.courses = response
       self.rerender()
@@ -143,7 +138,7 @@ export class CourseScoreComponent implements OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
@@ -261,12 +256,12 @@ export class CourseScoreComponent implements OnInit {
       post_test_grade: this.post_test_grade,
     };
     if( this.data_grid.some(x => x.emp_no == this.emp_no)){
-      await this.service.axios_put(`Register/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, environment.text.success);
+      await this.service.axios_put(`Register/ByCommitteeCourse/${this.course_no}/${this.emp_no}`, send_data, Settings.text.success);
       this.fnClear()
       self.get_registrant()
     }
     else{
-      axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, this.headers)
+      axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, Settings.headers)
       .then(function(){
         self.service.sweetalert_create()
         self.get_registrant()
@@ -306,7 +301,7 @@ export class CourseScoreComponent implements OnInit {
     }
     // console.log(send_data)
     if( send_data.length > 0){
-      axios.put(`${environment.API_URL}Register/UpdateScore/${this.course_no}`, send_data, this.headers)
+      axios.put(`${environment.API_URL}Register/UpdateScore/${this.course_no}`, send_data, Settings.headers)
       .then(function(){
         self.service.sweetalert_edit()
         self.get_registrant()
@@ -358,7 +353,7 @@ export class CourseScoreComponent implements OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('Register/' + this.course_no + '/' + item.emp_no, environment.text.delete);
+        await this.service.axios_delete('Register/' + this.course_no + '/' + item.emp_no, Settings.text.delete);
         this.get_registrant();
       }
     })
@@ -479,7 +474,7 @@ export class CourseScoreComponent implements OnInit {
       formData.append('dept_abb', this._org_abb)
 
       await axios.post(`${environment.API_URL}Register/UploadCourseScore/${this.course_no}`
-      , formData, this.headers)
+      , formData, Settings.headers)
       .then(function(response:any){
         if(response.length>0){
           Swal.fire({

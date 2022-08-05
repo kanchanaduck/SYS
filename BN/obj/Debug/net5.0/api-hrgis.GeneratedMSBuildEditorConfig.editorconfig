@@ -7,4 +7,4 @@ build_property.PublishSingleFile =
 build_property.IncludeAllContentForSelfExtract = 
 build_property._SupportedPlatformList = Android,iOS,Linux,macOS,Windows
 build_property.RootNamespace = api_hrgis
-build_property.ProjectDir = D:\HRGIS\BN\
+build_property.ProjectDir = d:\HRGIS\BN\

@@ -6,9 +6,11 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { environment } from '../../../environments/environment';
+import { Settings } from 'src/app/settings';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-approve-mgr',
@@ -16,13 +18,6 @@ import axios from 'axios';
   styleUrls: ['./approve-mgr.component.scss']
 })
 export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
-
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
 
   data_grid: any = [];
   data_grid_other: any = [];
@@ -49,8 +44,8 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
   checkboxesDataList: any[];
   _getjwt: any;
   _emp_no: any;
-  _org_abb: string = "";
-  _org_code: string = "";
+  _org_abb: any = [];
+  _org_code: any = [];
 
   submitted = false;
   approver: any;
@@ -67,8 +62,16 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
   emp_status: any;
   has_continuous: boolean = false;
 
-  constructor(private service: AppServiceService, private exportexcel: ExportService) {
+  constructor(private route: ActivatedRoute, private service: AppServiceService, private exportexcel: ExportService) {
+    this.route.params.subscribe(params => {
+      this.course_no = params['course_no'];
+    });
+
+    // if(this.course_no!=null){
+    //   window.location.reload();
+    // }
   }
+
   ngOnInit() {
 
     this._getjwt = this.service.service_jwt();  // get jwt
@@ -234,7 +237,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
 
   async get_approver_of_emp_no() {
     let self = this
-    await axios.get(`${environment.API_URL}Stakeholder/Approver/Belong/${this._emp_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Stakeholder/Approver/Belong/${this._emp_no}`, Settings.headers)
     .then(function (response) {
       self.approver = response
       self.approver_org_code = self.approver.org_code
@@ -251,9 +254,13 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     await this.service.gethttp('Stakeholder/Approver/' + self._emp_no)
       .subscribe((response: any) => {
         console.log(response)
-        self.is_approver = true;
-        self._org_code = response.org_code
-        self._org_abb = response.organization.org_abb
+        self.is_approver = false;
+        response.forEach(element => {
+          console.log(element)
+          self._org_code.push(element.org_code)
+          self._org_abb.push(element.organization.org_abb)
+          self.is_approver = self.is_approver || (self._emp_no == element.emp_no)
+        });
         self.isreadonly = false;
       }, (error: any) => {
         console.log(error);
@@ -275,7 +282,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
@@ -310,7 +317,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
 
   async get_courses_open(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, Settings.headers)
     .then(function(response){
       self.courses = response
       self.get_course()
@@ -333,14 +340,14 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     const send_data = {
       course_no: this.course_no,
       emp_no: this.emp_no,
-      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? environment.text.wait : null,
+      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? Settings.text.wait : null,
       remark: this.txt_not_pass
     }
     // console.log(send_data);
-    // await this.service.axios_post('Register', send_data, environment.text.success);
+    // await this.service.axios_post('Register', send_data, Settings.text.success);
     // await this.get_registrant(this.form.controls['frm_course'].value);
     let self = this
-    await axios.post(`${environment.API_URL}Register/ByApproverEmp`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Register/ByApproverEmp`, send_data, Settings.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -418,7 +425,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         this.selection.clear();
-        await this.service.axios_put(`Register/MgrApprove/${this.course_no}`, this.array_grid, environment.text.success);
+        await this.service.axios_put(`Register/MgrApprove/${this.course_no}`, this.array_grid, Settings.text.success);
         this.array_grid = [];
         await this.get_registrant();
       }
@@ -443,7 +450,7 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete(`Register/${item.course_no}/${item.emp_no}`, environment.text.delete);
+        await this.service.axios_delete(`Register/${item.course_no}/${item.emp_no}`, Settings.text.delete);
         this.get_registrant();
       }
     })
@@ -531,13 +538,13 @@ export class ApproveMgrComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     let formData = new FormData();
-    // if (this.customFile.nativeElement.value !== undefined && this.customFile.nativeElement.value !== "" && this.customFile.nativeElement.value !== null) {
-      formData.append('file_form', this.file)
-      formData.append('file_name', this.fileName)
-      formData.append('dept_abb', this._org_abb)
+
+    formData.append('file_form', this.file)
+    formData.append('file_name', this.fileName)
+    // formData.append('dept_abb', this._org_abb)
 
       await axios.post(`${environment.API_URL}Register/UploadCourseRegister/ByApproverEmp/${this.course_no}`
-      , formData, this.headers)
+      , formData, Settings.headers)
       .then(function(response:any){
         if(response.length>0){
           Swal.fire({

@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import axios from 'axios';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 @Component({
   selector: 'app-training',
   templateUrl: './training.component.html',
@@ -12,12 +13,7 @@ export class TrainingComponent implements OnInit {
 
   training_menu: any = [];
   report_url: string;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  } 
+
   _getjwt: any;
   _emp_no: any;
   _div_code: any;
@@ -36,13 +32,13 @@ export class TrainingComponent implements OnInit {
     this._emp_no= this._getjwt.user.emp_no; // set emp_no
     this._div_code = this._getjwt.user.div_code; // set dept_code
     this._dept_code = this._getjwt.user.dept_code; // set dept_code
-    this.report_url = `${environment.REPORT_URL}/Training/`
+    this.report_url = `${Settings.REPORT_URL}Training/`
     this.check_is_center()
   }
 
   async check_is_center() {
     let self = this
-    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,Settings.headers)
     .then(function (response) {
       self.is_center = true;
     })

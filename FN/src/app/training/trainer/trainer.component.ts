@@ -1,14 +1,12 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DataTableDirective } from 'angular-datatables';
 import axios from 'axios';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import Swal from 'sweetalert2';
 import { AppServiceService } from '../../app-service.service'
 import { Subject } from 'rxjs';
-
-// DBCC CHECKIDENT ('HRGIS.dbo.tr_trainer', RESEED, 0)
 
 @Component({
   selector: 'app-trainer',
@@ -25,12 +23,6 @@ export class TrainerComponent implements OnInit, OnDestroy {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
 
   filter_trainer_owner: string = "";
   filter_trainer_type: string = "";
@@ -81,7 +73,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
   }
   
   async get_trainer_owner() {
-    await this.httpClient.get(`${environment.API_URL}Trainers/Owner`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Trainers/Owner`, Settings.headers)
     .subscribe((response: any) => {
       this.trainer_owner = response;
       this.check_is_committee()
@@ -118,7 +110,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
   }
   async get_trainers(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Trainers`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Trainers`, Settings.headers)
     .subscribe((response: any) => {
       self.trainers = response;
       if (this.isDtInitialized) {
@@ -155,7 +147,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
    
   async get_employee() {
     let self =this
-    await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Employees/${this.trainer.emp_no}`,Settings.headers)
     .then(function (response) {
       console.log(response)
       self.trainer = response
@@ -176,7 +168,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   async get_trainer(trainer_no: number) {
     try {
-      const response = await axios.get(`${environment.API_URL}Trainers/${trainer_no}`, this.headers);
+      const response = await axios.get(`${environment.API_URL}Trainers/${trainer_no}`, Settings.headers);
       this.trainer = response
       this.trainer.org_code  = this.trainer.trainer_owner_code
       return response;
@@ -202,7 +194,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   async save_trainer() {
     let self = this
-    await axios.post(`${environment.API_URL}Trainers`,this.trainer, this.headers)
+    await axios.post(`${environment.API_URL}Trainers`,this.trainer, Settings.headers)
     .then(function (response) {
       Swal.fire({
         toast: true,
@@ -237,7 +229,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await axios.delete(`${environment.API_URL}Trainers/${trainer_no}`, this.headers)
+        await axios.delete(`${environment.API_URL}Trainers/${trainer_no}`, Settings.headers)
         .then(function (response) {
           Swal.fire({
             toast: true,
@@ -310,7 +302,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
               {
                 text: '<i class="far fa-file-alt"></i> Whole history</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs531/HRGIS_REPORT/Training/TrainerHistory","_blank")
+                  window.open(`${Settings.REPORT_URL}Training/TrainerHistory`,"_blank")
                 }
               }
             ]

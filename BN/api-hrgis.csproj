@@ -5,6 +5,15 @@
     <RootNamespace>api_hrgis</RootNamespace>
   </PropertyGroup>
 
+  <!-- Adds EnvironmentName variable during publish -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Test'">
+      <EnvironmentName>Development</EnvironmentName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == '' Or  '$(Configuration)' == 'Release'">
+      <EnvironmentName>Production</EnvironmentName>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="5.8.5" />
     <PackageReference Include="FoolProof.Core" Version="1.1.10" />

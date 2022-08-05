@@ -18,7 +18,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_hrgis.Controllers
 {
-    [Authorize] // Microsoft.AspNetCore.Authorization // [AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -103,6 +103,26 @@ namespace api_hrgis.Controllers
                     throw;
                 }
             }
+        }
+        // GET: api/Account/ResetPassword
+        [HttpGet("ResetPassword/All")]
+        public async Task<ActionResult<tb_user>> reset_password_all()
+        {
+            var tb_user = await _context.tb_user
+                            .ToListAsync();
+
+            foreach (var item in tb_user)
+            {
+                var hashsalt = _repository.EncryptPassword(item.username);
+                item.passwordhash = hashsalt.Hash;
+                item.storedsalt = hashsalt.Salt;
+                item.reset_password_at = DateTime.Now;
+                item.reset_password_by = "HRGIS-TEST";
+                _context.Entry(item).State = EntityState.Modified;
+            }
+            await _context.SaveChangesAsync();
+            return NoContent();
+
         }
         // GET: api/Account/ResetPassword
         [HttpGet("ResetPassword/{emp_no}")]

@@ -77,7 +77,7 @@
         "tslib": "^2.3.1",
         "typicons.font": "^2.0.9",
         "web-animations-js": "^2.3.2",
-        "xlsx": "^0.16.9",
+        "xlsx": "^0.18.5",
         "zone.js": "~0.10.3"
     },
     "devDependencies": {
@@ -103,6 +103,6 @@
         "protractor": "~5.4.4",
         "ts-node": "~8.9.1",
         "tslint": "~6.1.2",
-        "typescript": "~3.8.3"
+        "typescript": "^3.7.7"
     }
 }

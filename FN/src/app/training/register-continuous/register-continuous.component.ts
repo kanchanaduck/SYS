@@ -6,6 +6,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios';
 
@@ -46,12 +47,7 @@ export class RegisterContinuousComponent implements OnInit {
 
   form: FormGroup;
   submitted = false;
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
+
   is_committee: boolean;
   _org_code: any;
   course_no:string;
@@ -162,7 +158,7 @@ export class RegisterContinuousComponent implements OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
@@ -201,7 +197,7 @@ export class RegisterContinuousComponent implements OnInit {
 
 async get_courses_owner(){
   let self = this
-  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, this.headers)
+  await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, Settings.headers)
   .then(function(response){
     self.courses = response
     self.get_course()
@@ -291,7 +287,7 @@ async check_is_committee() {
     console.log(form_data)
 
     if(form_data.length>0){
-      await axios.post(`${environment.API_URL}Register/Continuous`, form_data, this.headers)
+      await axios.post(`${environment.API_URL}Register/Continuous`, form_data, Settings.headers)
       .then(function(response:any){
         if(response.length>0){
           Swal.fire({
@@ -325,7 +321,7 @@ async check_is_committee() {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete('Register/' + item.course_no + '/' + item.emp_no, environment.text.delete);
+        await this.service.axios_delete('Register/' + item.course_no + '/' + item.emp_no, Settings.text.delete);
         this.get_registrant()
       }
     })

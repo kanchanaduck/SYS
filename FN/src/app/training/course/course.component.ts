@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbDate, NgbDateStruct, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { fromEvent, Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import axios from 'axios';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-course',
@@ -40,12 +40,6 @@ export class CourseComponent implements OnInit {
   course: any = {};
   errors: any;
 
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   is_committee: boolean;
   master_course_no: string;
   master_courses: any;
@@ -170,7 +164,7 @@ export class CourseComponent implements OnInit {
               {
                 text: '<i class="far fa-file-alt"></i> Report</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs531/HRGIS_REPORT/Training/Course","_blank")
+                  window.open(`${Settings.REPORT_URL}Training/Course`,"_blank")
                 }
               }
             ]
@@ -249,7 +243,7 @@ export class CourseComponent implements OnInit {
       console.log(form_data)
 
       self.errors = {};
-      await axios.post(`${environment.API_URL}Courses`, form_data , this.headers)
+      await axios.post(`${environment.API_URL}Courses`, form_data , Settings.headers)
       .then(function (response) {
         self.service.sweetalert_create();
         self.fnClear()
@@ -314,7 +308,7 @@ export class CourseComponent implements OnInit {
     this.course = {};
 
     let self = this
-    await axios.get(`${environment.API_URL}Courses/${course_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/${course_no}`, Settings.headers)
     .then(function(response){
 
       self.course = response

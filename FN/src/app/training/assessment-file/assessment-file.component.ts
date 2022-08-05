@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
 import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
-import Swal from 'sweetalert2';
+import { Settings } from 'src/app/settings';
 
 @Component({
   selector: 'app-assessment-file',
@@ -14,12 +14,6 @@ export class AssessmentFileComponent implements OnInit {
   link: string;
   course_no: string;
   error: string = "";
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   courses: any = [];
   course: any = {};
   download_button_disabled: boolean = true;
@@ -34,7 +28,7 @@ export class AssessmentFileComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    axios.get(`${environment.API_URL}Courses`,self.headers)
+    axios.get(`${environment.API_URL}Courses`,Settings.headers)
     .then(function(response){
       self.courses = response
     })
@@ -45,7 +39,7 @@ export class AssessmentFileComponent implements OnInit {
   async get_course(){
     let self = this
     if(this.course_no!=null){
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands

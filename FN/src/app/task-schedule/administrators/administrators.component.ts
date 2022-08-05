@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
 import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 
 @Component({
   selector: 'app-administrators',
@@ -14,12 +15,6 @@ export class AdministratorsComponent implements OnInit {
   employees: any = {};
   c: any = {};
   center: any = {};
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   _getjwt: any;
   _emp_no: string;
   _dept_abb: string;
@@ -95,7 +90,7 @@ export class AdministratorsComponent implements OnInit {
   }
 
   dump_hrms(){
-    axios.get(`${environment.API_URL}OracleHRMS/Employee/Dump`, this.headers)
+    axios.get(`${environment.API_URL}OracleHRMS/Employee/Dump`, Settings.headers)
     .then((response) => {
       alert("success")
       location.reload()
@@ -106,7 +101,7 @@ export class AdministratorsComponent implements OnInit {
   }
 
   get_hrms(){
-    axios.get(`${environment.API_URL}OracleHRMS/HistoryDump`, this.headers)
+    axios.get(`${environment.API_URL}OracleHRMS/HistoryDump`, Settings.headers)
     .then((response) => {
       this.history_dump = response
     })

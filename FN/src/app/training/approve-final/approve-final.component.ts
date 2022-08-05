@@ -8,6 +8,7 @@ import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Settings } from 'src/app/settings';
 
 @Component({
   selector: 'app-approve-final',
@@ -16,12 +17,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
 
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   data_grid: any = [];
   // datatable
   dtOptions: any = {};
@@ -285,7 +280,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
     else
     {
       self.data_grid = [];
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
@@ -320,7 +315,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
 
   async get_courses_owner(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}/NotOver10WorkingDays`, Settings.headers)
     .then(function(response){
       self.courses = response
       self.get_course()
@@ -340,11 +335,11 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
     const send_data = {
       course_no: this.course_no,
       emp_no: this.emp_no,
-      last_status: (this.data_grid.length + 1) > this.course.capacity ? environment.text.wait : 'Approved',
+      last_status: (this.data_grid.length + 1) > this.course.capacity ? Settings.text.wait : 'Approved',
       remark: this.txt_not_pass
     }
     let self = this
-    await axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Register/ByCommitteeCourse`, send_data, Settings.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -390,7 +385,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
     if(this._org_code != this.course.org_code){ 
       Swal.fire({
         icon: 'error',
-        text: environment.text.invalid_course
+        text: Settings.text.invalid_course
       })
       return; 
     }
@@ -426,7 +421,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
         Array.prototype.push.apply(this.array_grid, this.data_grid); 
         this.array_grid = removeDuplicateObjectFromArray(this.array_grid, 'emp_no'); 
 
-        await this.service.axios_put(`Register/FinalApprove/${this.course_no}`, this.array_grid, environment.text.success);
+        await this.service.axios_put(`Register/FinalApprove/${this.course_no}`, this.array_grid, Settings.text.success);
         await this.get_registrant();
         this.selection.clear();
         this.array_grid = [];
@@ -455,7 +450,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete(`Register/${this.course_no}/${emp_no}`, environment.text.delete);
+        await this.service.axios_delete(`Register/${this.course_no}/${emp_no}`, Settings.text.delete);
         this.get_registrant();
       }
     })
@@ -546,7 +541,7 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
       formData.append('capacity', this.txtqty.nativeElement.value)
     }
 
-    this.result = await this.service.axios_formdata_post('/Register/UploadCourseRegistration/' + this.course_no, formData, environment.text.success);
+    this.result = await this.service.axios_formdata_post('/Register/UploadCourseRegistration/' + this.course_no, formData, Settings.text.success);
     // console.log('result: ', this.result.data);
     if (this.result.data.length > 0) {
       let element = this.result.data;
@@ -631,8 +626,8 @@ export class ApproveFinalComponent implements AfterViewInit, OnDestroy, OnInit {
           console.log("2", this.selection.selected);
         }
 
-        this.v_regis = this.data_grid.filter(x => x.last_status != environment.text.wait).length;
-        this.v_wait = this.data_grid.filter(x => x.last_status == environment.text.wait).length;
+        this.v_regis = this.data_grid.filter(x => x.last_status != Settings.text.wait).length;
+        this.v_wait = this.data_grid.filter(x => x.last_status == Settings.text.wait).length;
         this.v_total = this.data_grid.length;
 
         if(this.v_total>this.course.capacity){

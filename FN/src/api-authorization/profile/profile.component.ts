@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import axios from 'axios';
 import { AppServiceService } from 'src/app/app-service.service';
+import { Settings } from 'src/app/settings';
 import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-profile',
@@ -14,15 +15,9 @@ export class ProfileComponent implements OnInit {
   _data: any;
   _fullname: any;
   _positions: any;
-  img_garoon: any = environment.img_garoon;
+  img_garoon: any = Settings.IMG_GAROON;
   images: any;
   activeUrl: any;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   _emp_no: any;
   password: any = {};
   errors: any = {};
@@ -38,7 +33,7 @@ export class ProfileComponent implements OnInit {
 
   async ngOnInit() {
 
-    if (localStorage.getItem('token_hrgis') != null) {
+    if (sessionStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); 
       this._fullname = this._data.user.fullname_en;
       this._emp_no = this._data.user.emp_no;
@@ -49,7 +44,7 @@ export class ProfileComponent implements OnInit {
 
   change_password(){
     let self =this
-    axios.post(`${environment.API_URL}Account/ChangePassword/${this._emp_no}`, this.password,  this.headers)
+    axios.post(`${environment.API_URL}Account/ChangePassword/${this._emp_no}`, this.password,  Settings.headers)
     .then(function(){
       self.service.sweetalert_edit()  
       self.password =  {};

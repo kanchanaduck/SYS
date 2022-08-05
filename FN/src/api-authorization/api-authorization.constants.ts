@@ -15,6 +15,7 @@ export const LogoutActions = {
 
 export const LoginActions = {
   Login: 'signin',
+  LoginAs: 'signin/:signin-as/:course_no',
   LoginCallback: 'login-callback',
   LoginFailed: 'login-failed',
   Profile: 'profile',
@@ -25,6 +26,7 @@ let applicationPaths: ApplicationPathsType = {
   DefaultLoginRedirectPath: '/',
   ApiAuthorizationClientConfigurationUrl: `_configuration/${ApplicationName}`,
   Login: `authentication/${LoginActions.Login}`,
+  LoginAs: `authentication/${LoginActions.LoginAs}`,
   LoginFailed: `authentication/${LoginActions.LoginFailed}`,
   LoginCallback: `authentication/${LoginActions.LoginCallback}`,
   Register: `authentication/${LoginActions.Register}`,
@@ -59,6 +61,7 @@ interface ApplicationPathsType {
   readonly DefaultLoginRedirectPath: string;
   readonly ApiAuthorizationClientConfigurationUrl: string;
   readonly Login: string;
+  readonly LoginAs: string;
   readonly LoginFailed: string;
   readonly LoginCallback: string;
   readonly Register: string;

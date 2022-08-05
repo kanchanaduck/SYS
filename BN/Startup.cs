@@ -42,7 +42,7 @@ namespace api_hrgis
         {
             ///////////// Connect DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<OracleDbContext>(options =>
                 options.UseOracle(Configuration.GetConnectionString("OracleConnection")));
@@ -60,7 +60,7 @@ namespace api_hrgis
             }
             else
             {
-                Console.WriteLine("Not dev or staging");
+                Console.WriteLine("You are on production mode.");
             }
             ///////////// Include Newtonsoft
             services.AddControllersWithViews()
@@ -75,27 +75,25 @@ namespace api_hrgis
                 opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-            services.AddMvc(setupAction =>
-            {
+            services.AddMvc(setupAction =>{
                 setupAction.EnableEndpointRouting = false;
-            }).AddJsonOptions(jsonOptions =>
-            {
+            }).AddJsonOptions(jsonOptions =>{
                 jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            /////////////
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             services.AddControllers();
+
             ///////////// Allow Origin
-            services.AddCors(options =>
-                        {
-                            options.AddPolicy(name: MyAllowSpecificOrigins,
-                            builder =>
-                            {
-                                builder.WithOrigins("*").AllowAnyOrigin()
-                                    .AllowAnyHeader()
-                                    .AllowAnyMethod();
-                            });
-                        });
+            services.AddCors(options =>{
+                    options.AddPolicy(name: MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("*").AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+                });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "api_hrgis", Version = "v1" });
@@ -124,13 +122,9 @@ namespace api_hrgis
                             new string[] {}
 
                     }
-                });
-                // End To Enable authorization using Swagger (JWT)  
+                }); 
             });
 
-            // Adding Authentication
-            // Microsoft.IdentityModel.Tokens, Microsoft.AspNetCore.Authentication.JwtBearer, System.IdentityModel.Tokens.Jwt
-            // System.Text, System.Security.Claims, Newtonsoft.Json.Linq
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
             {
                 option.RequireHttpsMetadata = false;
@@ -186,7 +180,6 @@ namespace api_hrgis
                                     var email = data["user"]["email"];
 
                                     identity.AddClaim(new Claim("access_token", accessToken.RawData));
-                                    // Console.WriteLine(empno);
                                     identity.AddClaim(new Claim("emp_no", emp_no.ToString()));
                                     identity.AddClaim(new Claim("title_name_en", title_name_en.ToString()));
                                     identity.AddClaim(new Claim("firstname_en", firstname_en.ToString()));
@@ -216,12 +209,12 @@ namespace api_hrgis
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api_hrgis v1"));
                 // app.UseSwaggerUI(c => c.SwaggerEndpoint("/api_hrgis/swagger/v1/swagger.json", "api_hrgis v1"));
             }
+            
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
@@ -237,8 +230,17 @@ namespace api_hrgis
 
             app.UseEndpoints(endpoints =>
             {
-                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
 }
+
+// วิธี publish
+
+// ขึ้น Test ไฟล์จะอยู่ที่โฟลเดอร์ \bin\Test\net5.0\publish\
+// dotnet publish /p:Configuration=Testt
+
+
+// ขึ้น Production ไฟล์จะอยู่ที่โฟลเดอร์ \bin\Debug\net5.0\publish
+// dotnet publish

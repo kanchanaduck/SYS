@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
-import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 
@@ -13,11 +12,8 @@ const routes: Routes = [
   { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },
   { path: 'charts', loadChildren: () => import('./charts/charts.module').then(m => m.ChartsDemoModule) },
   { path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule) },
-  { path: 'welfare', loadChildren: () => import('./welfare/welfare.module').then(m => m.WelfareModule) },
   { path: 'users', loadChildren: () => import('./users/users.module').then(m => m.UsersModule), data: { title: 'User', active: true } },
   { path: 'manual', loadChildren: () => import('./manual/manual.module').then(m => m.ManualModule), data: { title: 'Manual', active: true } },
-  { path: 'menus', loadChildren: () => import('./menus/menus.module').then(m => m.MenusModule), data: { title: 'Menu', active: true } },
-  { path: 'employee', loadChildren: () => import('./employee/employee.module').then(m => m.EmployeeModule), data: { title: 'Employee', active: true } },
   { path: 'training', loadChildren: () => import('./training/training.module').then(m => m.TrainingModule), data: { title: 'Training', active: true } },
   { path: 'task-schedule', loadChildren: () => import('./task-schedule/task-schedule.module').then(m => m.TaskScheduleModule), data: { title: 'Task schedule', active: true } },
   { path: '**', redirectTo: 'general-pages/page-404' },

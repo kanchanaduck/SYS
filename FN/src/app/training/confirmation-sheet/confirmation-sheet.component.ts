@@ -4,6 +4,7 @@ import { AppServiceService } from 'src/app/app-service.service';
 import { environment } from 'src/environments/environment';
 import axios from 'axios';
 import { formatDate } from '@angular/common';
+import { Settings } from 'src/app/settings';
 @Component({
   selector: 'app-confirmation-sheet',
   templateUrl: './confirmation-sheet.component.html',
@@ -20,12 +21,6 @@ export class ConfirmationSheetComponent implements OnInit {
   course_no: string;
   course: any = {};
   courses: any = [];
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   response: any;
   email: any;
   is_committee: boolean = false;
@@ -39,7 +34,7 @@ export class ConfirmationSheetComponent implements OnInit {
     this._getjwt = this.service.service_jwt();  // get jwt
     this._emp_no = this._getjwt.user.emp_no; // set emp_no
     this.check_is_committee()
-    this.report_url = `${environment.REPORT_URL}/Training/ConfirmationSheet`
+    this.report_url = `${Settings.REPORT_URL}Training/ConfirmationSheet`
   }
 
   async check_is_committee() {
@@ -59,7 +54,7 @@ export class ConfirmationSheetComponent implements OnInit {
 
   async get_courses_owner(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Owner/${this._org_code}`, Settings.headers)
     .then(function(response){
       self.courses = response
       // self.course_no = 'AOF-001-001'
@@ -84,7 +79,7 @@ export class ConfirmationSheetComponent implements OnInit {
       return;
     }
 
-    axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+    axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
       .then(function(response: any){
         self.course = response.courses
         let trainers = response.trainers
@@ -173,7 +168,7 @@ export class ConfirmationSheetComponent implements OnInit {
     Trainer: ${this.course.trainer_text} <br>
     Please try to be punctual, so we can start the training on time. <br>
     Prepare : Eraser, Pencil <br>
-    Please click the link. <a href="http://cptsvs531/HRGIS">http://cptsvs531/HRGIS</a> to see more detail`
+    Please click the link. <a href="${environment.WEB_URL}">${environment.WEB_URL}</a> to see more detail`
     console.log(this.email);
   }
 

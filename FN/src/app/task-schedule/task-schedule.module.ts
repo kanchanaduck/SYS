@@ -7,12 +7,10 @@ import { DataTablesModule } from 'angular-datatables';
 
 import { TaskScheduleComponent } from './task-schedule/task-schedule.component';
 import { AdministratorsComponent } from './administrators/administrators.component';
-import { CloseCourseComponent } from './close-course/close-course.component';
 
 const routes: Routes = [
   { path: '', component: TaskScheduleComponent },
   { path: 'hrms', component: AdministratorsComponent, data: { title: 'HRMS', active: true } },
-  { path: 'close-course', component: CloseCourseComponent, data: { title: 'Close course', active: true } },
 ]
 
 
@@ -20,7 +18,6 @@ const routes: Routes = [
   declarations: [
     TaskScheduleComponent,
     AdministratorsComponent,
-    CloseCourseComponent 
   ],
   imports: [
     CommonModule,

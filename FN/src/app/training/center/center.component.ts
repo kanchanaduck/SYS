@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { AppServiceService } from 'src/app/app-service.service';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
+import { Settings } from 'src/app/settings';
 @Component({
   selector: 'app-center',
   templateUrl: './center.component.html',
@@ -22,12 +23,6 @@ export class CenterComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  } 
 
   _getjwt: any;
   _emp_no: any;
@@ -111,7 +106,7 @@ export class CenterComponent implements OnInit {
   }
 
   async get_centers(){
-    await this.httpClient.get(`${environment.API_URL}Center`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Center`, Settings.headers)
     .subscribe((response: any) => {
       this.centers = response;
       if (this.isDtInitialized) {
@@ -130,7 +125,7 @@ export class CenterComponent implements OnInit {
 
   async check_is_center() {
     let self = this
-    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,Settings.headers)
     .then(function (response) {
       self.is_center = true;
     })
@@ -141,7 +136,7 @@ export class CenterComponent implements OnInit {
 
   async save_center() {  
     let self = this
-    await axios.post(`${environment.API_URL}Center`,this.center,this.headers)
+    await axios.post(`${environment.API_URL}Center`,this.center,Settings.headers)
     .then(function (response) {
       self.get_centers()
       self.reset_form_center()
@@ -164,7 +159,7 @@ export class CenterComponent implements OnInit {
     })
     .then(async (result) => {
       if (result.value) {
-        await axios.delete(`${environment.API_URL}Center/${emp_no}`, this.headers)
+        await axios.delete(`${environment.API_URL}Center/${emp_no}`, Settings.headers)
         .then(function (response) {
           console.log(response)
           self.service.sweetalert_delete()
@@ -190,7 +185,7 @@ export class CenterComponent implements OnInit {
    
   async get_employee() {
     let self =this
-    await axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Employees/${this.center.emp_no}`,Settings.headers)
     .then(function (response) {
       console.log(response)
       self.center = response
@@ -207,7 +202,7 @@ export class CenterComponent implements OnInit {
   }
   async get_setting() {  
     let self = this
-    await axios.get(`${environment.API_URL}Center/Signature`, this.headers)
+    await axios.get(`${environment.API_URL}Center/Signature`, Settings.headers)
     .then(function (response:any) {
       self.setting.name = response.name
       self.setting.position = response.position
@@ -221,7 +216,7 @@ export class CenterComponent implements OnInit {
 
   async save_setting() {  
     let self = this
-    await axios.put(`${environment.API_URL}Center/Signature/1`,this.setting,this.headers)
+    await axios.put(`${environment.API_URL}Center/Signature/1`,this.setting,Settings.headers)
     .then(function (response) {
       self.service.sweetalert_edit()
     })

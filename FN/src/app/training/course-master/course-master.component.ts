@@ -7,6 +7,7 @@ import { AppServiceService } from '../../app-service.service';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Settings } from 'src/app/settings';
 @Component({
   selector: 'app-course-master',
   templateUrl: './course-master.component.html',
@@ -25,12 +26,6 @@ export class CourseMasterComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false;
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   previous_courses: any = [];
   departments: any;
   edit_mode: boolean = false;
@@ -92,7 +87,7 @@ export class CourseMasterComponent implements OnInit {
     }
     else
     {
-      await axios.get(`${environment.API_URL}CourseMasters/${course_no}`,self.headers)
+      await axios.get(`${environment.API_URL}CourseMasters/${course_no}`,Settings.headers)
         .then(function(response: any){
           self.course_modal = response
           self.course_modal.arr_band = self.course_modal.master_courses_bands
@@ -158,7 +153,7 @@ export class CourseMasterComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}CourseMasters`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}CourseMasters`, Settings.headers)
     .subscribe((response: any) => {
       self.courses = response;
       self.all_course = self.courses
@@ -182,7 +177,7 @@ export class CourseMasterComponent implements OnInit {
 /*   async get_all_courses(){
     let self = this
     if(!self.is_center){
-      await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
+      await axios.get(`${environment.API_URL}CourseMasters`, Settings.headers)
       .then(function (response) {
         self.all_course = response
       })
@@ -208,7 +203,7 @@ export class CourseMasterComponent implements OnInit {
     self.edit_mode = true;
     self.master_courses_bands = [];
 
-    await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, this.headers)
+    await axios.get(`${environment.API_URL}CourseMasters/${course_no}`, Settings.headers)
       .then(function (response) {
         self.course = response
         console.log(response)
@@ -291,7 +286,7 @@ export class CourseMasterComponent implements OnInit {
   
   get_bands(){
     let self = this
-    axios.get(`${environment.API_URL}Bands`, this.headers).then(response => (
+    axios.get(`${environment.API_URL}Bands`, Settings.headers).then(response => (
       self.bands = response
     ));
 
@@ -302,7 +297,7 @@ export class CourseMasterComponent implements OnInit {
 
   async get_departments() {
     let self = this
-    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
+    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, Settings.headers)
     .then(function (response) {
       self.departments = response
       self.departments.forEach(element => {
@@ -356,7 +351,7 @@ export class CourseMasterComponent implements OnInit {
       },
       /* ajax: {
         url: `${environment.API_URL}CourseMasters/Search`,
-        headers: this.headers
+        headers: Settings.headers
       }, */
       buttons: {
         "dom":{
@@ -380,7 +375,7 @@ export class CourseMasterComponent implements OnInit {
               {
                 text: '<i class="far fa-file-alt"></i> Report</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs531/HRGIS_REPORT/Training/CourseMaster","_blank")
+                  window.open(`${Settings.REPORT_URL}Training/CourseMaster`,"_blank")
                 }
               }
             ]
@@ -455,7 +450,7 @@ export class CourseMasterComponent implements OnInit {
 
 
     if(self.edit_mode){
-      axios.put(`${environment.API_URL}CourseMasters/${self.course.course_no_temp}`, this.course, this.headers)
+      axios.put(`${environment.API_URL}CourseMasters/${self.course.course_no_temp}`, this.course, Settings.headers)
       .then(function (response) {
         Swal.fire({
           toast: true,
@@ -478,7 +473,7 @@ export class CourseMasterComponent implements OnInit {
       });
   }
   else{
-    axios.post(`${environment.API_URL}CourseMasters`, this.course, this.headers)
+    axios.post(`${environment.API_URL}CourseMasters`, this.course, Settings.headers)
     .then(function (response) {
       Swal.fire({
         toast: true,

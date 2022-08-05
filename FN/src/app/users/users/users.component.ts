@@ -2,9 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import axios from 'axios';
 import { CommonModule } from '@angular/common';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import { AppServiceService } from 'src/app/app-service.service';
 import { HttpClient } from '@angular/common/http';
-import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-users',
@@ -14,12 +14,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 export class UsersComponent implements OnInit {
 
   employees: any = [];
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   _getjwt: any;
   _emp_no: string;
   _dept_abb: string;
@@ -39,7 +33,7 @@ export class UsersComponent implements OnInit {
 
   async get_users(){
     let self = this
-    await axios.get(`${environment.API_URL}Account`, this.headers)
+    await axios.get(`${environment.API_URL}Account`, Settings.headers)
     .then((response) => {
       this.employees = response;
       this.employees = this.employees.filter(e=>e.dept_abb == self._dept_abb)
@@ -51,7 +45,7 @@ export class UsersComponent implements OnInit {
   }
 
   async check_is_j4(){
-    await axios.get(`${environment.API_URL}Employees/CheckIsj4Up/${this._emp_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Employees/CheckIsj4Up/${this._emp_no}`, Settings.headers)
     .then((response) => {
       this.is_j4 = true
     })
@@ -61,7 +55,7 @@ export class UsersComponent implements OnInit {
   }
 
   reset_password(emp_no: string){
-    axios.get(`${environment.API_URL}Account/ResetPassword/${emp_no}`, this.headers)
+    axios.get(`${environment.API_URL}Account/ResetPassword/${emp_no}`, Settings.headers)
     .then((response) => {
       this.service.sweetalert_edit()
     })

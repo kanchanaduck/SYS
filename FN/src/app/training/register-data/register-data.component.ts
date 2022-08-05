@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgbActiveModal, NgbDate, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { fromEvent, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import axios from 'axios';
 
 
@@ -16,14 +15,6 @@ import axios from 'axios';
   styleUrls: ['./register-data.component.scss']
 })
 export class RegisterDataComponent implements OnInit {
-
-  
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
 
   dtOptions: any = {};
   dtTrigger: Subject<any> = new Subject();
@@ -86,7 +77,7 @@ export class RegisterDataComponent implements OnInit {
 
   async get_committee_of_emp_no(){
     let self = this
-    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, Settings.headers)
     .then(function (response) {
       self.committee = response
       self.committee_org_code = self.committee.org_code
@@ -114,7 +105,7 @@ export class RegisterDataComponent implements OnInit {
     {
       self.data_grid = [];
       self.data_grid_other = [];
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands
@@ -165,7 +156,7 @@ export class RegisterDataComponent implements OnInit {
 
 async get_courses(){
   let self = this
-  await axios.get(`${environment.API_URL}Courses`, this.headers)
+  await axios.get(`${environment.API_URL}Courses`, Settings.headers)
   .then(function(response){
     self.courses = response
     self.route.params.subscribe(params => {
@@ -378,8 +369,8 @@ async clear_data() {
       await this.service.gethttp(`Register/${this.course_no}`)
       .subscribe((response: any) => {
         this.response = response
-        this.v_regis = this.response.filter(x => x.last_status != environment.text.wait).length;
-        this.v_wait = this.response.filter(x => x.last_status == environment.text.wait).length;
+        this.v_regis = this.response.filter(x => x.last_status != Settings.text.wait).length;
+        this.v_wait = this.response.filter(x => x.last_status == Settings.text.wait).length;
         this.v_total = this.response.length;
     }, (error: any) => {
         console.log(error);

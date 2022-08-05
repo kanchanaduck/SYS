@@ -43,6 +43,11 @@ namespace api_hrgis.Controllers
         public async Task<IActionResult> Login([FromBody] request_login model)
         {
             var store = _context.tb_user.FirstOrDefault(u => u.username == model.Username);
+            
+            if(store==null){
+                return Unauthorized("Authentication failed.");
+            }
+
             var user = _repository.VerifyPassword(model.Password, store.storedsalt, store.passwordhash);
             if (user)
             {
@@ -89,7 +94,7 @@ namespace api_hrgis.Controllers
                 });
             }
 
-            return Unauthorized();
+            return Unauthorized("Authentication failed.");
         }
     }
 }

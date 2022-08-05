@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { Settings } from 'src/app/settings';
 import { HttpClient } from '@angular/common/http';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { Subject } from 'rxjs';
 import { DataTableDirective } from 'angular-datatables';
 import { AppServiceService } from '../../app-service.service'
-import { throttleTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-stakeholder',
@@ -38,12 +37,7 @@ export class StakeholderComponent implements OnInit {
   @ViewChild(DataTableDirective)
   dtElement: DataTableDirective;
   isDtInitialized: boolean = false;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
+
   _getjwt: any;
   _emp_no: any;
   _div_code: any;
@@ -99,35 +93,14 @@ export class StakeholderComponent implements OnInit {
               {
                 text: '<i class="far fa-file-alt"></i> Report</button>',
                 action: function ( e, dt, node, config ) {
-                  window.open("http://cptsvs531/HRGIS_REPORT/Training/Stakeholder","_blank")
+                  window.open(`${Settings.REPORT_URL}Training/Stakeholder`,"_blank")
                 }
               }
-              /* {
-                extend: 'excelHtml5',
-                filename: 'stakeholder',
-                text: '<i class="far fa-file-excel"></i> Excel</button>',
-                exportOptions: {
-                  format: {
-                    body: function(data, column, row) {
-                      if (typeof data === 'string' || data instanceof String) {
-                          data = data.replace(/<br\s*\/?>/ig, "\r\n");
-                      }
-                      return data;
-                    }
-                  }
-                }
-              } */
             ]
           },
         ],
       },
-      order: [ [0, 'asc'],[2, 'desc'], [1, 'asc']],
-      /* columnDefs: [ 
-        {
-          targets: [ 5 ],
-          orderable: false 
-        },
-      ], */  
+      order: [ [0, 'asc'],[2, 'desc'], [1, 'asc']], 
       container: "#example_wrapper .col-md-6:eq(0)",
       lengthMenu: [[10, 25, 50, 75, 100, -1], [10, 25, 50, 75, 100, "All"]],
     };
@@ -155,7 +128,7 @@ export class StakeholderComponent implements OnInit {
 
   // async add_more_approver(){
   //   let self = this
-  //   await axios.get(`${environment.API_URL}Employees/${this.more_approver}`,this.headers)
+  //   await axios.get(`${environment.API_URL}Employees/${this.more_approver}`,Settings.headers)
   //   .then(function (response) {
   //     self.employees_j4up.push(
   //       response
@@ -172,7 +145,7 @@ export class StakeholderComponent implements OnInit {
 
   async get_stakeholders(){
     let self = this
-    await this.httpClient.get(`${environment.API_URL}Stakeholder`, this.headers)
+    await this.httpClient.get(`${environment.API_URL}Stakeholder`, Settings.headers)
     .subscribe((response: any) => {
       self.stakeholders = response;
       if (this.isDtInitialized) {
@@ -197,7 +170,7 @@ export class StakeholderComponent implements OnInit {
     let self = this
     let org_code = self.stakeholder.org_code
 
-    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/employed`,this.headers)
+    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/employed`,Settings.headers)
     .then(function (response) {
       self.employees = response
 
@@ -231,7 +204,7 @@ export class StakeholderComponent implements OnInit {
   async get_employees_j4up() {
     let self = this
     let org_code = self.stakeholder.org_code
-    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/j4up/employed`,this.headers)
+    await axios.get(`${environment.API_URL}Employees/Organization/${org_code}/j4up/employed`,Settings.headers)
     .then(function (response:any) {
       self.employees_j4up = []
 
@@ -273,7 +246,7 @@ export class StakeholderComponent implements OnInit {
 
   async get_departments() {
     let self = this
-    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, this.headers)
+    await axios.get(`${environment.API_URL}Organization/Level/Department/Parent`, Settings.headers)
     .then(function (response) {
       self.departments = response
     })
@@ -299,10 +272,7 @@ export class StakeholderComponent implements OnInit {
       return;
     } 
     console.log(org_code)
-    // self.stakeholder.org_code = org_code;
-    // self.get_employees()
-    // self.get_employees_j4up()
-    await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, this.headers)
+    await axios.get(`${environment.API_URL}Stakeholder/${org_code}`, Settings.headers)
       .then(function (response) {
         self.stakeholder = response
         self.get_employees();
@@ -312,58 +282,13 @@ export class StakeholderComponent implements OnInit {
         self.service.sweetalert_error(error)
     });
 
-    //console.log(self.stakeholder)
-    //console.log(self.stakeholder.stakeholders)
-    //console.log(self.stakeholder.stakeholders.length)
-
-    // if(self.stakeholder.stakeholders.length>0){
-
-    //   const committees = self.stakeholder.stakeholders.filter(function(el){
-    //     return el.role === "COMMITTEE"
-    //   })
-
-    //   const approvers = self.stakeholder.stakeholders.filter(function(el){
-    //     return el.role === "APPROVER"
-    //   })
-
-
-    //   if(approvers.length>0){
-    //     //console.log(approvers);
-    //     self.stakeholder.approvers = [];
-    //     self.employees_j4up = []
-    //     approvers.forEach(element => {
-    //       console.log(element)
-    //       self.employees_j4up.push({
-    //         emp_no: element.emp_no,
-    //         shortname_en: element.employee.shortname_en
-    //       })
-    //       console.log(self.employees_j4up)
-    //       self.stakeholder.approvers.push(element.emp_no)
-    //     });
-    //   }
-    //   else{
-    //     //console.log("Approvers = 0")
-    //   }
-
-    //   if(committees.length>0){
-    //     //console.log(committees)
-    //     self.stakeholder.committees = [];
-    //     committees.forEach(element => {
-    //       self.stakeholder.committees.push(element.emp_no)
-    //     });
-    //   }
-    //   else{
-    //     //console.log("Committees = 0")
-    //   }        
-    // }
-
     this.check_is_center()
 
   }
 
   async check_is_center() {
     let self = this
-    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,this.headers)
+    await axios.get(`${environment.API_URL}Center/${this._emp_no}`,Settings.headers)
     .then(function (response) {
       self.is_center = true;
     })
@@ -404,7 +329,7 @@ export class StakeholderComponent implements OnInit {
     }
   
     if(self.more_approver!=null){
-      axios.get(`${environment.API_URL}Employees/${self.more_approver}`,self.headers)
+      axios.get(`${environment.API_URL}Employees/${self.more_approver}`,Settings.headers)
         .then(function (response) {
           self.formData.push({
             emp_no: self.more_approver,
@@ -434,7 +359,7 @@ export class StakeholderComponent implements OnInit {
     if(self.formData.length>0)
     {
       console.log("POST")
-      axios.post(`${environment.API_URL}Stakeholder`,self.formData, self.headers)
+      axios.post(`${environment.API_URL}Stakeholder`,self.formData, Settings.headers)
       .then(function (response) {
         Swal.fire({
           toast: true,
@@ -454,7 +379,7 @@ export class StakeholderComponent implements OnInit {
     else
     {
       console.log("RESET")
-      axios.post(`${environment.API_URL}Stakeholder/Reset/${self.stakeholder.org_code}`, [], self.headers)
+      axios.post(`${environment.API_URL}Stakeholder/Reset/${self.stakeholder.org_code}`, [], Settings.headers)
       .then(function (response) {
         Swal.fire({
           toast: true,

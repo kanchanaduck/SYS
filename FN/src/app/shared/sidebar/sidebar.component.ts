@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
 import { HttpResponse } from '@angular/common/http';
+import { Settings } from 'src/app/settings';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,15 +18,9 @@ export class SidebarComponent implements OnInit {
   _data: any;
   _fullname: any;
   _positions: any;
-  img_garoon: any = environment.img_garoon;
+  img_garoon: any = Settings.IMG_GAROON;
   images: any;
   activeUrl: any;
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   _emp_no: any;
 
   constructor(
@@ -38,7 +33,7 @@ export class SidebarComponent implements OnInit {
 
     this.activeUrl = this.router.url
 
-    if (localStorage.getItem('token_hrgis') != null) {
+    if (sessionStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); 
       if(this._data.user.band=="JP"){
         this._fullname = this._data.user.lastname_en + ' ' + this._data.user.firstname_en.substring(0, 1);

@@ -78,17 +78,18 @@ namespace api_hrgis.Controllers
 
             return Ok(course_score);
         }
-
         // GET: api/Register/YouOther/{course_no}/{org_code}
         [HttpGet("YourOther/{course_no}/{org_code}")]
         public async Task<ActionResult> YourOther(string course_no, string org_code)
         {
+            string[] org = org_code.Split(",");
+
             var query = await (
                 from tb1 in _context.tr_course_registration
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && (table.div_code==org_code || table.dept_code==org_code) 
+                where tb1.course_no == course_no && ( org.Contains(table.div_code) || org.Contains(table.dept_code)) 
                 select new
                 {
                     tb1.course_no,
@@ -115,7 +116,7 @@ namespace api_hrgis.Controllers
                 join tb3 in _context.tr_course on tb1.course_no equals tb3.course_no
                 join tb2 in _context.tb_employee on tb1.emp_no equals tb2.emp_no into tb
                 from table in tb.DefaultIfEmpty()
-                where tb1.course_no == course_no && !(table.div_code==org_code || table.dept_code==org_code) 
+                where tb1.course_no == course_no && !( org.Contains(table.div_code) || org.Contains(table.dept_code))
                 select new
                 {
                     tb1.course_no,
@@ -577,9 +578,9 @@ namespace api_hrgis.Controllers
                 tb.emp_no = _emp_no;
                 tb.seq_no = seq;
                 tb.last_status = _config["Status:approved"];
-                tb.pre_test_score = registrant.pre_test_score==null? null:Convert.ToInt32(registrant.pre_test_score);
+                tb.pre_test_score = registrant.pre_test_score==null? null:Convert.ToDecimal(registrant.pre_test_score);
                 tb.pre_test_grade = registrant.pre_test_score==null? null:fnGrade(registrant.pre_test_score.ToString());
-                tb.post_test_score = registrant.post_test_score==null? null:Convert.ToInt32(registrant.post_test_score);
+                tb.post_test_score = registrant.post_test_score==null? null:Convert.ToDecimal(registrant.post_test_score);
                 tb.post_test_grade = registrant.post_test_score==null? null:fnGrade(registrant.post_test_score.ToString());
                 tb.remark = _remark;
                 tb.register_at = DateTime.Now;
@@ -616,9 +617,9 @@ namespace api_hrgis.Controllers
                 return NotFound("Not found the trainee");
             }
 
-            registrant.pre_test_score = r.pre_test_score==null? null:Convert.ToInt32(r.pre_test_score);
+            registrant.pre_test_score = r.pre_test_score==null? null:Convert.ToDecimal(r.pre_test_score);
             registrant.pre_test_grade = r.pre_test_score==null? null:fnGrade(r.pre_test_score.ToString());
-            registrant.post_test_score = r.post_test_score==null? null:Convert.ToInt32(r.post_test_score);
+            registrant.post_test_score = r.post_test_score==null? null:Convert.ToDecimal(r.post_test_score);
             registrant.post_test_grade = r.post_test_score==null? null:fnGrade(r.post_test_score.ToString());
             registrant.scored_at = DateTime.Now;
             registrant.scored_by = User.FindFirst("emp_no").Value;
@@ -731,26 +732,40 @@ namespace api_hrgis.Controllers
                                     _remark  = _remark + GetPrevCourseNoText(course_no, _emp_no);
                                 }
 
-                                _context.Add(new tr_course_registration
-                                {
-                                    seq_no = _seq_no,
-                                    course_no = item.course_no,
-                                    emp_no = item.emp_no,
-                                    pre_test_score = item.pre_test_score==null? null:Convert.ToInt32(item.pre_test_score),
-                                    pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString()),
-                                    post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score),
-                                    post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString()),
-                                    remark = _remark,
-                                    last_status = _config.GetValue<string>("Status:approved"),
-                                    register_at = DateTime.Now,
-                                    register_by = User.FindFirst("emp_no").Value,
-                                    final_approved_at = DateTime.Now,
-                                    final_approved_by = User.FindFirst("emp_no").Value,
-                                    final_approved_checked = true,
-                                    scored_at = DateTime.Now,
-                                    scored_by = User.FindFirst("emp_no").Value
-                                });
-                                await _context.SaveChangesAsync();
+                                string _grade_pre = item.pre_test_score==null? null:fnGrade(Convert.ToDecimal(item.pre_test_score).ToString());
+                                string _grade_post = item.post_test_score==null? null:fnGrade(Convert.ToDecimal(item.post_test_score).ToString());
+
+                                if (_grade_pre != "Fail" && _grade_post != "Fail"){
+                                    _context.Add(new tr_course_registration
+                                    {
+                                        seq_no = _seq_no,
+                                        course_no = item.course_no,
+                                        emp_no = item.emp_no,
+                                        pre_test_score = item.pre_test_score==null? null:item.pre_test_score,
+                                        pre_test_grade = _grade_pre,
+                                        post_test_score = item.post_test_score==null? null:item.post_test_score,
+                                        post_test_grade = _grade_post,
+                                        remark = _remark,
+                                        last_status = _config.GetValue<string>("Status:approved"),
+                                        register_at = DateTime.Now,
+                                        register_by = User.FindFirst("emp_no").Value,
+                                        final_approved_at = DateTime.Now,
+                                        final_approved_by = User.FindFirst("emp_no").Value,
+                                        final_approved_checked = true,
+                                        scored_at = DateTime.Now,
+                                        scored_by = User.FindFirst("emp_no").Value
+                                    });
+                                    await _context.SaveChangesAsync();
+                                }
+                                else{
+                                    response.Add(new response_course_registration
+                                    {
+                                        emp_no = _emp_no,
+                                        seq_no = ws_seq_no,
+                                        error_message = _config["Text:score_incorrect"]
+                                    });
+                                }
+
                             }
                             else{
                                 // Duplication Data. : emp_no ของพนักงานใน row มีข้อมูลใน course อยู่แล้ว
@@ -774,7 +789,7 @@ namespace api_hrgis.Controllers
         public async Task<ActionResult<IEnumerable<tr_stakeholder>>> get_email_inform_approver(
             string course_no, string org_code){
                 
-            var approver = await _context.tr_stakeholder.Where(e=>e.role=="Approver" && e.org_code==org_code)
+            var approver = await _context.tr_stakeholder.Where(e=>e.role.ToUpper()=="APPROVER" && e.org_code==org_code)
                     .Include(e=>e.employee)
                     .ToListAsync();
 
@@ -814,11 +829,13 @@ namespace api_hrgis.Controllers
         {
             var approver_emp_no = User.FindFirst("emp_no").Value;
             var employee = _context.tb_employee.Where(e=>e.emp_no==emp_no).FirstOrDefault();
-            var approver = _context.tr_stakeholder
-                            .Where(e=>e.emp_no==approver_emp_no && e.role.ToUpper()=="APPROVER")
-                            .FirstOrDefault();
+
+            var org_approver = _context.tr_stakeholder.
+                                    Where(e=>e.emp_no==approver_emp_no && e.role.ToUpper()=="APPROVER")
+                                    .Select(a=>a.org_code).ToArray();
+
             bool is_staff_of_approver = false;
-            if(employee.dept_code==approver.org_code || employee.div_code==approver.org_code){
+            if(org_approver.Contains(employee.dept_code) || org_approver.Contains(employee.div_code)){
                 is_staff_of_approver = true;
             }
             return is_staff_of_approver;
@@ -939,9 +956,9 @@ namespace api_hrgis.Controllers
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
-                    int rowCount = worksheet.Dimension.Rows;
+                    // int rowCount = worksheet.Dimension.Rows;
+                    int rowCount = get_last_used_row_epplus(worksheet);
                     int colCount = worksheet.Dimension.Columns;
-                    // Console.WriteLine("rowCount: " + rowCount);
 
                     for (int row = 4; row <= rowCount; row++)
                     {
@@ -1108,9 +1125,9 @@ namespace api_hrgis.Controllers
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
-                    int rowCount = worksheet.Dimension.Rows;
+                    // int rowCount = worksheet.Dimension.Rows;
+                    int rowCount = get_last_used_row_epplus(worksheet);
                     int colCount = worksheet.Dimension.Columns;
-                    // Console.WriteLine("rowCount: " + rowCount);
 
                     for (int row = 4; row <= rowCount; row++)
                     {
@@ -1160,7 +1177,7 @@ namespace api_hrgis.Controllers
                                     });
                                 }
                                 else{
-                                    if(approver.org_code==emp.div_code || approver.org_code==emp.dept_code ){
+                                    if( is_staff_of_approver(_emp_no) ){
                                         if(!course_bands.Contains(emp.band)){
                                             response.Add(new response_course_registration
                                             {
@@ -1280,13 +1297,13 @@ namespace api_hrgis.Controllers
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
-                    int rowCount = worksheet.Dimension.Rows;
+                    // int rowCount = worksheet.Dimension.Rows;
+                    int rowCount = get_last_used_row_epplus(worksheet);
                     int colCount = worksheet.Dimension.Columns;
-                    // Console.WriteLine("rowCount: " + rowCount);
 
                     for (int row = 4; row <= rowCount; row++)
                     {
-                        if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) // ถ้ามี error ให้ตรวจ rowCount กับ แถวสุดท้าย ตรงกันไหม : จะเป็น error ของค่าว่างของแถวสุดท้ายลงไป
+                        if (!String.IsNullOrEmpty(worksheet.Cells[row, 2].Value.ToString().Trim())) 
                         {
                             string _emp_no = worksheet.Cells[row, 2].Value.ToString().Trim() == null ? null : worksheet.Cells[row, 2].Value.ToString().Trim();
                             int ws_seq_no = worksheet.Cells[row, 1].Value==null? 0:Convert.ToInt32(worksheet.Cells[row, 1].Value.ToString().Trim());
@@ -1428,9 +1445,9 @@ namespace api_hrgis.Controllers
                                     .Where(x => x.course_no == course_no && x.emp_no == item.emp_no)
                                     .FirstOrDefaultAsync();
 
-                    edits.pre_test_score = item.pre_test_score==null? null:Convert.ToInt32(item.pre_test_score);
+                    edits.pre_test_score = item.pre_test_score==null? null:Convert.ToDecimal(item.pre_test_score);
                     edits.pre_test_grade = item.pre_test_score==null? null:fnGrade(item.pre_test_score.ToString());
-                    edits.post_test_score = item.post_test_score==null? null:Convert.ToInt32(item.post_test_score);
+                    edits.post_test_score = item.post_test_score==null? null:Convert.ToDecimal(item.post_test_score);
                     edits.post_test_grade = item.post_test_score==null? null:fnGrade(item.post_test_score.ToString());
                     edits.scored_at = DateTime.Now;
                     edits.scored_by = User.FindFirst("emp_no").Value;
@@ -1503,9 +1520,9 @@ namespace api_hrgis.Controllers
                 using (var package = new ExcelPackage(new FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets["Sheet1"];
-                    int rowCount = worksheet.Dimension.Rows;
+                    // int rowCount = worksheet.Dimension.Rows;
+                    int rowCount = get_last_used_row_epplus(worksheet);
                     int colCount = worksheet.Dimension.Columns;
-                    // Console.WriteLine("rowCount: " + rowCount);
 
                     for (int row = 2; row <= rowCount; row++)
                     {
@@ -1538,9 +1555,9 @@ namespace api_hrgis.Controllers
                                 {
                                     emp_no = _emp_no,
                                     seq_no = _seq_no,
-                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                    pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                     pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                    post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                     post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                     error_message = _config["Text:staff_not_exist"]
                                 });
@@ -1551,9 +1568,9 @@ namespace api_hrgis.Controllers
                                     {
                                         emp_no = _emp_no,
                                         seq_no = _seq_no,
-                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                        pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                         pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                        post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                         post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                         error_message = _config["Text:unequal_band"]
                                     });
@@ -1567,13 +1584,12 @@ namespace api_hrgis.Controllers
                                             {
                                                 emp_no = _emp_no,
                                                 seq_no = _seq_no,
-                                                pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                                 pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                                 post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                                 error_message = _config.GetValue<string>("Text:staff_resigned")
                                             });
-                                            // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้
                                         }   
                                         else{
                                             string _grade_pre = pre_test_score==null? null:fnGrade(pre_test_score);
@@ -1585,9 +1601,9 @@ namespace api_hrgis.Controllers
                                                     {
                                                         emp_no = _emp_no,
                                                         seq_no = _seq_no,
-                                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                        pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                                         pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                        post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                                         post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                                         error_message = _config.GetValue<string>("Text:course_full")
                                                     });
@@ -1609,14 +1625,16 @@ namespace api_hrgis.Controllers
                                                     else{
                                                         _remark  = _remark + GetPrevCourseNoText(course_no, _emp_no);
                                                     }
+
+
                                                     _context.Add(new tr_course_registration
                                                     {
                                                         course_no = course_no,
                                                         emp_no = _emp_no,
                                                         seq_no = _seq_no,
-                                                        pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                        pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                                         pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                        post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                        post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                                         post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                                         last_status = (_seq_no>course.capacity)? _config["Status:wait"]:_config["Status:approved"],
                                                         remark = _remark,
@@ -1629,6 +1647,7 @@ namespace api_hrgis.Controllers
                                                         final_approved_checked = true
                                                     });
                                                     await _context.SaveChangesAsync();
+
                                                 }
                                             }
                                             else
@@ -1637,21 +1656,21 @@ namespace api_hrgis.Controllers
                                                 {
                                                     emp_no = _emp_no,
                                                     seq_no = _seq_no,
-                                                    pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score),
+                                                    pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score),
                                                     pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score),
-                                                    post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score),
+                                                    post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score),
                                                     post_test_grade = post_test_score==null? null:fnGrade(post_test_score),
                                                     error_message = _config.GetValue<string>("Text:score_incorrect")
                                                 });
-                                            } // Score incorrect. : คะแนนที่กรอกมาคำนวนไม่ได้  
+                                            }
                                         }
                                     }
                                     else
                                     {
                                         query.emp_no = _emp_no;
-                                        query.pre_test_score = pre_test_score==null? null:Convert.ToInt32(pre_test_score);
+                                        query.pre_test_score = pre_test_score==null? null:Convert.ToDecimal(pre_test_score);
                                         query.pre_test_grade = pre_test_score==null? null:fnGrade(pre_test_score);
-                                        query.post_test_score = post_test_score==null? null:Convert.ToInt32(post_test_score);
+                                        query.post_test_score = post_test_score==null? null:Convert.ToDecimal(post_test_score);
                                         query.post_test_grade = post_test_score==null? null:fnGrade(post_test_score);
                                         query.scored_at = DateTime.Now;
                                         query.scored_by = User.FindFirst("emp_no").Value;
@@ -1671,7 +1690,7 @@ namespace api_hrgis.Controllers
         protected string fnGrade(string score)
         {
             string grade = "Fail";
-            int _score = Convert.ToInt32(score);
+            decimal _score = Convert.ToDecimal(score);
 
             if (score == "") { grade = ""; }
             else if (_score >= 80 && _score <= 100) { grade = "A"; }
@@ -1697,6 +1716,20 @@ namespace api_hrgis.Controllers
             && e.emp_no==emp_no && e.last_status=="Approved");
             return studied;
         }
+        protected int get_last_used_row_epplus(ExcelWorksheet sheet){
+            if (sheet.Dimension == null) {  
+                return 0; 
+            } // In case of a blank sheet
+            var row = sheet.Dimension.End.Row;
+            while(row >= 1) {
+                var range = sheet.Cells[row, 1, row, sheet.Dimension.End.Column];
+                if(range.Any(c => !string.IsNullOrEmpty(c.Text))) {
+                    break;
+                }
+                row--;
+            }
+            return row;
+        }
     }
 }
 public class req_fileform
@@ -1717,9 +1750,9 @@ public class response_course_score
 {
     public string emp_no { get; set; }
     public int seq_no { get; set; }
-    public int? pre_test_score { get; set; }
+    public decimal? pre_test_score { get; set; }
     public string pre_test_grade { get; set; }
-    public int? post_test_score { get; set; }
+    public decimal? post_test_score { get; set; }
     public string post_test_grade { get; set; }
     public string error_message { get; set; }
 }

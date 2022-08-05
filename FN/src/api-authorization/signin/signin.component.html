@@ -5,7 +5,11 @@
             <h2>Welcome back!</h2>
             <h4>Please sign in to continue</h4>
 
-            <form [formGroup]="form" (ngSubmit)="btnsubmit()">
+            <div class="alert alert-solid-danger mg-b-0" role="alert" *ngIf="showErrorMessage">
+                <strong>{{errorMessage}}</strong>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="login()">
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" class="form-control" name="signin-username" placeholder="Enter your username" #username [formControlName]="'username'">
@@ -16,9 +20,9 @@
                     <input type="password" class="form-control" name="signin-password" placeholder="Enter your password" value="thisisademo" #password [formControlName]="'password'">
                 </div>
                 <!-- form-group -->
-                <div *ngIf="showErrorMessage" class="text-left text-danger">
+                <!-- <div *ngIf="showErrorMessage" class="text-left text-danger">
                     <p>{{errorMessage}}</p>
-                </div>
+                </div> -->
                 <!-- <a class="btn btn-az-primary btn-block" href="/">Sign In</a> -->
                 <button type="submit" class="btn btn-az-primary btn-block" aria-label="icon button" [disabled]="!form.valid">Sign In</button>
             </form>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
 import { Router } from '@angular/router';
 import { AppServiceService } from '../../app-service.service';
+import { Settings } from 'src/app/settings';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -16,8 +17,9 @@ export class HeaderComponent implements OnInit {
   _data: any;
   _fullname: any;
   _positions: any;
-  img_garoon: any = environment.img_garoon;
+  img_garoon: any = Settings.IMG_GAROON;
   images: any;
+  is_production:boolean = environment.production;
 
   constructor(private service: AppServiceService, private router: Router) { }
 
@@ -26,7 +28,7 @@ export class HeaderComponent implements OnInit {
       this.now = Date.now();
     }, 1);
 
-    if (localStorage.getItem('token_hrgis') != null) {
+    if (sessionStorage.getItem('token_hrgis') != null) {
       this._data = await this.service.service_jwt(); 
       //console.log('data jwt: ', this._data);
       if(this._data.user.band=="JP"){
@@ -55,18 +57,15 @@ export class HeaderComponent implements OnInit {
     event.preventDefault();
     if (window.matchMedia('(min-width: 992px)').matches) {
       document.querySelector('body').classList.toggle('az-sidebar-hide');
-      // localStorage.setItem("hrgis_sidebar_show", "false");
     }
     else {
       document.querySelector('body').classList.toggle('az-sidebar-show');
-      // localStorage.setItem("hrgis_sidebar_show", "true");
     }
-    // document.querySelector('.az-sidebar').classList.toggle('d-flex');
 
   }
 
   SingOut() {
-    localStorage.clear();
+    sessionStorage.removeItem("token_hrgis");
     this.router.navigate(['authentication/signin']);
   }
 

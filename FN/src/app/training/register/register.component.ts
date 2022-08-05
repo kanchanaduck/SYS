@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Settings } from 'src/app/settings';
 import { AppServiceService } from '../../app-service.service';
 import { ExportService } from '../../export.service';
 import axios from 'axios';
@@ -13,13 +14,6 @@ import 'rxjs/add/operator/map';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
-
-  headers: any = {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
 
   data_grid: any = [];
   data_grid_other: any = [];
@@ -212,6 +206,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
 
   async send_email() {
     let self =this
+
     if(!this.course_no){
       console.log(this.course_no)
       this.errors =  {
@@ -220,7 +215,16 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
       console.log(this.errors.course_no)
       return;
     }
-    await axios.get(`${environment.API_URL}Register/GetEmailInformApprover/${this.course_no}/${this._org_code}`, this.headers)
+
+    if(self.data_grid.length<=0){
+      Swal.fire({
+        icon: 'error',
+        text: 'No employee to let your approver approve.'
+      })
+      return;
+    }
+
+    await axios.get(`${environment.API_URL}Register/GetEmailInformApprover/${this.course_no}/${this._org_code}`, Settings.headers)
     .then(function(response:any){
       var email_from = self._email;
       var email_to = "";
@@ -235,12 +239,18 @@ export class RegisterComponent implements AfterViewInit, OnDestroy, OnInit{
         }
       });
 
-      var email_subject = "[HRGIS] Request for approval to participate in the training."
+      var test = environment.production? "":" TEST!! "
+
+      var email_subject = `[HRGIS${test}] Request for approval to participate in the training.`
+
+      var approver_url = `${environment.WEB_URL}authentication/signin/approver/${self.course_no}`
 
       var email_body = `Dear ${email_dear} <br><br>
 
-I would like to notify that your members request to participate in the training. 
-Please click the link to approve. <a href="${environment.WEB_URL}">${environment.WEB_URL}</a>`
+I would like to notify that your members request to participate in the training. <br>
+Please sign in and click the link to approve. <br>
+[${self.course_no} ${self.course.course_name_en}] Link: <a href="${approver_url}">${approver_url}</a>
+`
 
       var email_text_show = `<p class="text-left">
       <strong>To:</strong> ${email_to} <br>
@@ -290,7 +300,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
 
   async get_committee_of_emp_no() {
     let self = this
-    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, this.headers)
+    await axios.get(`${environment.API_URL}Stakeholder/Committee/Belong/${this._emp_no}`, Settings.headers)
     .then(function (response) {
       self.committee = response
       self.committee_org_code = self.committee.org_code
@@ -330,7 +340,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     else
     {
       this.errors = {};
-      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,self.headers)
+      axios.get(`${environment.API_URL}Courses/Trainers?course_no=${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response.courses
           self.arr_band = response.courses.courses_bands;
@@ -365,7 +375,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
 
   async get_courses_open(){
     let self = this
-    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, this.headers)
+    await axios.get(`${environment.API_URL}Courses/Open/StartNotOver5Days`, Settings.headers)
     .then(function(response){
       self.courses = response
       self.get_course()
@@ -386,12 +396,12 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
     const send_data = {
       course_no: this.course_no,
       emp_no: this.emp_no,
-      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? environment.text.wait : null,
+      last_status: (this.data_grid.length + this.data_grid_other.length) + 1 > this.course.capacity ? Settings.text.wait : null,
       remark: this.txt_not_pass
     }
 
     let self = this
-    await axios.post(`${environment.API_URL}Register/ByCommitteeEmp`, send_data, this.headers)
+    await axios.post(`${environment.API_URL}Register/ByCommitteeEmp`, send_data, Settings.headers)
     .then(function(response){
       Swal.fire({
         toast: true,
@@ -430,7 +440,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
       cancelButtonText: 'No'
     }).then(async (result) => {
       if (result.value) {
-        await this.service.axios_delete(`Register/${this.course_no}/${item.emp_no}`, environment.text.delete);
+        await this.service.axios_delete(`Register/${this.course_no}/${item.emp_no}`, Settings.text.delete);
         this.get_registrant();
       }
     })
@@ -531,7 +541,7 @@ Please click the link to approve. <a href="${environment.WEB_URL}">${environment
       formData.append('dept_abb', this._org_abb)
 
       await axios.post(`${environment.API_URL}Register/UploadCourseRegister/ByCommitteeEmp/${this.course_no}`
-      , formData, this.headers)
+      , formData, Settings.headers)
       .then(function(response:any){
         if(response.length>0){
           Swal.fire({

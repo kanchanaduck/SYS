@@ -1,43 +1,11 @@
 // This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// `ng build --configuration=prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
   production: false,
-  WEB_URL: 'http://cptsvs531/HRGIS',
-  // API_URL: 'https://localhost:5001/api/',
-  API_URL: 'http://cptsvs531:5000/api-hrgis/api/',
-  REPORT_URL: 'http://cptsvs531/HRGIS_REPORT',
-  img_garoon: 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/',
-  status: {
-    wait: "Wait",
-    approved: "Approved",
-    center_app: "Center approved"
-  },
-  role: {
-    committee: "COMMITTEE",
-    approver: "APPROVER",
-    center: "CENTER"
-  },
-  level: {
-    department: "department",
-    division: "division"
-  },
-  call: "8005",
-  text: {
-    all: "All",
-    committee_only: "Can only be used by committee.", // ใช้งานได้แค่ committee
-    delete: "Delete data success.", // เมื่อกดลบข้อมูลสำเร็จ
-    duplication: "Data is already exists", // เมื่อมีข้อมูลซ้ำ
-    invalid_department: "Please select staff in your own organization.", // เมื่อพนักงานคนนั้นไม่ได้อยู่ใน orgnization เดียวกับ committee
-    invalid_course: "Course no in your own organization.", // เมื่อ course no ไม่ได้อยู่ในแผนกของคุณ
-    not_found: "Data not found.", // เมื่อค้นหาข้อมูลไม่พบ
-    not_sendmail: "No data, can't send e-mail.", // ไม่พบข้อมูล ไม่สามารถส่งเมล์ได้
-    success: "Update data success.", // เมื่อกดบันทึกข้อมูลสำเร็จ
-    score_incorrect: "Score should be between 0 and 100", // เมื่อกรอกคะแนนไม่ได้อยู่ในช่วง 0-100
-    unequal_band: "This band is not allowed.",  // เมื่อพนักงานคนนั้นไม่ได้อยู่ใน band ของการตั้งค่า course
-    wait: "Wait"
-  }
+  API_URL: 'https://localhost:5001/api/',
+  WEB_URL: 'http://localhost:4200/',
 };
 
 /*
@@ -48,11 +16,3 @@ export const environment = {
  * on performance if an error is thrown.
  */
 // import 'zone.js/dist/zone-error';  // Included with Angular CLI.
-
-// ng build --baseHref=/HRGIS/
-// ng build --baseHref=/HRGIS_TEST/
-// ng build --prod --base-href=/HRGIS_TEST/
-// npm uninstall
-
-// API_URL: 'https://localhost:5001/api/',
-// API_URL: 'http://cptsvs531:5000/api-hrgis/api/',

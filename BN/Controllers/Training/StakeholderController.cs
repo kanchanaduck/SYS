@@ -112,13 +112,13 @@ namespace api_hrgis.Controllers
         }
         // GET: api/Stakeholder/Approver/000001
         [HttpGet("Approver/{emp_no}")]
-        public async Task<ActionResult<tr_stakeholder>> get_approver_by_emp_no(string emp_no)
+        public async Task<ActionResult<IEnumerable<tr_stakeholder>>> get_approver_by_emp_no(string emp_no)
         {
             var tr_stakeholder = await _context.tr_stakeholder
                                     .Include(e => e.organization)
                                     .AsNoTracking()
                                     .Where(e => e.emp_no == emp_no && e.role.ToUpper() == "APPROVER") 
-                                    .FirstOrDefaultAsync();
+                                    .ToListAsync();
 
             if (tr_stakeholder == null)
             {

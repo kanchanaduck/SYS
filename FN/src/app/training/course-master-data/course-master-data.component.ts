@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { AppServiceService } from '../../app-service.service';
 import { environment } from 'src/environments/environment';
 import axios from 'axios';
-
+import { Settings } from 'src/app/settings';
 
 @Component({
   selector: 'app-course-master-data',
@@ -11,14 +11,6 @@ import axios from 'axios';
   styleUrls: ['./course-master-data.component.scss']
 })
 export class CourseMasterDataComponent implements OnInit {
-
-    
-  headers: any = {
-    headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token_hrgis'),
-      'Content-Type': 'application/json'
-    }
-  }
   courses: any = [];
   course: any = {};
   bands: any = [];
@@ -36,7 +28,7 @@ export class CourseMasterDataComponent implements OnInit {
 
   async get_courses(){
     let self = this
-    await axios.get(`${environment.API_URL}CourseMasters`, this.headers)
+    await axios.get(`${environment.API_URL}CourseMasters`, Settings.headers)
     .then(function(response){
       self.courses = response    
       self.route.params.subscribe(params => {
@@ -65,7 +57,7 @@ export class CourseMasterDataComponent implements OnInit {
     }
     else
     {
-      await axios.get(`${environment.API_URL}CourseMasters/${self.course_no}`,self.headers)
+      await axios.get(`${environment.API_URL}CourseMasters/${self.course_no}`,Settings.headers)
         .then(function(response: any){
           self.course = response
           self.arr_band = self.course.master_courses_bands

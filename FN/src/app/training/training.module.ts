@@ -18,8 +18,6 @@ import { ChartsModule } from 'ng2-charts';
 import { TrainingComponent } from './training/training.component';
 import { CourseMasterComponent } from './course-master/course-master.component';
 import { CourseComponent } from './course/course.component';
-import { SurveySettingComponent } from './survey-setting/survey-setting.component';
-import { SurveyComponent } from './survey/survey.component';
 import { RegisterComponent } from './register/register.component';
 import { ApproveMgrComponent } from './approve-mgr/approve-mgr.component';
 import { ApproveFinalComponent } from './approve-final/approve-final.component';
@@ -31,7 +29,6 @@ import { CenterComponent } from './center/center.component';
 import { TrainerComponent } from './trainer/trainer.component';
 import { TrainerHistoryComponent } from './trainer-history/trainer-history.component';
 import { AssessmentFileComponent } from './assessment-file/assessment-file.component';
-import { SurveyApproveComponent } from './survey-approve/survey-approve.component';
 import { RegisterDataComponent } from './register-data/register-data.component';
 import { CourseMasterDataComponent } from './course-master-data/course-master-data.component';
 
@@ -39,6 +36,7 @@ const routes: Routes = [
   { path: '', component: TrainingComponent },
   { path: 'training', component: TrainingComponent, data: { title: 'Training', active: true} },
   { path: 'approve-mgr', component: ApproveMgrComponent, data: { title: 'Approver approve', active: true } },
+  { path: 'approve-mgr/:course_no', component: ApproveMgrComponent, data: { title: 'Approver approve', active: true } },
   { path: 'approve-final', component: ApproveFinalComponent, data: { title: 'Final approve', active: true } },
   { path: 'center', component: CenterComponent, data: { title: 'Center management', active: true } },
   { path: 'course-score', component: CourseScoreComponent, data: { title: 'Input score', active: true } },
@@ -49,9 +47,6 @@ const routes: Routes = [
   { path: 'course', component: CourseComponent, data: { title: 'Course', active: true } },
   { path: 'trainer', component: TrainerComponent, data: { title: 'Trainer management', active: true} },
   { path: 'trainer-history/:trainer_no', component: TrainerHistoryComponent, data: { title: 'Trainer history', active: true} },
-  { path: 'survey-setting', component: SurveySettingComponent, data: { title: 'Need survey setting', active: true } },
-  { path: 'survey', component: SurveyComponent, data: { title: 'Need survey answer', active: true } },
-  { path: 'survey-detail/:year/:course_owner', component: SurveyApproveComponent, data: { title: 'Need survey detail', active: true } },
   { path: 'register', component: RegisterComponent, data: { title: 'Committee register ', active: true } },
   { path: 'register-continuous', component: RegisterContinuousComponent, data: { title: 'Register continuous employee no.', active: true } },
   { path: 'stakeholder', component: StakeholderComponent, data: { title: 'Stakeholder management', active: true } },
@@ -65,8 +60,6 @@ const routes: Routes = [
     CourseMasterComponent,
     CourseComponent,
     TrainerComponent,
-    SurveySettingComponent,
-    SurveyComponent,
     RegisterComponent,
     ApproveMgrComponent,
     ApproveFinalComponent,
@@ -77,7 +70,6 @@ const routes: Routes = [
     TrainerHistoryComponent,
     CenterComponent,
     AssessmentFileComponent,
-    SurveyApproveComponent,
     RegisterDataComponent,
     CourseMasterDataComponent,
   ],
