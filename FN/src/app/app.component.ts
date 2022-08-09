@@ -32,10 +32,16 @@ export class AppComponent implements OnInit {
         || (event['url'].includes('/authentication/signin')) 
         || (event['url'] == '/authentication/signup') 
         || (event['url'] == '/authentication/page-404') ) {
+
           this.showHeader = false;
           this.showFooter = false;
         }
         else {
+          
+          if(sessionStorage.getItem("token_hrgis")==null){
+            location.href = `authentication/signin`
+          }
+
           this.showHeader = true;
           this.showFooter = false;
         }
