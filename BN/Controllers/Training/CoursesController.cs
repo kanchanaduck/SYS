@@ -436,6 +436,7 @@ namespace api_hrgis.Controllers
             foreach (var item in course.courses_trainers)
             {
                 c.Add(item.trainer_no);
+                Console.WriteLine("Training no"+item.trainer_no);
             }
 
             var trainers = await (from trainer in _context.tr_trainer
@@ -562,8 +563,8 @@ namespace api_hrgis.Controllers
                 if(item.dept_abb!=null) {
                    dept = "("+item.dept_abb+")";
                 }
-                Console.WriteLine(dept);
-                trainer_arr.Add(item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."+dept );
+                // Console.WriteLine(dept);
+                trainer_arr.Add(item.firstname_en+" "+item.lastname_en.Substring(0,1)+". "+dept );
             }
 
             var registrant = await (
@@ -609,12 +610,13 @@ namespace api_hrgis.Controllers
 
             using(var package = new ExcelPackage(new FileInfo(originalFilePath)))
             {
+
                 string trainer_joined = "";
                 if(course.trainer_text!="" || course.trainer_text!=null){
-                    trainer_joined = course.trainer_text;
+                    trainer_joined = string.Join(",", trainer_arr);
                 }
                 else{
-                    trainer_joined = string.Join(",", trainer_arr);
+                    trainer_joined = course.trainer_text;
                 }
 
                 ExcelWorksheet worksheet = package.Workbook.Worksheets["ประเมินหลักสูตร"];
@@ -622,7 +624,7 @@ namespace api_hrgis.Controllers
                 worksheet.Cells["G6"].Value = course.course_name_th;
                 worksheet.Cells["G7"].Value = course.course_name_en;
                 worksheet.Cells["D8"].Value = ( course.date_start==null && course.date_end==null)? null:(course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy")); 
-                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"HH\:mm")+" - "+course.date_end?.ToString(@"HH\:mm"); 
                 worksheet.Cells["K8"].Value = course.place; 
                 worksheet.Cells["D9"].Value = trainer_joined; 
                 worksheet.Cells["K9"].Value = course.organization.org_abb;
@@ -678,7 +680,7 @@ namespace api_hrgis.Controllers
                 worksheet.Cells["G6"].Value = course.course_name_th;
                 worksheet.Cells["G7"].Value = course.course_name_en;
                 worksheet.Cells["D8"].Value = course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy");  
-                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["G8"].Value = course.date_start?.ToString(@"HH\:mm")+" - "+course.date_end?.ToString(@"HH\:mm"); 
                 worksheet.Cells["J8"].Value = course.place; 
                 worksheet.Cells["D9"].Value = trainer_joined; 
                 worksheet.Cells["J9"].Value = course.organization.org_abb;
@@ -691,7 +693,7 @@ namespace api_hrgis.Controllers
                 worksheet.Cells["D8"].Value = course.course_no;
                 worksheet.Cells["G8"].Value = course.course_name_th+eng_course;
                 worksheet.Cells["D9"].Value = course.date_start?.ToString("dd/MM/yy")+" - "+course.date_end?.ToString("dd/MM/yy"); 
-                worksheet.Cells["G9"].Value = course.date_start?.ToString(@"hh\:mm")+" - "+course.date_end?.ToString(@"hh\:mm"); 
+                worksheet.Cells["G9"].Value = course.date_start?.ToString(@"HH\:mm")+" - "+course.date_end?.ToString(@"HH\:mm"); 
                 worksheet.Cells["L9"].Value = course.place; 
                 worksheet.Cells["D10"].Value = trainer_joined; 
                 worksheet.Cells["L10"].Value = course.organization.org_abb;
