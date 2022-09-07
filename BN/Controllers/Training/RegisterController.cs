@@ -154,54 +154,51 @@ namespace api_hrgis.Controllers
 
         protected string GetPrevCourseNoText(string course_no, string emp_no)
         {
-            string prev_c = ""; string result = "";
+            string result = "";
 
             if(!is_employee_exist(emp_no)){
                 return result;
             }
 
-            var course_master = _context.tr_course
+            var course = _context.tr_course
                     .Where(x => x.course_no == course_no)
                     .FirstOrDefault();
 
-            // Console.WriteLine("Master: "+course_master.master_course_no);
+            if(course==null){
+                return result;
+            }
 
-            var course = _context.tr_course_master
-                    .Where(x => x.course_no == course_master.master_course_no)
+            var master_course_no= course.master_course_no;
+
+            Console.WriteLine("Master: "+master_course_no);
+
+            var course_master = _context.tr_course_master
+                    .Where(x => x.course_no == master_course_no)
                     .Include(x => x.master_courses_previous_courses)
                     .FirstOrDefault();
 
-            if (course != null)
-            {
-                
-                // Console.WriteLine("Count: "+course.master_courses_previous_courses.Count());
-                if (course.master_courses_previous_courses.Count() > 0)
-                {
-                    int index = 0;
-                    foreach (var i in course.master_courses_previous_courses)
-                    {
-                        if (course.master_courses_previous_courses.Count() == 1 || 
-                                index==course.master_courses_previous_courses.Count()-1)
-                        {
-                            prev_c = prev_c + i.prev_course_no;
-                        }
-                        else
-                        {
-                            prev_c = prev_c + i.prev_course_no + ", ";
-                        }
-                        index++;
-                    }
-                    // Console.WriteLine("Previous: "+prev_c);
+            if(course_master==null){
+                return result;
+            }
 
-                    var query2 = _context.tr_course_registration.Where(x => x.course_no == course_no 
+            List<string> previous_courses = new List<string>{}; 
+
+            Console.WriteLine("Count: "+course_master.master_courses_previous_courses.Count());
+            if (course_master.master_courses_previous_courses.Count() > 0)
+            {
+                foreach (var i in course_master.master_courses_previous_courses){
+                    previous_courses.Add(i.prev_course_no);
+                }
+
+                var child_courses = _context.tr_course.Where(c=>previous_courses.Contains(c.master_course_no))
+                    .Select(c=>c.course_no).ToArray();
+
+                if(!(_context.tr_course_registration.Any(
+                    x => child_courses.Contains(x.course_no) 
                     && x.emp_no == emp_no 
-                    && x.last_status == _config.GetValue<string>("Status:approved")).FirstOrDefault();
-                    if (query2 == null)
-                    {
-                        result = _config.GetValue<string>("Text:not_passed") + " " + prev_c;
-                    }
-                    
-                    // Console.WriteLine("Result: "+result);
+                    && x.last_status == _config.GetValue<string>("Status:approved")
+                ))){
+                    result = _config.GetValue<string>("Text:not_passed")+" "+string.Join(",", previous_courses)+"; ";
                 }
             }
 

@@ -105,10 +105,10 @@
 
 <hr *ngIf="is_center">
 
-<div class="row"  *ngIf="is_center">
-    <div class="col-md-4 offset-4">
+<div class="row" *ngIf="is_center">
+    <div class="col-md-4 offset-2">
         <form (ngSubmit)="save_setting()">
-            <div class="card mb-3" *ngIf="is_center">
+            <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-cog"></i> Setting signature sheet
                 </div>
@@ -135,6 +135,60 @@
 
                     <button type="submit" class="btn btn-sm btn-az-primary pd-x-30 mg-r-5">Save</button>
                     <button type="button" class="btn btn-sm btn-dark pd-x-30">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
+    <div class="col-md-4">
+        <form (ngSubmit)="extend_course()">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-cog"></i> Extend course
+                </div>
+                <div class="card-body">
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-5">
+                            <label class="form-label mg-b-0">Course no.</label>
+                        </div><!-- col -->
+                        <div class="col-md-7 mg-t-5 mg-md-t-0">
+                            <div class="input-group">
+                                <input type="text" name="extend.course_no" [(ngModel)]="extend.course_no" 
+                                    class="form-control" placeholder="Course no.">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-sm btn-az-primary" type="button" (click)="find_date_end()">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-5">
+                            <label class="form-label mg-b-0">Date end</label>
+                        </div><!-- col -->
+                        <div class="col-md-7 mg-t-5 mg-md-t-0">
+                        <input type="date" name="extend.date_end_get" [(ngModel)]="extend.date_end_get" 
+                            class="form-control" placeholder="Date end">
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+                    
+
+                    <div class="row row-xs align-items-center mg-b-20">
+                        <div class="col-md-5">
+                            <label class="form-label mg-b-0">Extend date end to</label>
+                        </div><!-- col -->
+                        <div class="col-md-7 mg-t-5 mg-md-t-0">
+                        <input type="date" name="extend.date_end" [(ngModel)]="extend.date_end" 
+                            class="form-control" placeholder="Date end">
+                        </div><!-- col -->
+                    </div><!-- row -->
+
+                    <button type="submit" class="btn btn-sm btn-az-primary pd-x-30 mg-r-5">Save</button>
+                    <button type="button" class="btn btn-sm btn-dark pd-x-30" (click)="clear_extend()" >Cancel</button>
                 </div>
             </div>
         </form>

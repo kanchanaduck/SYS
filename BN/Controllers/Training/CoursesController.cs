@@ -60,7 +60,17 @@ namespace api_hrgis.Controllers
 
             return Ok(courses);
         }
-
+        private bool course_editable(string course_no){
+            var course = _context.tr_course.Find(course_no);
+            return ((DateTime.Now.Date - (course.date_end.HasValue ? course.date_end.Value: DateTime.Now.Date) ).Days 
+                                -
+                                (count_holidays((course.date_end.HasValue ? course.date_end.Value: DateTime.Now.Date), (DateTime.Now.Date)))
+                                < 10
+                                )? true:false; 
+        }
+        private bool course_has_registrant(string course_no){
+            return _context.tr_course_registration.Any(e=>e.course_no==course_no);
+        }
         // GET: api/Courses/5
         [HttpGet("{course_no}")]
         public async Task<ActionResult<tr_course>> get_course(string course_no)
@@ -81,7 +91,6 @@ namespace api_hrgis.Controllers
 
             return tr_course;
         }
-
         // GET: api/Courses/Open
         [HttpGet("Open")]
         public async Task<ActionResult<IEnumerable<tr_course>>> course_open()
@@ -284,7 +293,6 @@ namespace api_hrgis.Controllers
         }
 
         // PUT: api/Course/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{course_no}")]
         public async Task<IActionResult> Puttr_course(string course_no, tr_course tr_course)
         {
@@ -293,23 +301,21 @@ namespace api_hrgis.Controllers
                 return StatusCode(403,"Permission denied, only committee can manage data");
             }
 
-            Console.WriteLine("COURSE NO TEMP: "+course_no);
-            Console.WriteLine("COURSE NO: "+tr_course.course_no);
-
             var course = await _context.tr_course
                             .Include(b => b.courses_bands)
                             .Include(b => b.courses_trainers)
-                            .Where(b => b.course_no==tr_course.course_no)
+                            .Where(b => b.course_no==course_no)
                             .FirstOrDefaultAsync();
-
-            Console.WriteLine("Course new: "+course.course_no);
             
             if(course == null)
             {
-                return StatusCode(400,"Course is not found");
+                return NotFound("Course is not found");
             }
 
-            Console.WriteLine("COURSE: "+course.course_no);
+            if(!course_editable(course_no))
+            {
+                return StatusCode(400,"Course cannot be revised or deleted after course end within 10 working days");
+            }
 
             course.course_no = tr_course.course_no;
             course.course_name_th = tr_course.course_name_th;
@@ -331,6 +337,90 @@ namespace api_hrgis.Controllers
             return NoContent();
         }
 
+        [HttpPut("Extend")]
+        public async Task<IActionResult> course_extend(string course_no, string date_end)
+        {
+            if(!(_context.tr_center.Any(e=>e.emp_no==User.FindFirst("emp_no").Value)))
+            {
+                return StatusCode(403,"Permission denied, only center can manage data");
+            }
+
+            var course = await _context.tr_course
+                            .Where(b => b.course_no==course_no)
+                            .FirstOrDefaultAsync();
+            
+            if(course == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            DateTime de =  Convert.ToDateTime(date_end);
+            course.date_end = de;
+            course.updated_at = DateTime.Now;
+            course.updated_by = User.FindFirst("emp_no").Value;
+            _context.Entry(course).State = EntityState.Modified;
+            await _context.SaveChangesAsync(); 
+
+            return NoContent();
+        }
+
+        // PUT: api/Course/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("Rename/{course_no}")]
+        public async Task<IActionResult> rename_course(string old_course_no, tr_course tr_course)
+        {
+            if(!user_is_commitee())
+            {
+                return StatusCode(403,"Permission denied, only committee can manage data");
+            }
+
+            var course_old = await _context.tr_course
+                            .Include(b => b.courses_bands)
+                            .Include(b => b.courses_trainers)
+                            .Where(b => b.course_no==old_course_no)
+                            .FirstOrDefaultAsync();
+            
+            if(course_old == null)
+            {
+                return NotFound("Course is not found");
+            }
+
+            if(!course_editable(old_course_no))
+            {
+                return StatusCode(400,"Course cannot be revised or deleted after course end within 10 working days");
+            }
+
+            if(course_has_registrant(old_course_no)){
+                return StatusCode(400,"Course no. cannot be changed because there is registrant.");
+            }
+
+            var course_new = course_old;
+            course_new.course_no = tr_course.course_no;
+            course_new.course_name_th = tr_course.course_name_th;
+            course_new.course_name_en = tr_course.course_name_en;
+            course_new.org_code = tr_course.org_code;
+            course_new.date_start = tr_course.date_start;
+            course_new.date_end = tr_course.date_end;
+            course_new.place = tr_course.place;
+            course_new.capacity = tr_course.capacity;
+            course_new.days = tr_course.days;
+            course_new.open_register = tr_course.open_register;
+            course_new.courses_bands = tr_course.courses_bands;
+            course_new.courses_trainers = tr_course.courses_trainers;
+            course_new.updated_at = DateTime.Now;
+            course_new.updated_by = User.FindFirst("emp_no").Value;
+
+            if(_context.tr_course.Any(e=>e.course_no==course_new.course_no)){
+                return Conflict("Cannot add duplicate course no.");
+            }
+
+            _context.tr_course.Add(course_new);
+            await _context.SaveChangesAsync(); 
+
+            await delete_course(old_course_no);
+
+            return NoContent();
+        }
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [AllowAnonymous]
@@ -371,7 +461,7 @@ namespace api_hrgis.Controllers
 
         // DELETE: api/Courses/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Deletetr_course(string id)
+        public async Task<IActionResult> delete_course(string id)
         {
             // ต้อง update [tr_course] status_active = false
             var tr_course = await _context.tr_course.Where(x => x.course_no == id).FirstOrDefaultAsync();
@@ -564,7 +654,7 @@ namespace api_hrgis.Controllers
                    dept = "("+item.dept_abb+")";
                 }
                 // Console.WriteLine(dept);
-                trainer_arr.Add(item.firstname_en+" "+item.lastname_en.Substring(0,1)+". "+dept );
+                trainer_arr.Add(item.title_name_en+item.firstname_en+" "+item.lastname_en.Substring(0,1)+". "+dept );
             }
 
             var registrant = await (
@@ -664,8 +754,7 @@ namespace api_hrgis.Controllers
 
                     }
 
-                    // Console.WriteLine(worksheet.Name+" "+data+" "+item.emp_no+" "+item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."+" "+item.dept_abb+" "+start_col);
-                    worksheet.Cells[14, start_col].Value = item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."; 
+                    worksheet.Cells[14, start_col].Value = item.title_name_en+item.firstname_en+" "+item.lastname_en.Substring(0,1)+"."; 
                     worksheet.Cells[15, start_col].Value = item.emp_no;
                     worksheet.Cells[16, start_col].Value = item.dept_abb;
                     start_col = start_col+2;
@@ -721,7 +810,7 @@ namespace api_hrgis.Controllers
 
                     }
                     worksheet.Cells[start_row, 3].Value = item.emp_no; 
-                    worksheet.Cells[start_row, 4].Value = item.firstname_en+" "+item.lastname_en;
+                    worksheet.Cells[start_row, 4].Value = item.title_name_en+item.firstname_en+" "+item.lastname_en;
                     worksheet.Cells[start_row, 6].Value = item.position_name_en;
                     worksheet.Cells[start_row, 7].Value = item.div_abb;
                     worksheet.Cells[start_row, 8].Value = item.dept_abb;

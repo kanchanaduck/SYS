@@ -239,7 +239,7 @@ namespace api_hrgis
 // วิธี publish
 
 // ขึ้น Test ไฟล์จะอยู่ที่โฟลเดอร์ \bin\Test\net5.0\publish\
-// dotnet publish /p:Configuration=Testt
+// dotnet publish --configuration=Test
 
 
 // ขึ้น Production ไฟล์จะอยู่ที่โฟลเดอร์ \bin\Debug\net5.0\publish

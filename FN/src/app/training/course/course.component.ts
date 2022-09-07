@@ -44,6 +44,7 @@ export class CourseComponent implements OnInit {
   master_course_no: string;
   master_courses: any;
   check_bands: any[];
+  course_temp: string;
 
   constructor(private modalService: NgbModal, config: NgbModalConfig, public activeModal: NgbActiveModal, private service: AppServiceService) {
     // popup
@@ -303,6 +304,9 @@ export class CourseComponent implements OnInit {
     this.visibleSave = false;
     this.visibleUpdate = true;
 
+    this.course_temp = null;
+    this.course_temp = course_no;
+
     this.course = {};
     this.errors = {};
     this.course = {};
@@ -401,9 +405,29 @@ export class CourseComponent implements OnInit {
     }
     console.log('send data: ', send_data);
 
-    await this.service.axios_put(`Courses/${this.course.course_no}`, send_data, 'Update data success.');
-    this.fnClear()
-    this.get_courses();
+    if(this.course_temp!=this.course.course_no){
+      await axios.put(`${environment.API_URL}Courses/Rename/${this.course_temp}`, send_data, Settings.headers)
+      .then(function (response) {
+        self.service.sweetalert_edit()
+        self.fnClear()
+        self.get_courses();
+      })
+      .catch(function (error) {
+        self.service.sweetalert_error(error)
+      });  
+    }
+    else{
+      await axios.put(`${environment.API_URL}Courses/${this.course.course_no}`, send_data, Settings.headers)
+      .then(function (response) {
+        self.service.sweetalert_edit()
+        self.fnClear()
+        self.get_courses();
+      })
+      .catch(function (error) {
+        self.service.sweetalert_error(error)
+      });      
+    }
+
   }
 
   async fnDelete(course_no) {

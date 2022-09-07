@@ -7,6 +7,7 @@ import { AppServiceService } from 'src/app/app-service.service';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject } from 'rxjs';
 import { Settings } from 'src/app/settings';
+import { SelectionModel } from '@angular/cdk/collections';
 @Component({
   selector: 'app-center',
   templateUrl: './center.component.html',
@@ -31,6 +32,7 @@ export class CenterComponent implements OnInit {
   _org_code: any;
   _org_abb: any;
   is_center: boolean = false;
+  extend: any = {};
 
   constructor(private service: AppServiceService, private httpClient: HttpClient) { }
 
@@ -223,6 +225,43 @@ export class CenterComponent implements OnInit {
     .catch(function (error) {
       self.service.sweetalert_error(error)
     });
+  }
+
+
+  async find_date_end() {
+    
+    if(this.extend.course_no==undefined){
+      return ;
+    }
+    
+    let self = this
+    await axios.get(`${environment.API_URL}Courses/${this.extend.course_no}`,Settings.headers)
+    .then(function (response: any) {
+      self.extend.date_end_get = new Date(response.date_end).toISOString().slice(0, 10);
+      console.log(response.date_end)
+      console.log(self.extend.date_end_get)
+      var next_month = new Date(new Date(response.date_end).setMonth(new Date(response.date_end).getMonth() + 2))
+      self.extend.date_end = next_month.toISOString().slice(0, 10);
+    })
+    .catch(function (error) {
+      self.service.sweetalert_error(error)
+    });
+  }
+
+  async extend_course() {  
+    let self = this
+    await axios.put(`${environment.API_URL}Courses/Extend/?course_no=${this.extend.course_no}&date_end=${this.extend.date_end}`,this.extend,Settings.headers)
+    .then(function (response) {
+      self.service.sweetalert_edit()
+      self.clear_extend()
+    })
+    .catch(function (error) {
+      self.service.sweetalert_error(error)
+    });
+  }
+
+  async clear_extend(){
+    this.extend = {}
   }
 
 }

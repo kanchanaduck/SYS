@@ -278,6 +278,13 @@ Please sign in and click the link to approve. <br>
           .then(function(response){
             self.get_registrant();
           })
+          .catch(function(error){
+            Swal.fire({
+              icon: 'error',
+              title: "500",
+              text: "There was an error with this function, please inform ICD."
+            })
+          })
         }
       })
     })

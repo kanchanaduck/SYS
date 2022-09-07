@@ -104,6 +104,7 @@ namespace api_hrgis.Controllers
                 }
             }
         }
+        [AllowAnonymous]
         // GET: api/Account/ResetPassword
         [HttpGet("ResetPassword/All")]
         public async Task<ActionResult<tb_user>> reset_password_all()

@@ -1,6 +1,6 @@
 export class Settings {
     public static IMG_GAROON: string = 'http://cptsvs522/cbgrn/grn/image/customimg/emp_pic/';
-    public static REPORT_URL: string = 'http://cptsvs531/HRGIS_REPORT/';
+    public static REPORT_URL: string = 'http://cptsvs527/HRGIS-REPORT/';
     public static status: any =  {
       wait: "Wait",
       approved: "Approved",
